@@ -3,3 +3,9 @@
 ################################################################################
 
 /.vs/Syllabore/v16/.suo
+/.vs
+/Syllabore/.vs/Syllabore/v16
+/Syllabore/Syllabore/bin/Debug/netstandard2.0
+/Syllabore/Syllabore/obj
+/Syllabore/Syllabore.Example/bin/Debug/netcoreapp2.1
+/Syllabore/Syllabore.Example/obj
