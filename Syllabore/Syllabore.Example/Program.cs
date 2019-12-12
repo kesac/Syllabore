@@ -6,11 +6,13 @@ namespace Syllabore.Example
     {
         public static void Main(string[] args)
         {
-            ISyllableModel model = new BasicSyllableModel();
-            INameValidator validator = new BasicNameValidator();
+            var provider = new BasicSyllableProvider();
+            var validator = new BasicNameValidator();
 
-            Syllabore names = new Syllabore(model, validator);
-            for(int i = 0; i < 50; i++)
+            // Syllabore names = new Syllabore(model);
+            Syllabore names = new Syllabore(provider, validator);
+
+            for (int i = 0; i < 100; i++)
             {
                 System.Console.WriteLine(names.Next());
             }
