@@ -6,21 +6,21 @@ namespace Syllabore
 {
     public class Syllabore
     {
-        private ISyllableModel Model { get; set; }
+        private ISyllableProvider Provider { get; set; }
         private INameValidator Validator { get; set; }
         private Random Random { get; set; }
         public int MinimumSyllables { get; set; }
         public int MaximumSyllables { get; set; }
 
-        public Syllabore(ISyllableModel model)
+        public Syllabore(ISyllableProvider provider)
         {
-            this.Model = model;
+            this.Provider = provider;
             this.MinimumSyllables = 2;
             this.MaximumSyllables = 2;
             this.Random = new Random();
         }
 
-        public Syllabore(ISyllableModel model, INameValidator validator) : this(model)
+        public Syllabore(ISyllableProvider provider, INameValidator validator) : this(provider)
         {
             if (validator != null)
             {
@@ -44,7 +44,18 @@ namespace Syllabore
                 output.Clear();
                 for (int i = 0; i < syllableLength; i++)
                 {
-                    output.Append(Model.NextSyllable());
+                    if (i == 0 && syllableLength > 1)
+                    {
+                        output.Append(Provider.NextStartingSyllable());
+                    }
+                    else if (i == syllableLength - 1 && syllableLength > 1)
+                    {
+                        output.Append(Provider.NextEndingSyllable());
+                    }
+                    else
+                    {
+                        output.Append(Provider.NextSyllable());
+                    }
                 }
 
                 if (this.Validator != null)

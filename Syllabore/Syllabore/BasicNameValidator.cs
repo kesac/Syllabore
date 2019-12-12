@@ -8,9 +8,9 @@ namespace Syllabore
     public class BasicNameValidator : INameValidator
     {
 
-        private static readonly string[] InvalidEndings =
+        private static readonly string[] AwkwardEndings =
         {
-            "J", "Q", "V", "X", "Z", "CH", "BL", "CL", "FL", "GL", "BR", "CR", "DR", "PR", "TR", "TH", "SC", "SP"
+            "J", "P", "Q", "V", "W", "Z"
         };
 
         public bool IsValidName(string name)
@@ -18,7 +18,7 @@ namespace Syllabore
             bool isValid = true;
 
             if (name != null) {
-                foreach (var ending in InvalidEndings)
+                foreach (var ending in AwkwardEndings)
                 {
                     if (name.ToLower().EndsWith(ending))
                     {
