@@ -1,5 +1,5 @@
 # Syllabore
-A boring name generator based on constructing syllables and randomly joining them.
+A fantasy name generator based on constructing syllables and randomly joining them.
 
 ## Basic Usage
 ```csharp
@@ -29,7 +29,7 @@ public static void Main(string[] args)
     }
 }
 ```
-## Sample Output with Basic Model and Validator
+## Sample Output with Basic Provider and Validator
 ```
 Naci
 Xogud
