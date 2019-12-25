@@ -4,15 +4,15 @@ using System.Text;
 
 namespace Syllabore
 {
-    public class Syllabore
+    public class NameGenerator : IGenerator
     {
-        private ISyllableProvider Provider { get; set; }
-        private INameValidator Validator { get; set; }
+        private IProvider Provider { get; set; }
+        private IValidator Validator { get; set; }
         private Random Random { get; set; }
         public int MinimumSyllables { get; set; }
         public int MaximumSyllables { get; set; }
 
-        public Syllabore(ISyllableProvider provider)
+        public NameGenerator(IProvider provider)
         {
             this.Provider = provider;
             this.MinimumSyllables = 2;
@@ -20,7 +20,7 @@ namespace Syllabore
             this.Random = new Random();
         }
 
-        public Syllabore(ISyllableProvider provider, INameValidator validator) : this(provider)
+        public NameGenerator(IProvider provider, IValidator validator) : this(provider)
         {
             if (validator != null)
             {

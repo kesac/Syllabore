@@ -5,7 +5,7 @@ using System.Text;
 namespace Syllabore
 {
     // This is meant to be a standlone syllable model for quick use
-    public class BasicSyllableProvider : ISyllableProvider
+    public class BasicSyllableProvider : IProvider
     {
 
         private static readonly string[] StartingConsonants = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Y", "Z" };

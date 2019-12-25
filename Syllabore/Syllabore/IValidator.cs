@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Syllabore
 {
-    public interface INameValidator
+    public interface IValidator
     {
         bool IsValidName(string name);
     }

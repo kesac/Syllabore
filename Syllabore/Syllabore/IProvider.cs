@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Syllabore
 {
-    public interface ISyllableProvider
+    public interface IProvider
     {
         // Generate a random syllable suitable for starting name
         string NextStartingSyllable();
