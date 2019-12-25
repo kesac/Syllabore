@@ -1,0 +1,22 @@
+﻿<syllabore>
+  <define name="BasicNameGenerator">
+    <components>
+      <add type="Vowels" values="a e i o u"/>
+      <add type="StartingConsonants" values="b c d f g h j k l m n p q r s t v w x y z"/>
+      <add type="StartingConsonantSequences" values="ch sh bl cl fl pl gl br cr"/>
+      <add type="StartingConsonantSequences" values="dr pr tr th sc sp st sl spr"/>
+      <add type="EndingConsonants" values="b c d f g h k l m n p r s t v x y"/>
+      <add type="EndingConsonantSequences" values="ck st sc ng nk rsh lsh rk rst nct xt"/>
+    </components>
+    <constraints>
+      <constrain when="NameEndsWith" values="j p q v w z"/>
+    </constraints>
+    <probability>
+      <set type="StartingVowelProbability" value="0.10"/>
+      <set type="StartingConsonantSequenceProbability" value="0.20" />
+      <set type="VowelSequenceProbability" value = "0.20" />
+      <set type="EndingConsonantProbability" value = "0.10" />
+      <set type="EndingConsonantSequenceProbability" value = "0.10" />
+    </probability>
+  </define>
+</syllabore>

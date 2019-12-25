@@ -10,7 +10,7 @@ namespace Syllabore.Example
             var validator = new BasicNameValidator();
 
             // Syllabore names = new Syllabore(model);
-            Syllabore names = new Syllabore(provider, validator);
+            var names = new NameGenerator(provider, validator);
 
             for (int i = 0; i < 100; i++)
             {
