@@ -1,14 +1,14 @@
 # Syllabore
-A boring name generator based on constructing syllables and randomly joining them.
+A fantasy name generator based on constructing syllables and randomly joining them.
 
 ## Basic Usage
 ```csharp
 public static void Main(string[] args)
 {
-    ISyllableModel model = new BasicSyllableModel(); // provider of consonants, vowels, and codas
-    Syllabore names = new Syllabore(model);
+    var provider = new BasicSyllableProvider(); // provider of consonant and vowel combinations
+    var names = new Syllabore(provider);
     
-    for(int i = 0; i < 50; i++)
+    for(int i = 0; i < 100; i++)
     {
         System.Console.WriteLine(names.Next());
     }
@@ -19,37 +19,17 @@ public static void Main(string[] args)
 ```csharp
 public static void Main(string[] args)
 {
-    ISyllableModel model = new BasicSyllableModel();
-    INameValidator validator = new BasicNameValidator(); // optional, for constraining letter combinations
-    Syllabore names = new Syllabore(model, validator);
+    var provider = new BasicSyllableProvider();
+    var validator = new BasicNameValidator(); // optional, for constraining letter combinations
+    var names = new Syllabore(provider, validator);
     
-    for(int i = 0; i < 50; i++)
+    for(int i = 0; i < 100; i++)
     {
         System.Console.WriteLine(names.Next());
     }
 }
 ```
-
-## Changing Length of Names
-```csharp
-public static void Main(string[] args)
-{
-    ISyllableModel model = new BasicSyllableModel();
-    INameValidator validator = new BasicNameValidator();
-
-    Syllabore names = new Syllabore(model, validator);
-
-    names.MinimumSyllables = 1;
-    names.MaximumSyllables = 5;
-    
-    for(int i = 0; i < 50; i++)
-    {
-        System.Console.WriteLine(names.Next());
-    }
-}
-```
-
-## Sample Output with Basic Model and Validator
+## Sample Output with Basic Provider and Validator
 ```
 Naci
 Xogud
@@ -79,6 +59,25 @@ Clunust
 Jodo
 Jita
 ```
+## Changing Length of Generated Names
+```csharp
+public static void Main(string[] args)
+{
+    var provider = new BasicSyllableProvider();
+    var validator = new BasicNameValidator();
+    var names = new Syllabore(provider, validator);
+
+    names.MinimumSyllables = 1;
+    names.MaximumSyllables = 5;
+    
+    for(int i = 0; i < 100; i++)
+    {
+        System.Console.WriteLine(names.Next());
+    }
+}
+```
+
+
 
 # License
 
