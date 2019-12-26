@@ -15,6 +15,10 @@ namespace Syllabore.Example
             {
                 System.Console.WriteLine(names.Next());
             }
+
+
+            var loader = new XmlLoader("data/basic.xml");
+
         }
     }
 }
