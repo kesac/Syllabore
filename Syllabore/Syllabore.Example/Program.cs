@@ -6,10 +6,9 @@ namespace Syllabore.Example
     {
         public static void Main(string[] args)
         {
-            var provider = new BasicSyllableProvider();
-            var validator = new BasicNameValidator();
+            var provider = new StandaloneSyllableProvider();
+            var validator = new StandaloneNameValidator();
 
-            // Syllabore names = new Syllabore(model);
             var names = new NameGenerator(provider, validator);
 
             for (int i = 0; i < 100; i++)

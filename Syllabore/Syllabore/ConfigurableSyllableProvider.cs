@@ -5,7 +5,7 @@ using System.Text;
 namespace Syllabore
 {
     /// <summary>
-    /// Generates syllables based on the pre-specified vowels and consonants.
+    /// Generates syllables based on a set of configurable vowels and consonants.
     /// </summary>
     public class ConfigurableSyllableProvider : ISyllableProvider
     {

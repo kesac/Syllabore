@@ -4,36 +4,16 @@ using System.Text;
 
 namespace Syllabore
 {
-    // This is meant to be a standlone name validator for quick use
-    public class StandaloneNameValidator : INameValidator
+    /// <summary>
+    /// A quick and dirty standlone name provider for quick use. Custom validators
+    /// should use <c>ConfigurableNameValidator</c> instead.
+    /// </summary>
+    public class StandaloneNameValidator : ConfigurableNameValidator
     {
-
-        private static readonly string[] AwkwardEndings =
+        public StandaloneNameValidator()
         {
-            "J", "P", "Q", "V", "W", "Z"
-        };
-
-        public bool IsValidName(string name)
-        {
-            bool isValid = true;
-
-            if (name != null) {
-                foreach (var ending in AwkwardEndings)
-                {
-                    if (name.ToLower().EndsWith(ending))
-                    {
-                        isValid = false;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                isValid = false;
-            }
-
-            return isValid;
-
+            // Invalidate awkward looking endings
+            this.AddConstraintAsRegex("[j|p|q|v|w|z]$");
         }
     }
 }
