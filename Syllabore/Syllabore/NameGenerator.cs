@@ -16,6 +16,9 @@ namespace Syllabore
         public int MinimumSyllables { get; set; }
         public int MaximumSyllables { get; set; }
 
+        /// <summary>
+        /// Constructs a name generator with no validator using the specified syllable provider.
+        /// </summary>
         public NameGenerator(ISyllableProvider provider)
         {
             this.Provider = provider;
@@ -24,6 +27,9 @@ namespace Syllabore
             this.Random = new Random();
         }
 
+        /// <summary>
+        /// Constructs a name generator using the specified syllable provider and name validator.
+        /// </summary>
         public NameGenerator(ISyllableProvider provider, INameValidator validator) : this(provider)
         {
             if (validator != null)
@@ -32,12 +38,19 @@ namespace Syllabore
             }
         }
 
+
+        /// <summary>
+        /// Generates a random name. The syllable length of the generated name is determined by the properties <c>MinimumSyllables</c> and <c>MaximumSyllables</c>.
+        /// </summary>
         public string Next()
         {
             var syllableLength = this.Random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
             return this.Next(syllableLength);
         }
 
+        /// <summary>
+        /// Generates a random name with the specified syllable length.
+        /// </summary>
         public string Next(int syllableLength)
         {
             var output = new StringBuilder();

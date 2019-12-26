@@ -4,7 +4,10 @@ using System.Text;
 
 namespace Syllabore
 {
-    // This is meant to be a standlone syllable provider for quick use
+    /// <summary>
+    /// A quick and dirty standlone syllable provider for quick use. Custom providers
+    /// should use <c>ConfigurableSyllableProvider</c> instead.
+    /// </summary>
     public class StandaloneSyllableProvider : ConfigurableSyllableProvider
     {
 

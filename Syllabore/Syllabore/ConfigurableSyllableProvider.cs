@@ -5,7 +5,7 @@ using System.Text;
 namespace Syllabore
 {
     /// <summary>
-    /// 
+    /// Generates syllables based on the pre-specified vowels and consonants.
     /// </summary>
     public class ConfigurableSyllableProvider : ISyllableProvider
     {
@@ -41,61 +41,97 @@ namespace Syllabore
             this.EndingConsonantSequenceProbability = 0.10;
         }
 
+        /// <summary>
+        /// Adds the specified consonant as a consonant that can occur before a vowel.
+        /// </summary>
         public void AddStartingConsonant(string consonant)
         {
             this.StartingConsonants.Add(consonant);
         }
 
+        /// <summary>
+        /// Adds the specified consonants as consonants that can occur before a vowel.
+        /// </summary>
         public void AddStartingConsonant(string[] consonants)
         {
             this.StartingConsonants.AddRange(consonants);
         }
 
+        /// <summary>
+        /// Adds the specified consonant sequence as a sequence that can occur before a vowel.
+        /// </summary>
         public void AddStartingConsonantSequence(string consonantSequence)
         {
             this.StartingConsonantSequences.Add(consonantSequence);
         }
 
+        /// <summary>
+        /// Adds the specified consonant sequences as sequences that can occur before a vowel.
+        /// </summary>
         public void AddStartingConsonantSequence(string[] consonantSequences)
         {
             this.StartingConsonantSequences.AddRange(consonantSequences);
         }
 
+        /// <summary>
+        /// Adds the specified vowel as a vowel that can be used to form the 'center' of syllables.
+        /// </summary>
         public void AddVowel(string vowel)
         {
             this.Vowels.Add(vowel);
         }
 
+        /// <summary>
+        /// Adds the specified vowels as vowels that can be used to form the 'center' of syllables.
+        /// </summary>
         public void AddVowel(string[] vowels)
         {
             this.Vowels.AddRange(vowels);
         }
 
+        /// <summary>
+        /// Adds the specified vowel sequence as a sequence that can be used to form the 'center' of syllables.
+        /// </summary>
         public void AddVowelSequence(string vowelSequence)
         {
             this.VowelSequences.Add(vowelSequence);
         }
 
+        /// <summary>
+        /// Adds the specified vowel sequences as sequences that can be used to form the 'center' of syllables.
+        /// </summary>
         public void AddVowelSequence(string[] vowelSequences)
         {
             this.VowelSequences.AddRange(vowelSequences);
         }
 
+        /// <summary>
+        /// Adds the specified consonant as a consonant that can appear after a vowel.
+        /// </summary>
         public void AddEndingConsonant(string consonant)
         {
             this.EndingConsonants.Add(consonant);
         }
 
+        /// <summary>
+        /// Adds the specified consonants as consonants that can appear after a vowel.
+        /// </summary>
         public void AddEndingConsonant(string[] consonants)
         {
             this.EndingConsonants.AddRange(consonants);
         }
 
+        /// <summary>
+        /// Adds the specified consonant sequence as a sequence that can appear after a vowel.
+        /// </summary>
         public void AddEndingConsonantSequence(string consonantSequence)
         {
             this.EndingConsonantSequences.Add(consonantSequence);
         }
 
+        /// <summary>
+        /// Adds the specified consonant sequences as sequences that can appear after a vowel.
+        /// </summary>
         public void AddEndingConsonantSequence(string[] consonantSequences)
         {
             this.EndingConsonantSequences.AddRange(consonantSequences);
