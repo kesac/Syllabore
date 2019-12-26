@@ -21,7 +21,7 @@ namespace Syllabore
         /// </summary>
         public NameGenerator(ISyllableProvider provider)
         {
-            this.Provider = provider;
+            this.Provider = provider ?? throw new ArgumentNullException("The specified ISyllableProvider is null.");
             this.MinimumSyllables = 2;
             this.MaximumSyllables = 2;
             this.Random = new Random();
@@ -32,10 +32,7 @@ namespace Syllabore
         /// </summary>
         public NameGenerator(ISyllableProvider provider, INameValidator validator) : this(provider)
         {
-            if (validator != null)
-            {
-                this.Validator = validator;
-            }
+            this.Validator = validator ?? throw new ArgumentNullException("The specified INameValidator is null.");
         }
 
 
@@ -53,6 +50,12 @@ namespace Syllabore
         /// </summary>
         public string Next(int syllableLength)
         {
+
+            if(syllableLength < 0)
+            {
+                throw new ArgumentException("The desired syllable length must be a non-negative value.");
+            }
+
             var output = new StringBuilder();
             var validNameGenerated = false;
 
