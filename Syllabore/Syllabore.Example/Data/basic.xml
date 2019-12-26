@@ -2,6 +2,7 @@
   <define name="BasicNameGenerator">
     <components>
       <add type="Vowels" values="a e i o u"/>
+      <add type="VowelSequences" values="ee"/>
       <add type="StartingConsonants" values="b c d f g h j k l m n p q r s t v w x y z"/>
       <add type="StartingConsonantSequences" values="ch sh bl cl fl pl gl br cr"/>
       <add type="StartingConsonantSequences" values="dr pr tr th sc sp st sl spr"/>
@@ -10,6 +11,7 @@
     </components>
     <constraints>
       <constrain when="NameEndsWith" values="j p q v w z"/>
+      <constrain when="NameMatchesRegex" regex="([a-zA-Z])\1\1"/>
     </constraints>
     <probability>
       <set type="StartingVowelProbability" value="0.10"/>
