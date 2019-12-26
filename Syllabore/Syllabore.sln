@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syllabore", "Syllabore\Syllabore.csproj", "{E4920BB6-04EB-494B-BF70-FBB664925C30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Syllabore", "Syllabore\Syllabore.csproj", "{E4920BB6-04EB-494B-BF70-FBB664925C30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syllabore.Example", "Syllabore.Example\Syllabore.Example.csproj", "{4E89CF7F-AD8B-41FA-A13E-25EA8517B66F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Syllabore.Example", "Syllabore.Example\Syllabore.Example.csproj", "{4E89CF7F-AD8B-41FA-A13E-25EA8517B66F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syllabore.Tests", "Syllabore.Tests\Syllabore.Tests.csproj", "{53049EA8-CD37-44BC-8E8C-658FD27085FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{4E89CF7F-AD8B-41FA-A13E-25EA8517B66F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E89CF7F-AD8B-41FA-A13E-25EA8517B66F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E89CF7F-AD8B-41FA-A13E-25EA8517B66F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53049EA8-CD37-44BC-8E8C-658FD27085FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53049EA8-CD37-44BC-8E8C-658FD27085FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53049EA8-CD37-44BC-8E8C-658FD27085FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53049EA8-CD37-44BC-8E8C-658FD27085FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
