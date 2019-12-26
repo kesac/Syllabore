@@ -5,7 +5,7 @@ using System.Text;
 namespace Syllabore
 {
     // This is meant to be a standlone name validator for quick use
-    public class BasicNameValidator : IValidator
+    public class StandaloneNameValidator : INameValidator
     {
 
         private static readonly string[] AwkwardEndings =

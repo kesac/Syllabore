@@ -4,15 +4,19 @@ using System.Text;
 
 namespace Syllabore
 {
-    public class NameGenerator : IGenerator
+    /// <summary>
+    /// Randomly generates names by constructing syllables and joining them together.
+    /// Optionally, it can also filter its output through a <c>INameValidator</c>.
+    /// </summary>
+    public class NameGenerator
     {
-        private IProvider Provider { get; set; }
-        private IValidator Validator { get; set; }
+        private ISyllableProvider Provider { get; set; }
+        private INameValidator Validator { get; set; }
         private Random Random { get; set; }
         public int MinimumSyllables { get; set; }
         public int MaximumSyllables { get; set; }
 
-        public NameGenerator(IProvider provider)
+        public NameGenerator(ISyllableProvider provider)
         {
             this.Provider = provider;
             this.MinimumSyllables = 2;
@@ -20,7 +24,7 @@ namespace Syllabore
             this.Random = new Random();
         }
 
-        public NameGenerator(IProvider provider, IValidator validator) : this(provider)
+        public NameGenerator(ISyllableProvider provider, INameValidator validator) : this(provider)
         {
             if (validator != null)
             {
