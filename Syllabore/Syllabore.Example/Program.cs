@@ -11,14 +11,21 @@ namespace Syllabore.Example
 
             var names = new NameGenerator(provider, validator);
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10; i++)
             {
                 System.Console.WriteLine(names.Next());
             }
 
 
-            var loader = new XmlLoader("data/basic.xml");
+            var file = new XmlFileLoader("data/basic.xml");
+            file.Load();
 
+            var names2 = file.GetNameGenerator("BasicNameGenerator");
+
+            for (int i = 0; i < 10; i++)
+            {
+                System.Console.WriteLine(names2.Next());
+            }
         }
     }
 }
