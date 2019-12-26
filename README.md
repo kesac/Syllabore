@@ -1,34 +1,22 @@
 # Syllabore
 A fantasy name generator based on constructing syllables and randomly joining them.
 
-## Basic Usage
+## Quick Start Usage
 ```csharp
 public static void Main(string[] args)
 {
-    var provider = new BasicSyllableProvider(); // provider of consonant and vowel combinations
-    var names = new Syllabore(provider);
-    
-    for(int i = 0; i < 100; i++)
+    var provider = new StandaloneSyllableProvider();
+    var validator = new StandaloneNameValidator();
+
+    var names = new NameGenerator(provider, validator);
+
+    for (int i = 0; i < 100; i++)
     {
         System.Console.WriteLine(names.Next());
     }
 }
 ```
 
-## Constraining Names
-```csharp
-public static void Main(string[] args)
-{
-    var provider = new BasicSyllableProvider();
-    var validator = new BasicNameValidator(); // optional, for constraining letter combinations
-    var names = new Syllabore(provider, validator);
-    
-    for(int i = 0; i < 100; i++)
-    {
-        System.Console.WriteLine(names.Next());
-    }
-}
-```
 ## Sample Output with Basic Provider and Validator
 ```
 Naci
@@ -59,25 +47,6 @@ Clunust
 Jodo
 Jita
 ```
-## Changing Length of Generated Names
-```csharp
-public static void Main(string[] args)
-{
-    var provider = new BasicSyllableProvider();
-    var validator = new BasicNameValidator();
-    var names = new Syllabore(provider, validator);
-
-    names.MinimumSyllables = 1;
-    names.MaximumSyllables = 5;
-    
-    for(int i = 0; i < 100; i++)
-    {
-        System.Console.WriteLine(names.Next());
-    }
-}
-```
-
-
 
 # License
 
