@@ -1,5 +1,5 @@
 # Syllabore
-A C# library for generating fantasy names. Name generation is done by randomly constructing syllables and joining them.
+A C# library for generating fantasy names. Name generation is done by randomly constructing syllables and joining them. Syllables are formed from a customizable pool of vowels and consonants. Names are checked against predefined constraints to improve the quality of output.
 
 ## Quick Start
 The recommended method for creating name generators is through an XML definition file and the *XmlFileLoader* class. If you're looking for a quick way to try this library without loading external files, you can use the standalone provider and validator:
