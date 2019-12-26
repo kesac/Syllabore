@@ -2,7 +2,7 @@
   <define name="BasicNameGenerator">
     <components>
       <add type="Vowels" values="a e i o u"/>
-      <add type="VowelSequences" values="ee"/>
+      <add type="VowelSequences" values="ae ea ai ia au ay ie oi ou ey"/>
       <add type="StartingConsonants" values="b c d f g h j k l m n p q r s t v w x y z"/>
       <add type="StartingConsonantSequences" values="ch sh bl cl fl pl gl br cr"/>
       <add type="StartingConsonantSequences" values="dr pr tr th sc sp st sl spr"/>
