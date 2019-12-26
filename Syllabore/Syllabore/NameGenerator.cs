@@ -96,7 +96,7 @@ namespace Syllabore
                 }
             }
 
-            return output.ToString().Substring(0, 1) + output.ToString().Substring(1).ToLower();
+            return output.ToString().Substring(0, 1).ToUpper() + output.ToString().Substring(1).ToLower();
         }
 
 
