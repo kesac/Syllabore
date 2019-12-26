@@ -41,6 +41,14 @@ namespace Syllabore
         /// </summary>
         public string Next()
         {
+            // We validate the minimum and maximum syllable lengths in this method instead of the property setters because per Microsoft:
+            // "...exceptions resulting from invalid state should be postponed until the interraleted properties are actually used together..."
+            // (https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/property?redirectedfrom=MSDN)
+            if(this.MinimumSyllables < 1 || this.MaximumSyllables < 1 || this.MinimumSyllables > this.MaximumSyllables)
+            {
+                throw new InvalidOperationException("The value of property MinimumSyllables must be less than or equal to property MaximumSyllables. Both values must be postive integers.");
+            }
+
             var syllableLength = this.Random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
             return this.Next(syllableLength);
         }
@@ -51,9 +59,9 @@ namespace Syllabore
         public string Next(int syllableLength)
         {
 
-            if(syllableLength < 0)
+            if(syllableLength < 1)
             {
-                throw new ArgumentException("The desired syllable length must be a non-negative value.");
+                throw new ArgumentException("The desired syllable length must be a positive value.");
             }
 
             var output = new StringBuilder();
