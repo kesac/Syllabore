@@ -17,6 +17,12 @@ namespace Syllabore
         private List<string> EndingConsonants { get; set; }
         private List<string> EndingConsonantSequences { get; set; }
 
+        public bool UseStartingConsonants { get; set; }
+        public bool UseStartingConsonantSequences { get; set; }
+        public bool UseVowelSequences { get; set; }
+        public bool UseEndingConsonants { get; set; }
+        public bool UseEndingConsonantSequences { get; set; }
+
         public double StartingVowelProbability { get; set; }
         public double StartingConsonantSequenceProbability { get; set; }
         public double VowelSequenceProbability { get; set; }
@@ -33,6 +39,12 @@ namespace Syllabore
             this.VowelSequences = new List<string>();
             this.EndingConsonants = new List<string>();
             this.EndingConsonantSequences = new List<string>();
+
+            this.UseStartingConsonants = true;
+            this.UseStartingConsonantSequences = true;
+            this.UseVowelSequences = true;
+            this.UseEndingConsonants = true;
+            this.UseEndingConsonantSequences = true;
 
             this.StartingVowelProbability = 0.10;
             this.StartingConsonantSequenceProbability = 0.20;
@@ -137,34 +149,77 @@ namespace Syllabore
             this.EndingConsonantSequences.AddRange(consonantSequences);
         }
 
-        private string NextConsonant()
+        private string NextStartingConsonant()
         {
-            return this.StartingConsonants[this.Random.Next(this.StartingConsonants.Count)];
+            if(this.StartingConsonants.Count > 0)
+            {
+                return this.StartingConsonants[this.Random.Next(this.StartingConsonants.Count)];
+            }
+            else
+            {
+                throw new InvalidOperationException("No starting consonants defined.");
+            }
         }
 
-        private string NextConsonantSequence()
+        private string NextStartingConsonantSequence()
         {
-            return this.StartingConsonantSequences[this.Random.Next(this.StartingConsonantSequences.Count)];
+            if (this.StartingConsonantSequences.Count > 0)
+            {
+                return this.StartingConsonantSequences[this.Random.Next(this.StartingConsonantSequences.Count)];
+            }
+            else
+            {
+                throw new InvalidOperationException("No starting consonant sequences defined.");
+            }
         }
 
         private string NextVowel()
         {
-            return this.Vowels[this.Random.Next(this.Vowels.Count)];
+            if (this.Vowels.Count > 0)
+            {
+                return this.Vowels[this.Random.Next(this.Vowels.Count)];
+            }
+            else
+            {
+                throw new InvalidOperationException("No vowels defined.");
+            }
         }
 
         private string NextVowelSequence()
         {
-            return this.VowelSequences[this.Random.Next(this.VowelSequences.Count)];
+            if (this.VowelSequences.Count > 0)
+            {
+                return this.VowelSequences[this.Random.Next(this.VowelSequences.Count)];
+            }
+            else
+            {
+                throw new InvalidOperationException("No vowel sequences defined.");
+            }
         }
 
         private string NextEndingConsonant()
         {
-            return this.EndingConsonants[this.Random.Next(this.EndingConsonants.Count)];
+            if (this.EndingConsonants.Count > 0)
+            {
+                return this.EndingConsonants[this.Random.Next(this.EndingConsonants.Count)];
+            }
+            else
+            {
+                throw new InvalidOperationException("No ending consonants defined.");
+            }
         }
 
         private string NextEndingConsonantSequence()
         {
-            return this.EndingConsonantSequences[this.Random.Next(this.EndingConsonantSequences.Count)];
+            if (this.EndingConsonantSequences.Count > 0)
+            {
+                return this.EndingConsonantSequences[this.Random.Next(this.EndingConsonantSequences.Count)];
+            }
+            else
+            {
+                throw new InvalidOperationException("No ending consonant sequences defined.");
+            }
+
         }
 
 
@@ -195,16 +250,16 @@ namespace Syllabore
             else
             {
 
-                if (allowSequences && this.Random.NextDouble() < this.StartingConsonantSequenceProbability)
+                if (this.UseStartingConsonantSequences && allowSequences && this.Random.NextDouble() < this.StartingConsonantSequenceProbability)
                 {
-                    output.Append(this.NextConsonantSequence());
+                    output.Append(this.NextStartingConsonantSequence());
                 }
-                else
+                else if(this.UseStartingConsonants)
                 {
-                    output.Append(this.NextConsonant());
+                    output.Append(this.NextStartingConsonant());
                 }
 
-                if (allowSequences && this.Random.NextDouble() < this.VowelSequenceProbability)
+                if (this.UseVowelSequences && allowSequences && this.Random.NextDouble() < this.VowelSequenceProbability)
                 {
                     output.Append(this.NextVowelSequence());
                 }
@@ -214,11 +269,11 @@ namespace Syllabore
                 }
             }
 
-            if (this.Random.NextDouble() < this.EndingConsonantProbability)
+            if (this.UseEndingConsonants && this.Random.NextDouble() < this.EndingConsonantProbability)
             {
                 output.Append(this.NextEndingConsonant());
             }
-            else if (allowSequences && this.Random.NextDouble() < this.EndingConsonantSequenceProbability)
+            else if (this.UseEndingConsonantSequences && allowSequences && this.Random.NextDouble() < this.EndingConsonantSequenceProbability)
             {
                 output.Append(this.NextEndingConsonantSequence());
             }
