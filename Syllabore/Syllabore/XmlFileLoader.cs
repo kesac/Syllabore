@@ -16,17 +16,17 @@ namespace Syllabore
 
         public XmlFileLoader(string path)
         {
-            if (!File.Exists(path))
-            {
-                throw new ArgumentException("The specified file does not exist.");
-            }
-
             this.Path = path;
             this.NameGenerators = new Dictionary<string, NameGenerator>();
         }
 
         public void Load()
         {
+            if (!File.Exists(this.Path))
+            {
+                throw new ArgumentException("The specified file does not exist.");
+            }
+
             var doc = new XmlDocument();
             doc.Load(this.Path);
 
@@ -46,7 +46,7 @@ namespace Syllabore
 
         public NameGenerator GetNameGenerator(string name)
         {
-            return this.NameGenerators[name];
+            return this.NameGenerators?[name] ?? throw new ArgumentException("The specified name generator does not exist.");
         }
 
         private void DefineGenerator(XmlNode generatorRoot)
