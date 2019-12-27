@@ -2,6 +2,23 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Kevin Sacro</Authors>
+    <Title>Syllabore</Title>
+    <Description>A C# library for generating fantasy names. Name generation is done by randomly constructing syllables and joining them. Syllables are formed from a customizable pool of vowels and consonants. Names are checked against predefined constraints to improve the quality of output.</Description>
+    <Copyright>Copyright (c) 2019 Kevin Sacro</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/kesac/Syllabore</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/kesac/Syllabore</RepositoryUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageTags>name generation name-generation syllable syllables syllabore fantasy</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

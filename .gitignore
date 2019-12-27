@@ -12,3 +12,6 @@
 /Syllabore/.vs/Syllabore/DesignTimeBuild
 /Syllabore/Syllabore.Tests/bin/Debug/netcoreapp3.1
 /Syllabore/Syllabore.Tests/obj
+/Syllabore/Syllabore/bin/Release
+/Syllabore/Syllabore.Example/bin/Release/netcoreapp2.1
+/Syllabore/Syllabore.Tests/bin/Release/netcoreapp3.1
