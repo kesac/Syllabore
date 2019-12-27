@@ -11,7 +11,7 @@ namespace Syllabore.Example
 
             var names = new NameGenerator(provider, validator);
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 1; i++)
             {
                 System.Console.WriteLine(names.Next());
             }
@@ -20,9 +20,9 @@ namespace Syllabore.Example
             var file = new XmlFileLoader("data/basic.xml");
             file.Load();
 
-            var names2 = file.GetNameGenerator("BasicNameGenerator");
+            var names2 = file.GetNameGenerator("SoftNameGenerator");
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 100; i++)
             {
                 System.Console.WriteLine(names2.Next());
             }
