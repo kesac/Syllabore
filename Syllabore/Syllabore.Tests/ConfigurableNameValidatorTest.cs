@@ -37,5 +37,48 @@ namespace Syllabore.Tests
 
         }
 
+        [TestMethod]
+        public void NameValidation_WhenRegexConstraintsSpecified2_OutputReflectsConstraints()
+        {
+
+            var provider = new StandaloneSyllableProvider();
+            var validator = new ConfigurableNameValidator();
+            validator.AddConstraintAsRegex("^.*([^aeiouAEIOU]{3,}).*$"); // Rejects 3 or more consecutive consonants
+
+            Assert.IsTrue(validator.IsValidName("bc"));
+            Assert.IsFalse(validator.IsValidName("bcd"));
+            Assert.IsFalse(validator.IsValidName("bcdf"));
+
+            var generator = new NameGenerator(provider, validator);
+
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var original = generator.Next();
+                var name = new StringBuilder(original.ToLower());
+
+                name.Replace("a", " ");
+                name.Replace("e", " ");
+                name.Replace("i", " ");
+                name.Replace("o", " ");
+                name.Replace("u", " ");
+                
+                var consonantGroups = name.ToString().Split(" ");
+
+                int maxConsonantSequenceLength = 0;
+                foreach(var sequence in consonantGroups)
+                {
+                    if(sequence.Length > maxConsonantSequenceLength)
+                    {
+                        maxConsonantSequenceLength = sequence.Length;
+                    }
+                }
+
+                Assert.IsTrue(maxConsonantSequenceLength < 3);
+            }
+
+
+        }
+
     }
 }
