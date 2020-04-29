@@ -38,18 +38,23 @@ namespace Syllabore.Example
             // Creating variations of a single name
             var set = new HashSet<string>();
             var syllableShifter = new SyllableShifter(provider);
-            var letterShifter = new LetterShifter(provider);
+            var vowelShifter = new VowelShifter(provider.GetAllVowels());
             names.MinimumSyllables = 2;
             names.MaximumSyllables = 2;
             
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
                 var sourceName = names.NextName();
                 set.Add(sourceName.ToString());
 
+                for (int j = 0; j < 1; j++)
+                {
+                    set.Add(syllableShifter.NextVariation(sourceName).ToString());
+                }
+
                 for (int j = 0; j < 5; j++)
                 {
-                    set.Add(letterShifter.NextVariation(sourceName).ToString());
+                    set.Add(vowelShifter.NextVariation(sourceName).ToString());
                 }
             }
 
