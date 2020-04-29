@@ -17,6 +17,7 @@ namespace Syllabore
         private List<string> EndingConsonants { get; set; }
         private List<string> EndingConsonantSequences { get; set; }
 
+
         public bool UseStartingConsonants { get; set; }
         public bool UseStartingConsonantSequences { get; set; }
         public bool UseVowelSequences { get; set; }
@@ -147,6 +148,39 @@ namespace Syllabore
         public void AddEndingConsonantSequence(string[] consonantSequences)
         {
             this.EndingConsonantSequences.AddRange(consonantSequences);
+        }
+
+        /// <summary>
+        /// Returns list of all possible vowels and vowel sequences this provider can generate.
+        /// </summary>
+        public List<string> GetAllVowels()
+        {
+            var result = new List<string>();
+            result.AddRange(this.Vowels);
+            result.AddRange(this.VowelSequences);
+            return result;
+        }
+
+        /// <summary>
+        /// Returns list of all possible starting consonants and consonant sequences this provider can generate.
+        /// </summary>
+        public List<string> GetAllStartingConsonants()
+        {
+            var result = new List<string>();
+            result.AddRange(this.StartingConsonants);
+            result.AddRange(this.StartingConsonantSequences);
+            return result;
+        }
+
+        /// <summary>
+        /// Returns list of all possible ending consonants and consonant sequences this provider can generate.
+        /// </summary>
+        public List<string> GetAllEndingConsonants()
+        {
+            var result = new List<string>();
+            result.AddRange(this.EndingConsonants);
+            result.AddRange(this.EndingConsonantSequences);
+            return result;
         }
 
         private string NextStartingConsonant()
