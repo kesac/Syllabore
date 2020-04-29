@@ -6,23 +6,21 @@ using System.Text.RegularExpressions;
 namespace Syllabore
 {
     /// TODO add vowel shifting and consonant shifting
-    public class LetterShifter : IShifter
+    public class VowelShifter : IShifter
     {
         private List<string> VowelPool { get; set; }
-        private List<string> StartingConsonantPool { get; set; }
-        private List<string> EndingConsonantPool { get; set; }
 
         private Random Random { get; set; }
 
-        public LetterShifter(ConfigurableSyllableProvider provider)
+        public VowelShifter(List<string> vowelPool)
         {
-            if (provider == null) {
+            if (vowelPool == null) {
                 throw new ArgumentNullException("The specified ISyllableProvider is null.");
             }
 
-            this.VowelPool = provider.GetAllVowels();
-            this.StartingConsonantPool = provider.GetAllStartingConsonants();
-            this.EndingConsonantPool = provider.GetAllEndingConsonants();
+
+            this.VowelPool = new List<string>();
+            this.VowelPool.AddRange(vowelPool);
 
             this.Random = new Random();
         }
@@ -35,13 +33,11 @@ namespace Syllabore
 
             Name result = new Name(syllables);
 
-
             int index = this.Random.Next(sourceName.Syllables.Length);
 
             var syllable = result.Syllables[index];
 
-            result.Syllables[index] = Regex.Replace(syllable, "([aeiouAEIOU])", this.VowelPool[this.Random.Next(this.VowelPool.Count)]);
-
+            result.Syllables[index] = Regex.Replace(syllable, "([aeiouAEIOU]+)", this.VowelPool[this.Random.Next(this.VowelPool.Count)]);
 
             return result;
         }
