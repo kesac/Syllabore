@@ -23,6 +23,14 @@ namespace Syllabore
         public int MaximumSyllables { get; set; }
 
         /// <summary>
+        /// Maximum attempts this generator will attempt to satisfy the
+        /// NameValidator before it throws an Exception. This is used to protect
+        /// against scenarios where a NameGenerator has been configured in such
+        /// a way that it can't generate any name that would satisfy the validator.
+        /// </summary>
+        public int MaximumAttempts { get; set; }
+
+        /// <summary>
         /// Constructs a name generator with no validator using the specified syllable provider.
         /// </summary>
         public NameGenerator(ISyllableProvider provider)
@@ -30,6 +38,7 @@ namespace Syllabore
             this.Provider = provider ?? throw new ArgumentNullException("The specified ISyllableProvider is null.");
             this.MinimumSyllables = 2;
             this.MaximumSyllables = 2;
+            this.MaximumAttempts = 1000;
             this.Random = new Random();
         }
 
@@ -93,6 +102,7 @@ namespace Syllabore
 
             var syllables = new List<string>();
             var validNameGenerated = false;
+            var totalAttempts = 0;
 
             while (!validNameGenerated)
             {
@@ -120,6 +130,11 @@ namespace Syllabore
                 else
                 {
                     validNameGenerated = true;
+                }
+                
+                if(totalAttempts++ >= this.MaximumAttempts)
+                {
+                    throw new InvalidOperationException("This NameGenerator has run out of attempts generating a valid name. It may be configured in such a way that it cannot generate names that satisfy the specified NameValidator.");
                 }
             }
 
