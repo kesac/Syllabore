@@ -29,11 +29,11 @@ namespace Syllabore.Tests
             var provider = new ConfigurableSyllableProvider();
             provider.AddVowel("a");
 
-            provider.UseStartingConsonants = false;
-            provider.UseStartingConsonantSequences = false;
+            provider.UseLeadingConsonants = false;
+            provider.UseLeadingConsonantSequences = false;
             provider.UseVowelSequences = false;
-            provider.UseEndingConsonants = false;
-            provider.UseEndingConsonantSequences = false;
+            provider.UseTrailingConsonants = false;
+            provider.UseTrailingConsonantSequences = false;
 
             var generator = new NameGenerator(provider);
 
@@ -48,10 +48,10 @@ namespace Syllabore.Tests
         public void SyllableGeneration_WhenComponentsDefinedExceptVowels_ThrowsInvalidOperationException()
         {
             var provider = new ConfigurableSyllableProvider();
-            provider.AddStartingConsonant("b");
-            provider.AddStartingConsonantSequence("bb");
-            provider.AddEndingConsonant("b");
-            provider.AddEndingConsonantSequence("b");
+            provider.AddLeadingConsonant("b");
+            provider.AddLeadingConsonantSequence("bb");
+            provider.AddTrailingConsonant("b");
+            provider.AddTrailingConsonantSequence("b");
 
             var generator = new NameGenerator(provider);
 
@@ -67,15 +67,15 @@ namespace Syllabore.Tests
             var provider = new ConfigurableSyllableProvider();
             provider.AddVowel("a");
             provider.AddVowelSequence("ee");
-            provider.AddStartingConsonant("b");
-            provider.AddStartingConsonantSequence("cc");
-            provider.AddEndingConsonant("d");
-            provider.AddEndingConsonantSequence("ff");
+            provider.AddLeadingConsonant("b");
+            provider.AddLeadingConsonantSequence("cc");
+            provider.AddTrailingConsonant("d");
+            provider.AddTrailingConsonantSequence("ff");
 
             provider.VowelSequenceProbability = 0.5;
-            provider.StartingVowelProbability = 0.25;
-            provider.StartingConsonantSequenceProbability = 0.25;
-            provider.EndingConsonantSequenceProbability = 0.25;
+            provider.LeadingVowelProbability = 0.25;
+            provider.LeadingConsonantSequenceProbability = 0.25;
+            provider.TrailingConsonantSequenceProbability = 0.25;
 
             var generator = new NameGenerator(provider);
 
@@ -109,12 +109,12 @@ namespace Syllabore.Tests
             var consonants = new string[] { "b", "c", "d", "f", "g" };
 
             provider.AddVowel("a");
-            provider.AddStartingConsonant(consonants);
-            provider.AddEndingConsonant(consonants);
+            provider.AddLeadingConsonant(consonants);
+            provider.AddTrailingConsonant(consonants);
 
             provider.VowelSequenceProbability = 0;
-            provider.StartingConsonantSequenceProbability = 0;
-            provider.EndingConsonantSequenceProbability = 0;
+            provider.LeadingConsonantSequenceProbability = 0;
+            provider.TrailingConsonantSequenceProbability = 0;
 
             var generator = new NameGenerator(provider);
 
