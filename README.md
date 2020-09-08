@@ -1,7 +1,8 @@
 # Syllabore
 A C# library for generating fantasy names. Name generation is done by randomly constructing syllables and joining them. Syllables are formed from a customizable pool of vowels and consonants. Names are checked against predefined constraints to improve the quality of output.
 
-![Nuget](https://img.shields.io/nuget/v/Syllabore?style=plastic)
+[![Nuget](https://img.shields.io/nuget/v/Syllabore)](https://www.nuget.org/packages/Syllabore/)
+
 
 ## Quick Start
 The recommended method for creating name generators is through an XML definition file and the *XmlFileLoader* class. If you're looking for a quick way to try this library without loading external files, you can use the standalone provider and validator:
@@ -45,22 +46,22 @@ An XML definition file provides valid vowels, consonants, character sequences, i
     <components>
       <add type="Vowels" values="a e i o u"/>
       <add type="VowelSequences" values="ae ea ai ia au ay ie oi ou ey"/>
-      <add type="StartingConsonants" values="b c d f g h j k l m n p q r s t v w x y z"/>
-      <add type="StartingConsonantSequences" values="ch sh bl cl fl pl gl br cr"/>
-      <add type="StartingConsonantSequences" values="dr pr tr th sc sp st sl spr"/>
-      <add type="EndingConsonants" values="b c d f g h k l m n p r s t v x y"/>
-      <add type="EndingConsonantSequences" values="ck st sc ng nk rsh lsh rk rst nct xt"/>
+      <add type="LeadingConsonants" values="b c d f g h j k l m n p q r s t v w x y z"/>
+      <add type="LeadingConsonantSequences" values="ch sh bl cl fl pl gl br cr"/>
+      <add type="LeadingConsonantSequences" values="dr pr tr th sc sp st sl spr"/>
+      <add type="TrailingConsonants" values="b c d f g h k l m n p r s t v x y"/>
+      <add type="TrailingConsonantSequences" values="ck st sc ng nk rsh lsh rk rst nct xt"/>
     </components>
     <constraints>
-      <constrain when="NameEndsWith" values="j p q v w z"/>
-      <constrain when="NameMatchesRegex" regex="([a-zA-Z])\1\1"/>
+      <invalid if="NameEndsWith" values="j p q v w z"/>
+      <invalid if="NameMatchesRegex" regex="([a-zA-Z])\1\1"/>
     </constraints>
     <probability>
-      <set type="StartingVowelProbability" value="0.10"/>
-      <set type="StartingConsonantSequenceProbability" value="0.20" />
+      <set type="LeadingVowelProbability" value="0.10"/>
+      <set type="LeadingConsonantSequenceProbability" value="0.20" />
       <set type="VowelSequenceProbability" value = "0.20" />
-      <set type="EndingConsonantProbability" value = "0.10" />
-      <set type="EndingConsonantSequenceProbability" value = "0.10" />
+      <set type="TrailingConsonantProbability" value = "0.10" />
+      <set type="TrailingConsonantSequenceProbability" value = "0.10" />
     </probability>
   </define>
 </syllabore>
@@ -95,6 +96,28 @@ Wiqa
 Clunust
 Jodo
 Jita
+```
+## But I don't like XML
+If you don't want to deal with XML, you can also build a name generator programmatically by accessing *SyllableProviders* or *NameValidators* directly. Here is a quick and dirty example:
+```csharp
+var provider = new ConfigurableSyllableProvider();
+var validator = new ConfigurableNameValidator();
+
+provider.AddLeadingConsonant("w");
+provider.AddLeadingConsonantSequence("dr");
+provider.AddVowel("o");
+provider.AddVowelSequence("ou");
+provider.AddTrailingConsonant("k");
+provider.AddTrailingConsonantSequence("rld");
+
+validator.AddConstraintAsRegex("x");
+
+var names = new NameGenerator(provider, validator);
+
+for (int i = 0; i < 10; i++)
+{
+    System.Console.WriteLine(names.Next());
+}
 ```
 
 # Installation
