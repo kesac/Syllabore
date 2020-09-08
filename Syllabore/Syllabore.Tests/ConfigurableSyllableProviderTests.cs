@@ -27,7 +27,7 @@ namespace Syllabore.Tests
         public void SyllableGeneration_WhenNoComponentsDefinedExceptVowels_NamesCanStillBeGenerated()
         {
             var provider = new ConfigurableSyllableProvider();
-            provider.AddVowel("a");
+            provider.AddVowel("a","e,","o");
 
             provider.UseLeadingConsonants = false;
             provider.UseLeadingConsonantSequences = false;
@@ -40,7 +40,7 @@ namespace Syllabore.Tests
             for (int i = 0; i < 1000; i++)
             {
                 var name = generator.Next();
-                Assert.IsTrue(!string.IsNullOrEmpty(name));
+                Assert.IsTrue(!string.IsNullOrEmpty(name) && Regex.IsMatch(name,"[aeiouAEIOU]*"));
             }
         }
 
@@ -52,7 +52,7 @@ namespace Syllabore.Tests
             provider.AddLeadingConsonantSequence("bb");
             provider.AddTrailingConsonant("b");
             provider.AddTrailingConsonantSequence("b");
-
+            
             var generator = new NameGenerator(provider);
 
             for (int i = 0; i < 1000; i++)
@@ -98,6 +98,38 @@ namespace Syllabore.Tests
             }
 
             Assert.IsTrue(foundVowel && foundVowelSequence && foundStartingConsonant && foundStartingConsonantSequence && foundEndingConsonant && foundEndingConsonantSequence);
+
+        }
+
+        [TestMethod, Timeout(10000)]
+        public void SyllableGeneration_WhenNoSequencesConfigured_ProviderPermitsConfiguration()
+        {
+            var provider = new ConfigurableSyllableProvider();
+            provider.AddLeadingConsonant("s", "r", "t");
+            provider.AddVowel("e","a");
+            provider.AddTrailingConsonant("t","z");
+
+            provider.UseLeadingConsonantSequences = false;
+            provider.UseVowelSequences = false;
+            provider.UseTrailingConsonantSequences = false;
+
+            var validator = new ConfigurableNameValidator();
+            validator.AddConstraintAsRegex("^.{,2}$"); // Invalidate names with less than 3 characters
+
+            var generator = new NameGenerator(provider, validator);
+
+            try
+            {
+                for (int i = 0; i < 10000; i++)
+                {
+                    var name = generator.Next();
+                    Assert.IsTrue(name.Length > 2);
+                }
+            }
+            catch(Exception e)
+            {
+                Assert.Fail(e.Message);
+            }
 
         }
 
