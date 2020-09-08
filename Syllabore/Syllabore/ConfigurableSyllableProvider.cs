@@ -55,97 +55,51 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Adds the specified consonant as a consonant that can occur before a vowel.
-        /// </summary>
-        public void AddLeadingConsonant(string consonant)
-        {
-            this.LeadingConsonants.Add(consonant);
-        }
-
-        /// <summary>
         /// Adds the specified consonants as consonants that can occur before a vowel.
         /// </summary>
-        public void AddLeadingConsonant(string[] consonants)
+        public void AddLeadingConsonant(params string[] consonants)
         {
             this.LeadingConsonants.AddRange(consonants);
         }
 
-        /// <summary>
-        /// Adds the specified consonant sequence as a sequence that can occur before a vowel.
-        /// </summary>
-        public void AddLeadingConsonantSequence(string consonantSequence)
-        {
-            this.LeadingConsonantSequences.Add(consonantSequence);
-        }
 
         /// <summary>
         /// Adds the specified consonant sequences as sequences that can occur before a vowel.
         /// </summary>
-        public void AddLeadingConsonantSequence(string[] consonantSequences)
+        public void AddLeadingConsonantSequence(params string[] consonantSequences)
         {
             this.LeadingConsonantSequences.AddRange(consonantSequences);
         }
 
         /// <summary>
-        /// Adds the specified vowel as a vowel that can be used to form the 'center' of syllables.
-        /// </summary>
-        public void AddVowel(string vowel)
-        {
-            this.Vowels.Add(vowel);
-        }
-
-        /// <summary>
         /// Adds the specified vowels as vowels that can be used to form the 'center' of syllables.
         /// </summary>
-        public void AddVowel(string[] vowels)
+        public void AddVowel(params string[] vowels)
         {
             this.Vowels.AddRange(vowels);
         }
 
         /// <summary>
-        /// Adds the specified vowel sequence as a sequence that can be used to form the 'center' of syllables.
-        /// </summary>
-        public void AddVowelSequence(string vowelSequence)
-        {
-            this.VowelSequences.Add(vowelSequence);
-        }
-
-        /// <summary>
         /// Adds the specified vowel sequences as sequences that can be used to form the 'center' of syllables.
         /// </summary>
-        public void AddVowelSequence(string[] vowelSequences)
+        public void AddVowelSequence(params string[] vowelSequences)
         {
             this.VowelSequences.AddRange(vowelSequences);
         }
 
         /// <summary>
-        /// Adds the specified consonant as a consonant that can appear after a vowel.
-        /// </summary>
-        public void AddTrailingConsonant(string consonant)
-        {
-            this.TrailingConsonants.Add(consonant);
-        }
-
-        /// <summary>
         /// Adds the specified consonants as consonants that can appear after a vowel.
         /// </summary>
-        public void AddTrailingConsonant(string[] consonants)
+        public void AddTrailingConsonant(params string[] consonants)
         {
             this.TrailingConsonants.AddRange(consonants);
         }
 
-        /// <summary>
-        /// Adds the specified consonant sequence as a sequence that can appear after a vowel.
-        /// </summary>
-        public void AddTrailingConsonantSequence(string consonantSequence)
-        {
-            this.TrailingConsonantSequences.Add(consonantSequence);
-        }
 
         /// <summary>
         /// Adds the specified consonant sequences as sequences that can appear after a vowel.
         /// </summary>
-        public void AddTrailingConsonantSequence(string[] consonantSequences)
+        public void AddTrailingConsonantSequence(params string[] consonantSequences)
         {
             this.TrailingConsonantSequences.AddRange(consonantSequences);
         }
