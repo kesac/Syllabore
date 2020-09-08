@@ -3,43 +3,43 @@
     <components>
       <add type="Vowels" values="a e i o u"/>
       <add type="VowelSequences" values="ae ea ai ia au ay ie oi ou ey"/>
-      <add type="StartingConsonants" values="b c d f g h j k l m n p q r s t v w x y z"/>
-      <add type="StartingConsonantSequences" values="ch sh bl cl fl pl gl br cr"/>
-      <add type="StartingConsonantSequences" values="dr pr tr th sc sp st sl spr"/>
-      <add type="EndingConsonants" values="b c d f g h k l m n p r s t v x y"/>
-      <add type="EndingConsonantSequences" values="ck st sc ng nk rsh lsh rk rst nct xt"/>
+      <add type="LeadingConsonants" values="b c d f g h j k l m n p q r s t v w x y z"/>
+      <add type="LeadingConsonantSequences" values="ch sh bl cl fl pl gl br cr"/>
+      <add type="LeadingConsonantSequences" values="dr pr tr th sc sp st sl spr"/>
+      <add type="TrailingConsonants" values="b c d f g h k l m n p r s t v x y"/>
+      <add type="TrailingConsonantSequences" values="ck st sc ng nk rsh lsh rk rst nct xt"/>
     </components>
     <constraints>
-      <constrain when="NameEndsWith" values="j p q v w z"/>
-      <constrain when="NameMatchesRegex" regex="([a-zA-Z])\1\1"/>
+      <invalid if="NameEndsWith" values="j p q v w z"/>
+      <invalid if="NameMatchesRegex" regex="([a-zA-Z])\1\1"/>
     </constraints>
     <probability>
-      <set type="StartingVowelProbability" value="0.10"/>
-      <set type="StartingConsonantSequenceProbability" value="0.20" />
+      <set type="LeadingVowelProbability" value="0.10"/>
+      <set type="LeadingConsonantSequenceProbability" value="0.20" />
       <set type="VowelSequenceProbability" value="0.20" />
-      <set type="EndingConsonantProbability" value="0.10" />
-      <set type="EndingConsonantSequenceProbability" value="0.10" />
+      <set type="TrailingConsonantProbability" value="0.10" />
+      <set type="TrailingConsonantSequenceProbability" value="0.10" />
     </probability>
   </define>
   <define name="SoftNameGenerator">
     <components>
       <add type="Vowels" values="a e i o u"/>
       <add type="VowelSequences" values="ae ai ay"/>
-      <add type="StartingConsonants" values="c d f h l m n p r s t v y"/>
-      <add type="StartingConsonantSequences" values="ch sr cl fl pl br cr"/>
-      <add type="StartingConsonantSequences" values="hr th sc sl"/>
-      <add type="EndingConsonants" values="c d l m n p r s t"/>
-      <add type="EndingConsonantSequences" values="st rs"/>
+      <add type="LeadingConsonants" values="c d f h l m n p r s t v y"/>
+      <add type="LeadingConsonantSequences" values="ch sr cl fl pl br cr"/>
+      <add type="LeadingConsonantSequences" values="hr th sc sl"/>
+      <add type="TrailingConsonants" values="c d l m n p r s t"/>
+      <add type="TrailingConsonantSequences" values="st rs"/>
     </components>
     <constraints>
-      <constrain when="NameMatchesRegex" regex="([a-zA-Z])\1\1"/>
+      <invalid if="NameMatchesRegex" regex="([a-zA-Z])\1\1"/>
     </constraints>
     <probability>
-      <set type="StartingVowelProbability" value="0.10"/>
-      <set type="StartingConsonantSequenceProbability" value="0.20" />
+      <set type="LeadingVowelProbability" value="0.10"/>
+      <set type="LeadingConsonantSequenceProbability" value="0.20" />
       <set type="VowelSequenceProbability" value="0.20" />
-      <set type="EndingConsonantProbability" value="0.10" />
-      <set type="EndingConsonantSequenceProbability" value="0.10" />
+      <set type="TrailingConsonantProbability" value="0.10" />
+      <set type="TrailingConsonantSequenceProbability" value="0.10" />
     </probability>
   </define>
 </syllabore>

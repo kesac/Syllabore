@@ -83,7 +83,7 @@ namespace Syllabore
         {
             foreach (XmlNode node in componentsRoot.ChildNodes)
             {
-                if (node.Name.Equals("add", StringComparison.OrdinalIgnoreCase))
+                if (node.Name.Equals("Add", StringComparison.OrdinalIgnoreCase))
                 {
 
                     var type = node.Attributes["type"].Value;
@@ -98,21 +98,21 @@ namespace Syllabore
                     {
                         provider.AddVowelSequence(valuesAsArray);
                     }
-                    else if (type.Equals("StartingConsonants", StringComparison.OrdinalIgnoreCase))
+                    else if (type.Equals("LeadingConsonants", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.AddStartingConsonant(valuesAsArray);
+                        provider.AddLeadingConsonant(valuesAsArray);
                     }
-                    else if (type.Equals("StartingConsonantSequences", StringComparison.OrdinalIgnoreCase))
+                    else if (type.Equals("LeadingConsonantSequences", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.AddStartingConsonantSequence(valuesAsArray);
+                        provider.AddLeadingConsonantSequence(valuesAsArray);
                     }
-                    else if (type.Equals("EndingConsonants", StringComparison.OrdinalIgnoreCase))
+                    else if (type.Equals("TrailingConsonants", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.AddEndingConsonant(valuesAsArray);
+                        provider.AddTrailingConsonant(valuesAsArray);
                     }
-                    else if (type.Equals("EndingConsonantSequences", StringComparison.OrdinalIgnoreCase))
+                    else if (type.Equals("TrailingConsonantSequences", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.AddEndingConsonantSequence(valuesAsArray);
+                        provider.AddTrailingConsonantSequence(valuesAsArray);
                     }
                     else
                     {
@@ -127,9 +127,9 @@ namespace Syllabore
         {
             foreach (XmlNode node in constraintsRoot.ChildNodes)
             {
-                if (node.Name.Equals("Constrain", StringComparison.OrdinalIgnoreCase))
+                if (node.Name.Equals("Invalid", StringComparison.OrdinalIgnoreCase))
                 {
-                    var when = node.Attributes["when"].Value;
+                    var when = node.Attributes["if"].Value;
 
                     if (when.Equals("NameMatchesRegex", StringComparison.OrdinalIgnoreCase))
                     {
@@ -160,25 +160,46 @@ namespace Syllabore
                     var type = node.Attributes["type"].Value;
                     var value = node.Attributes["value"].Value;
 
-                    if (type.Equals("StartingVowelProbability", StringComparison.OrdinalIgnoreCase))
+                    if (type.Equals("LeadingVowelProbability", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.StartingVowelProbability = double.Parse(value);
+                        provider.LeadingVowelProbability = double.Parse(value);
+                        if(provider.LeadingVowelProbability == 1)
+                        {
+                            provider.UseLeadingConsonants = false;
+                            provider.UseLeadingConsonantSequences = false;
+                        }
                     }
-                    else if (type.Equals("StartingConsonantSequenceProbability", StringComparison.OrdinalIgnoreCase))
+                    else if (type.Equals("LeadingConsonantSequenceProbability", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.StartingConsonantSequenceProbability = double.Parse(value);
+                        provider.LeadingConsonantSequenceProbability = double.Parse(value);
+                        if(provider.LeadingConsonantSequenceProbability == 0)
+                        {
+                            provider.UseLeadingConsonantSequences = false;
+                        }
                     }
                     else if (type.Equals("VowelSequenceProbability", StringComparison.OrdinalIgnoreCase))
                     {
                         provider.VowelSequenceProbability = double.Parse(value);
+                        if (provider.VowelSequenceProbability == 0)
+                        {
+                            provider.UseVowelSequences = false;
+                        }
                     }
-                    else if (type.Equals("EndingConsonantProbability", StringComparison.OrdinalIgnoreCase))
+                    else if (type.Equals("TrailingConsonantProbability", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.EndingConsonantProbability = double.Parse(value);
+                        provider.TrailingConsonantProbability = double.Parse(value);
+                        if(provider.TrailingConsonantProbability == 0)
+                        {
+                            provider.UseTrailingConsonants = false;
+                        }
                     }
-                    else if (type.Equals("EndingConsonantSequenceProbability", StringComparison.OrdinalIgnoreCase))
+                    else if (type.Equals("TrailingConsonantSequenceProbability", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.EndingConsonantSequenceProbability = double.Parse(value);
+                        provider.TrailingConsonantSequenceProbability = double.Parse(value);
+                        if(provider.TrailingConsonantSequenceProbability == 0)
+                        {
+                            provider.UseTrailingConsonantSequences = false;
+                        }
                     }
                     else
                     {
