@@ -10,80 +10,80 @@ namespace Syllabore
     public class ConfigurableSyllableProvider : ISyllableProvider
     {
         private Random Random { get; set; }
-        private List<string> StartingConsonants { get; set; }
-        private List<string> StartingConsonantSequences { get; set; }
+        private List<string> LeadingConsonants { get; set; }
+        private List<string> LeadingConsonantSequences { get; set; }
         private List<string> Vowels { get; set; }
         private List<string> VowelSequences { get; set; }
-        private List<string> EndingConsonants { get; set; }
-        private List<string> EndingConsonantSequences { get; set; }
+        private List<string> TrailingConsonants { get; set; }
+        private List<string> TrailingConsonantSequences { get; set; }
 
 
-        public bool UseStartingConsonants { get; set; }
-        public bool UseStartingConsonantSequences { get; set; }
+        public bool UseLeadingConsonants { get; set; }
+        public bool UseLeadingConsonantSequences { get; set; }
         public bool UseVowelSequences { get; set; }
-        public bool UseEndingConsonants { get; set; }
-        public bool UseEndingConsonantSequences { get; set; }
+        public bool UseTrailingConsonants { get; set; }
+        public bool UseTrailingConsonantSequences { get; set; }
 
-        public double StartingVowelProbability { get; set; }
-        public double StartingConsonantSequenceProbability { get; set; }
+        public double LeadingVowelProbability { get; set; }
+        public double LeadingConsonantSequenceProbability { get; set; }
         public double VowelSequenceProbability { get; set; }
-        public double EndingConsonantProbability { get; set; }
-        public double EndingConsonantSequenceProbability { get; set; }
+        public double TrailingConsonantProbability { get; set; }
+        public double TrailingConsonantSequenceProbability { get; set; }
 
         public ConfigurableSyllableProvider()
         {
             this.Random = new Random();
 
-            this.StartingConsonants = new List<string>();
-            this.StartingConsonantSequences = new List<string>();
+            this.LeadingConsonants = new List<string>();
+            this.LeadingConsonantSequences = new List<string>();
             this.Vowels = new List<string>();
             this.VowelSequences = new List<string>();
-            this.EndingConsonants = new List<string>();
-            this.EndingConsonantSequences = new List<string>();
+            this.TrailingConsonants = new List<string>();
+            this.TrailingConsonantSequences = new List<string>();
 
-            this.UseStartingConsonants = true;
-            this.UseStartingConsonantSequences = true;
+            this.UseLeadingConsonants = true;
+            this.UseLeadingConsonantSequences = true;
             this.UseVowelSequences = true;
-            this.UseEndingConsonants = true;
-            this.UseEndingConsonantSequences = true;
+            this.UseTrailingConsonants = true;
+            this.UseTrailingConsonantSequences = true;
 
-            this.StartingVowelProbability = 0.10;
-            this.StartingConsonantSequenceProbability = 0.20;
+            this.LeadingVowelProbability = 0.10;
+            this.LeadingConsonantSequenceProbability = 0.20;
             this.VowelSequenceProbability = 0.20;
-            this.EndingConsonantProbability = 0.10;
-            this.EndingConsonantSequenceProbability = 0.10;
+            this.TrailingConsonantProbability = 0.10;
+            this.TrailingConsonantSequenceProbability = 0.10;
         }
 
         /// <summary>
         /// Adds the specified consonant as a consonant that can occur before a vowel.
         /// </summary>
-        public void AddStartingConsonant(string consonant)
+        public void AddLeadingConsonant(string consonant)
         {
-            this.StartingConsonants.Add(consonant);
+            this.LeadingConsonants.Add(consonant);
         }
 
         /// <summary>
         /// Adds the specified consonants as consonants that can occur before a vowel.
         /// </summary>
-        public void AddStartingConsonant(string[] consonants)
+        public void AddLeadingConsonant(string[] consonants)
         {
-            this.StartingConsonants.AddRange(consonants);
+            this.LeadingConsonants.AddRange(consonants);
         }
 
         /// <summary>
         /// Adds the specified consonant sequence as a sequence that can occur before a vowel.
         /// </summary>
-        public void AddStartingConsonantSequence(string consonantSequence)
+        public void AddLeadingConsonantSequence(string consonantSequence)
         {
-            this.StartingConsonantSequences.Add(consonantSequence);
+            this.LeadingConsonantSequences.Add(consonantSequence);
         }
 
         /// <summary>
         /// Adds the specified consonant sequences as sequences that can occur before a vowel.
         /// </summary>
-        public void AddStartingConsonantSequence(string[] consonantSequences)
+        public void AddLeadingConsonantSequence(string[] consonantSequences)
         {
-            this.StartingConsonantSequences.AddRange(consonantSequences);
+            this.LeadingConsonantSequences.AddRange(consonantSequences);
         }
 
         /// <summary>
@@ -121,33 +121,33 @@ namespace Syllabore
         /// <summary>
         /// Adds the specified consonant as a consonant that can appear after a vowel.
         /// </summary>
-        public void AddEndingConsonant(string consonant)
+        public void AddTrailingConsonant(string consonant)
         {
-            this.EndingConsonants.Add(consonant);
+            this.TrailingConsonants.Add(consonant);
         }
 
         /// <summary>
         /// Adds the specified consonants as consonants that can appear after a vowel.
         /// </summary>
-        public void AddEndingConsonant(string[] consonants)
+        public void AddTrailingConsonant(string[] consonants)
         {
-            this.EndingConsonants.AddRange(consonants);
+            this.TrailingConsonants.AddRange(consonants);
         }
 
         /// <summary>
         /// Adds the specified consonant sequence as a sequence that can appear after a vowel.
         /// </summary>
-        public void AddEndingConsonantSequence(string consonantSequence)
+        public void AddTrailingConsonantSequence(string consonantSequence)
         {
-            this.EndingConsonantSequences.Add(consonantSequence);
+            this.TrailingConsonantSequences.Add(consonantSequence);
         }
 
         /// <summary>
         /// Adds the specified consonant sequences as sequences that can appear after a vowel.
         /// </summary>
-        public void AddEndingConsonantSequence(string[] consonantSequences)
+        public void AddTrailingConsonantSequence(string[] consonantSequences)
         {
-            this.EndingConsonantSequences.AddRange(consonantSequences);
+            this.TrailingConsonantSequences.AddRange(consonantSequences);
         }
 
         /// <summary>
@@ -162,48 +162,48 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Returns list of all possible starting consonants and consonant sequences this provider can generate.
+        /// Returns list of all possible leading consonants and consonant sequences this provider can generate.
         /// </summary>
-        public List<string> GetAllStartingConsonants()
+        public List<string> GetAllLeadingConsonants()
         {
             var result = new List<string>();
-            result.AddRange(this.StartingConsonants);
-            result.AddRange(this.StartingConsonantSequences);
+            result.AddRange(this.LeadingConsonants);
+            result.AddRange(this.LeadingConsonantSequences);
             return result;
         }
 
         /// <summary>
-        /// Returns list of all possible ending consonants and consonant sequences this provider can generate.
+        /// Returns list of all possible trailing consonants and consonant sequences this provider can generate.
         /// </summary>
-        public List<string> GetAllEndingConsonants()
+        public List<string> GetAllTrailingConsonants()
         {
             var result = new List<string>();
-            result.AddRange(this.EndingConsonants);
-            result.AddRange(this.EndingConsonantSequences);
+            result.AddRange(this.TrailingConsonants);
+            result.AddRange(this.TrailingConsonantSequences);
             return result;
         }
 
-        private string NextStartingConsonant()
+        private string NextLeadingConsonant()
         {
-            if(this.StartingConsonants.Count > 0)
+            if(this.LeadingConsonants.Count > 0)
             {
-                return this.StartingConsonants[this.Random.Next(this.StartingConsonants.Count)];
+                return this.LeadingConsonants[this.Random.Next(this.LeadingConsonants.Count)];
             }
             else
             {
-                throw new InvalidOperationException("No starting consonants defined.");
+                throw new InvalidOperationException("No leading consonants defined.");
             }
         }
 
-        private string NextStartingConsonantSequence()
+        private string NextLeadingConsonantSequence()
         {
-            if (this.StartingConsonantSequences.Count > 0)
+            if (this.LeadingConsonantSequences.Count > 0)
             {
-                return this.StartingConsonantSequences[this.Random.Next(this.StartingConsonantSequences.Count)];
+                return this.LeadingConsonantSequences[this.Random.Next(this.LeadingConsonantSequences.Count)];
             }
             else
             {
-                throw new InvalidOperationException("No starting consonant sequences defined.");
+                throw new InvalidOperationException("No leading consonant sequences defined.");
             }
         }
 
@@ -231,27 +231,27 @@ namespace Syllabore
             }
         }
 
-        private string NextEndingConsonant()
+        private string NextTrailingConsonant()
         {
-            if (this.EndingConsonants.Count > 0)
+            if (this.TrailingConsonants.Count > 0)
             {
-                return this.EndingConsonants[this.Random.Next(this.EndingConsonants.Count)];
+                return this.TrailingConsonants[this.Random.Next(this.TrailingConsonants.Count)];
             }
             else
             {
-                throw new InvalidOperationException("No ending consonants defined.");
+                throw new InvalidOperationException("No trailing consonants defined.");
             }
         }
 
-        private string NextEndingConsonantSequence()
+        private string NextTrailingConsonantSequence()
         {
-            if (this.EndingConsonantSequences.Count > 0)
+            if (this.TrailingConsonantSequences.Count > 0)
             {
-                return this.EndingConsonantSequences[this.Random.Next(this.EndingConsonantSequences.Count)];
+                return this.TrailingConsonantSequences[this.Random.Next(this.TrailingConsonantSequences.Count)];
             }
             else
             {
-                throw new InvalidOperationException("No ending consonant sequences defined.");
+                throw new InvalidOperationException("No trailing consonant sequences defined.");
             }
 
         }
@@ -273,24 +273,24 @@ namespace Syllabore
             return GenerateSyllable(false, true);
         }
 
-        private string GenerateSyllable(bool allowStartingVowel, bool allowSequences)
+        private string GenerateSyllable(bool allowLeadingVowel, bool allowSequences)
         {
             var output = new StringBuilder();
 
-            if (allowStartingVowel && this.Random.NextDouble() < this.StartingVowelProbability)
+            if (allowLeadingVowel && this.Random.NextDouble() < this.LeadingVowelProbability)
             {
                 output.Append(this.NextVowel());
             }
             else
             {
 
-                if (this.UseStartingConsonantSequences && allowSequences && this.Random.NextDouble() < this.StartingConsonantSequenceProbability)
+                if (this.UseLeadingConsonantSequences && allowSequences && this.Random.NextDouble() < this.LeadingConsonantSequenceProbability)
                 {
-                    output.Append(this.NextStartingConsonantSequence());
+                    output.Append(this.NextLeadingConsonantSequence());
                 }
-                else if(this.UseStartingConsonants)
+                else if(this.UseLeadingConsonants)
                 {
-                    output.Append(this.NextStartingConsonant());
+                    output.Append(this.NextLeadingConsonant());
                 }
 
                 if (this.UseVowelSequences && allowSequences && this.Random.NextDouble() < this.VowelSequenceProbability)
@@ -303,13 +303,13 @@ namespace Syllabore
                 }
             }
 
-            if (this.UseEndingConsonants && this.Random.NextDouble() < this.EndingConsonantProbability)
+            if (this.UseTrailingConsonants && this.Random.NextDouble() < this.TrailingConsonantProbability)
             {
-                output.Append(this.NextEndingConsonant());
+                output.Append(this.NextTrailingConsonant());
             }
-            else if (this.UseEndingConsonantSequences && allowSequences && this.Random.NextDouble() < this.EndingConsonantSequenceProbability)
+            else if (this.UseTrailingConsonantSequences && allowSequences && this.Random.NextDouble() < this.TrailingConsonantSequenceProbability)
             {
-                output.Append(this.NextEndingConsonantSequence());
+                output.Append(this.NextTrailingConsonantSequence());
             }
 
             return output.ToString();
