@@ -8,59 +8,91 @@ namespace Syllabore.Example
     {
         public static void Main(string[] args)
         {
-            // Creating a vanilla name generator with a validator
-            // with no configuration or loading of definition files
-            var provider = new StandaloneSyllableProvider();
-            var validator = new StandaloneNameValidator();
+            { 
+                // Quickest way to use Syllabore's name generator
+                // without specifying any configuration. This instance
+                // will default to using StandaloneSyllableProvider for
+                // name generator and will not use any NameValidator to
+                // improve output.
+                var g = new NameGenerator();
 
-            var names = new NameGenerator(provider, validator);
-
-            for (int i = 0; i < 10; i++)
-            {
-                System.Console.WriteLine(names.Next());
-            }
-
-            System.Console.WriteLine();
-
-            // Creating a name generator from an XML definiton file
-            var file = new XmlFileLoader("data/basic.xml");
-            file.Load();
-
-            var names2 = file.GetNameGenerator("SoftNameGenerator");
-
-            for (int i = 0; i < 10; i++)
-            {
-                System.Console.WriteLine(names2.Next());
-            }
-
-            System.Console.WriteLine();
-
-            // Creating variations of a single name
-            var set = new HashSet<string>();
-            var syllableShifter = new SyllableShifter(provider);
-            var vowelShifter = new VowelShifter(provider.GetAllVowels());
-            names.MinimumSyllables = 2;
-            names.MaximumSyllables = 2;
-            
-            for (int i = 0; i < 5; i++)
-            {
-                var sourceName = names.NextName();
-                set.Add(sourceName.ToString());
-
-                for (int j = 0; j < 1; j++)
+                for (int i = 0; i < 10; i++)
                 {
-                    set.Add(syllableShifter.NextVariation(sourceName).ToString());
+                    System.Console.WriteLine(g.Next());
                 }
 
-                for (int j = 0; j < 5; j++)
-                {
-                    set.Add(vowelShifter.NextVariation(sourceName).ToString());
-                }
+                System.Console.WriteLine();
+            }
+            {
+
+                // Normally the constructor takes a SyllableProvider
+                // and NameValidator. There are "Standalone" classes
+                // available for quick and dirty use. It is recommended
+                // you create your own by using ISyllableProvider/INameValidator
+                // or inheriting from ConfigurableSyllableProvider/ConfigurableNameValidator.
+
+                var provider = new StandaloneSyllableProvider();
+                var validator = new StandaloneNameValidator();
+
+                var g = new NameGenerator(provider, validator);
             }
 
-            foreach(var name in set.ToList().OrderBy(x => x))
             {
-                System.Console.WriteLine(name);
+                // Configuration of syllable providers and name validators
+                // can be captured in a dedicated XML file then loaded
+                // through the XmlFileLoader.
+
+                var file = new XmlFileLoader("data/basic.xml").Load();
+                var g = file.GetNameGenerator("SoftNameGenerator");
+
+            }
+            {
+                // If you don't like XML, you can choose to
+                // build name generators programmatically.
+                var g = new NameGenerator()
+                    .SetProvider(new ConfigurableSyllableProvider()
+                        .AddLeadingConsonant("s", "t", "r")
+                        .AddVowel("a", "e")
+                        .AddVowelSequence("ee")
+                        .SetVowelSequenceProbability(0.20)
+                        .AddTrailingConsonant("z")
+                        .AllowLeadingConsonantSequences(false)
+                        .AllowTrailingConsonantSequences(false))
+                    .SetValidator(new ConfigurableNameValidator()
+                        .AddRegexConstraint("zzz")
+                        .AddRegexConstraint("[q]+"))
+                    .SetSyllableLength(5, 10);
+            }
+
+            {
+                // Creating variations of a single name
+                var provider = new StandaloneSyllableProvider();
+                var names = new NameGenerator(provider);
+                var set = new HashSet<string>();
+                var syllableShifter = new SyllableShifter(provider);
+                var vowelShifter = new VowelShifter(provider.GetAllVowels());
+                names.SetSyllableLength(2);
+
+                for (int i = 0; i < 5; i++)
+                {
+                    var sourceName = names.NextName();
+                    set.Add(sourceName.ToString());
+
+                    for (int j = 0; j < 1; j++)
+                    {
+                        set.Add(syllableShifter.NextVariation(sourceName).ToString());
+                    }
+
+                    for (int j = 0; j < 5; j++)
+                    {
+                        set.Add(vowelShifter.NextVariation(sourceName).ToString());
+                    }
+                }
+
+                foreach (var name in set.ToList().OrderBy(x => x))
+                {
+                    System.Console.WriteLine(name);
+                }
             }
 
         }
