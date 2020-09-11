@@ -20,9 +20,10 @@ namespace Syllabore
         /// <summary>
         /// Adds the specified constraint as a regular expression. Any name matching this contraint is considered invalid.
         /// </summary>
-        public void AddConstraintAsRegex(string regex)
+        public ConfigurableNameValidator AddConstraintAsRegex(string regex)
         {
             this.RegexConstraints.Add(regex);
+            return this;
         }
 
 
