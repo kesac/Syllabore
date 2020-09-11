@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Syllabore
@@ -178,7 +179,7 @@ namespace Syllabore
 
                 if (this.Validator != null)
                 {
-                    validNameGenerated = this.Validator.IsValidName(syllables.ToString());
+                    validNameGenerated = this.Validator.IsValidName(string.Join(string.Empty, syllables));
                 }
                 else
                 {
