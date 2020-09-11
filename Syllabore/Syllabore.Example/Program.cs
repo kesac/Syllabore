@@ -42,9 +42,14 @@ namespace Syllabore.Example
                 // through the XmlFileLoader.
 
                 var file = new XmlFileLoader("data/basic.xml").Load();
-                var g = file.GetNameGenerator("SoftNameGenerator");
+                var g = file.GetNameGenerator("SoftNameGenerator").SetSyllableCount(2, 4);
 
-                Console.WriteLine(g.Next());
+                Console.WriteLine();
+                for (int i = 0; i < 10; i++)
+                {
+                    System.Console.WriteLine(g.Next());
+                }
+                Console.WriteLine();
             }
             {
 

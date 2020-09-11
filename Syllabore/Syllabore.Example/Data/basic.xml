@@ -25,21 +25,21 @@
     <components>
       <add type="Vowels" values="a e i o u"/>
       <add type="VowelSequences" values="ae ai ay"/>
-      <add type="LeadingConsonants" values="c d f h l m n p r s t v y"/>
-      <add type="LeadingConsonantSequences" values="ch sr cl fl pl br cr"/>
+      <add type="LeadingConsonants" values="b c d f h l m n p r s t v y"/>
+      <add type="LeadingConsonantSequences" values="ch sr cl fl pl cr"/>
       <add type="LeadingConsonantSequences" values="hr th sc sl"/>
-      <add type="TrailingConsonants" values="c d l m n p r s t"/>
-      <add type="TrailingConsonantSequences" values="st rs"/>
+      <add type="TrailingConsonants" values="c d l m n p r s t y"/>
+      <add type="TrailingConsonantSequences" values="st rs sy"/>
     </components>
     <constraints>
-      <invalid if="NameMatchesRegex" regex="([a-zA-Z])\1\1"/>
+      <invalid if="NameMatchesRegex" regex="(\w)\1+"/>
     </constraints>
     <probability>
-      <set type="LeadingVowelProbability" value="0.10"/>
+      <set type="LeadingVowelProbability" value="0.75"/>
       <set type="LeadingConsonantSequenceProbability" value="0.20" />
       <set type="VowelSequenceProbability" value="0.20" />
-      <set type="TrailingConsonantProbability" value="0.10" />
-      <set type="TrailingConsonantSequenceProbability" value="0.10" />
+      <set type="TrailingConsonantProbability" value="0.20" />
+      <set type="TrailingConsonantSequenceProbability" value="0.33" />
     </probability>
   </define>
 </syllabore>
