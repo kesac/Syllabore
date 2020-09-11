@@ -20,8 +20,6 @@ namespace Syllabore.Example
                 {
                     System.Console.WriteLine(g.Next());
                 }
-
-                System.Console.WriteLine();
             }
             {
 
@@ -35,6 +33,7 @@ namespace Syllabore.Example
                 var validator = new StandaloneNameValidator();
 
                 var g = new NameGenerator(provider, validator);
+                Console.WriteLine(g.Next());
             }
 
             {
@@ -45,23 +44,32 @@ namespace Syllabore.Example
                 var file = new XmlFileLoader("data/basic.xml").Load();
                 var g = file.GetNameGenerator("SoftNameGenerator");
 
+                Console.WriteLine(g.Next());
             }
             {
+
                 // If you don't like XML, you can choose to
                 // build name generators programmatically.
                 var g = new NameGenerator()
                     .SetProvider(new ConfigurableSyllableProvider()
                         .AddLeadingConsonant("s", "t", "r")
                         .AddVowel("a", "e")
-                        .AddVowelSequence("ee")
                         .SetVowelSequenceProbability(0.20)
                         .AddTrailingConsonant("z")
+                        .SetTrailingConsonantProbability(0.10)
+                        .AllowVowelSequences(false)
                         .AllowLeadingConsonantSequences(false)
                         .AllowTrailingConsonantSequences(false))
                     .SetValidator(new ConfigurableNameValidator()
                         .AddRegexConstraint("zzz")
                         .AddRegexConstraint("[q]+"))
-                    .SetSyllableLength(5, 10);
+                    .SetSyllableLength(3);
+
+                for(int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+
             }
 
             {
