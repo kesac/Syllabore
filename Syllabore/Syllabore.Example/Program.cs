@@ -63,7 +63,7 @@ namespace Syllabore.Example
                     .SetValidator(new ConfigurableNameValidator()
                         .AddRegexConstraint("zzz")
                         .AddRegexConstraint("[q]+"))
-                    .SetSyllableLength(3);
+                    .SetSyllableCount(3);
 
                 for(int i = 0; i < 10; i++)
                 {
@@ -79,7 +79,7 @@ namespace Syllabore.Example
                 var set = new HashSet<string>();
                 var syllableShifter = new SyllableShifter(provider);
                 var vowelShifter = new VowelShifter(provider.GetAllVowels());
-                names.SetSyllableLength(2);
+                names.SetSyllableCount(2);
 
                 for (int i = 0; i < 5; i++)
                 {

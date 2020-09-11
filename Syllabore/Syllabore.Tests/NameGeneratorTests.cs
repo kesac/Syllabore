@@ -31,19 +31,19 @@ namespace Syllabore.Tests
             var generator = new NameGenerator();
 
             // Single argument
-            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(-1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(0).Next());
-            Assert.IsNotNull(generator.SetSyllableLength(1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableCount(-1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableCount(0).Next());
+            Assert.IsNotNull(generator.SetSyllableCount(1).Next());
 
             // Double argument
-            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(-1, 1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(0, 1).Next());
-            Assert.IsNotNull(generator.SetSyllableLength(1, 1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(1, -1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(1, 0).Next());
-            Assert.IsNotNull(generator.SetSyllableLength(4, 5).Next());
-            Assert.IsNotNull(generator.SetSyllableLength(5, 5).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(6, 5).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableCount(-1, 1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableCount(0, 1).Next());
+            Assert.IsNotNull(generator.SetSyllableCount(1, 1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableCount(1, -1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableCount(1, 0).Next());
+            Assert.IsNotNull(generator.SetSyllableCount(4, 5).Next());
+            Assert.IsNotNull(generator.SetSyllableCount(5, 5).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableCount(6, 5).Next());
 
         }
 
@@ -64,7 +64,7 @@ namespace Syllabore.Tests
             var generator = new NameGenerator()
                 .SetValidator(new ConfigurableNameValidator()
                 .AddRegexConstraint(".")) // Set validator to reject names with at least 1 character
-                .SetSyllableLength(10)  // Ensure the generator only produces names with at least 1 character
+                .SetSyllableCount(10)  // Ensure the generator only produces names with at least 1 character
                 .SetMaximumRetries(10000);  // All futile attempts
 
             Assert.ThrowsException<InvalidOperationException>(() => generator.Next());

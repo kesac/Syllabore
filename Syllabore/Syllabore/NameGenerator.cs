@@ -43,7 +43,7 @@ namespace Syllabore
         public NameGenerator(ISyllableProvider provider)
         {
             this.SetProvider(provider);
-            this.SetSyllableLength(2, 2);
+            this.SetSyllableCount(2, 2);
             this.SetMaximumRetries(1000);
             this.Random = new Random();
         }
@@ -68,12 +68,12 @@ namespace Syllabore
             return this;
         }
 
-        public NameGenerator SetSyllableLength(int length)
+        public NameGenerator SetSyllableCount(int length)
         {
-            return this.SetSyllableLength(length, length);
+            return this.SetSyllableCount(length, length);
         }
 
-        public NameGenerator SetSyllableLength(int min, int max)
+        public NameGenerator SetSyllableCount(int min, int max)
         {
 
             if(min < 1)
