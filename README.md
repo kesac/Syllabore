@@ -121,9 +121,9 @@ var g = new NameGenerator()
     .SetValidator(new ConfigurableNameValidator()
         .AddRegexConstraint("zzz")
         .AddRegexConstraint("[q]+"))
-    .SetSyllableLength(3);
+    .SetSyllableCount(3);
 ```
-(This example would create names like Tetara, Resata, Rerere, etc.)
+(This example would create 3-syllable names like Tetara, Resata, Resere, etc.)
 
 # Installation
 The easiest way to add this to your project is through NuGet Package Manager (search for "Syllabore"). Visit https://www.nuget.org/packages/Syllabore/ for more details. 
