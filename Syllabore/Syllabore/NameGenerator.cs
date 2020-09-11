@@ -16,29 +16,35 @@ namespace Syllabore
     /// </summary>
     public class NameGenerator
     {
-        private ISyllableProvider Provider { get; set; }
-        private INameValidator Validator { get; set; }
         private Random Random { get; set; }
-        public int MinimumSyllables { get; set; }
-        public int MaximumSyllables { get; set; }
+        public ISyllableProvider Provider { get; private set; }
+        public INameValidator Validator { get; private set; }
+        public int MinimumSyllables { get; private set; }
+        public int MaximumSyllables { get; private set; }
 
         /// <summary>
         /// Maximum attempts this generator will attempt to satisfy the
         /// NameValidator before it throws an Exception. This is used to protect
         /// against scenarios where a NameGenerator has been configured in such
-        /// a way that it can't generate any name that would satisfy the validator.
+        /// a way that it can't generate any name that would satisfy its own validator.
         /// </summary>
-        public int MaximumAttempts { get; set; }
+        public int MaximumRetries { get; set; }
 
         /// <summary>
-        /// Constructs a name generator with no validator using the specified syllable provider.
+        /// Convenience constructor to construct a name generator using StandaloneSyllableProvider.
+        /// No NameValidator is configured when this constructor is used.
+        /// </summary>
+        public NameGenerator() : this(new StandaloneSyllableProvider()) { }
+
+        /// <summary>
+        /// Constructs a name generator using the specified SyllableProvider.
+        /// No NameValidator is configured when this constructor is used; 
         /// </summary>
         public NameGenerator(ISyllableProvider provider)
         {
-            this.Provider = provider ?? throw new ArgumentNullException("The specified ISyllableProvider is null.");
-            this.MinimumSyllables = 2;
-            this.MaximumSyllables = 2;
-            this.MaximumAttempts = 1000;
+            this.SetProvider(provider);
+            this.SetSyllableLength(2, 2);
+            this.SetMaximumRetries(1000);
             this.Random = new Random();
         }
 
@@ -47,7 +53,54 @@ namespace Syllabore
         /// </summary>
         public NameGenerator(ISyllableProvider provider, INameValidator validator) : this(provider)
         {
+            this.SetValidator(validator);
+        }
+
+        public NameGenerator SetProvider(ISyllableProvider provider) 
+        {
+            this.Provider = provider ?? throw new ArgumentNullException("The specified ISyllableProvider is null.");
+            return this;
+        }
+
+        public NameGenerator SetValidator(INameValidator validator)
+        {
             this.Validator = validator ?? throw new ArgumentNullException("The specified INameValidator is null.");
+            return this;
+        }
+
+        public NameGenerator SetSyllableLength(int length)
+        {
+            return this.SetSyllableLength(length, length);
+        }
+
+        public NameGenerator SetSyllableLength(int min, int max)
+        {
+
+            if(min < 1)
+            {
+                throw new ArgumentException("The minimum syllable length must be a positive number.");
+            }
+            else if (max < min)
+            {
+                throw new ArgumentException("The maximum syllable length must be equal or greater to the minimum syllable length.");
+            }
+
+            this.MinimumSyllables = min;
+            this.MaximumSyllables = max;
+            return this;
+        }
+
+        public NameGenerator SetMaximumRetries(int limit)
+        {
+
+            if(limit < 1)
+            {
+                throw new ArgumentException("The number of maximum attempts to make must be one or greater.");
+            }
+
+            this.MaximumRetries = limit;
+
+            return this;
         }
 
         /// <summary>
@@ -132,7 +185,7 @@ namespace Syllabore
                     validNameGenerated = true;
                 }
                 
-                if(totalAttempts++ >= this.MaximumAttempts)
+                if(totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
                 {
                     throw new InvalidOperationException("This NameGenerator has run out of attempts generating a valid name. It may be configured in such a way that it cannot generate names that satisfy the specified NameValidator.");
                 }
