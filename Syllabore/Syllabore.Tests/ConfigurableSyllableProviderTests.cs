@@ -114,7 +114,7 @@ namespace Syllabore.Tests
             provider.UseTrailingConsonantSequences = false;
 
             var validator = new ConfigurableNameValidator();
-            validator.AddConstraintAsRegex("^.{,2}$"); // Invalidate names with less than 3 characters
+            validator.AddRegexConstraint("^.{,2}$"); // Invalidate names with less than 3 characters
 
             var generator = new NameGenerator(provider, validator);
 

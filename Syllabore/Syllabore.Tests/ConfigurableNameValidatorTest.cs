@@ -26,8 +26,8 @@ namespace Syllabore.Tests
             provider.UseTrailingConsonantSequences = true;
 
             var validator = new ConfigurableNameValidator();
-            validator.AddConstraintAsRegex(@"[aeiouAEIOU]{2}"); // This rule rejects names with vowel sequences
-            validator.AddConstraintAsRegex(@"[^aeiouAEIOU]{2}"); // This rule rejects names with consonant sequences
+            validator.AddRegexConstraint(@"[aeiouAEIOU]{2}"); // This rule rejects names with vowel sequences
+            validator.AddRegexConstraint(@"[^aeiouAEIOU]{2}"); // This rule rejects names with consonant sequences
 
             var generator = new NameGenerator(provider, validator);
 
@@ -44,7 +44,7 @@ namespace Syllabore.Tests
 
             var provider = new StandaloneSyllableProvider();
             var validator = new ConfigurableNameValidator();
-            validator.AddConstraintAsRegex(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
+            validator.AddRegexConstraint(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
 
             Assert.IsTrue(validator.IsValidName("bc"));
             Assert.IsFalse(validator.IsValidName("bcd"));

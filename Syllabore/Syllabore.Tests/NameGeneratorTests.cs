@@ -7,6 +7,16 @@ namespace Syllabore.Tests
     public class NameGeneratorTests
     {
         [TestMethod]
+        public void Constructor_WhenNoParameter_SuccessfulNameGeneration()
+        {
+            var generator = new NameGenerator();
+            for(int i = 0; i < 100; i++)
+            {
+                Assert.IsTrue(generator.Next() != string.Empty);
+            }
+        }
+
+        [TestMethod]
         public void Constructor_WhenAnyParameterNull_ArgumentNullExceptionThrown()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null));
@@ -18,39 +28,22 @@ namespace Syllabore.Tests
         [TestMethod]
         public void NameGeneration_WhenSyllableLengthPropertyValuesInvalid_InvalidOperationExceptionThrown()
         {
-            var generator = new NameGenerator(new StandaloneSyllableProvider());
+            var generator = new NameGenerator();
 
-            generator.MinimumSyllables = -1;
-            generator.MaximumSyllables = 1;
-            Assert.ThrowsException<InvalidOperationException>(() => generator.Next());
+            // Single argument
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(-1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(0).Next());
+            Assert.IsNotNull(generator.SetSyllableLength(1).Next());
 
-            generator.MinimumSyllables = 0;
-            generator.MaximumSyllables = 1;
-            Assert.ThrowsException<InvalidOperationException>(() => generator.Next());
-
-            generator.MinimumSyllables = 1;
-            generator.MaximumSyllables = 1;
-            Assert.IsNotNull(generator.Next());
-
-            generator.MinimumSyllables = 1;
-            generator.MaximumSyllables = -1;
-            Assert.ThrowsException<InvalidOperationException>(() => generator.Next());
-
-            generator.MinimumSyllables = 1;
-            generator.MaximumSyllables = 0;
-            Assert.ThrowsException<InvalidOperationException>(() => generator.Next());
-
-            generator.MinimumSyllables = 4;
-            generator.MaximumSyllables = 5;
-            Assert.IsNotNull(generator.Next());
-
-            generator.MinimumSyllables = 5;
-            generator.MaximumSyllables = 5;
-            Assert.IsNotNull(generator.Next());
-
-            generator.MinimumSyllables = 6;
-            generator.MaximumSyllables = 5;
-            Assert.ThrowsException<InvalidOperationException>(() => generator.Next());
+            // Double argument
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(-1, 1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(0, 1).Next());
+            Assert.IsNotNull(generator.SetSyllableLength(1, 1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(1, -1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(1, 0).Next());
+            Assert.IsNotNull(generator.SetSyllableLength(4, 5).Next());
+            Assert.IsNotNull(generator.SetSyllableLength(5, 5).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetSyllableLength(6, 5).Next());
 
         }
 
@@ -58,10 +51,36 @@ namespace Syllabore.Tests
         public void NameGeneration_WhenNonPositiveSyllableLengthProvided_ArgumentExceptionThrown()
         {
             var generator = new NameGenerator(new StandaloneSyllableProvider());
+
             Assert.IsNotNull(generator.Next(1));
             Assert.ThrowsException<ArgumentException>(() => generator.Next(0));
             Assert.ThrowsException<ArgumentException>(() => generator.Next(-1));
             Assert.ThrowsException<ArgumentException>(() => generator.Next(int.MinValue));
         }
+
+        [TestMethod]
+        public void NameGeneration_WhenInfiniteGeneration_ExceptionThrown()
+        {
+            var generator = new NameGenerator()
+                .SetValidator(new ConfigurableNameValidator()
+                .AddRegexConstraint(".")) // Set validator to reject names with at least 1 character
+                .SetSyllableLength(10)  // Ensure the generator only produces names with at least 1 character
+                .SetMaximumRetries(10000);  // All futile attempts
+
+            Assert.ThrowsException<InvalidOperationException>(() => generator.Next());
+
+        }
+
+        [TestMethod]
+        public void NameGeneration_WhenMaximumRetriesLessThanOne_ExceptionThrown()
+        {
+            var generator = new NameGenerator();
+
+            Assert.ThrowsException<ArgumentException>(() => generator.SetMaximumRetries(-1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.SetMaximumRetries(0).Next());
+            Assert.IsNotNull(generator.SetMaximumRetries(1).Next());
+
+        }
+
     }
 }
