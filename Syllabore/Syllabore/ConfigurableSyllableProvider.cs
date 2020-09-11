@@ -30,6 +30,7 @@ namespace Syllabore
         public double TrailingConsonantProbability { get; set; }
         public double TrailingConsonantSequenceProbability { get; set; }
 
+  
         public ConfigurableSyllableProvider()
         {
             this.Random = new Random();
@@ -57,51 +58,127 @@ namespace Syllabore
         /// <summary>
         /// Adds the specified consonants as consonants that can occur before a vowel.
         /// </summary>
-        public void AddLeadingConsonant(params string[] consonants)
+        public ConfigurableSyllableProvider AddLeadingConsonant(params string[] consonants)
         {
             this.LeadingConsonants.AddRange(consonants);
+            return this;
         }
 
 
         /// <summary>
         /// Adds the specified consonant sequences as sequences that can occur before a vowel.
         /// </summary>
-        public void AddLeadingConsonantSequence(params string[] consonantSequences)
+        public ConfigurableSyllableProvider AddLeadingConsonantSequence(params string[] consonantSequences)
         {
             this.LeadingConsonantSequences.AddRange(consonantSequences);
+            return this;
         }
 
         /// <summary>
         /// Adds the specified vowels as vowels that can be used to form the 'center' of syllables.
         /// </summary>
-        public void AddVowel(params string[] vowels)
+        public ConfigurableSyllableProvider AddVowel(params string[] vowels)
         {
             this.Vowels.AddRange(vowels);
+            return this;
         }
 
         /// <summary>
         /// Adds the specified vowel sequences as sequences that can be used to form the 'center' of syllables.
         /// </summary>
-        public void AddVowelSequence(params string[] vowelSequences)
+        public ConfigurableSyllableProvider AddVowelSequence(params string[] vowelSequences)
         {
             this.VowelSequences.AddRange(vowelSequences);
+            return this;
         }
 
         /// <summary>
         /// Adds the specified consonants as consonants that can appear after a vowel.
         /// </summary>
-        public void AddTrailingConsonant(params string[] consonants)
+        public ConfigurableSyllableProvider AddTrailingConsonant(params string[] consonants)
         {
             this.TrailingConsonants.AddRange(consonants);
+            return this;
         }
 
 
         /// <summary>
         /// Adds the specified consonant sequences as sequences that can appear after a vowel.
         /// </summary>
-        public void AddTrailingConsonantSequence(params string[] consonantSequences)
+        public ConfigurableSyllableProvider AddTrailingConsonantSequence(params string[] consonantSequences)
         {
             this.TrailingConsonantSequences.AddRange(consonantSequences);
+            return this;
+        }
+
+        // TODO - Docs
+        public ConfigurableSyllableProvider AllowLeadingConsonants(bool allow)
+        {
+            this.UseLeadingConsonants = allow;
+            return this;
+        }
+
+        // TODO - Docs
+        public ConfigurableSyllableProvider AllowLeadingConsonantSequences(bool allow)
+        {
+            this.UseLeadingConsonantSequences = allow;
+            return this;
+        }
+
+        // TODO - Docs
+        public ConfigurableSyllableProvider AllowVowelSequences(bool allow)
+        {
+            this.UseVowelSequences = allow;
+            return this;
+        }
+
+        // TODO - Docs
+        public ConfigurableSyllableProvider AllowTrailingConsonants(bool allow)
+        {
+            this.UseTrailingConsonants = allow;
+            return this;
+        }
+
+        // TODO - Docs
+        public ConfigurableSyllableProvider AllowTrailingConsonantSequences(bool allow)
+        {
+            this.UseTrailingConsonantSequences = allow;
+            return this;
+        }
+
+        // TODO - Docs and argument validation
+        public ConfigurableSyllableProvider SetLeadingVowelProbability(double d)
+        {
+            this.LeadingVowelProbability = d;
+            return this;
+        }
+
+        // TODO - Docs and argument validation
+        public ConfigurableSyllableProvider SetLeadingConsonantSequenceProbability(double d)
+        {
+            this.LeadingConsonantSequenceProbability = d;
+            return this;
+        }
+
+        // TODO - Docs and argument validation
+        public ConfigurableSyllableProvider SetVowelSequenceProbability(double d)
+        {
+            this.VowelSequenceProbability = d;
+            return this;
+        }
+
+        // TODO - Docs and argument validation
+        public ConfigurableSyllableProvider SetTrailingConsonantProbability(double d)
+        {
+            this.TrailingConsonantProbability = d;
+            return this;
+        }
+
+        // TODO - Docs and argument validation
+        public ConfigurableSyllableProvider SetTrailingConsonantSequenceProbability(double d)
+        {
+            this.TrailingConsonantSequenceProbability = d;
+            return this;
         }
 
         /// <summary>
