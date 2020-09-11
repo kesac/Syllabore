@@ -13,7 +13,7 @@ namespace Syllabore
         public StandaloneNameValidator()
         {
             // Invalidate awkward looking endings
-            this.AddConstraintAsRegex("[j|p|q|v|w|z]$");
+            this.AddRegexConstraint("[j|p|q|v|w|z]$");
         }
     }
 }

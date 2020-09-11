@@ -20,7 +20,7 @@ namespace Syllabore
             this.NameGenerators = new Dictionary<string, NameGenerator>();
         }
 
-        public void Load()
+        public XmlFileLoader Load()
         {
             if (!File.Exists(this.Path))
             {
@@ -42,6 +42,8 @@ namespace Syllabore
                     }
                 }
             }
+
+            return this;
         }
 
         public NameGenerator GetNameGenerator(string name)
@@ -134,13 +136,13 @@ namespace Syllabore
                     if (when.Equals("NameMatchesRegex", StringComparison.OrdinalIgnoreCase))
                     {
                         var regex = node.Attributes["regex"].Value;
-                        validator.AddConstraintAsRegex(regex);
+                        validator.AddRegexConstraint(regex);
                     }
                     else if (when.Equals("NameEndsWith", StringComparison.OrdinalIgnoreCase))
                     {
                         var values = node.Attributes["values"].Value;
                         var regex = string.Format("({0})$", values.Trim().Replace(" ", "|"));
-                        validator.AddConstraintAsRegex(regex);
+                        validator.AddRegexConstraint(regex);
                     }
                     else
                     {
