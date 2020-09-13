@@ -18,7 +18,7 @@ namespace Syllabore.Example
 
                 for (int i = 0; i < 10; i++)
                 {
-                    System.Console.WriteLine(g.Next());
+                    Console.WriteLine(g.Next());
                 }
             }
             {
@@ -29,11 +29,17 @@ namespace Syllabore.Example
                 // you create your own by using ISyllableProvider/INameValidator
                 // or inheriting from ConfigurableSyllableProvider/ConfigurableNameValidator.
 
-                var provider = new StandaloneSyllableProvider();
-                var validator = new StandaloneNameValidator();
-
+                var provider = new DefaultSyllableProvider();
+                var validator = new ConfigurableNameValidator()
+                        .AddRegexConstraint(@"[j|p|q|w]$")             // Invalidate these awkward endings
+                        .AddRegexConstraint(@"(\w)\1\1")               // Invalidate any sequence of 3 or more identical letters
+                        .AddRegexConstraint(@"([^aeiouAEIOU])\1\1\1"); // Invalidate any sequence of 4 or more consonants
+                
                 var g = new NameGenerator(provider, validator);
-                Console.WriteLine(g.Next());
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
             }
 
             {
@@ -75,36 +81,28 @@ namespace Syllabore.Example
                     Console.WriteLine(g.Next());
                 }
 
+                Console.WriteLine();
+
             }
 
             {
                 // Creating variations of a single name
-                var provider = new StandaloneSyllableProvider();
-                var names = new NameGenerator(provider);
-                var set = new HashSet<string>();
-                var syllableShifter = new SyllableShifter(provider);
-                var vowelShifter = new VowelShifter(provider.GetAllVowels());
-                names.SetSyllableCount(2);
+                var g = new NameGenerator()
+                    .SetShifter(new MultiShifter()
+                        .Using(new DefaultSyllableShifter())
+                        .Using(new VowelShifter()));
 
-                for (int i = 0; i < 5; i++)
+                for(int i = 0; i < 3; i++)
                 {
-                    var sourceName = names.NextName();
-                    set.Add(sourceName.ToString());
+                    var name = g.NextName();
+                    Console.WriteLine(name);
 
-                    for (int j = 0; j < 1; j++)
+                    for (int j = 0; j < 4; j++)
                     {
-                        set.Add(syllableShifter.NextVariation(sourceName).ToString());
-                    }
+                        var variation = g.NextVariation(name);
+                        Console.WriteLine(variation);
 
-                    for (int j = 0; j < 5; j++)
-                    {
-                        set.Add(vowelShifter.NextVariation(sourceName).ToString());
                     }
-                }
-
-                foreach (var name in set.ToList().OrderBy(x => x))
-                {
-                    System.Console.WriteLine(name);
                 }
             }
 
