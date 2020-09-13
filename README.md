@@ -1,11 +1,16 @@
 # Syllabore
-Syllabore is a fantasy name generator and class library. Name generation is accomplished by constructing individual syllables then sequencing them to form names. Syllables are generated from *SyllableProviders* that maintain their own pool of vowels and consonants. *NameValidators* can be added to the name generation process which adds the extra step of validating syllable and letter sequences during generation to avoid undesirable letter combinations and improve the quality of output.
+Syllabore is a fantasy name generator and class library. Name generation is accomplished by constructing individual syllables then sequencing them to form names. 
+
+These are concepts that Syllabore uses when generating names:
+* *SyllableProviders* - used to generate syllables. Providers maintain their own pool of vowels and consonants
+* *NameValidators* - used to add an extra step of validating syllable or letter sequences during name generation. This is useful in avoiding undesirable letter combinations and improve the quality of output
+* *NameShifters* - used to produce variations on a name. This is useful in iterating or evolving a name by replacing individual syllables or letters
 
 [![Nuget](https://img.shields.io/nuget/v/Syllabore)](https://www.nuget.org/packages/Syllabore/)
 
 
 ## Quick Start
-If you're looking for a quick way to try this library without dealing with customizing vowel/consonant pools or loading configuration files, just instantiate *NameGenerator* as-is:
+The generator is setup to work without any configuration; just instantiate *NameGenerator* as-is:
 ```csharp
 public static void Main(string[] args)
 {
@@ -17,23 +22,31 @@ public static void Main(string[] args)
     }
 }
 ```
-A vanilla *NameGenerator* will default to using *StandaloneSyllableProvider* for syllable generation. It will also not have a name validator to improve output quality.
+A vanilla *NameGenerator* will default to using *DefaultSyllableProvider* for syllable generation. It will also not have a name validator.
 
-Normally the *NameGenerator* constructor takes a a provider and validator. There are "standalone" classes included in this library for quick and dirty use. It is recommended you create your own by implementing the *ISyllableProvider* and *INameValidator* interfaces, or deriving from *ConfigurableSyllableProvider* and *ConfigurableNameValidator*
-
-The following example creates a generator identical to the first example except the validator is being used to check for awkward name endings:
+## Customizing Name Generation
+You can customize a name generator programmatically. Here is a quick and dirty example:
 ```csharp
-var provider = new StandaloneSyllableProvider();
-var validator = new StandaloneNameValidator();
+var g = new NameGenerator()
+    .SetProvider(new ConfigurableSyllableProvider()
+        .AddLeadingConsonant("s", "t", "r")
+        .AddVowel("a", "e")
+        .SetVowelSequenceProbability(0.20)
+        .AddTrailingConsonant("z")
+        .SetTrailingConsonantProbability(0.10)
+        .AllowVowelSequences(false)
+        .AllowLeadingConsonantSequences(false)
+        .AllowTrailingConsonantSequences(false))
+    .SetValidator(new ConfigurableNameValidator()
+        .AddRegexConstraint("zzz")
+        .AddRegexConstraint("[q]+"))
+    .SetSyllableCount(3);
 
-var g = new NameGenerator(provider, validator);
+// (This example would create 3-syllable names like Tetara, Resata, Resere, etc.)
 ```
 
-
-
-## Configuring Output
-
-Name generator configuration can be captured in an XML file then loaded through the *XmlFileLoader* class:
+## Capturing configuration in XML
+Name generator configurations can be captured in an XML file then loaded through an *XmlFileLoader* class:
 
 ```csharp
 public static void Main(string[] args)
@@ -47,7 +60,7 @@ public static void Main(string[] args)
     }
 }
 ```
-A syllabore file defines valid vowels, consonants, character sequences, invalid patterns, and sequence frequency. Here is an example XML file that corresponds to the *StandaloneSyllableProvider* and *StandaloneNameValidator*:
+A syllabore XML file defines valid vowels, consonants, character sequences, invalid patterns, and sequence frequency. Here is an example XML file that corresponds to the *DefaultSyllableProvider* implementation, but also checks for awkward letter sequences and name endings:
 ```xml
 <syllabore>
   <define name="BasicNameGenerator">
@@ -74,8 +87,7 @@ A syllabore file defines valid vowels, consonants, character sequences, invalid 
   </define>
 </syllabore>
 ```
-
-## Sample Output with StandaloneSyllableProvider and StandaloneNameValidator
+## Sample Output
 ```
 Naci
 Xogud
@@ -105,26 +117,37 @@ Clunust
 Jodo
 Jita
 ```
-## But I don't like XML
-If you don't want to deal with XML, you can also build a name generator programmatically. Here is a quick and dirty example:
-```csharp
-var g = new NameGenerator()
-    .SetProvider(new ConfigurableSyllableProvider()
-        .AddLeadingConsonant("s", "t", "r")
-        .AddVowel("a", "e")
-        .SetVowelSequenceProbability(0.20)
-        .AddTrailingConsonant("z")
-        .SetTrailingConsonantProbability(0.10)
-        .AllowVowelSequences(false)
-        .AllowLeadingConsonantSequences(false)
-        .AllowTrailingConsonantSequences(false))
-    .SetValidator(new ConfigurableNameValidator()
-        .AddRegexConstraint("zzz")
-        .AddRegexConstraint("[q]+"))
-    .SetSyllableCount(3);
-```
-(This example would create 3-syllable names like Tetara, Resata, Resere, etc.)
 
+## Shifters and Creating Variations
+Syllabore can also produce variations of names by using *Shifters*. By default, a *NameGenerator* will use the *DefaultSyllableShifter*. Here is a quick example of producing variations:
+```csharp
+var g = new NameGenerator();
+
+for(int i = 0; i < 3; i++)
+{
+    var name = g.NextName();
+    Console.WriteLine(name);
+
+    for (int j = 0; j < 4; j++)
+    {
+        // Variations will be different to the original
+        // in that one syllable is replaced with a new
+        // randomly generated syllable
+        var variation = g.NextVariation(name);
+        Console.WriteLine(variation);
+    }
+}
+
+```
+You can create your own custom shifters and configure *NameGenerator* to use them. For example:
+```csharp
+// Creates a name generator that uses both DefaultSyllableShifter and
+// VowelShifter for creating variations of names.
+var g = new NameGenerator()
+    .SetShifter(new MultiShifter()
+        .Using(new DefaultSyllableShifter())
+        .Using(new VowelShifter()));
+```
 # Installation
 The easiest way to add this to your project is through NuGet Package Manager (search for "Syllabore"). Visit https://www.nuget.org/packages/Syllabore/ for more details. 
 
