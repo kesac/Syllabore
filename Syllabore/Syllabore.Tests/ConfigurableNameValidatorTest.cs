@@ -42,7 +42,7 @@ namespace Syllabore.Tests
         public void NameValidation_WhenRegexConstraintsSpecified2_OutputReflectsConstraints()
         {
 
-            var provider = new StandaloneSyllableProvider();
+            var provider = new DefaultSyllableProvider();
             var validator = new ConfigurableNameValidator();
             validator.AddRegexConstraint(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
 

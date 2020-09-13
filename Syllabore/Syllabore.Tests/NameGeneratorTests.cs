@@ -21,8 +21,8 @@ namespace Syllabore.Tests
         {
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null));
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, null));
-            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(new StandaloneSyllableProvider(), null));
-            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new StandaloneNameValidator()));
+            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(new DefaultSyllableProvider(), null));
+            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new ConfigurableNameValidator()));
         }
 
         [TestMethod]
@@ -50,7 +50,7 @@ namespace Syllabore.Tests
         [TestMethod]
         public void NameGeneration_WhenNonPositiveSyllableLengthProvided_ArgumentExceptionThrown()
         {
-            var generator = new NameGenerator(new StandaloneSyllableProvider());
+            var generator = new NameGenerator(new DefaultSyllableProvider());
 
             Assert.IsNotNull(generator.Next(1));
             Assert.ThrowsException<ArgumentException>(() => generator.Next(0));
