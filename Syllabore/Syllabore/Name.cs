@@ -11,6 +11,7 @@ namespace Syllabore
     public struct Name
     {
         public string[] Syllables { get; set; }
+
         public Name(string[] syllables)
         {
             this.Syllables = new string[syllables.Length];

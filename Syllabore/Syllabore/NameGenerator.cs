@@ -20,6 +20,7 @@ namespace Syllabore
         private Random Random { get; set; }
         public ISyllableProvider Provider { get; private set; }
         public INameValidator Validator { get; private set; }
+        public IShifter Shifter { get; private set; }
         public int MinimumSyllables { get; private set; }
         public int MaximumSyllables { get; private set; }
 
@@ -35,7 +36,7 @@ namespace Syllabore
         /// Convenience constructor to construct a name generator using StandaloneSyllableProvider.
         /// No NameValidator is configured when this constructor is used.
         /// </summary>
-        public NameGenerator() : this(new StandaloneSyllableProvider()) { }
+        public NameGenerator() : this(new DefaultSyllableProvider()) { }
 
         /// <summary>
         /// Constructs a name generator using the specified SyllableProvider.
@@ -44,14 +45,12 @@ namespace Syllabore
         public NameGenerator(ISyllableProvider provider)
         {
             this.SetProvider(provider);
+            this.SetShifter(new DefaultSyllableShifter()); // TODO is this ok here? 
             this.SetSyllableCount(2, 2);
             this.SetMaximumRetries(1000);
             this.Random = new Random();
         }
 
-        /// <summary>
-        /// Constructs a name generator using the specified syllable provider and name validator.
-        /// </summary>
         public NameGenerator(ISyllableProvider provider, INameValidator validator) : this(provider)
         {
             this.SetValidator(validator);
@@ -66,6 +65,12 @@ namespace Syllabore
         public NameGenerator SetValidator(INameValidator validator)
         {
             this.Validator = validator ?? throw new ArgumentNullException("The specified INameValidator is null.");
+            return this;
+        }
+
+        public NameGenerator SetShifter(IShifter shifter)
+        {
+            this.Shifter = shifter ?? throw new ArgumentNullException("The specified IShifter is null.");
             return this;
         }
 
@@ -106,6 +111,7 @@ namespace Syllabore
 
         /// <summary>
         /// Generates a random name. The syllable length of the generated name is determined by the properties <c>MinimumSyllables</c> and <c>MaximumSyllables</c>.
+        /// If you need to access individual syllables, use NextName() instead.
         /// </summary>
         public string Next()
         {
@@ -121,12 +127,23 @@ namespace Syllabore
             return this.Next(syllableLength);
         }
 
+
+
+        /// <summary>
+        /// Generates a random name with the specified syllable length and returns as a string.
+        /// If you need to access individual syllables, use NextName() instead.
+        /// </summary>
+        public string Next(int syllableLength)
+        {
+            return this.NextName(syllableLength).ToString();
+        }
+
         /// <summary>
         /// Generates a random name and returns it as a Name struct. The syllable length of the generated name is determined by the properties <c>MinimumSyllables</c> and <c>MaximumSyllables</c>.
         /// </summary>
         public Name NextName()
         {
-            if(this.MinimumSyllables < 1 || this.MaximumSyllables < 1 || this.MinimumSyllables > this.MaximumSyllables)
+            if (this.MinimumSyllables < 1 || this.MaximumSyllables < 1 || this.MinimumSyllables > this.MaximumSyllables)
             {
                 throw new InvalidOperationException("The value of property MinimumSyllables must be less than or equal to property MaximumSyllables. Both values must be postive integers.");
             }
@@ -134,15 +151,6 @@ namespace Syllabore
             var syllableLength = this.Random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
             return this.NextName(syllableLength);
         }
-
-        /// <summary>
-        /// Generates a random name with the specified syllable length.
-        /// </summary>
-        public string Next(int syllableLength)
-        {
-            return this.NextName(syllableLength).ToString();
-        }
-
         /// <summary>
         /// Generates a random name with the specified syllable length and returns it as a Name struct.
         /// </summary>
@@ -154,47 +162,66 @@ namespace Syllabore
                 throw new ArgumentException("The desired syllable length must be a positive value.");
             }
 
-            var syllables = new List<string>();
+            //var syllables = new List<string>();
             var validNameGenerated = false;
             var totalAttempts = 0;
+            var result = new Name(new string[syllableLength]);
 
             while (!validNameGenerated)
             {
-                syllables.Clear();
+                //syllables.Clear();
                 for (int i = 0; i < syllableLength; i++)
                 {
                     if (i == 0 && syllableLength > 1)
                     {
-                        syllables.Add(Provider.NextStartingSyllable());
+                        result.Syllables[i] = this.Provider.NextStartingSyllable();
                     }
                     else if (i == syllableLength - 1 && syllableLength > 1)
                     {
-                        syllables.Add(Provider.NextEndingSyllable());
+                        result.Syllables[i] = this.Provider.NextEndingSyllable();
                     }
                     else
                     {
-                        syllables.Add(Provider.NextSyllable());
+                        result.Syllables[i] = this.Provider.NextSyllable();
                     }
                 }
 
-                if (this.Validator != null)
-                {
-                    validNameGenerated = this.Validator.IsValidName(string.Join(string.Empty, syllables));
-                }
-                else
-                {
-                    validNameGenerated = true;
-                }
-                
-                if(totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
+                validNameGenerated = this.Validator != null ? this.Validator.IsValidName(result.ToString()) : true;
+
+                if (totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
                 {
                     throw new InvalidOperationException("This NameGenerator has run out of attempts generating a valid name. It may be configured in such a way that it cannot generate names that satisfy the specified NameValidator.");
                 }
             }
 
-            return new Name(syllables.ToArray());
+            return result;
         }
 
+        public Name NextVariation(Name sourceName)
+        {
+
+            if (sourceName.Syllables.Length < 1)
+            {
+                throw new ArgumentException("It's not possible to create variations on a name that has 0 syllables.");
+            }
+
+            var validNameGenerated = false;
+            var totalAttempts = 0;
+            Name? result = null;
+
+            while (!validNameGenerated)
+            {
+                result = this.Shifter.NextVariation(sourceName);
+                validNameGenerated = this.Validator != null ? this.Validator.IsValidName(result.ToString()) : true;
+
+                if (totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
+                {
+                    throw new InvalidOperationException("This NameGenerator has run out of attempts generating a valid name variation. It may be configured in such a way that there does not exist a variation that can satisfy the specified NameValidator."); ;
+                }
+            }
+
+            return result ?? throw new InvalidOperationException("The NameGenerator has failed to produce a name variation.");
+        }
 
 
     }
