@@ -5,25 +5,32 @@ using System.Text.RegularExpressions;
 
 namespace Syllabore
 {
-    /// TODO add vowel shifting and consonant shifting
+    
+    /// Experimental: finds vowels in a name then changes it to another vowel
     public class VowelShifter : IShifter
     {
+        private readonly string[] DefaultVowels = { "a", "e", "i", "o", "u" };
         private List<string> VowelPool { get; set; }
-
         private Random Random { get; set; }
 
-        public VowelShifter(List<string> vowelPool)
+        public VowelShifter()
         {
-            if (vowelPool == null) {
-                throw new ArgumentNullException("The specified ISyllableProvider is null.");
-            }
-
-
-            this.VowelPool = new List<string>();
-            this.VowelPool.AddRange(vowelPool);
+            this.VowelPool = new List<string>(DefaultVowels);
 
             this.Random = new Random();
         }
+
+        /*
+        public VowelShifter UsingVowel(params string[] vowel)
+        {
+            foreach(var v in vowel)
+            {
+                this.VowelPool.Add(v);
+            }
+
+            return this;
+        }
+        */
 
         /// TODO this is only shifting vowels right now and it doesn't handle vowel sequences
         public Name NextVariation(Name sourceName)
