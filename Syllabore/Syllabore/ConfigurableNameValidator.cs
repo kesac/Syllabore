@@ -20,12 +20,13 @@ namespace Syllabore
         /// <summary>
         /// Adds the specified constraint as a regular expression. Any name matching this contraint is considered invalid.
         /// </summary>
-        public ConfigurableNameValidator AddRegexConstraint(string regex)
+        public ConfigurableNameValidator Invalidate(params string[] regex)
         {
-            this.RegexConstraints.Add(regex);
+            foreach (var r in regex) { 
+                this.RegexConstraints.Add(r);
+            }
             return this;
         }
-
 
         /// <summary>
         /// Returns true if the specified name does not match any of this validator's contraints, else returns false.
