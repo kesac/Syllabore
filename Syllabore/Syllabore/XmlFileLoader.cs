@@ -78,7 +78,7 @@ namespace Syllabore
                 }
             }
 
-            this.NameGenerators.Add(generatorName, new NameGenerator(provider, validator));
+            this.NameGenerators.Add(generatorName, new NameGenerator().UsingProvider(provider).UsingValidator(validator));
         }
 
         private void DefineSyllableProvider(ConfigurableSyllableProvider provider, XmlNode componentsRoot)
@@ -94,27 +94,27 @@ namespace Syllabore
 
                     if(type.Equals("Vowels", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.AddVowel(valuesAsArray);
+                        provider.WithVowels(valuesAsArray);
                     }
                     else if (type.Equals("VowelSequences", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.AddVowelSequence(valuesAsArray);
+                        provider.WithVowelSequences(valuesAsArray);
                     }
                     else if (type.Equals("LeadingConsonants", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.AddLeadingConsonant(valuesAsArray);
+                        provider.WithLeadingConsonants(valuesAsArray);
                     }
                     else if (type.Equals("LeadingConsonantSequences", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.AddLeadingConsonantSequence(valuesAsArray);
+                        provider.WithLeadingConsonantSequences(valuesAsArray);
                     }
                     else if (type.Equals("TrailingConsonants", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.AddTrailingConsonant(valuesAsArray);
+                        provider.WithTrailingConsonants(valuesAsArray);
                     }
                     else if (type.Equals("TrailingConsonantSequences", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.AddTrailingConsonantSequence(valuesAsArray);
+                        provider.WithTrailingConsonantSequence(valuesAsArray);
                     }
                     else
                     {
@@ -136,13 +136,13 @@ namespace Syllabore
                     if (when.Equals("NameMatchesRegex", StringComparison.OrdinalIgnoreCase))
                     {
                         var regex = node.Attributes["regex"].Value;
-                        validator.AddRegexConstraint(regex);
+                        validator.Invalidate(regex);
                     }
                     else if (when.Equals("NameEndsWith", StringComparison.OrdinalIgnoreCase))
                     {
                         var values = node.Attributes["values"].Value;
                         var regex = string.Format("({0})$", values.Trim().Replace(" ", "|"));
-                        validator.AddRegexConstraint(regex);
+                        validator.Invalidate(regex);
                     }
                     else
                     {
