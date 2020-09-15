@@ -58,17 +58,19 @@ namespace Syllabore
         /// <summary>
         /// Adds the specified consonants as consonants that can occur before a vowel.
         /// </summary>
-        public ConfigurableSyllableProvider AddLeadingConsonant(params string[] consonants)
+        public ConfigurableSyllableProvider WithLeadingConsonants(params string[] consonants)
         {
-            this.LeadingConsonants.AddRange(consonants);
+            foreach (var c in consonants)
+            {
+                this.LeadingConsonants.AddRange(c.Atomize());
+            }
             return this;
         }
-
 
         /// <summary>
         /// Adds the specified consonant sequences as sequences that can occur before a vowel.
         /// </summary>
-        public ConfigurableSyllableProvider AddLeadingConsonantSequence(params string[] consonantSequences)
+        public ConfigurableSyllableProvider WithLeadingConsonantSequences(params string[] consonantSequences)
         {
             this.LeadingConsonantSequences.AddRange(consonantSequences);
             return this;
@@ -77,16 +79,19 @@ namespace Syllabore
         /// <summary>
         /// Adds the specified vowels as vowels that can be used to form the 'center' of syllables.
         /// </summary>
-        public ConfigurableSyllableProvider AddVowel(params string[] vowels)
+        public ConfigurableSyllableProvider WithVowels(params string[] vowels)
         {
-            this.Vowels.AddRange(vowels);
+            foreach (var v in vowels)
+            {
+                this.Vowels.AddRange(v.Atomize());
+            }
             return this;
         }
 
         /// <summary>
         /// Adds the specified vowel sequences as sequences that can be used to form the 'center' of syllables.
         /// </summary>
-        public ConfigurableSyllableProvider AddVowelSequence(params string[] vowelSequences)
+        public ConfigurableSyllableProvider WithVowelSequences(params string[] vowelSequences)
         {
             this.VowelSequences.AddRange(vowelSequences);
             return this;
@@ -95,9 +100,12 @@ namespace Syllabore
         /// <summary>
         /// Adds the specified consonants as consonants that can appear after a vowel.
         /// </summary>
-        public ConfigurableSyllableProvider AddTrailingConsonant(params string[] consonants)
+        public ConfigurableSyllableProvider WithTrailingConsonants(params string[] consonants)
         {
-            this.TrailingConsonants.AddRange(consonants);
+            foreach (var c in consonants)
+            {
+                this.TrailingConsonants.AddRange(c.Atomize());
+            }
             return this;
         }
 
@@ -105,70 +113,46 @@ namespace Syllabore
         /// <summary>
         /// Adds the specified consonant sequences as sequences that can appear after a vowel.
         /// </summary>
-        public ConfigurableSyllableProvider AddTrailingConsonantSequence(params string[] consonantSequences)
+        public ConfigurableSyllableProvider WithTrailingConsonantSequence(params string[] consonantSequences)
         {
             this.TrailingConsonantSequences.AddRange(consonantSequences);
             return this;
         }
 
         // TODO - Docs
-        public ConfigurableSyllableProvider AllowLeadingConsonants(bool allow)
-        {
-            this.UseLeadingConsonants = allow;
-            return this;
-        }
+        public ConfigurableSyllableProvider AllowLeadingConsonants() { this.UseLeadingConsonants = true; return this; }
+        public ConfigurableSyllableProvider AllowLeadingConsonantSequences() { this.UseLeadingConsonantSequences = true; return this; }
+        public ConfigurableSyllableProvider AllowVowelSequences() { this.UseVowelSequences = true; return this; }
+        public ConfigurableSyllableProvider AllowTrailingConsonants() { this.UseTrailingConsonants = true; return this; }
+        public ConfigurableSyllableProvider AllowTrailingConsonantSequences() { this.UseTrailingConsonantSequences = true; return this; }
+        public ConfigurableSyllableProvider DisallowLeadingConsonants() { this.UseLeadingConsonants = false; return this; }
+        public ConfigurableSyllableProvider DisallowLeadingConsonantSequences() { this.UseLeadingConsonantSequences = false; return this; }
+        public ConfigurableSyllableProvider DisallowVowelSequences() { this.UseVowelSequences = false; return this; }
+        public ConfigurableSyllableProvider DisallowTrailingConsonants() { this.UseTrailingConsonants = false; return this; }
+        public ConfigurableSyllableProvider DisallowTrailingConsonantSequences() { this.UseTrailingConsonantSequences = false; return this; }
 
-        // TODO - Docs
-        public ConfigurableSyllableProvider AllowLeadingConsonantSequences(bool allow)
+        // TODO - Docs and argument validation
+        public ConfigurableSyllableProvider WithLeadingVowelProbability(double d)
         {
-            this.UseLeadingConsonantSequences = allow;
-            return this;
-        }
-
-        // TODO - Docs
-        public ConfigurableSyllableProvider AllowVowelSequences(bool allow)
-        {
-            this.UseVowelSequences = allow;
-            return this;
-        }
-
-        // TODO - Docs
-        public ConfigurableSyllableProvider AllowTrailingConsonants(bool allow)
-        {
-            this.UseTrailingConsonants = allow;
-            return this;
-        }
-
-        // TODO - Docs
-        public ConfigurableSyllableProvider AllowTrailingConsonantSequences(bool allow)
-        {
-            this.UseTrailingConsonantSequences = allow;
-            return this;
+            this.LeadingVowelProbability = d; return this;
         }
 
         // TODO - Docs and argument validation
-        public ConfigurableSyllableProvider SetLeadingVowelProbability(double d)
-        {
-            this.LeadingVowelProbability = d;
-            return this;
-        }
-
-        // TODO - Docs and argument validation
-        public ConfigurableSyllableProvider SetLeadingConsonantSequenceProbability(double d)
+        public ConfigurableSyllableProvider WithLeadingConsonantSequenceProbability(double d)
         {
             this.LeadingConsonantSequenceProbability = d;
             return this;
         }
 
         // TODO - Docs and argument validation
-        public ConfigurableSyllableProvider SetVowelSequenceProbability(double d)
+        public ConfigurableSyllableProvider WithVowelSequenceProbability(double d)
         {
             this.VowelSequenceProbability = d;
             return this;
         }
 
         // TODO - Docs and argument validation
-        public ConfigurableSyllableProvider SetTrailingConsonantProbability(double d)
+        public ConfigurableSyllableProvider WithTrailingConsonantProbability(double d)
         {
             this.TrailingConsonantProbability = d;
             return this;
@@ -179,39 +163,6 @@ namespace Syllabore
         {
             this.TrailingConsonantSequenceProbability = d;
             return this;
-        }
-
-        /// <summary>
-        /// Returns list of all possible vowels and vowel sequences this provider can generate.
-        /// </summary>
-        public List<string> GetAllVowels()
-        {
-            var result = new List<string>();
-            result.AddRange(this.Vowels);
-            result.AddRange(this.VowelSequences);
-            return result;
-        }
-
-        /// <summary>
-        /// Returns list of all possible leading consonants and consonant sequences this provider can generate.
-        /// </summary>
-        public List<string> GetAllLeadingConsonants()
-        {
-            var result = new List<string>();
-            result.AddRange(this.LeadingConsonants);
-            result.AddRange(this.LeadingConsonantSequences);
-            return result;
-        }
-
-        /// <summary>
-        /// Returns list of all possible trailing consonants and consonant sequences this provider can generate.
-        /// </summary>
-        public List<string> GetAllTrailingConsonants()
-        {
-            var result = new List<string>();
-            result.AddRange(this.TrailingConsonants);
-            result.AddRange(this.TrailingConsonantSequences);
-            return result;
         }
 
         private string NextLeadingConsonant()
