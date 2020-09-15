@@ -9,19 +9,19 @@ namespace Syllabore
     /// with another syllable. This class uses the DefaultSyllableProvider
     /// by default.
     /// </summary>
-    public class DefaultSyllableShifter : IShifter
+    public class DefaultNameMutator : INameMutator
     {
         private ISyllableProvider Provider { get; set; }
 
         private Random Random { get; set; }
 
-        public DefaultSyllableShifter()
+        public DefaultNameMutator()
         {
             this.Provider = new DefaultSyllableProvider();
             this.Random = new Random();
         }
 
-        public Name NextVariation(Name sourceName)
+        public Name Mutate(Name sourceName)
         {
             Name result = new Name(new string[sourceName.Syllables.Length]);            
             Array.Copy(sourceName.Syllables, result.Syllables, sourceName.Syllables.Length);

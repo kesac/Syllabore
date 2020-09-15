@@ -21,12 +21,12 @@ namespace Syllabore
         public DefaultSyllableProvider()
         {
 
-            this.AddLeadingConsonant(LeadingConsonants);
-            this.AddLeadingConsonantSequence(LeadingConsonantSequences);
-            this.AddVowel(Vowels);
-            this.AddVowelSequence(VowelSequences);
-            this.AddTrailingConsonant(TrailingConsonants);
-            this.AddTrailingConsonantSequence(TrailingConsonantSequences);
+            this.WithLeadingConsonants(LeadingConsonants)
+                .WithLeadingConsonantSequences(LeadingConsonantSequences)
+                .WithVowels(Vowels)
+                .WithVowelSequences(VowelSequences)
+                .WithTrailingConsonants(TrailingConsonants)
+                .WithTrailingConsonantSequence(TrailingConsonantSequences);
 
         }
 
