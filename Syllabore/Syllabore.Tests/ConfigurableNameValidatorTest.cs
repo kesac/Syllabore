@@ -13,25 +13,22 @@ namespace Syllabore.Tests
         [TestMethod, Timeout(10000)]
         public void NameValidation_WhenRegexConstraintsSpecified_OutputReflectsConstraints()
         {
-            var provider = new ConfigurableSyllableProvider();
-            provider.AddVowel("a");
-            provider.AddVowelSequence("ee");
-            provider.AddLeadingConsonant("b");
-            provider.AddLeadingConsonantSequence("cc");
-            provider.AddTrailingConsonant("d");
-            provider.AddTrailingConsonantSequence("ff");
+            var generator = new NameGenerator()
+                .UsingProvider(x => x
+                    .WithVowels("a")
+                    .WithVowelSequences("ee")
+                    .WithLeadingConsonants("b")
+                    .WithLeadingConsonantSequences("cc")
+                    .WithTrailingConsonants("d")
+                    .WithTrailingConsonantSequence("ff")
+                    .AllowVowelSequences() // These flags are true by default; we explicitly set them for clarity to future readers
+                    .AllowLeadingConsonantSequences()
+                    .AllowTrailingConsonantSequences())
+                .UsingValidator(x => x
+                    .Invalidate(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
+                    .Invalidate(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
 
-            provider.UseVowelSequences = true; // These flags are true by default; we explicitly set them for clarity to future readers
-            provider.UseLeadingConsonantSequences = true;
-            provider.UseTrailingConsonantSequences = true;
-
-            var validator = new ConfigurableNameValidator();
-            validator.AddRegexConstraint(@"[aeiouAEIOU]{2}"); // This rule rejects names with vowel sequences
-            validator.AddRegexConstraint(@"[^aeiouAEIOU]{2}"); // This rule rejects names with consonant sequences
-
-            var generator = new NameGenerator(provider, validator);
-
-            for(int i = 1000; i < 1; i++)
+            for (int i = 1000; i < 1; i++)
             {
                 Assert.IsFalse(Regex.IsMatch(generator.Next(), "(ee|cc|ff)"));
             }
@@ -44,13 +41,15 @@ namespace Syllabore.Tests
 
             var provider = new DefaultSyllableProvider();
             var validator = new ConfigurableNameValidator();
-            validator.AddRegexConstraint(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
+            validator.Invalidate(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
 
             Assert.IsTrue(validator.IsValidName("bc"));
             Assert.IsFalse(validator.IsValidName("bcd"));
             Assert.IsFalse(validator.IsValidName("bcdf"));
 
-            var generator = new NameGenerator(provider, validator);
+            var generator = new NameGenerator();
+            generator.UsingProvider(provider);
+            generator.UsingValidator(validator);
 
             for (int i = 1000; i < 1; i++)
             {

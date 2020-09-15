@@ -12,30 +12,27 @@ namespace Syllabore.Tests
 
 
         [TestMethod]
-        public void SyllableGeneration_WhenNoComponentsDefined_ThrowsInvalidOperationException()
+        public void SyllableGeneration_WhenNoComponentsDefined_ValidOperation()
         {
-            var provider = new ConfigurableSyllableProvider();
-            var generator = new NameGenerator(provider);
+            var generator = new NameGenerator();
 
             for (int i = 0; i < 1000; i++)
             {
-                Assert.ThrowsException<InvalidOperationException>(() => generator.Next());
+                Assert.IsNotNull(generator.Next());
             }
         }
 
         [TestMethod]
         public void SyllableGeneration_WhenNoComponentsDefinedExceptVowels_NamesCanStillBeGenerated()
         {
-            var provider = new ConfigurableSyllableProvider();
-            provider.AddVowel("a","e,","o");
-
-            provider.UseLeadingConsonants = false;
-            provider.UseLeadingConsonantSequences = false;
-            provider.UseVowelSequences = false;
-            provider.UseTrailingConsonants = false;
-            provider.UseTrailingConsonantSequences = false;
-
-            var generator = new NameGenerator(provider);
+            var generator = new NameGenerator()
+                .UsingProvider(x => x
+                    .WithVowels("aeo")
+                    .DisallowLeadingConsonants()
+                    .DisallowLeadingConsonantSequences()
+                    .DisallowVowelSequences()
+                    .DisallowTrailingConsonants()
+                    .DisallowTrailingConsonantSequences());
 
             for (int i = 0; i < 1000; i++)
             {
@@ -46,14 +43,13 @@ namespace Syllabore.Tests
 
         [TestMethod]
         public void SyllableGeneration_WhenComponentsDefinedExceptVowels_ThrowsInvalidOperationException()
-        {
-            var provider = new ConfigurableSyllableProvider();
-            provider.AddLeadingConsonant("b");
-            provider.AddLeadingConsonantSequence("bb");
-            provider.AddTrailingConsonant("b");
-            provider.AddTrailingConsonantSequence("b");
-            
-            var generator = new NameGenerator(provider);
+        {   
+            var generator = new NameGenerator()
+                .UsingProvider(x => x
+                    .WithLeadingConsonants("b")
+                    .WithLeadingConsonantSequences("bb")
+                    .WithTrailingConsonants("b")
+                    .WithTrailingConsonantSequence("b"));
 
             for (int i = 0; i < 1000; i++)
             {
@@ -64,20 +60,18 @@ namespace Syllabore.Tests
         [TestMethod]
         public void SyllableGeneration_WhenAllComponentsDefined_AllComponentsAppearInOutput()
         {
-            var provider = new ConfigurableSyllableProvider();
-            provider.AddVowel("a");
-            provider.AddVowelSequence("ee");
-            provider.AddLeadingConsonant("b");
-            provider.AddLeadingConsonantSequence("cc");
-            provider.AddTrailingConsonant("d");
-            provider.AddTrailingConsonantSequence("ff");
-
-            provider.VowelSequenceProbability = 0.5;
-            provider.LeadingVowelProbability = 0.25;
-            provider.LeadingConsonantSequenceProbability = 0.25;
-            provider.TrailingConsonantSequenceProbability = 0.25;
-
-            var generator = new NameGenerator(provider);
+            var generator = new NameGenerator()
+                .UsingProvider(x => x
+                    .WithVowels("a")
+                    .WithVowelSequences("ee")
+                    .WithLeadingConsonants("b")
+                    .WithLeadingConsonantSequences("cc")
+                    .WithTrailingConsonants("d")
+                    .WithTrailingConsonantSequence("ff")
+                    .WithVowelSequenceProbability(0.5)
+                    .WithLeadingVowelProbability(0.25)
+                    .WithLeadingConsonantSequenceProbability(0.25)
+                    .WithTrailingConsonantProbability(0.25));
 
             bool foundVowel = false;
             bool foundVowelSequence = false;
@@ -97,26 +91,28 @@ namespace Syllabore.Tests
                 if (name.Contains("ff")) { foundEndingConsonantSequence = true; }
             }
 
-            Assert.IsTrue(foundVowel && foundVowelSequence && foundStartingConsonant && foundStartingConsonantSequence && foundEndingConsonant && foundEndingConsonantSequence);
+            Assert.IsTrue(foundVowel);
+            Assert.IsTrue(foundVowelSequence);
+            Assert.IsTrue(foundStartingConsonant);
+            Assert.IsTrue(foundStartingConsonantSequence);
+            Assert.IsTrue(foundEndingConsonant);
+            Assert.IsTrue(foundEndingConsonantSequence);
+            Assert.IsTrue(foundVowel && foundVowelSequence && foundStartingConsonant && foundStartingConsonantSequence && foundEndingConsonant && foundEndingConsonantSequence); // original
 
         }
 
         [TestMethod, Timeout(10000)]
         public void SyllableGeneration_WhenNoSequencesConfigured_ProviderPermitsConfiguration()
         {
-            var provider = new ConfigurableSyllableProvider();
-            provider.AddLeadingConsonant("s", "r", "t");
-            provider.AddVowel("e","a");
-            provider.AddTrailingConsonant("t","z");
-
-            provider.UseLeadingConsonantSequences = false;
-            provider.UseVowelSequences = false;
-            provider.UseTrailingConsonantSequences = false;
-
-            var validator = new ConfigurableNameValidator();
-            validator.AddRegexConstraint("^.{,2}$"); // Invalidate names with less than 3 characters
-
-            var generator = new NameGenerator(provider, validator);
+            var generator = new NameGenerator()
+                .UsingProvider(x => x
+                    .WithLeadingConsonants("srt")
+                    .WithVowels("ea")
+                    .WithTrailingConsonants("tz")
+                    .DisallowLeadingConsonantSequences()
+                    .DisallowVowelSequences()
+                    .DisallowTrailingConsonantSequences())
+                .UsingValidator(x => x.Invalidate("^.{,2}$"));// Invalidate names with less than 3 characters
 
             try
             {
@@ -136,19 +132,17 @@ namespace Syllabore.Tests
         [TestMethod]
         public void SyllableGeneration_WhenCustomVowelsDefined_OnlyCustomVowelsAppearInOutput()
         {
-            var provider = new ConfigurableSyllableProvider();
 
             var consonants = new string[] { "b", "c", "d", "f", "g" };
 
-            provider.AddVowel("a");
-            provider.AddLeadingConsonant(consonants);
-            provider.AddTrailingConsonant(consonants);
-
-            provider.VowelSequenceProbability = 0;
-            provider.LeadingConsonantSequenceProbability = 0;
-            provider.TrailingConsonantSequenceProbability = 0;
-
-            var generator = new NameGenerator(provider);
+            var generator = new NameGenerator()
+                .UsingProvider(x => x
+                    .WithVowels("a")
+                    .WithLeadingConsonants(consonants)
+                    .WithTrailingConsonants(consonants)
+                    .DisallowVowelSequences()
+                    .DisallowLeadingConsonantSequences()
+                    .DisallowTrailingConsonantSequences());
 
             for(int i = 0; i < 1000; i++)
             {

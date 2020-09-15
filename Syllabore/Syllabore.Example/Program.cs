@@ -31,11 +31,12 @@ namespace Syllabore.Example
 
                 var provider = new DefaultSyllableProvider();
                 var validator = new ConfigurableNameValidator()
-                        .AddRegexConstraint(@"[j|p|q|w]$")             // Invalidate these awkward endings
-                        .AddRegexConstraint(@"(\w)\1\1")               // Invalidate any sequence of 3 or more identical letters
-                        .AddRegexConstraint(@"([^aeiouAEIOU])\1\1\1"); // Invalidate any sequence of 4 or more consonants
+                        .Invalidate(@"[j|p|q|w]$")             // Invalidate these awkward endings
+                        .Invalidate(@"(\w)\1\1")               // Invalidate any sequence of 3 or more identical letters
+                        .Invalidate(@"([^aeiouAEIOU])\1\1\1"); // Invalidate any sequence of 4 or more consonants
                 
-                var g = new NameGenerator(provider, validator);
+                var g = new NameGenerator().UsingProvider(provider).UsingValidator(validator);
+
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(g.Next());
@@ -48,7 +49,7 @@ namespace Syllabore.Example
                 // through the XmlFileLoader.
 
                 var file = new XmlFileLoader("data/basic.xml").Load();
-                var g = file.GetNameGenerator("SoftNameGenerator").SetSyllableCount(2, 4);
+                var g = file.GetNameGenerator("SoftNameGenerator").LimitSyllableCount(2, 4);
 
                 Console.WriteLine();
                 for (int i = 0; i < 10; i++)
@@ -62,19 +63,19 @@ namespace Syllabore.Example
                 // If you don't like XML, you can choose to
                 // build name generators programmatically.
                 var g = new NameGenerator()
-                    .SetProvider(new ConfigurableSyllableProvider()
-                        .AddLeadingConsonant("s", "t", "r")
-                        .AddVowel("a", "e")
-                        .SetVowelSequenceProbability(0.20)
-                        .AddTrailingConsonant("z")
-                        .SetTrailingConsonantProbability(0.10)
-                        .AllowVowelSequences(false)
-                        .AllowLeadingConsonantSequences(false)
-                        .AllowTrailingConsonantSequences(false))
-                    .SetValidator(new ConfigurableNameValidator()
-                        .AddRegexConstraint("zzz")
-                        .AddRegexConstraint("[q]+"))
-                    .SetSyllableCount(3);
+                    .UsingProvider(new ConfigurableSyllableProvider()
+                        .WithLeadingConsonants("s", "t", "r")
+                        .WithVowels("a", "e")
+                        .WithVowelSequenceProbability(0.20)
+                        .WithTrailingConsonants("z")
+                        .WithTrailingConsonantProbability(0.10)
+                        .DisallowVowelSequences()
+                        .DisallowLeadingConsonantSequences()
+                        .DisallowTrailingConsonantSequences())
+                    .UsingValidator(new ConfigurableNameValidator()
+                        .Invalidate("zzz")
+                        .Invalidate("[q]+"))
+                    .LimitSyllableCount(3);
 
                 for(int i = 0; i < 10; i++)
                 {
@@ -88,9 +89,9 @@ namespace Syllabore.Example
             {
                 // Creating variations of a single name
                 var g = new NameGenerator()
-                    .SetShifter(new MultiShifter()
-                        .Using(new DefaultSyllableShifter())
-                        .Using(new VowelShifter()));
+                    .UsingMutator(new MutatorCollection()
+                        .Using(new DefaultNameMutator())
+                        .Using(new VowelMutator()));
 
                 for(int i = 0; i < 3; i++)
                 {
@@ -104,6 +105,68 @@ namespace Syllabore.Example
 
                     }
                 }
+            }
+
+
+            {
+                Console.WriteLine();
+                var g = new NameGenerator()
+                    .UsingProvider(p => p
+                        .WithVowels("aeoy")
+                        .WithLeadingConsonants("vstlr")
+                        .WithTrailingConsonants("zrt")
+                        .WithVowelSequences("ey", "ay", "oy")
+                        .DisallowLeadingConsonantSequences()
+                        .DisallowTrailingConsonantSequences())
+                    .UsingValidator(v => v
+                        .Invalidate(
+                            @"(\w)\1\1", // no triples
+                            @"([^aeoyAEOY])\1", // no two consonant sequence
+                            @".*([y|Y]).*([y|Y]).*", // two y's in same word
+                            @".*([z|Z]).*([z|Z]).*", // two z's in same word
+                            @"(zs)", // looks wierd
+                            @"(y[v|t])")) // looks wierd 
+                    .UsingMutator(new VowelMutator("aeoy"))
+                    .LimitSyllableCount(2, 3);
+
+                for (int i = 0; i < 25; i++)
+                {
+                    var name = g.NextName();
+                    var variation = g.NextVariation(name);
+
+                    Console.WriteLine(name);
+                    if(!name.Equals(variation))
+                    {
+                        Console.WriteLine(variation);
+                    }
+                    
+                }
+
+                Console.WriteLine();
+
+            }
+            {
+                var provider = new ConfigurableSyllableProvider();
+                provider.WithVowels("a", "e", "o", "y");
+                provider.WithLeadingConsonants("v", "s", "t", "l", "r");
+                provider.WithTrailingConsonants("z", "r", "t");
+                provider.WithVowelSequences("ey", "ay", "oy");
+                provider.DisallowLeadingConsonantSequences();
+                provider.DisallowTrailingConsonantSequences();
+
+                var shifter = new VowelMutator("a", "e", "o", "y");
+
+                var validator = new ConfigurableNameValidator();
+                validator.Invalidate(@"(\w)\1\1");
+                validator.Invalidate(@"([^aeoyAEOY])\1");
+                validator.Invalidate(@".*([y|Y]).*([y|Y]).*");
+                validator.Invalidate(@".*([z|Z]).*([z|Z]).*");
+                validator.Invalidate(@"(zs)");
+                validator.Invalidate(@"(y[v|t])");
+
+                var g = new NameGenerator(provider, shifter, validator);
+                g.LimitSyllableCount(2, 3);
+
             }
 
         }
