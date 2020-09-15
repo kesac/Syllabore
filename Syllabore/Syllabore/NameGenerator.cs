@@ -19,8 +19,8 @@ namespace Syllabore
     {
         private Random Random { get; set; }
         public ISyllableProvider Provider { get; private set; }
+        public INameMutator Mutator { get; private set; }
         public INameValidator Validator { get; private set; }
-        public IShifter Shifter { get; private set; }
         public int MinimumSyllables { get; private set; }
         public int MaximumSyllables { get; private set; }
 
@@ -33,53 +33,68 @@ namespace Syllabore
         public int MaximumRetries { get; set; }
 
         /// <summary>
-        /// Convenience constructor to construct a name generator using StandaloneSyllableProvider.
-        /// No NameValidator is configured when this constructor is used.
+        /// When there are no constructor arguments, the name generator is configured to
+        /// use DefaultSyllableProvider, DefaultNameMutator, and no name validator.
         /// </summary>
-        public NameGenerator() : this(new DefaultSyllableProvider()) { }
+        public NameGenerator() : this(new DefaultSyllableProvider(), new DefaultNameMutator(), null) { }
 
-        /// <summary>
-        /// Constructs a name generator using the specified SyllableProvider.
-        /// No NameValidator is configured when this constructor is used; 
-        /// </summary>
-        public NameGenerator(ISyllableProvider provider)
+        public NameGenerator(ISyllableProvider provider, INameMutator shifter, INameValidator validator)
         {
-            this.SetProvider(provider);
-            this.SetShifter(new DefaultSyllableShifter()); // TODO is this ok here? 
-            this.SetSyllableCount(2, 2);
-            this.SetMaximumRetries(1000);
+            this.UsingProvider(provider)
+                .UsingMutator(shifter)
+                .UsingValidator(validator)
+                .LimitSyllableCount(2, 2)
+                .LimitRetries(1000);
+
             this.Random = new Random();
         }
 
-        public NameGenerator(ISyllableProvider provider, INameValidator validator) : this(provider)
+        /// <summary>
+        /// Creates a new ConfigurableSyllableProvider for this NameGenerator.
+        /// The new ConfigurableSyllableProvider replaces the old SyllableProvider if
+        /// one is already defined.
+        /// </summary>
+        public NameGenerator UsingProvider(Func<ConfigurableSyllableProvider,ISyllableProvider> configure)
         {
-            this.SetValidator(validator);
+            this.Provider = configure(new ConfigurableSyllableProvider());
+            return this;
         }
 
-        public NameGenerator SetProvider(ISyllableProvider provider) 
+        /// <summary>
+        /// Sets the specified ISyllableProvider as the new syllable provider for this NameGenerator.
+        /// The old ISyllableProvider is replaced if one was previously defined.
+        /// </summary>
+        public NameGenerator UsingProvider(ISyllableProvider provider)
         {
             this.Provider = provider ?? throw new ArgumentNullException("The specified ISyllableProvider is null.");
             return this;
         }
 
-        public NameGenerator SetValidator(INameValidator validator)
+        public NameGenerator UsingValidator(Func<ConfigurableNameValidator, INameValidator> configure)
         {
-            this.Validator = validator ?? throw new ArgumentNullException("The specified INameValidator is null.");
+            this.Validator = configure(new ConfigurableNameValidator());
             return this;
         }
 
-        public NameGenerator SetShifter(IShifter shifter)
+        // Right now this is ok
+        public NameGenerator UsingValidator(INameValidator validator)
         {
-            this.Shifter = shifter ?? throw new ArgumentNullException("The specified IShifter is null.");
+            this.Validator = validator;
+            return this;
+        }
+        
+        public NameGenerator UsingMutator(INameMutator mutator)
+        {
+            this.Mutator = mutator ?? throw new ArgumentNullException("The specified IMutator is null.");
             return this;
         }
 
-        public NameGenerator SetSyllableCount(int length)
+        public NameGenerator LimitSyllableCount(int length)
         {
-            return this.SetSyllableCount(length, length);
+            return this.LimitSyllableCount(length, length);
         }
 
-        public NameGenerator SetSyllableCount(int min, int max)
+        public NameGenerator LimitSyllableCount(int min, int max)
         {
 
             if(min < 1)
@@ -96,7 +111,7 @@ namespace Syllabore
             return this;
         }
 
-        public NameGenerator SetMaximumRetries(int limit)
+        public NameGenerator LimitRetries(int limit)
         {
 
             if(limit < 1)
@@ -126,8 +141,6 @@ namespace Syllabore
             var syllableLength = this.Random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
             return this.Next(syllableLength);
         }
-
-
 
         /// <summary>
         /// Generates a random name with the specified syllable length and returns as a string.
@@ -162,14 +175,12 @@ namespace Syllabore
                 throw new ArgumentException("The desired syllable length must be a positive value.");
             }
 
-            //var syllables = new List<string>();
             var validNameGenerated = false;
             var totalAttempts = 0;
             var result = new Name(new string[syllableLength]);
 
             while (!validNameGenerated)
             {
-                //syllables.Clear();
                 for (int i = 0; i < syllableLength; i++)
                 {
                     if (i == 0 && syllableLength > 1)
@@ -211,7 +222,7 @@ namespace Syllabore
 
             while (!validNameGenerated)
             {
-                result = this.Shifter.NextVariation(sourceName);
+                result = this.Mutator.Mutate(sourceName);
                 validNameGenerated = this.Validator != null ? this.Validator.IsValidName(result.ToString()) : true;
 
                 if (totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
