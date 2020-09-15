@@ -23,5 +23,19 @@ namespace Syllabore
             var result = string.Join(string.Empty, this.Syllables);
             return result.Substring(0, 1).ToUpper() + result.Substring(1).ToLower();
         }
+
+        public override bool Equals(object obj)
+        {
+            if(obj is Name){
+                return (((Name)obj).ToString() == this.ToString());
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
