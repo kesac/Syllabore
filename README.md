@@ -57,7 +57,6 @@ var g = new NameGenerator()
     .UsingValidator(v => v
         .Invalidate(
             @"(\w)\1\1",             // no letters three times in a row
-            @"([^aeoyAEOY])\1",      // no consonants twice in a row
             @".*([y|Y]).*([y|Y]).*", // two y's in same name
             @".*([z|Z]).*([z|Z]).*", // two z's in same name
             @"(zs)",                 // this just looks weird
