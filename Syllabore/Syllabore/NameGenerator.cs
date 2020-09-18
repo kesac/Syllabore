@@ -24,6 +24,8 @@ namespace Syllabore
         public int MinimumSyllables { get; private set; }
         public int MaximumSyllables { get; private set; }
 
+        public double MutationProbability { get; private set; }
+
         /// <summary>
         /// Maximum attempts this generator will attempt to satisfy the
         /// NameValidator before it throws an Exception. This is used to protect
@@ -89,6 +91,12 @@ namespace Syllabore
             return this;
         }
         
+        public NameGenerator UsingMutator(Func<ConfigurableNameMutator, INameMutator> configure)
+        {
+            this.Mutator = configure(new ConfigurableNameMutator());
+            return this;
+        }
+
         public NameGenerator UsingMutator(INameMutator mutator)
         {
             this.Mutator = mutator ?? throw new ArgumentNullException("The specified IMutator is null.");
@@ -126,6 +134,19 @@ namespace Syllabore
             }
 
             this.MaximumRetries = limit;
+
+            return this;
+        }
+
+        public NameGenerator LimitMutationChance(double probability)
+        {
+
+            if (probability < 0 || probability > 1)
+            {
+                throw new ArgumentException("The mutation probability must be a number between 0 and 1 inclusive.");
+            }
+
+            this.MutationProbability = probability;
 
             return this;
         }
@@ -183,24 +204,31 @@ namespace Syllabore
 
             var validNameGenerated = false;
             var totalAttempts = 0;
-            var result = new Name(new string[syllableLength]);
+            var result = new Name();
 
             while (!validNameGenerated)
             {
+                result.Syllables.Clear();
                 for (int i = 0; i < syllableLength; i++)
                 {
                     if (i == 0 && syllableLength > 1)
                     {
-                        result.Syllables[i] = this.Provider.NextStartingSyllable();
+                        //result.Syllables[i] = this.Provider.NextStartingSyllable();
+                        result.Syllables.Add(this.Provider.NextStartingSyllable());
                     }
                     else if (i == syllableLength - 1 && syllableLength > 1)
                     {
-                        result.Syllables[i] = this.Provider.NextEndingSyllable();
+                        result.Syllables.Add(this.Provider.NextEndingSyllable());
                     }
                     else
                     {
-                        result.Syllables[i] = this.Provider.NextSyllable();
+                        result.Syllables.Add(this.Provider.NextSyllable());
                     }
+                }
+
+                if(this.Random.NextDouble() < this.MutationProbability)
+                {
+                    result =  this.Mutator.Mutate(result);
                 }
 
                 validNameGenerated = this.Validator != null ? this.Validator.IsValidName(result.ToString()) : true;
@@ -214,17 +242,18 @@ namespace Syllabore
             return result;
         }
 
+        // Mutation will use this NameGenerator's mutator, but subject output to the validator (if there is one)
         public Name NextVariation(Name sourceName)
         {
 
-            if (sourceName.Syllables.Length < 1)
+            if (sourceName.Syllables.Count < 1)
             {
                 throw new ArgumentException("It's not possible to create variations on a name that has 0 syllables.");
             }
 
             var validNameGenerated = false;
             var totalAttempts = 0;
-            Name? result = null;
+            Name result = null;
 
             while (!validNameGenerated)
             {
