@@ -18,7 +18,7 @@ namespace Syllabore
             this.Shifters = new List<INameMutator>();
         }
 
-        public MutatorCollection Using(INameMutator shifter)
+        public MutatorCollection Add(INameMutator shifter)
         {
             this.Shifters.Add(shifter);
             return this;
