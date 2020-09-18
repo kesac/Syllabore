@@ -35,7 +35,7 @@ namespace Syllabore.Example
                         .Invalidate(@"(\w)\1\1")               // Invalidate any sequence of 3 or more identical letters
                         .Invalidate(@"([^aeiouAEIOU])\1\1\1"); // Invalidate any sequence of 4 or more consonants
                 
-                var g = new NameGenerator().UsingProvider(provider).UsingValidator(validator);
+                var g = new NameGenerator(provider, validator);
 
                 for (int i = 0; i < 10; i++)
                 {
@@ -63,16 +63,14 @@ namespace Syllabore.Example
                 // If you don't like XML, you can choose to
                 // build name generators programmatically.
                 var g = new NameGenerator()
-                    .UsingProvider(new ConfigurableSyllableProvider()
-                        .WithLeadingConsonants("s", "t", "r")
-                        .WithVowels("a", "e")
-                        .WithVowelSequenceProbability(0.20)
-                        .WithTrailingConsonants("z")
-                        .WithTrailingConsonantProbability(0.10)
-                        .DisallowVowelSequences()
-                        .DisallowLeadingConsonantSequences()
-                        .DisallowTrailingConsonantSequences())
-                    .UsingValidator(new ConfigurableNameValidator()
+                    .UsingProvider(x => x
+                        .WithLeadingConsonants("str")
+                        .WithVowels("ae")
+                        .WithTrailingConsonants("yz")
+                        .WithProbability(y => y
+                            .OfVowelSequences(0.20)
+                            .OfTrailingConsonants(0.10)))
+                    .UsingValidator(x => x
                         .Invalidate("zzz")
                         .Invalidate("[q]+"))
                     .LimitSyllableCount(3);
@@ -90,8 +88,8 @@ namespace Syllabore.Example
                 // Creating variations of a single name
                 var g = new NameGenerator()
                     .UsingMutator(new MutatorCollection()
-                        .Using(new DefaultNameMutator())
-                        .Using(new VowelMutator()));
+                        .Add(new DefaultNameMutator())
+                        .Add(new VowelMutator()));
 
                 for(int i = 0; i < 3; i++)
                 {
@@ -115,9 +113,7 @@ namespace Syllabore.Example
                         .WithVowels("aeoy")
                         .WithLeadingConsonants("vstlr")
                         .WithTrailingConsonants("zrt")
-                        .WithVowelSequences("ey", "ay", "oy")
-                        .DisallowLeadingConsonantSequences()
-                        .DisallowTrailingConsonantSequences())
+                        .WithVowelSequences("ey", "ay", "oy"))
                     .UsingValidator(v => v
                         .Invalidate(
                             @"(\w)\1\1", // no triples

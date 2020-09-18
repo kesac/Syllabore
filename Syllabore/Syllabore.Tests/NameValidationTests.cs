@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace Syllabore.Tests
 {
     [TestClass]
-    public class ConfigurableNameValidatorTest
+    public class NameValidationTests
     {
 
         [TestMethod, Timeout(10000)]
@@ -20,7 +20,7 @@ namespace Syllabore.Tests
                     .WithLeadingConsonants("b")
                     .WithLeadingConsonantSequences("cc")
                     .WithTrailingConsonants("d")
-                    .WithTrailingConsonantSequence("ff")
+                    .WithTrailingConsonantSequences("ff")
                     .AllowVowelSequences() // These flags are true by default; we explicitly set them for clarity to future readers
                     .AllowLeadingConsonantSequences()
                     .AllowTrailingConsonantSequences())
