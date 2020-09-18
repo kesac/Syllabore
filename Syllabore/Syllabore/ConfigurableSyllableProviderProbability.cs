@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Syllabore
 {
+    // Not sure if this should exist like this
     public class ConfigurableSyllableProviderProbability
     {
 

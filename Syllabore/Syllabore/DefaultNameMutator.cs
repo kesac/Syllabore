@@ -9,7 +9,7 @@ namespace Syllabore
     /// with another syllable. This class uses the DefaultSyllableProvider
     /// by default.
     /// </summary>
-    public class DefaultNameMutator : INameMutator
+    public class DefaultNameMutator : ConfigurableNameMutator
     {
         private ISyllableProvider Provider { get; set; }
 
@@ -19,29 +19,26 @@ namespace Syllabore
         {
             this.Provider = new DefaultSyllableProvider();
             this.Random = new Random();
-        }
 
-        public Name Mutate(Name sourceName)
-        {
-            Name result = new Name(new string[sourceName.Syllables.Length]);            
-            Array.Copy(sourceName.Syllables, result.Syllables, sourceName.Syllables.Length);
+            this.WithMutation(name => {
 
-            int index = this.Random.Next(sourceName.Syllables.Length);
+                int index = this.Random.Next(name.Syllables.Count);
 
-            if (index == 0)
-            {
-                result.Syllables[index] = this.Provider.NextStartingSyllable();
-            }
-            else if (index == sourceName.Syllables.Length - 1)
-            {
-                result.Syllables[index] = this.Provider.NextEndingSyllable();
-            }
-            else
-            {
-                result.Syllables[index] = this.Provider.NextSyllable();
-            }
+                if (index == 0)
+                {
+                    name.Syllables[index] = this.Provider.NextStartingSyllable();
+                }
+                else if (index == name.Syllables.Count - 1)
+                {
+                    name.Syllables[index] = this.Provider.NextEndingSyllable();
+                }
+                else
+                {
+                    name.Syllables[index] = this.Provider.NextSyllable();
+                }
 
-            return result;
+            });
+
         }
     }
 }
