@@ -5,17 +5,6 @@ using System.Text;
 namespace Syllabore
 {
 
-    public class Mutation
-    {
-        public Action<Name> Mutate { get; set; }
-        public Func<Name, bool> CanMutate { get; set; }
-
-        public Mutation(Action<Name> mutate)
-        {
-            this.Mutate = mutate;
-        }
-    }
-
     public class ConfigurableNameMutator : INameMutator
     {
         private Random Random;
