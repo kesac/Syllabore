@@ -26,7 +26,7 @@ namespace Syllabore
                 .WithVowels(Vowels)
                 .WithVowelSequences(VowelSequences)
                 .WithTrailingConsonants(TrailingConsonants)
-                .WithTrailingConsonantSequence(TrailingConsonantSequences);
+                .WithTrailingConsonantSequences(TrailingConsonantSequences);
 
         }
 
