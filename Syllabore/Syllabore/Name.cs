@@ -8,14 +8,17 @@ namespace Syllabore
     /// Represents a generated name. Can be returned by NameGenerator for callers
     /// to access the syllables of a name.
     /// </summary>
-    public struct Name
+    public class Name
     {
-        public string[] Syllables { get; set; }
+        public List<string> Syllables { get; set; }
 
-        public Name(string[] syllables)
+        public Name()
         {
-            this.Syllables = new string[syllables.Length];
-            syllables.CopyTo(this.Syllables, 0);
+            this.Syllables = new List<string>();
+        }
+
+        public Name(Name copy) {
+            this.Syllables = new List<string>(copy.Syllables);
         }
 
         public override string ToString()
