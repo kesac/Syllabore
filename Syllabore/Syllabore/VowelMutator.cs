@@ -43,15 +43,9 @@ namespace Syllabore
         /// TODO this is only shifting vowels right now and it doesn't handle vowel sequences
         public Name Mutate(Name sourceName)
         {
-            var syllables = new string[sourceName.Syllables.Length];
-            Array.Copy(sourceName.Syllables, syllables, sourceName.Syllables.Length);
-
-            Name result = new Name(syllables);
-
-            int index = this.Random.Next(sourceName.Syllables.Length);
-
+            Name result = new Name(sourceName);
+            int index = this.Random.Next(sourceName.Syllables.Count);
             var syllable = result.Syllables[index];
-
             result.Syllables[index] = Regex.Replace(syllable, "([aeiouAEIOU]+)", this.VowelPool[this.Random.Next(this.VowelPool.Count)]);
 
             return result;
