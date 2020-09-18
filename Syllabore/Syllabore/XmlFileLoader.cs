@@ -78,7 +78,7 @@ namespace Syllabore
                 }
             }
 
-            this.NameGenerators.Add(generatorName, new NameGenerator().UsingProvider(provider).UsingValidator(validator));
+            this.NameGenerators.Add(generatorName, new NameGenerator(provider, validator));
         }
 
         private void DefineSyllableProvider(ConfigurableSyllableProvider provider, XmlNode componentsRoot)
@@ -114,7 +114,7 @@ namespace Syllabore
                     }
                     else if (type.Equals("TrailingConsonantSequences", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.WithTrailingConsonantSequence(valuesAsArray);
+                        provider.WithTrailingConsonantSequences(valuesAsArray);
                     }
                     else
                     {
@@ -164,43 +164,47 @@ namespace Syllabore
 
                     if (type.Equals("LeadingVowelProbability", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.LeadingVowelProbability = double.Parse(value);
-                        if(provider.LeadingVowelProbability == 1)
+                        provider.Probability.OfStartingSyllableLeadingVowels(double.Parse(value));
+                        if(provider.Probability.StartingSyllableLeadingVowel == 1)
                         {
-                            provider.UseLeadingConsonants = false;
-                            provider.UseLeadingConsonantSequences = false;
+                            provider.DisallowLeadingConsonants();
+                            provider.DisallowLeadingConsonantSequences();
                         }
                     }
                     else if (type.Equals("LeadingConsonantSequenceProbability", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.LeadingConsonantSequenceProbability = double.Parse(value);
-                        if(provider.LeadingConsonantSequenceProbability == 0)
+                        provider.Probability.OfLeadingConsonantSequences(double.Parse(value));
+                        if (provider.Probability.LeadingConsonantSequenceProbability == 0)
                         {
-                            provider.UseLeadingConsonantSequences = false;
+                            provider.DisallowLeadingConsonantSequences();
                         }
                     }
                     else if (type.Equals("VowelSequenceProbability", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.VowelSequenceProbability = double.Parse(value);
-                        if (provider.VowelSequenceProbability == 0)
+                        // provider.VowelSequenceProbability = double.Parse(value);
+                        provider.Probability.OfVowelSequences(double.Parse(value));
+                        if (provider.Probability.VowelSequence == 0)
                         {
-                            provider.UseVowelSequences = false;
+                            //provider.UseVowelSequences = false;
+                            provider.DisallowVowelSequences();
                         }
                     }
                     else if (type.Equals("TrailingConsonantProbability", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.TrailingConsonantProbability = double.Parse(value);
-                        if(provider.TrailingConsonantProbability == 0)
+                        //provider.TrailingConsonantProbability = double.Parse(value);
+                        provider.Probability.OfTrailingConsonants(double.Parse(value));
+                        if(provider.Probability.TrailingConsonant == 0)
                         {
-                            provider.UseTrailingConsonants = false;
+                            //provider.UseTrailingConsonants = false;
+                            provider.DisallowTrailingConsonants();
                         }
                     }
                     else if (type.Equals("TrailingConsonantSequenceProbability", StringComparison.OrdinalIgnoreCase))
                     {
-                        provider.TrailingConsonantSequenceProbability = double.Parse(value);
-                        if(provider.TrailingConsonantSequenceProbability == 0)
+                        provider.Probability.OfTrailingConsonantSequence(double.Parse(value));
+                        if(provider.Probability.TrailingConsonantSequence == 0)
                         {
-                            provider.UseTrailingConsonantSequences = false;
+                            provider.DisallowTrailingConsonantSequences();
                         }
                     }
                     else

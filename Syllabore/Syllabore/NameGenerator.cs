@@ -38,10 +38,16 @@ namespace Syllabore
         /// </summary>
         public NameGenerator() : this(new DefaultSyllableProvider(), new DefaultNameMutator(), null) { }
 
-        public NameGenerator(ISyllableProvider provider, INameMutator shifter, INameValidator validator)
+        public NameGenerator(ISyllableProvider provider) : this(provider, new DefaultNameMutator(), null) { }
+
+        public NameGenerator(ISyllableProvider provider, INameMutator mutator) : this(provider, mutator, null) { }
+
+        public NameGenerator(ISyllableProvider provider, INameValidator validator) : this(provider, new DefaultNameMutator(), validator) { }
+
+        public NameGenerator(ISyllableProvider provider, INameMutator mutator, INameValidator validator)
         {
             this.UsingProvider(provider)
-                .UsingMutator(shifter)
+                .UsingMutator(mutator)
                 .UsingValidator(validator)
                 .LimitSyllableCount(2, 2)
                 .LimitRetries(1000);
