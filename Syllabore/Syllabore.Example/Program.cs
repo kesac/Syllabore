@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Syllabore.Example
 {
@@ -114,6 +115,14 @@ namespace Syllabore.Example
                         .WithLeadingConsonants("vstlr")
                         .WithTrailingConsonants("zrt")
                         .WithVowelSequences("ey", "ay", "oy"))
+                    .UsingMutator(m => m
+                        .WithMutation(x => { x.Syllables[0] = "Gran"; })
+                        .WithMutation(x => { x.Syllables[x.Syllables.Count - 1] = "gard"; }).When(x => x.EndsWithVowel())
+                        .WithMutation(x => x.Syllables.Add("opolis")).When(x => x.EndsWithConsonant())
+                        .WithMutation(x => x.Syllables.Add("polis")).When(x => x.EndsWithVowel())
+                        .WithMutationCount(1))
+                    .LimitMutationChance(0.99)
+                    .LimitSyllableCount(2, 3)
                     .UsingValidator(v => v
                         .Invalidate(
                             @"(\w)\1\1", // no triples
@@ -121,21 +130,14 @@ namespace Syllabore.Example
                             @".*([y|Y]).*([y|Y]).*", // two y's in same word
                             @".*([z|Z]).*([z|Z]).*", // two z's in same word
                             @"(zs)", // looks wierd
-                            @"(y[v|t])")) // looks wierd 
-                    .UsingMutator(new VowelMutator("aeoy"))
-                    .LimitSyllableCount(2, 3);
+                            @"(y[v|t])") // looks wierd 
+                        );
 
-                for (int i = 0; i < 25; i++)
+
+                for (int i = 0; i < 50; i++)
                 {
                     var name = g.NextName();
-                    var variation = g.NextVariation(name);
-
                     Console.WriteLine(name);
-                    if(!name.Equals(variation))
-                    {
-                        Console.WriteLine(variation);
-                    }
-                    
                 }
 
                 Console.WriteLine();
