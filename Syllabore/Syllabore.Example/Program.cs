@@ -32,9 +32,9 @@ namespace Syllabore.Example
 
                 var provider = new DefaultSyllableProvider();
                 var validator = new ConfigurableNameValidator()
-                        .Invalidate(@"[j|p|q|w]$")             // Invalidate these awkward endings
-                        .Invalidate(@"(\w)\1\1")               // Invalidate any sequence of 3 or more identical letters
-                        .Invalidate(@"([^aeiouAEIOU])\1\1\1"); // Invalidate any sequence of 4 or more consonants
+                        .InvalidateRegex(@"[j|p|q|w]$")             // Invalidate these awkward endings
+                        .InvalidateRegex(@"(\w)\1\1")               // Invalidate any sequence of 3 or more identical letters
+                        .InvalidateRegex(@"([^aeiouAEIOU])\1\1\1"); // Invalidate any sequence of 4 or more consonants
                 
                 var g = new NameGenerator(provider, validator);
 
@@ -66,14 +66,7 @@ namespace Syllabore.Example
                 var g = new NameGenerator()
                     .UsingProvider(x => x
                         .WithLeadingConsonants("str")
-                        .WithVowels("ae")
-                        .WithTrailingConsonants("yz")
-                        .WithProbability(y => y
-                            .OfVowelSequences(0.20)
-                            .OfTrailingConsonants(0.10)))
-                    .UsingValidator(x => x
-                        .Invalidate("zzz")
-                        .Invalidate("[q]+"))
+                        .WithVowels("ae"))
                     .LimitSyllableCount(3);
 
                 for(int i = 0; i < 10; i++)
@@ -117,22 +110,20 @@ namespace Syllabore.Example
                         .WithVowelSequences("ey", "ay", "oy"))
                     .UsingMutator(m => m
                         .WithMutation(x => { x.Syllables[0] = "Gran"; })
-                        .WithMutation(x => { x.Syllables[x.Syllables.Count - 1] = "gard"; }).When(x => x.EndsWithVowel())
                         .WithMutation(x => x.Syllables.Add("opolis")).When(x => x.EndsWithConsonant())
                         .WithMutation(x => x.Syllables.Add("polis")).When(x => x.EndsWithVowel())
                         .WithMutationCount(1))
-                    .LimitMutationChance(0.99)
-                    .LimitSyllableCount(2, 3)
                     .UsingValidator(v => v
-                        .Invalidate(
-                            @"(\w)\1\1", // no triples
-                            @"([^aeoyAEOY])\1", // no two consonant sequence
-                            @".*([y|Y]).*([y|Y]).*", // two y's in same word
-                            @".*([z|Z]).*([z|Z]).*", // two z's in same word
-                            @"(zs)", // looks wierd
-                            @"(y[v|t])") // looks wierd 
-                        );
-
+                        .Invalidate(x => x.ToString().Length > 12)
+                        .InvalidateRegex(
+                            @"(\w)\1\1",             // no letters three times in a row
+                            @".*([y|Y]).*([y|Y]).*", // two y's in same name
+                            @".*([z|Z]).*([z|Z]).*", // two z's in same name
+                            @"(zs)",                 // this just looks weird
+                            @"(y[v|t])"))            // this also looks weird 
+                    .LimitMutationChance(0.99)
+                    .LimitSyllableCount(2, 3);
+                
 
                 for (int i = 0; i < 50; i++)
                 {
@@ -155,12 +146,12 @@ namespace Syllabore.Example
                 var shifter = new VowelMutator("a", "e", "o", "y");
 
                 var validator = new ConfigurableNameValidator();
-                validator.Invalidate(@"(\w)\1\1");
-                validator.Invalidate(@"([^aeoyAEOY])\1");
-                validator.Invalidate(@".*([y|Y]).*([y|Y]).*");
-                validator.Invalidate(@".*([z|Z]).*([z|Z]).*");
-                validator.Invalidate(@"(zs)");
-                validator.Invalidate(@"(y[v|t])");
+                validator.InvalidateRegex(@"(\w)\1\1");
+                validator.InvalidateRegex(@"([^aeoyAEOY])\1");
+                validator.InvalidateRegex(@".*([y|Y]).*([y|Y]).*");
+                validator.InvalidateRegex(@".*([z|Z]).*([z|Z]).*");
+                validator.InvalidateRegex(@"(zs)");
+                validator.InvalidateRegex(@"(y[v|t])");
 
                 var g = new NameGenerator(provider, shifter, validator);
                 g.LimitSyllableCount(2, 3);

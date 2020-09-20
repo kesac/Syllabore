@@ -63,7 +63,7 @@ namespace Syllabore.Tests
         {
             var generator = new NameGenerator()
                 .UsingValidator(new ConfigurableNameValidator()
-                .Invalidate(".")) // Set validator to reject names with at least 1 character
+                .InvalidateRegex(".")) // Set validator to reject names with at least 1 character
                 .LimitSyllableCount(10)  // Ensure the generator only produces names with at least 1 character
                 .LimitRetries(1000);  // All futile attempts
 

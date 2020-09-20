@@ -25,8 +25,8 @@ namespace Syllabore.Tests
                     .AllowLeadingConsonantSequences()
                     .AllowTrailingConsonantSequences())
                 .UsingValidator(x => x
-                    .Invalidate(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
-                    .Invalidate(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
+                    .InvalidateRegex(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
+                    .InvalidateRegex(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
 
             for (int i = 1000; i < 1; i++)
             {
@@ -41,11 +41,11 @@ namespace Syllabore.Tests
 
             var provider = new DefaultSyllableProvider();
             var validator = new ConfigurableNameValidator();
-            validator.Invalidate(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
+            validator.InvalidateRegex(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
 
-            Assert.IsTrue(validator.IsValidName("bc"));
-            Assert.IsFalse(validator.IsValidName("bcd"));
-            Assert.IsFalse(validator.IsValidName("bcdf"));
+            Assert.IsTrue(validator.IsValidName(new Name() { Syllables = new List<String>() { "bc" } }));
+            Assert.IsFalse(validator.IsValidName(new Name() { Syllables = new List<String>() { "bcd" } }));
+            Assert.IsFalse(validator.IsValidName(new Name() { Syllables = new List<String>() { "bcdf" } }));
 
             var generator = new NameGenerator();
             generator.UsingProvider(provider);
