@@ -10,20 +10,25 @@ namespace Syllabore
     /// </summary>
     public class ConfigurableNameValidator : INameValidator
     {
-        private List<string> RegexConstraints { get; set; }
+        private List<Func<Name, bool>> Constraints { get; set; }
 
         public ConfigurableNameValidator()
         {
-            this.RegexConstraints = new List<string>();
+            this.Constraints = new List<Func<Name, bool>>();
+        }
+        public ConfigurableNameValidator Invalidate(Func<Name, bool> verify)
+        {
+            this.Constraints.Add(verify);
+            return this;
         }
 
         /// <summary>
         /// Adds the specified constraint as a regular expression. Any name matching this contraint is considered invalid.
         /// </summary>
-        public ConfigurableNameValidator Invalidate(params string[] regex)
+        public ConfigurableNameValidator InvalidateRegex(params string[] regex)
         {
-            foreach (var r in regex) { 
-                this.RegexConstraints.Add(r);
+            foreach (var r in regex) {
+                this.Invalidate(x => Regex.IsMatch(x.ToString(), r));
             }
             return this;
         }
@@ -31,14 +36,14 @@ namespace Syllabore
         /// <summary>
         /// Returns true if the specified name does not match any of this validator's contraints, else returns false.
         /// </summary>
-        public bool IsValidName(string name)
+        public bool IsValidName(Name name)
         {
 
             bool isValid = true;
 
-            foreach(var constraint in this.RegexConstraints)
+            foreach(var constraint in this.Constraints)
             {
-                if(Regex.IsMatch(name, constraint))
+                if(constraint(name))
                 {
                     isValid = false;
                     break;
