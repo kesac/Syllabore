@@ -136,13 +136,13 @@ namespace Syllabore
                     if (when.Equals("NameMatchesRegex", StringComparison.OrdinalIgnoreCase))
                     {
                         var regex = node.Attributes["regex"].Value;
-                        validator.Invalidate(regex);
+                        validator.InvalidateRegex(regex);
                     }
                     else if (when.Equals("NameEndsWith", StringComparison.OrdinalIgnoreCase))
                     {
                         var values = node.Attributes["values"].Value;
                         var regex = string.Format("({0})$", values.Trim().Replace(" ", "|"));
-                        validator.Invalidate(regex);
+                        validator.InvalidateRegex(regex);
                     }
                     else
                     {

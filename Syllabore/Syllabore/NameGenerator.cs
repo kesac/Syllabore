@@ -209,6 +209,7 @@ namespace Syllabore
             while (!validNameGenerated)
             {
                 result.Syllables.Clear();
+
                 for (int i = 0; i < syllableLength; i++)
                 {
                     if (i == 0 && syllableLength > 1)
@@ -231,7 +232,7 @@ namespace Syllabore
                     result =  this.Mutator.Mutate(result);
                 }
 
-                validNameGenerated = this.Validator != null ? this.Validator.IsValidName(result.ToString()) : true;
+                validNameGenerated = this.Validator != null ? this.Validator.IsValidName(result) : true;
 
                 if (totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
                 {
@@ -258,7 +259,7 @@ namespace Syllabore
             while (!validNameGenerated)
             {
                 result = this.Mutator.Mutate(sourceName);
-                validNameGenerated = this.Validator != null ? this.Validator.IsValidName(result.ToString()) : true;
+                validNameGenerated = this.Validator != null ? this.Validator.IsValidName(result) : true;
 
                 if (totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
                 {
