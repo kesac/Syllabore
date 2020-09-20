@@ -12,6 +12,6 @@ namespace Syllabore
         /// <summary>
         /// Returns true if the specified name is a valid. Otherwise, it returns false.
         /// </summary>
-        bool IsValidName(string name);
+        bool IsValidName(Name name);
     }
 }
