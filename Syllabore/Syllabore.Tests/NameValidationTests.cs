@@ -40,7 +40,7 @@ namespace Syllabore.Tests
         {
 
             var provider = new DefaultSyllableProvider();
-            var validator = new ConfigurableNameValidator();
+            var validator = new NameValidator();
             validator.InvalidateRegex(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
 
             Assert.IsTrue(validator.IsValidName(new Name() { Syllables = new List<String>() { "bc" } }));

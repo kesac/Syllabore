@@ -5,7 +5,7 @@ using System.Text;
 namespace Syllabore
 {
     // Not sure if this should exist like this
-    public class ConfigurableSyllableProviderProbability
+    public class SyllableProviderProbability
     {
 
         /// <summary>
@@ -40,54 +40,54 @@ namespace Syllabore
         public double TrailingConsonantSequence { get; private set; }
 
 
-        private ConfigurableSyllableProvider _parent;
+        private SyllableProvider _parent;
 
-        public ConfigurableSyllableProviderProbability(ConfigurableSyllableProvider parent)
+        public SyllableProviderProbability(SyllableProvider parent)
         {
             _parent = parent;
         }
 
-        public ConfigurableSyllableProvider Confirm()
+        public SyllableProvider Confirm()
         {
             return _parent;
         }
 
         // TODO - Docs and argument validation
-        public ConfigurableSyllableProviderProbability OfStartingSyllableLeadingVowels(double d)
+        public SyllableProviderProbability OfStartingSyllableLeadingVowels(double d)
         {
             this.StartingSyllableLeadingVowel = d;
             return this;
         }
 
-        public ConfigurableSyllableProviderProbability OfStartingSyllableLeadingVowelSequence(double d)
+        public SyllableProviderProbability OfStartingSyllableLeadingVowelSequence(double d)
         {
             this.StartingSyllableLeadingVowelSequenceProbability = d;
             return this;
         }
 
         // TODO - Docs and argument validation
-        public ConfigurableSyllableProviderProbability OfLeadingConsonantSequences(double d)
+        public SyllableProviderProbability OfLeadingConsonantSequences(double d)
         {
             this.LeadingConsonantSequenceProbability = d;
             return this;
         }
 
         // TODO - Docs and argument validation
-        public ConfigurableSyllableProviderProbability OfVowelSequences(double d)
+        public SyllableProviderProbability OfVowelSequences(double d)
         {
             this.VowelSequence = d;
             return this;
         }
 
         // TODO - Docs and argument validation
-        public ConfigurableSyllableProviderProbability OfTrailingConsonants(double d)
+        public SyllableProviderProbability OfTrailingConsonants(double d)
         {
             this.TrailingConsonant = d;
             return this;
         }
 
         // TODO - Docs and argument validation
-        public ConfigurableSyllableProviderProbability OfTrailingConsonantSequence(double d)
+        public SyllableProviderProbability OfTrailingConsonantSequence(double d)
         {
             this.TrailingConsonantSequence = d;
             return this;

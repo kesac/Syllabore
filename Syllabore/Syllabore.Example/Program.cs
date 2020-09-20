@@ -31,7 +31,7 @@ namespace Syllabore.Example
                 // or inheriting from ConfigurableSyllableProvider/ConfigurableNameValidator.
 
                 var provider = new DefaultSyllableProvider();
-                var validator = new ConfigurableNameValidator()
+                var validator = new NameValidator()
                         .InvalidateRegex(@"[j|p|q|w]$")             // Invalidate these awkward endings
                         .InvalidateRegex(@"(\w)\1\1")               // Invalidate any sequence of 3 or more identical letters
                         .InvalidateRegex(@"([^aeiouAEIOU])\1\1\1"); // Invalidate any sequence of 4 or more consonants
@@ -135,7 +135,7 @@ namespace Syllabore.Example
 
             }
             {
-                var provider = new ConfigurableSyllableProvider();
+                var provider = new SyllableProvider();
                 provider.WithVowels("a", "e", "o", "y");
                 provider.WithLeadingConsonants("v", "s", "t", "l", "r");
                 provider.WithTrailingConsonants("z", "r", "t");
@@ -145,7 +145,7 @@ namespace Syllabore.Example
 
                 var shifter = new VowelMutator("a", "e", "o", "y");
 
-                var validator = new ConfigurableNameValidator();
+                var validator = new NameValidator();
                 validator.InvalidateRegex(@"(\w)\1\1");
                 validator.InvalidateRegex(@"([^aeoyAEOY])\1");
                 validator.InvalidateRegex(@".*([y|Y]).*([y|Y]).*");

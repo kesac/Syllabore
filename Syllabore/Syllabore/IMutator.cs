@@ -7,7 +7,7 @@ namespace Syllabore
     /// <summary>
     /// Generates variations of a specified name.
     /// </summary>
-    public interface INameMutator
+    public interface IMutator
     {
         Name Mutate(Name sourceName);
     }

@@ -9,9 +9,9 @@ namespace Syllabore
     /// with another syllable. This class uses the DefaultSyllableProvider
     /// by default.
     /// </summary>
-    public class DefaultNameMutator : ConfigurableNameMutator
+    public class DefaultNameMutator : NameMutator
     {
-        private ISyllableProvider Provider { get; set; }
+        private IProvider Provider { get; set; }
 
         private Random Random { get; set; }
 

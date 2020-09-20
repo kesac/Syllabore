@@ -55,8 +55,8 @@ namespace Syllabore
         {
             var generatorName = generatorRoot.Attributes["name"].Value;
 
-            var provider = new ConfigurableSyllableProvider();
-            var validator = new ConfigurableNameValidator();
+            var provider = new SyllableProvider();
+            var validator = new NameValidator();
 
             foreach(XmlNode node in generatorRoot.ChildNodes)
             {
@@ -81,7 +81,7 @@ namespace Syllabore
             this.NameGenerators.Add(generatorName, new NameGenerator(provider, validator));
         }
 
-        private void DefineSyllableProvider(ConfigurableSyllableProvider provider, XmlNode componentsRoot)
+        private void DefineSyllableProvider(SyllableProvider provider, XmlNode componentsRoot)
         {
             foreach (XmlNode node in componentsRoot.ChildNodes)
             {
@@ -125,7 +125,7 @@ namespace Syllabore
             }
         }
 
-        private void DefineConstraints(ConfigurableNameValidator validator, XmlNode constraintsRoot)
+        private void DefineConstraints(NameValidator validator, XmlNode constraintsRoot)
         {
             foreach (XmlNode node in constraintsRoot.ChildNodes)
             {
@@ -153,7 +153,7 @@ namespace Syllabore
             }
         }
 
-        private void DefineProbability(ConfigurableSyllableProvider provider, XmlNode probabilityNode)
+        private void DefineProbability(SyllableProvider provider, XmlNode probabilityNode)
         {
             foreach (XmlNode node in probabilityNode)
             {

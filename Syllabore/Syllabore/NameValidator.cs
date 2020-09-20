@@ -8,15 +8,15 @@ namespace Syllabore
     /// <summary>
     /// Validates names by checking them against a set of configurable constraints.
     /// </summary>
-    public class ConfigurableNameValidator : INameValidator
+    public class NameValidator : IValidator
     {
         private List<Func<Name, bool>> Constraints { get; set; }
 
-        public ConfigurableNameValidator()
+        public NameValidator()
         {
             this.Constraints = new List<Func<Name, bool>>();
         }
-        public ConfigurableNameValidator Invalidate(Func<Name, bool> verify)
+        public NameValidator Invalidate(Func<Name, bool> verify)
         {
             this.Constraints.Add(verify);
             return this;
@@ -25,7 +25,7 @@ namespace Syllabore
         /// <summary>
         /// Adds the specified constraint as a regular expression. Any name matching this contraint is considered invalid.
         /// </summary>
-        public ConfigurableNameValidator InvalidateRegex(params string[] regex)
+        public NameValidator InvalidateRegex(params string[] regex)
         {
             foreach (var r in regex) {
                 this.Invalidate(x => Regex.IsMatch(x.ToString(), r));

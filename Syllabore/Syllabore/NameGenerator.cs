@@ -18,9 +18,9 @@ namespace Syllabore
     public class NameGenerator
     {
         private Random Random { get; set; }
-        public ISyllableProvider Provider { get; private set; }
-        public INameMutator Mutator { get; private set; }
-        public INameValidator Validator { get; private set; }
+        public IProvider Provider { get; private set; }
+        public IMutator Mutator { get; private set; }
+        public IValidator Validator { get; private set; }
         public int MinimumSyllables { get; private set; }
         public int MaximumSyllables { get; private set; }
 
@@ -40,13 +40,13 @@ namespace Syllabore
         /// </summary>
         public NameGenerator() : this(new DefaultSyllableProvider(), new DefaultNameMutator(), null) { }
 
-        public NameGenerator(ISyllableProvider provider) : this(provider, new DefaultNameMutator(), null) { }
+        public NameGenerator(IProvider provider) : this(provider, new DefaultNameMutator(), null) { }
 
-        public NameGenerator(ISyllableProvider provider, INameMutator mutator) : this(provider, mutator, null) { }
+        public NameGenerator(IProvider provider, IMutator mutator) : this(provider, mutator, null) { }
 
-        public NameGenerator(ISyllableProvider provider, INameValidator validator) : this(provider, new DefaultNameMutator(), validator) { }
+        public NameGenerator(IProvider provider, IValidator validator) : this(provider, new DefaultNameMutator(), validator) { }
 
-        public NameGenerator(ISyllableProvider provider, INameMutator mutator, INameValidator validator)
+        public NameGenerator(IProvider provider, IMutator mutator, IValidator validator)
         {
             this.UsingProvider(provider)
                 .UsingMutator(mutator)
@@ -62,9 +62,9 @@ namespace Syllabore
         /// The new ConfigurableSyllableProvider replaces the old SyllableProvider if
         /// one is already defined.
         /// </summary>
-        public NameGenerator UsingProvider(Func<ConfigurableSyllableProvider,ISyllableProvider> configure)
+        public NameGenerator UsingProvider(Func<SyllableProvider,IProvider> configure)
         {
-            this.Provider = configure(new ConfigurableSyllableProvider());
+            this.Provider = configure(new SyllableProvider());
             return this;
         }
 
@@ -72,32 +72,32 @@ namespace Syllabore
         /// Sets the specified ISyllableProvider as the new syllable provider for this NameGenerator.
         /// The old ISyllableProvider is replaced if one was previously defined.
         /// </summary>
-        public NameGenerator UsingProvider(ISyllableProvider provider)
+        public NameGenerator UsingProvider(IProvider provider)
         {
             this.Provider = provider ?? throw new ArgumentNullException("The specified ISyllableProvider is null.");
             return this;
         }
 
-        public NameGenerator UsingValidator(Func<ConfigurableNameValidator, INameValidator> configure)
+        public NameGenerator UsingValidator(Func<NameValidator, IValidator> configure)
         {
-            this.Validator = configure(new ConfigurableNameValidator());
+            this.Validator = configure(new NameValidator());
             return this;
         }
 
         // Right now this is ok
-        public NameGenerator UsingValidator(INameValidator validator)
+        public NameGenerator UsingValidator(IValidator validator)
         {
             this.Validator = validator;
             return this;
         }
         
-        public NameGenerator UsingMutator(Func<ConfigurableNameMutator, INameMutator> configure)
+        public NameGenerator UsingMutator(Func<NameMutator, IMutator> configure)
         {
-            this.Mutator = configure(new ConfigurableNameMutator());
+            this.Mutator = configure(new NameMutator());
             return this;
         }
 
-        public NameGenerator UsingMutator(INameMutator mutator)
+        public NameGenerator UsingMutator(IMutator mutator)
         {
             this.Mutator = mutator ?? throw new ArgumentNullException("The specified IMutator is null.");
             return this;

@@ -7,18 +7,18 @@ namespace Syllabore
     /// <summary>
     /// Used to combine multiple name shifters into a single shifter.
     /// </summary>
-    public class MutatorCollection : INameMutator
+    public class MutatorCollection : IMutator
     {
         private Random Random;
-        private List<INameMutator> Shifters;
+        private List<IMutator> Shifters;
 
         public MutatorCollection()
         {
             this.Random = new Random();
-            this.Shifters = new List<INameMutator>();
+            this.Shifters = new List<IMutator>();
         }
 
-        public MutatorCollection Add(INameMutator shifter)
+        public MutatorCollection Add(IMutator shifter)
         {
             this.Shifters.Add(shifter);
             return this;

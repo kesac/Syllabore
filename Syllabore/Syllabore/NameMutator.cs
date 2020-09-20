@@ -5,13 +5,13 @@ using System.Text;
 namespace Syllabore
 {
 
-    public class ConfigurableNameMutator : INameMutator
+    public class NameMutator : IMutator
     {
         private Random Random;
         private List<Mutation> Mutations;
         public int MutationLimit { get; private set; }
 
-        public ConfigurableNameMutator()
+        public NameMutator()
         {
             this.Random = new Random();
             this.Mutations = new List<Mutation>();
@@ -33,19 +33,19 @@ namespace Syllabore
             return result;
         }
 
-        public ConfigurableNameMutator WithMutation(Action<Name> mutate)
+        public NameMutator WithMutation(Action<Name> mutate)
         {
             this.Mutations.Add(new Mutation(mutate));
             return this;
         }
 
-        public ConfigurableNameMutator When(Func<Name, bool> when)
+        public NameMutator When(Func<Name, bool> when)
         {
             this.Mutations[this.Mutations.Count - 1].CanMutate = when;
             return this;
         }
 
-        public ConfigurableNameMutator WithMutationCount(int limit)
+        public NameMutator WithMutationCount(int limit)
         {
             this.MutationLimit = limit;
             return this;

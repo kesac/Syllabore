@@ -27,7 +27,7 @@ namespace Syllabore.Tests
         public void SyllableGeneration_WhenNoVowelsDefined_ThrowsInvalidOperationException()
         {
             // No vowel or vowel sequences defined shouldn't work
-            var provider = new ConfigurableSyllableProvider()
+            var provider = new SyllableProvider()
                 .WithLeadingConsonants("b")
                 .WithLeadingConsonantSequences("bb", "bbb")
                 .WithTrailingConsonants("b")
