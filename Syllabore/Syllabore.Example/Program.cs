@@ -109,9 +109,9 @@ namespace Syllabore.Example
                         .WithTrailingConsonants("zrt")
                         .WithVowelSequences("ey", "ay", "oy"))
                     .UsingMutator(m => m
-                        .WithMutation(x => { x.Syllables[0] = "Gran"; })
-                        .WithMutation(x => x.Syllables.Add("opolis")).When(x => x.EndsWithConsonant())
-                        .WithMutation(x => x.Syllables.Add("polis")).When(x => x.EndsWithVowel())
+                        .WithMutation(x => { x.ReplaceLeadingSyllable("Gran"); })
+                        .WithMutation(x => x.ReplaceTrailingSyllable("opolis")).When(x => x.SyllableAt(-2).EndsWithConsonant())
+                        .WithMutation(x => x.ReplaceTrailingSyllable("polis")).When(x => x.SyllableAt(-2).EndsWithVowel())
                         .WithMutationCount(1))
                     .UsingValidator(v => v
                         .Invalidate(x => x.ToString().Length > 12)
@@ -122,8 +122,9 @@ namespace Syllabore.Example
                             @"(zs)",                 // this just looks weird
                             @"(y[v|t])"))            // this also looks weird 
                     .LimitMutationChance(0.99)
-                    .LimitSyllableCount(2, 3);
-                
+                    .LimitSyllableCount(2, 4);
+
+                ConfigurationFile.Save(g, "city-name-generator.txt");
 
                 for (int i = 0; i < 50; i++)
                 {
