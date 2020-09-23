@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Syllabore
@@ -7,24 +8,25 @@ namespace Syllabore
     /// <summary>
     /// Generates syllables based on a set of configurable vowels and consonants.
     /// </summary>
+    [Serializable]
     public class SyllableProvider : IProvider
     {
         private Random Random { get; set; }
-        private List<string> LeadingConsonants { get; set; }
-        private List<string> LeadingConsonantSequences { get; set; }
-        private List<string> Vowels { get; set; }
-        private List<string> VowelSequences { get; set; }
-        private List<string> TrailingConsonants { get; set; }
-        private List<string> TrailingConsonantSequences { get; set; }
+        public List<string> LeadingConsonants { get; set; }
+        public List<string> LeadingConsonantSequences { get; set; }
+        public List<string> Vowels { get; set; }
+        public List<string> VowelSequences { get; set; }
+        public List<string> TrailingConsonants { get; set; }
+        public List<string> TrailingConsonantSequences { get; set; }
 
-        public bool UseStartingSyllableLeadingVowels { get; private set; }
-        public bool UseLeadingConsonants { get; private set; }
-        public bool UseLeadingConsonantSequences { get; private set; }
-        public bool UseVowelSequences { get; private set; }
-        public bool UseTrailingConsonants { get; private set; }
-        public bool UseTrailingConsonantSequences { get; private set; }
+        public bool UseStartingSyllableLeadingVowels { get; set; }
+        public bool UseLeadingConsonants { get; set; }
+        public bool UseLeadingConsonantSequences { get; set; }
+        public bool UseVowelSequences { get; set; }
+        public bool UseTrailingConsonants { get; set; }
+        public bool UseTrailingConsonantSequences { get; set; }
 
-        public SyllableProviderProbability Probability { get; private set; }
+        public SyllableProviderProbability Probability { get; set; }
 
         public SyllableProvider()
         {
@@ -293,5 +295,6 @@ namespace Syllabore
 
             return output.ToString();
         }
+
     }
 }

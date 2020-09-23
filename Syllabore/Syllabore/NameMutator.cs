@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Syllabore
 {
-
+    [Serializable]
     public class NameMutator : IMutator
     {
         private Random Random;

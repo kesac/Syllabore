@@ -8,6 +8,7 @@ namespace Syllabore
     /// <summary>
     /// Validates names by checking them against a set of configurable constraints.
     /// </summary>
+    [Serializable]
     public class NameValidator : IValidator
     {
         private List<Func<Name, bool>> Constraints { get; set; }
