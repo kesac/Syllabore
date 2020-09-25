@@ -39,8 +39,9 @@ namespace Syllabore
             this.TrailingConsonants = new List<string>();
             this.TrailingConsonantSequences = new List<string>();
 
-            // These are automatically allowed once they are defined
             this.AllowStartingSyllableLeadingVowels();
+
+            // These are automatically allowed once they are defined
             this.DisallowLeadingConsonants();
             this.DisallowLeadingConsonantSequences();
             this.DisallowVowelSequences();
@@ -49,11 +50,11 @@ namespace Syllabore
 
             this.Probability = new SyllableProviderProbability(this);
             this.Probability.OfStartingSyllableLeadingVowels(0.10);
-            this.Probability.OfStartingSyllableLeadingVowelSequence(0.05);
-            this.Probability.OfLeadingConsonantSequences(0.20);
-            this.Probability.OfVowelSequences(0.20);
+            this.Probability.OfStartingSyllableLeadingVowelSequence(0.25); // 25% chance that a leading vowel becomes a sequence
+            this.Probability.OfLeadingConsonantSequences(0.25); // 25% chance that a leading consonant becomes a sequence
+            this.Probability.OfVowelSequences(0.25);
             this.Probability.OfTrailingConsonants(0.10);
-            this.Probability.OfTrailingConsonantSequence(0.10);
+            this.Probability.OfTrailingConsonantSequence(0.25); // 25% chance that a trailing consonant becomes a sequence
         }
 
         /// <summary>
@@ -233,21 +234,21 @@ namespace Syllabore
 
         public string NextStartingSyllable()
         {
-            return GenerateSyllable(true, true);
+            return GenerateSyllable(true);
         }
 
         public string NextSyllable()
         {
-            return GenerateSyllable(false, false);
+            return GenerateSyllable(false);
         }
 
 
         public string NextEndingSyllable()
         {
-            return GenerateSyllable(false, true);
+            return GenerateSyllable(false);
         }
 
-        private string GenerateSyllable(bool isStartingSyllable, bool allowSequences)
+        private string GenerateSyllable(bool isStartingSyllable)
         {
             var output = new StringBuilder();
 
@@ -265,16 +266,18 @@ namespace Syllabore
             else
             {
 
-                if (this.UseLeadingConsonantSequences && allowSequences && this.Random.NextDouble() < this.Probability.LeadingConsonantSequenceProbability)
+                if (this.UseLeadingConsonants)
                 {
-                    output.Append(this.NextLeadingConsonantSequence());
-                }
-                else if(this.UseLeadingConsonants)
-                {
-                    output.Append(this.NextLeadingConsonant());
+                    if (this.UseLeadingConsonantSequences && this.Random.NextDouble() < this.Probability.LeadingConsonantSequenceProbability) {
+                        output.Append(this.NextLeadingConsonantSequence());
+                    }
+                    else
+                    {
+                        output.Append(this.NextLeadingConsonant());
+                    }
                 }
 
-                if (this.UseVowelSequences && allowSequences && this.Random.NextDouble() < this.Probability.VowelSequence)
+                if (this.UseVowelSequences && this.Random.NextDouble() < this.Probability.VowelSequence)
                 {
                     output.Append(this.NextVowelSequence());
                 }
@@ -286,11 +289,14 @@ namespace Syllabore
 
             if (this.UseTrailingConsonants && this.Random.NextDouble() < this.Probability.TrailingConsonant)
             {
-                output.Append(this.NextTrailingConsonant());
-            }
-            else if (this.UseTrailingConsonantSequences && allowSequences && this.Random.NextDouble() < this.Probability.TrailingConsonantSequence)
-            {
-                output.Append(this.NextTrailingConsonantSequence());
+                if (this.UseTrailingConsonantSequences && this.Random.NextDouble() < this.Probability.TrailingConsonantSequence)
+                {
+                    output.Append(this.NextTrailingConsonantSequence());
+                }
+                else
+                {
+                    output.Append(this.NextTrailingConsonant());
+                }
             }
 
             return output.ToString();
