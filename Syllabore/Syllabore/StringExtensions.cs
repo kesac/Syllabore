@@ -13,6 +13,39 @@ namespace Syllabore
             return s.Select(x => x.ToString()).ToArray();
         }
 
+        public static bool StartsWith(this string s, params string[] prefixes)
+        {
+            foreach(var prefix in prefixes)
+            {
+                if (s.StartsWith(prefix))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool StartsWithVowel(this string s)
+        {
+            return Regex.IsMatch(s, "^[aieouAEIOU]$");
+        }
+        public static bool StartsWithVowel(this Name n)
+        {
+            return Regex.IsMatch(n.ToString(), "^[aieouAEIOU]");
+        }
+
+        public static bool EndsWith(this string s, params string[] suffixes)
+        {
+            foreach (var suffix in suffixes)
+            {
+                if (s.EndsWith(suffix))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static bool EndsWithVowel(this string s)
         {
             return Regex.IsMatch(s, "[aieouAEIOU]$");
