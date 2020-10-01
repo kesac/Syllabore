@@ -11,26 +11,21 @@ namespace Syllabore
     [Serializable]
     public class NameValidator : IValidator
     {
-        private List<Func<Name, bool>> Constraints { get; set; }
+        // private List<Func<Name, bool>> Constraints { get; set; } // Flexible, but not serializable
+        public List<string> InvalidPatterns { get; set; } // Only regex is serialized for now
 
         public NameValidator()
         {
-            this.Constraints = new List<Func<Name, bool>>();
-        }
-        public NameValidator Invalidate(Func<Name, bool> verify)
-        {
-            this.Constraints.Add(verify);
-            return this;
+            // this.Constraints = new List<Func<Name, bool>>();
+            this.InvalidPatterns = new List<string>();
         }
 
         /// <summary>
         /// Adds the specified constraint as a regular expression. Any name matching this contraint is considered invalid.
         /// </summary>
-        public NameValidator InvalidateRegex(params string[] regex)
+        public NameValidator DoNotAllowPattern(params string[] regex)
         {
-            foreach (var r in regex) {
-                this.Invalidate(x => Regex.IsMatch(x.ToString(), r));
-            }
+            this.InvalidPatterns.AddRange(regex);
             return this;
         }
 
@@ -42,6 +37,7 @@ namespace Syllabore
 
             bool isValid = true;
 
+            /*
             foreach(var constraint in this.Constraints)
             {
                 if(constraint(name))
@@ -50,7 +46,16 @@ namespace Syllabore
                     break;
                 }
             }
+            */
 
+            foreach (var pattern in this.InvalidPatterns)
+            {
+                if (Regex.IsMatch(name.ToString(), pattern))
+                {
+                    isValid = false;
+                    break;
+                }
+            }
             return isValid;
         }
     }
