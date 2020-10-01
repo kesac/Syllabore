@@ -174,7 +174,7 @@ namespace Syllabore
                     else if (type.Equals("LeadingConsonantSequenceProbability", StringComparison.OrdinalIgnoreCase))
                     {
                         provider.Probability.OfLeadingConsonantSequences(double.Parse(value));
-                        if (provider.Probability.LeadingConsonantSequenceProbability == 0)
+                        if (provider.Probability.LeadingConsonantSequence == 0)
                         {
                             provider.DisallowLeadingConsonantSequences();
                         }

@@ -10,14 +10,14 @@ namespace Syllabore
 
         /// <summary>
         /// In a starting syllable, this is the chance that a name starts with a vowel. This
-        /// probability has no effect on syllables that are not meant to start an name.
+        /// probability has no effect on syllables that are not meant to start a name.
         /// </summary>
         public double StartingSyllableLeadingVowel { get; private set; }
 
         /// <summary>
         /// If a starting syllable begins with a vowel, this is the chance it is a vowel sequence.
         /// </summary>
-        public double StartingSyllableLeadingVowelSequenceProbability { get; private set; }
+        public double StartingSyllableLeadingVowelSequence { get; private set; }
 
         /// <summary>
         /// Chance that the vowel in a syllable will be a vowel sequence.
@@ -25,9 +25,9 @@ namespace Syllabore
         public double VowelSequence { get; private set; }
 
         /// <summary>
-        /// Chance that a syllable starts with a consonant sequence instead of just a consonant.
+        /// If a syllable starts with a consonant, this is the change it becomes a consonant sequence.
         /// </summary>
-        public double LeadingConsonantSequenceProbability { get; private set; }
+        public double LeadingConsonantSequence { get; private set; }
 
         /// <summary>
         /// Chance that a syllable ends with a consonant instead of the syllable's vowel.
@@ -35,10 +35,9 @@ namespace Syllabore
         public double TrailingConsonant { get; private set; }
 
         /// <summary>
-        /// If a syllable ends with a consonant, this is the chance it is a consonant sequence.
+        /// If a syllable ends with a consonant, this is the chance it becomes a consonant sequence.
         /// </summary>
         public double TrailingConsonantSequence { get; private set; }
-
 
         private SyllableProvider _parent;
 
@@ -47,48 +46,51 @@ namespace Syllabore
             _parent = parent;
         }
 
-        public SyllableProvider Confirm()
-        {
-            return _parent;
-        }
-
-        // TODO - Docs and argument validation
         public SyllableProviderProbability OfStartingSyllableLeadingVowels(double d)
         {
+
+            if(d < 0 || d > 1) { throw new InvalidOperationException("The probablity must be a value between 0 and 1 inclusive."); }
+
             this.StartingSyllableLeadingVowel = d;
             return this;
         }
 
         public SyllableProviderProbability OfStartingSyllableLeadingVowelSequence(double d)
         {
-            this.StartingSyllableLeadingVowelSequenceProbability = d;
+            if (d < 0 || d > 1) { throw new InvalidOperationException("The probablity must be a value between 0 and 1 inclusive."); }
+
+            this.StartingSyllableLeadingVowelSequence = d;
             return this;
         }
 
-        // TODO - Docs and argument validation
         public SyllableProviderProbability OfLeadingConsonantSequences(double d)
         {
-            this.LeadingConsonantSequenceProbability = d;
+            if (d < 0 || d > 1) { throw new InvalidOperationException("The probablity must be a value between 0 and 1 inclusive."); }
+
+            this.LeadingConsonantSequence = d;
             return this;
         }
 
-        // TODO - Docs and argument validation
         public SyllableProviderProbability OfVowelSequences(double d)
         {
+            if (d < 0 || d > 1) { throw new InvalidOperationException("The probablity must be a value between 0 and 1 inclusive."); }
+
             this.VowelSequence = d;
             return this;
         }
 
-        // TODO - Docs and argument validation
         public SyllableProviderProbability OfTrailingConsonants(double d)
         {
+            if (d < 0 || d > 1) { throw new InvalidOperationException("The probablity must be a value between 0 and 1 inclusive."); }
+
             this.TrailingConsonant = d;
             return this;
         }
 
-        // TODO - Docs and argument validation
         public SyllableProviderProbability OfTrailingConsonantSequence(double d)
         {
+            if (d < 0 || d > 1) { throw new InvalidOperationException("The probablity must be a value between 0 and 1 inclusive."); }
+
             this.TrailingConsonantSequence = d;
             return this;
         }

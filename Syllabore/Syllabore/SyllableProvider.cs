@@ -254,7 +254,7 @@ namespace Syllabore
 
             if (isStartingSyllable && this.UseStartingSyllableLeadingVowels && this.Random.NextDouble() < this.Probability.StartingSyllableLeadingVowel)
             {
-                if (this.UseVowelSequences && this.Random.NextDouble() < this.Probability.StartingSyllableLeadingVowelSequenceProbability)
+                if (this.UseVowelSequences && this.Random.NextDouble() < this.Probability.StartingSyllableLeadingVowelSequence)
                 {
                     output.Append(this.NextVowelSequence());
                 }
@@ -268,7 +268,7 @@ namespace Syllabore
 
                 if (this.UseLeadingConsonants)
                 {
-                    if (this.UseLeadingConsonantSequences && this.Random.NextDouble() < this.Probability.LeadingConsonantSequenceProbability) {
+                    if (this.UseLeadingConsonantSequences && this.Random.NextDouble() < this.Probability.LeadingConsonantSequence) {
                         output.Append(this.NextLeadingConsonantSequence());
                     }
                     else
