@@ -352,7 +352,7 @@ namespace Syllabore.Tests
                     .WithLeadingConsonants("srt")
                     .WithVowels("ea")
                     .WithTrailingConsonants("tz"))
-                .UsingValidator(x => x.InvalidateRegex("^.{,2}$"));// Invalidate names with less than 3 characters
+                .UsingValidator(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 3 characters
 
             try
             {
@@ -380,7 +380,7 @@ namespace Syllabore.Tests
                     .WithTrailingConsonantSequences("bz")
                     .WithProbability(x => x.OfVowelSequences(1.0))
                     .DisallowStartingSyllableLeadingVowels())
-                .UsingValidator(x => x.InvalidateRegex("^.{,2}$"));// Invalidate names with less than 3 characters
+                .UsingValidator(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 3 characters
 
             try
             {
