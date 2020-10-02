@@ -108,13 +108,16 @@ namespace Syllabore.Example
                         .WithLeadingConsonants("vstlr")
                         .WithTrailingConsonants("zrt")
                         .WithVowelSequences("ey", "ay", "oy"))
+                        
                     .UsingMutator(m => m
-                        .WithMutation(x => { x.ReplaceLeadingSyllable("Gran"); })
+                        .WithMutation(x => x.ReplaceLeadingSyllable("Gran"))
+                        .WithMutation(x => x.ReplaceLeadingSyllable("Brig"))
                         .WithMutation(x => x.ReplaceTrailingSyllable("opolis")).When(x => x.SyllableAt(-2).EndsWithConsonant())
                         .WithMutation(x => x.ReplaceTrailingSyllable("polis")).When(x => x.SyllableAt(-2).EndsWithVowel())
                         .WithMutationCount(1))
                     .UsingValidator(v => v
                         .DoNotAllowPattern(
+                            @".{12,}",
                             @"(\w)\1\1",             // no letters three times in a row
                             @".*([y|Y]).*([y|Y]).*", // two y's in same name
                             @".*([z|Z]).*([z|Z]).*", // two z's in same name
