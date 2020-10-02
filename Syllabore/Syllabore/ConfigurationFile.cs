@@ -11,7 +11,7 @@ namespace Syllabore
 
         public static void Save(NameGenerator generator, string path)
         {
-            string result = JsonSerializer.Serialize<NameGenerator>(generator);
+            string result = JsonSerializer.Serialize<NameGenerator>(generator, new JsonSerializerOptions() { WriteIndented = true });
             File.WriteAllText(path, result);
         }
 
