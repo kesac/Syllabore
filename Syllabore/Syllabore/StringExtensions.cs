@@ -27,7 +27,7 @@ namespace Syllabore
 
         public static bool StartsWithVowel(this string s)
         {
-            return Regex.IsMatch(s, "^[aieouAEIOU]$");
+            return Regex.IsMatch(s, "^[aieouAEIOU]");
         }
         public static bool StartsWithVowel(this Name n)
         {
