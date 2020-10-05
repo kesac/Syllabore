@@ -351,7 +351,8 @@ namespace Syllabore.Tests
                 .UsingProvider(x => x
                     .WithLeadingConsonants("srt")
                     .WithVowels("ea")
-                    .WithTrailingConsonants("tz"))
+                    .WithTrailingConsonants("tz")
+                    .WithProbability(p => p.OfLeadingConsonants(1)))
                 .UsingValidator(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 3 characters
 
             try
