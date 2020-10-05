@@ -7,7 +7,7 @@ namespace Syllabore
 {
     
     /// Experimental: finds vowels in a name then changes it to another vowel
-    public class VowelMutator : IMutator
+    public class VowelMutator : NameMutator
     {
         private static readonly string[] DefaultVowels = { "a", "e", "i", "o", "u" };
         private List<string> VowelPool { get; set; }
@@ -18,6 +18,7 @@ namespace Syllabore
         public VowelMutator(params string[] vowels)
         {
 
+            this.Random = new Random();
             this.VowelPool = new List<string>();
 
             foreach(var v in vowels)
@@ -25,30 +26,13 @@ namespace Syllabore
                 this.VowelPool.AddRange(v.Atomize());
             }
 
-            this.Random = new Random();
-        }
-
-        /*
-        public VowelShifter UsingVowel(params string[] vowel)
-        {
-            foreach(var v in vowel)
+            this.WithMutation(name =>
             {
-                this.VowelPool.Add(v);
-            }
-
-            return this;
+                int index = this.Random.Next(name.Syllables.Count);
+                var syllable = name.Syllables[index];
+                name.Syllables[index] = Regex.Replace(syllable, "([aeiouAEIOU]+)", this.VowelPool[this.Random.Next(this.VowelPool.Count)]);
+            });
         }
-        */
 
-        /// TODO this is only shifting vowels right now and it doesn't handle vowel sequences
-        public Name Mutate(Name sourceName)
-        {
-            Name result = new Name(sourceName);
-            int index = this.Random.Next(sourceName.Syllables.Count);
-            var syllable = result.Syllables[index];
-            result.Syllables[index] = Regex.Replace(syllable, "([aeiouAEIOU]+)", this.VowelPool[this.Random.Next(this.VowelPool.Count)]);
-
-            return result;
-        }
     }
 }
