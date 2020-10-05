@@ -25,6 +25,10 @@ namespace Syllabore.Tests
 
             name.ReplaceLeadingSyllable("el");
             Assert.IsTrue(name.StartsWithVowel());
+
+            Assert.IsFalse(name.SyllableAt(-1).StartsWithVowel());
+            name.ReplaceTrailingSyllable("ol");
+            Assert.IsTrue(name.SyllableAt(-1).StartsWithVowel());
         }
 
     }

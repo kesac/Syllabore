@@ -108,10 +108,9 @@ namespace Syllabore.Example
                         .WithLeadingConsonants("vstlr")
                         .WithTrailingConsonants("zrt")
                         .WithVowelSequences("ey", "ay", "oy"))
-                        
                     .UsingMutator(m => m
                         .WithMutation(x => x.ReplaceLeadingSyllable("Gran"))
-                        .WithMutation(x => x.ReplaceLeadingSyllable("Brig"))
+                        .WithMutation(x => x.ReplaceLeadingSyllable("Bri"))
                         .WithMutation(x => x.ReplaceTrailingSyllable("opolis")).When(x => x.SyllableAt(-2).EndsWithConsonant())
                         .WithMutation(x => x.ReplaceTrailingSyllable("polis")).When(x => x.SyllableAt(-2).EndsWithVowel())
                         .WithMutationCount(1))
