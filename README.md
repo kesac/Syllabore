@@ -72,55 +72,6 @@ Sola
 Grantero
 ```
 
-## Capturing configuration in XML
-Name generator configurations can be captured in an XML file then loaded through an ```XmlFileLoader``` class:
-
-```csharp
-public static void Main(string[] args)
-{
-    var file = new XmlFileLoader("data/basic.xml").Load();
-    var names = file.GetNameGenerator("BasicNameGenerator");
-
-    for (int i = 0; i < 10; i++)
-    {
-        System.Console.WriteLine(names.Next());
-    }
-}
-```
-A syllabore XML file defines valid vowels, consonants, character sequences, invalid patterns, and sequence frequency. Here is an example XML file that corresponds to the ```DefaultSyllableProvider``` implementation, but also checks for awkward letter sequences and name endings:
-```xml
-<syllabore>
-  <define name="BasicNameGenerator">
-    <components>
-      <add type="Vowels" values="a e i o u"/>
-      <add type="VowelSequences" values="ae ea ai ia au ay ie oi ou ey"/>
-      <add type="LeadingConsonants" values="b c d f g h j k l m n p q r s t v w x y z"/>
-      <add type="LeadingConsonantSequences" values="ch sh bl cl fl pl gl br cr"/>
-      <add type="LeadingConsonantSequences" values="dr pr tr th sc sp st sl spr"/>
-      <add type="TrailingConsonants" values="b c d f g h k l m n p r s t v x y"/>
-      <add type="TrailingConsonantSequences" values="ck st sc ng nk rsh lsh rk rst nct xt"/>
-    </components>
-    <constraints>
-      <invalid if="NameEndsWith" values="j p q v w z"/>
-      <invalid if="NameMatchesRegex" regex="([a-zA-Z])\1\1"/>
-    </constraints>
-    <probability>
-      <set type="LeadingVowelProbability" value="0.10"/>
-      <set type="LeadingConsonantSequenceProbability" value="0.20" />
-      <set type="VowelSequenceProbability" value="0.20" />
-      <set type="TrailingConsonantProbability" value="0.10" />
-      <set type="TrailingConsonantSequenceProbability" value="0.10" />
-    </probability>
-  </define>
-</syllabore>
-```
-This example would create names like:
-```
-Naci, Xogud, Beqae, Crovo, Garu, Lultu, Laibu, Glowia, Goscuc, Tevu
-Zimvu, Druhhest, Sumae, Vumnih, Gefa, Duvu, Qiclou, Najost, Lidfo, Godrest
-Bebin, Zaprey, Thopea, Wiqa, Clunust, Jodo, Jita
-```
-
 ## Mutators and Creating Variations
 You can use Syllabore to produce variations of a specific name by accessing mutators directly. Here is a quick example of producing variations:
 ```csharp
@@ -150,6 +101,18 @@ var g = new NameGenerator()
     .LimitMutationChance(0.25);
 ```
 In this example, the name generator has been given a custom mutation step in which one vowel of one syllable in a name is changed to different vowel. This is set to occur 25% of the time whenever ```Next()``` is called.
+
+
+## Capturing NameGenerator settings in a file <sup>1</sup>
+The static methods ```Save()``` and ```Load()``` of the ```ConfigurationFile``` class let you serialize and deserialize any instance of ```NameGenerator```.
+
+```csharp
+var g = new NameGenerator();
+ConfigurationFile.Save(g, "settings.json");
+
+var deserialized = ConfigurationFile.Load("settings.json");
+```
+<sup>1</sup>*As of v1.1, ```Mutations``` defined for a NameGenerator cannot be serialized. This is because the current implementation of ```NameMutators``` use lambdas.*
 
 # Installation
 The easiest way to add this to your project is through NuGet Package Manager (search for "Syllabore"). Visit https://www.nuget.org/packages/Syllabore/ for details. 
