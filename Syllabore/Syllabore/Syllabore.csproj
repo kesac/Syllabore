@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Kevin Sacro</Authors>
     <Title>Syllabore</Title>
-    <Description>Syllabore is a fantasy name generator and class library. Name generation is accomplished by constructing individual syllables then sequencing them to form names. Syllables are generated from SyllableProviders that maintain their own pool of vowels and consonants. NameValidators can be added to the name generation process which adds the extra step of validating syllable and letter sequences during generation to avoid undesirable letter combinations and improve the quality of output.</Description>
+    <Description>Syllabore is a fantasy name generator and class library. Name generation is accomplished by constructing individual syllables then sequencing them to form names. (See https://github.com/kesac/Syllabore)</Description>
     <Copyright>Copyright (c) 2019-2020 Kevin Sacro</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/kesac/Syllabore</PackageProjectUrl>
