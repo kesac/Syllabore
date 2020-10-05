@@ -1,7 +1,7 @@
 # Syllabore
-Syllabore is a fantasy name generator and class library. 
+Syllabore is a fantasy name generator and class library. Syllabore does not use lists of pre-made names.
 
-Name generation is accomplished by generating syllables from vowel-consonant pools and sequencing them into names. Syllabore does not use lists of pre-made names.
+Name generation is accomplished by generating syllables from vowel-consonant pools and sequencing them into names. 
 
 These are concepts Syllabore uses when generating names:
 * **Providers** - used to randomly generate syllables. Providers maintain vowel-consonant pools used to construct syllables from scratch
