@@ -80,10 +80,7 @@ namespace Syllabore.Example
 
             {
                 // Creating variations of a single name
-                var g = new NameGenerator()
-                    .UsingMutator(new MutatorCollection()
-                        .Add(new DefaultNameMutator())
-                        .Add(new VowelMutator()));
+                var g = new NameGenerator().UsingMutator(new VowelMutator());
 
                 for(int i = 0; i < 3; i++)
                 {
@@ -126,6 +123,7 @@ namespace Syllabore.Example
                     .LimitSyllableCount(2, 4);
 
                 ConfigurationFile.Save(g, "city-name-generator.txt");
+                var g2 = ConfigurationFile.Load("city-name-generator.txt");
 
                 for (int i = 0; i < 50; i++)
                 {

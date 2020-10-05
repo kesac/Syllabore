@@ -20,10 +20,15 @@ namespace Syllabore.Tests
                         .WithVowelSequences("ey")
                         .WithTrailingConsonants("trs")
                         .WithTrailingConsonantSequences("mn"))
+                    .UsingMutator(x => x
+                        .WithMutationCount(3))
                     .UsingValidator(x => x
                         .DoNotAllowPattern(
                             "zzzy",
-                            "abcd"));
+                            "abcd"))
+                    .LimitMutationChance(0.50)
+                    .LimitRetries(100)
+                    .LimitSyllableCount(4, 10);
         }
 
         [TestMethod]
@@ -49,6 +54,7 @@ namespace Syllabore.Tests
             Assert.IsTrue(g.MaximumSyllables == g2.MaximumSyllables);
             Assert.IsTrue(g.MinimumSyllables == g2.MinimumSyllables);
             Assert.IsTrue(g.MutationProbability == g2.MutationProbability);
+            Assert.AreEqual(g.Mutator.MutationLimit, g2.Mutator.MutationLimit);
 
             var p1 = g.Provider;
             var p2 = g2.Provider;
@@ -73,7 +79,7 @@ namespace Syllabore.Tests
             Assert.IsTrue(p1.Probability.LeadingConsonant == p2.Probability.LeadingConsonant);
             Assert.IsTrue(p1.Probability.LeadingConsonantSequence == p2.Probability.LeadingConsonantSequence);
             Assert.IsTrue(p1.Probability.VowelSequence == p2.Probability.VowelSequence);
-            Assert.IsTrue(p1.Probability.StartingSyllableLeadingVowel == p2.Probability.StartingSyllableLeadingVowel); 
+            Assert.IsTrue(p1.Probability.StartingSyllableLeadingVowel == p2.Probability.StartingSyllableLeadingVowel);
             Assert.IsTrue(p1.Probability.StartingSyllableLeadingVowelSequence == p2.Probability.StartingSyllableLeadingVowelSequence);
             Assert.IsTrue(p1.Probability.TrailingConsonant == p2.Probability.TrailingConsonant);
             Assert.IsTrue(p1.Probability.TrailingConsonantSequence == p2.Probability.TrailingConsonantSequence);
@@ -83,8 +89,8 @@ namespace Syllabore.Tests
             Assert.IsNotNull(g.Validator.InvalidPatterns);
             Assert.IsNotNull(g2.Validator);
             Assert.IsNotNull(g2.Validator.InvalidPatterns);
-
             Assert.IsTrue(g.Validator.InvalidPatterns.UnorderedListEquals(g2.Validator.InvalidPatterns));
+
 
         }
 
