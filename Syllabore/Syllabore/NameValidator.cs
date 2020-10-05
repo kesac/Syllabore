@@ -11,12 +11,10 @@ namespace Syllabore
     [Serializable]
     public class NameValidator : IValidator
     {
-        // private List<Func<Name, bool>> Constraints { get; set; } // Flexible, but not serializable
-        public List<string> InvalidPatterns { get; set; } // Only regex is serialized for now
+        public List<string> InvalidPatterns { get; set; }
 
         public NameValidator()
         {
-            // this.Constraints = new List<Func<Name, bool>>();
             this.InvalidPatterns = new List<string>();
         }
 
@@ -36,17 +34,6 @@ namespace Syllabore
         {
 
             bool isValid = true;
-
-            /*
-            foreach(var constraint in this.Constraints)
-            {
-                if(constraint(name))
-                {
-                    isValid = false;
-                    break;
-                }
-            }
-            */
 
             foreach (var pattern in this.InvalidPatterns)
             {
