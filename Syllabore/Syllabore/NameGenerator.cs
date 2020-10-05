@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 
 namespace Syllabore
 {
@@ -18,11 +19,12 @@ namespace Syllabore
     public class NameGenerator
     {
         private Random Random { get; set; }
-        public IProvider Provider { get; private set; }
-        public IMutator Mutator { get; private set; }
-        public IValidator Validator { get; private set; }
-        public int MinimumSyllables { get; private set; }
-        public int MaximumSyllables { get; private set; }
+
+        public SyllableProvider Provider { get; set; }
+        public NameMutator Mutator { get; set; }
+        public NameValidator Validator { get; set; }
+        public int MinimumSyllables { get; set; }
+        public int MaximumSyllables { get; set; }
 
         /// <summary>
         /// A number from 0 to 1 inclusive that represents the probablity
@@ -31,7 +33,7 @@ namespace Syllabore
         /// A value of 0 means a mutation can never occur and a value of 1
         /// means a mutation will always occur.
         /// </summary>
-        public double MutationProbability { get; private set; }
+        public double MutationProbability { get; set; }
 
         /// <summary>
         /// Maximum attempts this generator will attempt to satisfy the
@@ -47,13 +49,13 @@ namespace Syllabore
         /// </summary>
         public NameGenerator() : this(new DefaultSyllableProvider(), new DefaultNameMutator(), null) { }
 
-        public NameGenerator(IProvider provider) : this(provider, new DefaultNameMutator(), null) { }
+        public NameGenerator(SyllableProvider provider) : this(provider, new DefaultNameMutator(), null) { }
 
-        public NameGenerator(IProvider provider, IMutator mutator) : this(provider, mutator, null) { }
+        public NameGenerator(SyllableProvider provider, NameMutator mutator) : this(provider, mutator, null) { }
 
-        public NameGenerator(IProvider provider, IValidator validator) : this(provider, new DefaultNameMutator(), validator) { }
+        public NameGenerator(SyllableProvider provider, NameValidator validator) : this(provider, new DefaultNameMutator(), validator) { }
 
-        public NameGenerator(IProvider provider, IMutator mutator, IValidator validator)
+        public NameGenerator(SyllableProvider provider, NameMutator mutator, NameValidator validator)
         {
             this.UsingProvider(provider)
                 .UsingMutator(mutator)
@@ -69,7 +71,7 @@ namespace Syllabore
         /// The new ConfigurableSyllableProvider replaces the old SyllableProvider if
         /// one is already defined.
         /// </summary>
-        public NameGenerator UsingProvider(Func<SyllableProvider,IProvider> configure)
+        public NameGenerator UsingProvider(Func<SyllableProvider,SyllableProvider> configure)
         {
             this.Provider = configure(new SyllableProvider());
             return this;
@@ -79,32 +81,32 @@ namespace Syllabore
         /// Sets the specified ISyllableProvider as the new syllable provider for this NameGenerator.
         /// The old ISyllableProvider is replaced if one was previously defined.
         /// </summary>
-        public NameGenerator UsingProvider(IProvider provider)
+        public NameGenerator UsingProvider(SyllableProvider provider)
         {
             this.Provider = provider ?? throw new ArgumentNullException("The specified ISyllableProvider is null.");
             return this;
         }
 
-        public NameGenerator UsingValidator(Func<NameValidator, IValidator> configure)
+        public NameGenerator UsingValidator(Func<NameValidator, NameValidator> configure)
         {
             this.Validator = configure(new NameValidator());
             return this;
         }
 
         // Right now this is ok
-        public NameGenerator UsingValidator(IValidator validator)
+        public NameGenerator UsingValidator(NameValidator validator)
         {
             this.Validator = validator;
             return this;
         }
         
-        public NameGenerator UsingMutator(Func<NameMutator, IMutator> configure)
+        public NameGenerator UsingMutator(Func<NameMutator, NameMutator> configure)
         {
             this.Mutator = configure(new NameMutator());
             return this;
         }
 
-        public NameGenerator UsingMutator(IMutator mutator)
+        public NameGenerator UsingMutator(NameMutator mutator)
         {
             this.Mutator = mutator ?? throw new ArgumentNullException("The specified IMutator is null.");
             return this;

@@ -10,12 +10,11 @@ namespace Syllabore
 
     public static class ConfigurationFile
     {
-        private static readonly JsonSerializerOptions Options = new JsonSerializerOptions() { WriteIndented = true,  };
+        private static readonly JsonSerializerOptions Options = new JsonSerializerOptions() { WriteIndented = true };
 
         public static void Save(NameGenerator generator, string path)
         {    
             string result = JsonSerializer.Serialize<NameGenerator>(generator, Options);
-            
             File.WriteAllText(path, result);
         }
 

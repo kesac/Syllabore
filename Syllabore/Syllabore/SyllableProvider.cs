@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Syllabore
 {
@@ -12,6 +13,7 @@ namespace Syllabore
     public class SyllableProvider : IProvider
     {
         private Random Random { get; set; }
+
         public List<string> LeadingConsonants { get; set; }
         public List<string> LeadingConsonantSequences { get; set; }
         public List<string> Vowels { get; set; }
@@ -26,8 +28,8 @@ namespace Syllabore
         public bool UseTrailingConsonants { get; set; }
         public bool UseTrailingConsonantSequences { get; set; }
 
-        public SyllableProviderProbability Probability { get; set; }
-
+        public SyllableProviderProbability Probability { get; private set; }
+        
         public SyllableProvider()
         {
             this.Random = new Random();
@@ -302,6 +304,7 @@ namespace Syllabore
 
             return output.ToString();
         }
+
 
     }
 }

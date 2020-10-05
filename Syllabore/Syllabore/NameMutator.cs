@@ -9,7 +9,7 @@ namespace Syllabore
     {
         private Random Random;
         private List<Mutation> Mutations;
-        public int MutationLimit { get; private set; }
+        public int MutationLimit { get; set; }
 
         public NameMutator()
         {
@@ -21,7 +21,7 @@ namespace Syllabore
         public Name Mutate(Name sourceName)
         {
             var result = new Name(sourceName);
-            for(int i = 0; i < this.MutationLimit; i++)
+            for(int i = 0; this.Mutations.Count > 0 && i < this.MutationLimit; i++)
             {
                 var mutation = this.Mutations[this.Random.Next(this.Mutations.Count)];
 
