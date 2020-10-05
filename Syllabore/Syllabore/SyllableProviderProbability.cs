@@ -25,6 +25,11 @@ namespace Syllabore
         public double VowelSequence { get; private set; }
 
         /// <summary>
+        /// Probability that a syllable can start with a consonant.
+        /// </summary>
+        public double LeadingConsonant { get; private set; }
+
+        /// <summary>
         /// If a syllable starts with a consonant, this is the change it becomes a consonant sequence.
         /// </summary>
         public double LeadingConsonantSequence { get; private set; }
@@ -60,6 +65,14 @@ namespace Syllabore
             if (d < 0 || d > 1) { throw new InvalidOperationException("The probablity must be a value between 0 and 1 inclusive."); }
 
             this.StartingSyllableLeadingVowelSequence = d;
+            return this;
+        }
+
+        public SyllableProviderProbability OfLeadingConsonants(double d)
+        {
+            if (d < 0 || d > 1) { throw new InvalidOperationException("The probablity must be a value between 0 and 1 inclusive."); }
+
+            this.LeadingConsonant = d;
             return this;
         }
 

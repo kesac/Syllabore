@@ -51,6 +51,7 @@ namespace Syllabore
             this.Probability = new SyllableProviderProbability(this);
             this.Probability.OfStartingSyllableLeadingVowels(0.10);
             this.Probability.OfStartingSyllableLeadingVowelSequence(0.25); // 25% chance that a leading vowel becomes a sequence
+            this.Probability.OfLeadingConsonants(0.95);
             this.Probability.OfLeadingConsonantSequences(0.25); // 25% chance that a leading consonant becomes a sequence
             this.Probability.OfVowelSequences(0.25);
             this.Probability.OfTrailingConsonants(0.10);
@@ -266,7 +267,7 @@ namespace Syllabore
             else
             {
 
-                if (this.UseLeadingConsonants)
+                if (this.UseLeadingConsonants && this.Random.NextDouble() < this.Probability.LeadingConsonant)
                 {
                     if (this.UseLeadingConsonantSequences && this.Random.NextDouble() < this.Probability.LeadingConsonantSequence) {
                         output.Append(this.NextLeadingConsonantSequence());
