@@ -409,7 +409,8 @@ namespace Syllabore.Tests
                 .WithTrailingConsonants("d")
                 .WithTrailingConsonantSequences("ff")
                 .WithVowels("o")
-                .WithVowelSequences("uu");
+                .WithVowelSequences("uu")
+                .WithProbability(p => p.OfLeadingConsonants(1));
         }
 
         [TestMethod]
