@@ -39,6 +39,12 @@ namespace Syllabore
             return this;
         }
 
+        public NameMutator Join(NameMutator m)
+        {
+            this.Mutations.AddRange(m.Mutations);
+            return this;
+        }
+
         public NameMutator When(Func<Name, bool> when)
         {
             this.Mutations[this.Mutations.Count - 1].CanMutate = when;
