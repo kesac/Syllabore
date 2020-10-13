@@ -157,6 +157,17 @@ namespace Syllabore.Example
                 g.LimitSyllableCount(2, 3);
 
             }
+            {
+                var name = new Name("syl", "la", "bore");
+                var mutator = new NameMutator()
+                                .Join(new DefaultNameMutator())
+                                .Join(new VowelMutator());
+
+                for(int i = 0; i < 20; i++)
+                {
+                    Console.WriteLine(mutator.Mutate(name));
+                }
+            }
 
         }
     }
