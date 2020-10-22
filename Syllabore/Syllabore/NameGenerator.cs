@@ -200,6 +200,7 @@ namespace Syllabore
             var syllableLength = this.Random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
             return this.NextName(syllableLength);
         }
+
         /// <summary>
         /// Generates a random name with the specified syllable length and returns it as a Name struct.
         /// </summary>
