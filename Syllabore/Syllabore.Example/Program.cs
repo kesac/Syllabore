@@ -43,26 +43,9 @@ namespace Syllabore.Example
                     Console.WriteLine(g.Next());
                 }
             }
-
-            {
-                // Configuration of syllable providers and name validators
-                // can be captured in a dedicated XML file then loaded
-                // through the XmlFileLoader.
-
-                var file = new XmlFileLoader("data/basic.xml").Load();
-                var g = file.GetNameGenerator("SoftNameGenerator").LimitSyllableCount(2, 4);
-
-                Console.WriteLine();
-                for (int i = 0; i < 10; i++)
-                {
-                    System.Console.WriteLine(g.Next());
-                }
-                Console.WriteLine();
-            }
             {
 
-                // If you don't like XML, you can choose to
-                // build name generators programmatically.
+                // You can choose to build name generators programmatically.
                 var g = new NameGenerator()
                     .UsingProvider(x => x
                         .WithLeadingConsonants("str")
