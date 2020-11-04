@@ -78,8 +78,6 @@ namespace Syllabore.Example
                     }
                 }
             }
-
-
             {
                 Console.WriteLine();
                 var g = new NameGenerator()
@@ -89,10 +87,11 @@ namespace Syllabore.Example
                         .WithTrailingConsonants("zrt")
                         .WithVowelSequences("ey", "ay", "oy"))
                     .UsingMutator(m => m
-                        .WithMutation(x => x.ReplaceLeadingSyllable("Gran"))
-                        .WithMutation(x => x.ReplaceLeadingSyllable("Bri"))
-                        .WithMutation(x => x.ReplaceTrailingSyllable("opolis")).When(x => x.SyllableAt(-2).EndsWithConsonant())
-                        .WithMutation(x => x.ReplaceTrailingSyllable("polis")).When(x => x.SyllableAt(-2).EndsWithVowel())
+                        .WithMutation(x => x.ReplaceSyllable(0, "Gran"))
+                        .WithMutation(x => x.ReplaceSyllable(0, "Bri"))
+                        .WithMutation(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard"))
+                        .WithMutation(x => x.When(y => y.SyllableAt(-2).EndsWithConsonant()).ReplaceSyllable(-1, "opolis"))
+                        .WithMutation(x => x.When(y => y.SyllableAt(-2).EndsWithVowel()).ReplaceSyllable(-1, "polis"))
                         .WithMutationCount(1))
                     .UsingValidator(v => v
                         .DoNotAllowPattern(
