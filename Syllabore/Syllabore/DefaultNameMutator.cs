@@ -20,24 +20,23 @@ namespace Syllabore
             this.Provider = new DefaultSyllableProvider();
             this.Random = new Random();
 
-            this.WithMutation(name => {
+            this.WithMutation(x => x
+                .ExecuteUnserializableAction(name => {
+                    int index = this.Random.Next(name.Syllables.Count);
 
-                int index = this.Random.Next(name.Syllables.Count);
-
-                if (index == 0)
-                {
-                    name.Syllables[index] = this.Provider.NextStartingSyllable();
-                }
-                else if (index == name.Syllables.Count - 1)
-                {
-                    name.Syllables[index] = this.Provider.NextEndingSyllable();
-                }
-                else
-                {
-                    name.Syllables[index] = this.Provider.NextSyllable();
-                }
-
-            });
+                    if (index == 0)
+                    {
+                        name.Syllables[index] = this.Provider.NextStartingSyllable();
+                    }
+                    else if (index == name.Syllables.Count - 1)
+                    {
+                        name.Syllables[index] = this.Provider.NextEndingSyllable();
+                    }
+                    else
+                    {
+                        name.Syllables[index] = this.Provider.NextSyllable();
+                    }
+            }));
 
         }
 
