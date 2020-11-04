@@ -26,12 +26,13 @@ namespace Syllabore
                 this.VowelPool.AddRange(v.Atomize());
             }
 
-            this.WithMutation(name =>
-            {
-                int index = this.Random.Next(name.Syllables.Count);
-                var syllable = name.Syllables[index];
-                name.Syllables[index] = Regex.Replace(syllable, "([aeiouAEIOU]+)", this.VowelPool[this.Random.Next(this.VowelPool.Count)]);
-            });
+            this.WithMutation(x => x
+                .ExecuteUnserializableAction(name => 
+                {
+                    int index = this.Random.Next(name.Syllables.Count);
+                    var syllable = name.Syllables[index];
+                    name.Syllables[index] = Regex.Replace(syllable, "([aeiouAEIOU]+)", this.VowelPool[this.Random.Next(this.VowelPool.Count)]);
+                }));
         }
 
     }

@@ -8,7 +8,8 @@ namespace Syllabore
     public class NameMutator : IMutator
     {
         private Random Random;
-        private List<Mutation> Mutations;
+        public List<Mutation> Mutations { get; set; }
+
         public int MutationLimit { get; set; }
 
         public NameMutator()
@@ -21,21 +22,23 @@ namespace Syllabore
         public Name Mutate(Name sourceName)
         {
             var result = new Name(sourceName);
-            for(int i = 0; this.Mutations.Count > 0 && i < this.MutationLimit; i++)
+
+            for (int i = 0; this.Mutations.Count > 0 && i < this.MutationLimit; i++)
             {
                 var mutation = this.Mutations[this.Random.Next(this.Mutations.Count)];
 
                 if (mutation.CanMutate == null || mutation.CanMutate(result)) // Not all mutations have a condition
                 {
-                    mutation.Mutate(result);
+                    mutation.Apply(result);
                 }
             }
+            
             return result;
         }
 
-        public NameMutator WithMutation(Action<Name> mutate)
+        public NameMutator WithMutation(Func<Mutation, Mutation> config)
         {
-            this.Mutations.Add(new Mutation(mutate));
+            this.Mutations.Add(config(new Mutation()));
             return this;
         }
 
@@ -45,11 +48,13 @@ namespace Syllabore
             return this;
         }
 
+        /*
         public NameMutator When(Func<Name, bool> when)
         {
             this.Mutations[this.Mutations.Count - 1].CanMutate = when;
             return this;
         }
+        /**/
 
         public NameMutator WithMutationCount(int limit)
         {
