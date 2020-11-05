@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -616,6 +617,133 @@ namespace Syllabore.Tests
                 if (s.StartsWith("cc")) { trailingConsonantSequenceDetected = true; break; }
             }
             Assert.IsTrue(trailingConsonantSequenceDetected);
+        }
+
+
+        [TestMethod]
+        public void Provider_CustomConsonantProbabilityDefined_AffectsSyllableGenerationCorrectly()
+        {
+
+            var provider = new SyllableProvider()
+                    .WithVowels("a")
+                    .WithVowelSequences("ee")
+                    .WithLeadingConsonants("b")
+                    .WithLeadingConsonantSequences("cc")
+                    .WithTrailingConsonants("d")
+                    .WithTrailingConsonantSequences("ff");
+
+            // Disable all leading and trailing consonants 
+            Assert.IsTrue(EachOutputNeverContainsAnyOf(
+                provider.WithProbability(y => y
+                    .OfLeadingConsonants(0.0)
+                    .OfLeadingConsonantSequences(0.0)
+                    .OfTrailingConsonants(0.0)
+                    .OfTrailingConsonantSequence(0.0)),
+                    "b", "cc", "d", "ff"));
+
+            // Consonant sequence probability doesn't matter
+            // if the consonant probability is zero
+            Assert.IsTrue(EachOutputNeverContainsAnyOf(
+                provider.WithProbability(y => y
+                    .OfLeadingConsonants(0.0)
+                    .OfLeadingConsonantSequences(1.0)
+                    .OfTrailingConsonants(0.0)
+                    .OfTrailingConsonantSequence(1.0)),
+                    "b", "cc", "d", "ff"));
+
+            // Consonant sequence probability only matters
+            // if the consonant probability is not zero
+
+            provider.WithProbability(y => y
+                    .OfLeadingConsonants(1.0)
+                    .OfLeadingConsonantSequences(0.0)
+                    .OfTrailingConsonants(1.0)
+                    .OfTrailingConsonantSequence(0.0));
+
+            // There should be no consonant sequences
+            Assert.IsTrue(EachOutputContainsAnyOf(provider, "b", "d"));
+            Assert.IsTrue(EachOutputNeverContainsAnyOf(provider, "cc", "ff"));
+
+            provider.WithProbability(y => y
+                .OfLeadingConsonants(1.0)
+                .OfLeadingConsonantSequences(1.0)
+                .OfTrailingConsonants(1.0)
+                .OfTrailingConsonantSequence(1.0));
+
+            // There should always be consonant sequences
+            Assert.IsTrue(EachOutputNeverContainsAnyOf(provider, "b", "d"));
+            Assert.IsTrue(EachOutputContainsAnyOf(provider, "cc", "ff"));
+
+            // Test whether a value between 0 and 1 ouputs both consonants and consonant sequences
+            provider.WithProbability(y => y
+                .OfLeadingConsonants(1.0)
+                .OfLeadingConsonantSequences(0.5)
+                .OfTrailingConsonants(1.0)
+                .OfTrailingConsonantSequence(0.5));
+
+            Assert.IsTrue(AllOutputContainsAtLeastOnce(provider, "b", "d", "cc", "ff"));
+
+            // Not all output will have a consonant
+            provider.WithProbability(y => y
+                .OfLeadingConsonants(0.5)
+                .OfLeadingConsonantSequences(0.5)
+                .OfTrailingConsonants(0.5)
+                .OfTrailingConsonantSequence(0.5));
+
+            Assert.IsTrue(AllOutputContainsAtLeastOnce(provider, "b", "d", "cc", "ff"));
+
+        }
+
+        private bool EachOutputNeverContainsAnyOf(SyllableProvider p, params string[] invalidSubstrings)
+        {
+            bool outputNeverAppears = true;
+            for (int i = 0; i < 1000; i++)
+            {
+                var s = p.NextSyllable();
+                if (s.ContainsAny(invalidSubstrings)){
+                    outputNeverAppears = false;
+                    break;
+                }
+            }
+
+            return outputNeverAppears;
+        }
+
+        private bool EachOutputContainsAnyOf(SyllableProvider p, params string[] validSubstrings)
+        {
+            bool outputAlwaysAppears = true;
+            for (int i = 0; i < 1000; i++)
+            {
+                var s = p.NextSyllable();
+                if (!s.ContainsAny(validSubstrings))
+                {
+                    outputAlwaysAppears = false;
+                    break;
+                }
+            }
+
+            return outputAlwaysAppears;
+        }
+
+        private bool AllOutputContainsAtLeastOnce(SyllableProvider p, params string[] validSubstrings)
+        {
+            bool[] substringAppeared = new bool[validSubstrings.Length];
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var s = p.NextSyllable();
+
+                for(int j = 0; j < validSubstrings.Length; j++)
+                {
+                    if (s.Contains(validSubstrings[j]))
+                    {
+                        substringAppeared[j] = true;
+                    }
+                }
+            }
+
+            return substringAppeared.All(x => x);
+
         }
 
     }

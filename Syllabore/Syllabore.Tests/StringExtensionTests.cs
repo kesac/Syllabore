@@ -31,5 +31,6 @@ namespace Syllabore.Tests
             Assert.IsTrue(name.SyllableAt(-1).StartsWithVowel());
         }
 
+
     }
 }

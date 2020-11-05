@@ -34,6 +34,18 @@ namespace Syllabore
             return Regex.IsMatch(n.ToString(), "^[aieouAEIOU]");
         }
 
+        public static bool ContainsAny(this string s, params string[] substrings)
+        {
+            foreach (var substring in substrings)
+            {
+                if (s.Contains(substring))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static bool EndsWith(this string s, params string[] suffixes)
         {
             foreach (var suffix in suffixes)
