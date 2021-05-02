@@ -178,7 +178,8 @@ namespace Syllabore.Tests
             // Defining at least one vowel sequence, set to 100% probability
             // without any possibility of vowels starting name shoudl work
             // provider.WithVowelSequenceProbability(1.0).WithStartingSyllableLeadingVowelSequenceProbability(1.0);
-            provider.WithProbability(x => x.OfVowelSequences(1.0).OfStartingSyllableLeadingVowelSequence(1.0));
+            //provider.WithProbability(x => x.OfVowelSequences(1.0).OfStartingSyllableLeadingVowelSequence(1.0));
+            provider.WithProbability(vowelIsSequence: 1.0, vowelBeginsStartingSyllableAndIsSequence: 1.0);
 
             for (int i = 0; i < 1000; i++)
             {
@@ -186,7 +187,8 @@ namespace Syllabore.Tests
             }
 
             // The normal scenario where at least one individual vowel is defined
-            provider.WithVowels("a").WithProbability(x => x.OfVowelSequences(0));
+            //provider.WithVowels("a").WithProbability(x => x.OfVowelSequences(0));
+            provider.WithVowels("a").WithProbability(vowelIsSequence: 0);
 
             for (int i = 0; i < 1000; i++)
             {
@@ -209,11 +211,18 @@ namespace Syllabore.Tests
                     .WithLeadingConsonantSequences("cc")
                     .WithTrailingConsonants("d")
                     .WithTrailingConsonantSequences("ff")
-                    .WithProbability(y => y
-                        .OfVowelSequences(0.5)
-                        .OfStartingSyllableLeadingVowels(0.25)
-                        .OfLeadingConsonantSequences(0.50)
-                        .OfTrailingConsonants(0.50));
+                    .WithProbability(
+                        vowelIsSequence: 0.5,
+                        vowelBeginsStartingSyllable: 0.25,
+                        consonantBeginsSyllable: 0.50,
+                        consonantEndsSyllable: 0.50);
+            /*
+            .WithProbability(y => y
+                .OfVowelSequences(0.5)
+                .OfStartingSyllableLeadingVowels(0.25)
+                .OfLeadingConsonantSequences(0.50)
+                .OfTrailingConsonants(0.50));
+            */
 
             bool foundVowel = false;
             bool foundVowelSequence = false;
@@ -311,11 +320,11 @@ namespace Syllabore.Tests
                     .WithLeadingConsonantSequences("cc")
                     .WithTrailingConsonants("d")
                     .WithTrailingConsonantSequences("ff")
-                    .WithProbability(y => y
-                        .OfVowelSequences(0.5)
-                        .OfStartingSyllableLeadingVowels(0.25)
-                        .OfLeadingConsonantSequences(0.50)
-                        .OfTrailingConsonants(0.50)));
+                    .WithProbability(
+                        vowelIsSequence: 0.5,
+                        vowelBeginsStartingSyllable: 0.25,
+                        consonantBeginsSyllable: 0.50,
+                        consonantEndsSyllable: 0.50));
 
             bool foundVowel = false;
             bool foundVowelSequence = false;
@@ -353,7 +362,7 @@ namespace Syllabore.Tests
                     .WithLeadingConsonants("srt")
                     .WithVowels("ea")
                     .WithTrailingConsonants("tz")
-                    .WithProbability(p => p.OfLeadingConsonants(1)))
+                    .WithProbability(consonantBeginsSyllable: 1.0))
                 .UsingValidator(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 3 characters
 
             try
@@ -380,7 +389,7 @@ namespace Syllabore.Tests
                     .WithLeadingConsonantSequences("sr")
                     .WithVowelSequences("ea")
                     .WithTrailingConsonantSequences("bz")
-                    .WithProbability(x => x.OfVowelSequences(1.0))
+                    .WithProbability(vowelIsSequence: 1.0)
                     .DisallowStartingSyllableLeadingVowels())
                 .UsingValidator(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 3 characters
 
@@ -411,7 +420,7 @@ namespace Syllabore.Tests
                 .WithTrailingConsonantSequences("ff")
                 .WithVowels("o")
                 .WithVowelSequences("uu")
-                .WithProbability(p => p.OfLeadingConsonants(1));
+                .WithProbability(consonantBeginsSyllable: 1.0);
         }
 
         [TestMethod]
@@ -634,61 +643,61 @@ namespace Syllabore.Tests
 
             // Disable all leading and trailing consonants 
             Assert.IsTrue(EachOutputNeverContainsAnyOf(
-                provider.WithProbability(y => y
-                    .OfLeadingConsonants(0.0)
-                    .OfLeadingConsonantSequences(0.0)
-                    .OfTrailingConsonants(0.0)
-                    .OfTrailingConsonantSequence(0.0)),
+                provider.WithProbability(
+                    consonantBeginsSyllable: 0.0,
+                    consonantBeginsSyllableAndIsSequence: 0.0,
+                    consonantEndsSyllable: 0.0,
+                    consonantEndsSyllableAndIsSequence: 0.0),
                     "b", "cc", "d", "ff"));
 
             // Consonant sequence probability doesn't matter
             // if the consonant probability is zero
             Assert.IsTrue(EachOutputNeverContainsAnyOf(
-                provider.WithProbability(y => y
-                    .OfLeadingConsonants(0.0)
-                    .OfLeadingConsonantSequences(1.0)
-                    .OfTrailingConsonants(0.0)
-                    .OfTrailingConsonantSequence(1.0)),
+                provider.WithProbability(
+                    consonantBeginsSyllable: 0.0,
+                    consonantBeginsSyllableAndIsSequence: 1.0,
+                    consonantEndsSyllable: 0.0,
+                    consonantEndsSyllableAndIsSequence: 1.0),
                     "b", "cc", "d", "ff"));
 
             // Consonant sequence probability only matters
             // if the consonant probability is not zero
 
-            provider.WithProbability(y => y
-                    .OfLeadingConsonants(1.0)
-                    .OfLeadingConsonantSequences(0.0)
-                    .OfTrailingConsonants(1.0)
-                    .OfTrailingConsonantSequence(0.0));
+            provider.WithProbability(
+                    consonantBeginsSyllable: 1.0,
+                    consonantBeginsSyllableAndIsSequence: 0.0,
+                    consonantEndsSyllable: 1.0,
+                    consonantEndsSyllableAndIsSequence: 0.0);
 
             // There should be no consonant sequences
             Assert.IsTrue(EachOutputContainsAnyOf(provider, "b", "d"));
             Assert.IsTrue(EachOutputNeverContainsAnyOf(provider, "cc", "ff"));
 
-            provider.WithProbability(y => y
-                .OfLeadingConsonants(1.0)
-                .OfLeadingConsonantSequences(1.0)
-                .OfTrailingConsonants(1.0)
-                .OfTrailingConsonantSequence(1.0));
+            provider.WithProbability(
+                consonantBeginsSyllable: 1.0,
+                consonantBeginsSyllableAndIsSequence: 1.0,
+                consonantEndsSyllable: 1.0,
+                consonantEndsSyllableAndIsSequence: 1.0);
 
             // There should always be consonant sequences
             Assert.IsTrue(EachOutputNeverContainsAnyOf(provider, "b", "d"));
             Assert.IsTrue(EachOutputContainsAnyOf(provider, "cc", "ff"));
 
             // Test whether a value between 0 and 1 ouputs both consonants and consonant sequences
-            provider.WithProbability(y => y
-                .OfLeadingConsonants(1.0)
-                .OfLeadingConsonantSequences(0.5)
-                .OfTrailingConsonants(1.0)
-                .OfTrailingConsonantSequence(0.5));
+            provider.WithProbability(
+                consonantBeginsSyllable: 1.0,
+                consonantBeginsSyllableAndIsSequence: 0.5,
+                consonantEndsSyllable: 1.0,
+                consonantEndsSyllableAndIsSequence: 0.5);
 
             Assert.IsTrue(AllOutputContainsAtLeastOnce(provider, "b", "d", "cc", "ff"));
 
             // Not all output will have a consonant
-            provider.WithProbability(y => y
-                .OfLeadingConsonants(0.5)
-                .OfLeadingConsonantSequences(0.5)
-                .OfTrailingConsonants(0.5)
-                .OfTrailingConsonantSequence(0.5));
+            provider.WithProbability(
+                consonantBeginsSyllable: 0.5,
+                consonantBeginsSyllableAndIsSequence: 0.5,
+                consonantEndsSyllable: 0.5,
+                consonantEndsSyllableAndIsSequence: 0.5);
 
             Assert.IsTrue(AllOutputContainsAtLeastOnce(provider, "b", "d", "cc", "ff"));
 
