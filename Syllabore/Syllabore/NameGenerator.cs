@@ -16,7 +16,7 @@ namespace Syllabore
     /// to return names as Name structs which gives you access to the syllable sequence.
     /// </p>
     /// </summary>
-    public class NameGenerator
+    public class NameGenerator : IGenerator
     {
         private Random Random { get; set; }
 
