@@ -72,7 +72,7 @@ namespace Syllabore.Example
 
                     for (int j = 0; j < 4; j++)
                     {
-                        var variation = g.NextVariation(name);
+                        var variation = g.Mutate(name);
                         Console.WriteLine(variation);
 
                     }

@@ -16,7 +16,7 @@ namespace Syllabore
     /// to return names as Name structs which gives you access to the syllable sequence.
     /// </p>
     /// </summary>
-    public class NameGenerator : IGenerator
+    public class NameGenerator : IGenerator, IMutator
     {
         private Random Random { get; set; }
 
@@ -254,7 +254,7 @@ namespace Syllabore
         }
 
         // Mutation will use this NameGenerator's mutator, but subject output to the validator (if there is one)
-        public Name NextVariation(Name sourceName)
+        public Name Mutate(Name sourceName)
         {
 
             if (sourceName.Syllables.Count < 1)
@@ -273,11 +273,11 @@ namespace Syllabore
 
                 if (totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
                 {
-                    throw new InvalidOperationException("This NameGenerator has run out of attempts generating a valid name variation. It may be configured in such a way that there does not exist a variation that can satisfy the specified NameValidator."); ;
+                    throw new InvalidOperationException("This NameGenerator has run out of attempts generating a valid name variation through mutations. It may be configured in such a way that there does not exist any mutation that can satisfy the specified NameValidator."); ;
                 }
             }
 
-            return result ?? throw new InvalidOperationException("The NameGenerator has failed to produce a name variation.");
+            return result ?? throw new InvalidOperationException("The NameGenerator has failed to produce a name variation through mutations.");
         }
 
 
