@@ -15,12 +15,14 @@ namespace Syllabore
     {
         public List<MutationStep> Steps { get; set; }
 
-        [JsonIgnore]
-        public Func<Name, bool> CanMutate { get; set; }
+        public int? ConditionalIndex { get; set; }
+        public string ConditionalRegex { get; set; }
 
         public Mutation()
         {
             this.Steps = new List<MutationStep>();
+            this.ConditionalIndex = null;
+            this.ConditionalRegex = null;
         }
         public void Apply(Name name)
         {
@@ -30,9 +32,24 @@ namespace Syllabore
             }
         }
 
-        public Mutation When(Func<Name, bool> when)
+        public Mutation When(string regex)
         {
-            this.CanMutate = when;
+            return this.When(int.MinValue, regex);
+        }
+
+        public Mutation When(int index, string regex)
+        {
+            if (index == int.MaxValue)
+            {
+                this.ConditionalIndex = null;
+            }
+            else
+            {
+                this.ConditionalIndex = index;
+            }
+
+            this.ConditionalRegex = regex;
+
             return this;
         }
 
@@ -60,12 +77,12 @@ namespace Syllabore
             return this;
         }
 
+        
         public Mutation ExecuteUnserializableAction(Action<Name> unserializableAction)
         {
             this.Steps.Add(new MutationStep(unserializableAction));
             return this;
         }
-
-
+        
     }
 }

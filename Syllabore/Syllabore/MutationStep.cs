@@ -12,7 +12,6 @@ namespace Syllabore
         SyllableRemoval,
         Lambda // Note: this cannot be serialized
     }
-
     public class MutationStep
     {
         public MutationStepType Type { get; set; }
@@ -83,6 +82,7 @@ namespace Syllabore
             {
                 UnserializableAction(name);
             }
+            
 
         }
 
