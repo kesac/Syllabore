@@ -90,8 +90,8 @@ namespace Syllabore.Example
                         .WithMutation(x => x.ReplaceSyllable(0, "Gran"))
                         .WithMutation(x => x.ReplaceSyllable(0, "Bri"))
                         .WithMutation(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard"))
-                        .WithMutation(x => x.When(y => y.SyllableAt(-2).EndsWithConsonant()).ReplaceSyllable(-1, "opolis"))
-                        .WithMutation(x => x.When(y => y.SyllableAt(-2).EndsWithVowel()).ReplaceSyllable(-1, "polis"))
+                        .WithMutation(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
+                        .WithMutation(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis"))
                         .WithMutationCount(1))
                     .UsingValidator(v => v
                         .DoNotAllowPattern(
