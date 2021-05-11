@@ -78,6 +78,7 @@ namespace Syllabore.Example
                     }
                 }
             }
+
             {
                 Console.WriteLine();
                 var g = new NameGenerator()
@@ -89,18 +90,18 @@ namespace Syllabore.Example
                     .UsingMutator(m => m
                         .WithMutation(x => x.ReplaceSyllable(0, "Gran"))
                         .WithMutation(x => x.ReplaceSyllable(0, "Bri"))
-                        .WithMutation(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard"))
+                        .WithMutation(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard").WithWeight(2))
                         .WithMutation(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
                         .WithMutation(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis"))
                         .WithMutationCount(1))
                     .UsingValidator(v => v
                         .DoNotAllowPattern(
                             @".{12,}",
-                            @"(\w)\1\1",             // no letters three times in a row
-                            @".*([y|Y]).*([y|Y]).*", // two y's in same name
-                            @".*([z|Z]).*([z|Z]).*", // two z's in same name
-                            @"(zs)",                 // this just looks weird
-                            @"(y[v|t])"))            // this also looks weird 
+                            @"(\w)\1\1",             // Prevents any letter from occuring three times in a row
+                            @".*([y|Y]).*([y|Y]).*", // Prevents double y
+                            @".*([z|Z]).*([z|Z]).*", // Prevents double z
+                            @"(zs)",                 // Prevents "zs"
+                            @"(y[v|t])"))            // Prevents "yv" and "yt"
                     .LimitMutationChance(0.99)
                     .LimitSyllableCount(2, 4);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -10,7 +11,6 @@ namespace Syllabore
     {
         private Random Random;
         public List<Mutation> Mutations { get; set; }
-
         public int MutationLimit { get; set; }
 
         public NameMutator()
@@ -20,15 +20,32 @@ namespace Syllabore
             this.MutationLimit = 1;
         }
 
+        private Mutation GetWeightedSelection()
+        {
+            int totalWeight = this.Mutations.Sum(x => x.Weight);
+            int selection = this.Random.Next(totalWeight);
+
+            int runningTotal = 0;
+            for (int j = 0; j < totalWeight; j++)
+            {
+                runningTotal += this.Mutations[j].Weight;
+                if (selection < runningTotal)
+                {
+                    return this.Mutations[j];
+                }
+            }
+
+            throw new InvalidOperationException("GetWeightedSelection() failed generated a selection that is in range of total weights");
+        }
+
         public Name Mutate(Name sourceName)
         {
             var result = new Name(sourceName);
 
             for (int i = 0; this.Mutations.Count > 0 && i < this.MutationLimit; i++)
             {
-                // Currently chooses a random mutation
-                var mutation = this.Mutations[this.Random.Next(this.Mutations.Count)];
-                var canApplyMutation = false;
+                var mutation = this.GetWeightedSelection();
+                var canApplyMutation = mutation.ConditionalRegex == null;
 
                 if (mutation.ConditionalRegex != null)
                 {
@@ -51,22 +68,12 @@ namespace Syllabore
                         canApplyMutation = true;
                     }
                 }
-                else
-                {
-                    canApplyMutation = true;
-                }
 
                 if (canApplyMutation)
                 {
                     mutation.Apply(result);
                 }
 
-                /**
-                if (mutation.CanMutate == null || mutation.CanMutate(result)) // Not all mutations have a condition
-                {
-                    mutation.Apply(result);
-                }
-                **/
             }
             
             return result;
@@ -83,14 +90,6 @@ namespace Syllabore
             this.Mutations.AddRange(m.Mutations);
             return this;
         }
-
-        /*
-        public NameMutator When(Func<Name, bool> when)
-        {
-            this.Mutations[this.Mutations.Count - 1].CanMutate = when;
-            return this;
-        }
-        /**/
 
         public NameMutator WithMutationCount(int limit)
         {

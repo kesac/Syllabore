@@ -15,12 +15,19 @@ namespace Syllabore
     {
         public List<MutationStep> Steps { get; set; }
 
+        /// <summary>
+        /// A positive integer that influences the probability of this mutation being used over others.
+        /// Given two mutations X and Y with a weight of 3 and 1 respectively, mutation X will be applied 75% of the time.
+        /// All mutations default to a weight of 1.
+        /// </summary>
+        public int Weight { get; set; }
         public int? ConditionalIndex { get; set; }
         public string ConditionalRegex { get; set; }
 
         public Mutation()
         {
             this.Steps = new List<MutationStep>();
+            this.Weight = 1;
             this.ConditionalIndex = null;
             this.ConditionalRegex = null;
         }
@@ -50,6 +57,12 @@ namespace Syllabore
 
             this.ConditionalRegex = regex;
 
+            return this;
+        }
+
+        public Mutation WithWeight(int weight)
+        {
+            this.Weight = weight;
             return this;
         }
 
