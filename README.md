@@ -55,7 +55,7 @@ var g = new NameGenerator()
         .WithMutation(x => x.Syllables.Add("polis")).When(x => x.EndsWithVowel())
         .WithMutationCount(1))
     .UsingValidator(v => v
-        .Invalidate(
+        .DoNotAllowPattern(
             @"(\w)\1\1",             // no letters three times in a row
             @".*([y|Y]).*([y|Y]).*", // two y's in same name
             @".*([z|Z]).*([z|Z]).*", // two z's in same name
