@@ -21,7 +21,13 @@ namespace Syllabore
         public static NameGenerator Load(string path)
         {
             string result = File.ReadAllText(path);
-            return JsonSerializer.Deserialize<NameGenerator>(result, Options);
+            var g = JsonSerializer.Deserialize<NameGenerator>(result, Options);
+
+            // The parent property is not serialized because it would create a cycle
+            // and so needs to be set again.
+            g.Provider.Probability.StartingSyllable.Parent = g.Provider.Probability;
+
+            return g;
         }
 
     }
