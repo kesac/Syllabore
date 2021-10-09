@@ -20,10 +20,7 @@ namespace Syllabore.Tests
                     .WithLeadingConsonants("b")
                     .WithLeadingConsonantSequences("cc")
                     .WithTrailingConsonants("d")
-                    .WithTrailingConsonantSequences("ff")
-                    .AllowVowelSequences() // These flags are true by default; we explicitly set them for clarity to future readers
-                    .AllowLeadingConsonantSequences()
-                    .AllowTrailingConsonantSequences())
+                    .WithTrailingConsonantSequences("ff"))
                 .UsingValidator(x => x
                     .DoNotAllowPattern(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
                     .DoNotAllowPattern(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences

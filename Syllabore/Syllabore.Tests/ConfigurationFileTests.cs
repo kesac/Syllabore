@@ -68,21 +68,21 @@ namespace Syllabore.Tests
             Assert.IsTrue(p1.TrailingConsonantSequences.UnorderedListEquals(p2.TrailingConsonantSequences));
 
             // Usage flags
-            Assert.IsTrue(p1.UseLeadingConsonants == p2.UseLeadingConsonants);
-            Assert.IsTrue(p1.UseLeadingConsonantSequences == p2.UseLeadingConsonantSequences);
-            Assert.IsTrue(p1.UseStartingSyllableLeadingVowels == p2.UseStartingSyllableLeadingVowels);
-            Assert.IsTrue(p1.UseVowelSequences == p2.UseVowelSequences);
-            Assert.IsTrue(p1.UseTrailingConsonants == p2.UseTrailingConsonants);
-            Assert.IsTrue(p1.UseTrailingConsonantSequences == p2.UseTrailingConsonantSequences);
+            Assert.IsTrue(p1.LeadingConsonantsAllowed == p2.LeadingConsonantsAllowed);
+            Assert.IsTrue(p1.LeadingConsonantSequencesAllowed == p2.LeadingConsonantSequencesAllowed);
+            Assert.IsTrue(p1.LeadingVowelForStartingSyllableAllowed == p2.LeadingVowelForStartingSyllableAllowed);
+            Assert.IsTrue(p1.VowelSequencesAllowed == p2.VowelSequencesAllowed);
+            Assert.IsTrue(p1.TrailingConsonantsAllowed == p2.TrailingConsonantsAllowed);
+            Assert.IsTrue(p1.TrailingConsonantSequencesAllowed == p2.TrailingConsonantSequencesAllowed);
 
             // Probability of a component showing up in a syllable
-            Assert.IsTrue(p1.ChanceConsonantBeginsSyllable == p2.ChanceConsonantBeginsSyllable);
-            Assert.IsTrue(p1.ChanceConsonantBeginsSyllableAndIsSequence == p2.ChanceConsonantBeginsSyllableAndIsSequence);
-            Assert.IsTrue(p1.ChanceVowelIsSequence == p2.ChanceVowelIsSequence);
-            Assert.IsTrue(p1.ChanceVowelBeginsStartingSyllable == p2.ChanceVowelBeginsStartingSyllable);
-            Assert.IsTrue(p1.ChanceVowelBeginsStartingSyllableAndIsSequence == p2.ChanceVowelBeginsStartingSyllableAndIsSequence);
-            Assert.IsTrue(p1.ChanceConsonantEndsSyllable == p2.ChanceConsonantEndsSyllable);
-            Assert.IsTrue(p1.ChanceConsonantEndsSyllableAndIsSequence == p2.ChanceConsonantEndsSyllableAndIsSequence);
+            Assert.IsTrue(p1.Probability.ChanceLeadingConsonantExists == p2.Probability.ChanceLeadingConsonantExists);
+            Assert.IsTrue(p1.Probability.ChanceLeadingConsonantBecomesSequence == p2.Probability.ChanceLeadingConsonantBecomesSequence);
+            Assert.IsTrue(p1.Probability.ChanceVowelBecomesSequence == p2.Probability.ChanceVowelBecomesSequence);
+            Assert.IsTrue(p1.Probability.StartingSyllable.ChanceLeadingVowelExists == p2.Probability.StartingSyllable.ChanceLeadingVowelExists);
+            Assert.IsTrue(p1.Probability.StartingSyllable.ChanceLeadingVowelBecomesSequence == p2.Probability.StartingSyllable.ChanceLeadingVowelBecomesSequence);
+            Assert.IsTrue(p1.Probability.ChanceTrailingConsonantExists == p2.Probability.ChanceTrailingConsonantExists);
+            Assert.IsTrue(p1.Probability.ChanceTrailingConsonantBecomesSequence == p2.Probability.ChanceTrailingConsonantBecomesSequence);
 
             // Invalid regular expressions
             Assert.IsNotNull(g.Validator);

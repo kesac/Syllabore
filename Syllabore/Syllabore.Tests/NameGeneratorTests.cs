@@ -82,5 +82,38 @@ namespace Syllabore.Tests
 
         }
 
+        [TestMethod]
+        public void NameGeneration_WithSequencesOnly_Allowed()
+        {
+            // It is valid for a name generator to use a provider that only uses sequences
+            var generator = new NameGenerator()
+                .UsingProvider(x => x
+                    .WithLeadingConsonantSequences("sr")
+                    .WithVowelSequences("ea")
+                    .WithTrailingConsonantSequences("bz")
+                    .WithProbability(x => x
+                        .VowelExists(1.0)
+                        .VowelBecomesSequence(1.0)
+                        .StartingSyllable.LeadingVowelExists(0.0)))
+                //.WithProbability(vowelBecomesVowelSequence: 1.0)
+                //.DisallowStartingSyllableLeadingVowels()
+                //.DisallowLeadingVowelsInStartingSyllables())
+                .UsingValidator(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 2 characters
+
+            try
+            {
+                for (int i = 0; i < 10000; i++)
+                {
+                    var name = generator.Next();
+                    Assert.IsTrue(name.Length > 2);
+                }
+            }
+            catch (Exception e)
+            {
+                Assert.Fail(e.Message);
+            }
+
+        }
+
     }
 }
