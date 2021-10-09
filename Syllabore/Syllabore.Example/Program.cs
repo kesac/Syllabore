@@ -22,6 +22,124 @@ namespace Syllabore.Example
                     Console.WriteLine(g.Next());
                 }
             }
+
+            Separator();
+
+            {
+                // Example of customizing name generator
+                // with a custom vowel and consonant pool
+                var p = new SyllableProvider();
+                p.WithVowels("aei");
+                p.WithConsonants("trs");
+
+                var g = new NameGenerator();
+                g.UsingProvider(p);
+
+                Console.WriteLine(g.Next());
+                
+
+                // Same example, but with method chaining.
+                // The rest of the examples will use this style.
+
+                g = new NameGenerator()
+                    .UsingProvider(x => x
+                        .WithVowels("aei")
+                        .WithConsonants("trs"));
+
+                Console.WriteLine(g.Next());
+                
+            }
+
+            Separator();
+
+            {
+                // Example of differentiating between leading and
+                // trailing consonants
+                var g = new NameGenerator()
+                    .UsingProvider(x => x
+                        .WithVowels("aei")
+                        .WithLeadingConsonants("vmnl")
+                        .WithTrailingConsonants("tsrc"));
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Example of introducing sequences:
+                // Vowels and consonants have a probability
+                // of turning into a vowel sequences and consonant
+                // sequences respectively
+                var g = new NameGenerator()
+                    .UsingProvider(x => x
+                        .WithVowels("aeiou")
+                        .WithVowelSequences("oo", "ea")
+                        .WithLeadingConsonants("vmnl")
+                        .WithLeadingConsonantSequences("wh", "tr")
+                        .WithTrailingConsonants("tsrc")
+                        .WithTrailingConsonantSequences("st","rd"));
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+
+                // Same example, but using context-aware AndSequences()
+
+                g = new NameGenerator()
+                    .UsingProvider(x => x
+                        .WithVowels("aeiou").Sequences("oo", "ea")
+                        .WithLeadingConsonants("vmnl").Sequences("wh", "tr")
+                        .WithTrailingConsonants("tsrc").Sequences("st", "rd"));
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+
+            }
+
+            Separator();
+
+            {
+                // An example of manipulating general frequency
+                // of leading and trailing consonants. In this example,
+                // the name generator will use syllables that always have
+                // a leading consonant, but only have a trailing one 20% of the
+                // time.
+                var g = new NameGenerator()
+                        .UsingProvider(x => x
+                            .WithVowels("aei")
+                            .WithLeadingConsonants("vmnl")
+                            .WithTrailingConsonants("tsrc")
+                            .WithProbability(x => x
+                                .LeadingConsonantExists(1.0)
+                                .TrailingConsonantExists(0.20)));
+            }
+
+            Separator();
+            
+            /*
+            {
+                // An example of manipulating frequency of individual consonants
+                // and vowels. This generator will use 'a' as a vowel three times
+                // more likely than 'e' or 'i'.
+                var g = new NameGenerator()
+                        .UsingProvider(x => x
+                            .WithVowels("a").Weight(3)
+                            .WithVowels("ei").Weight(1)
+                            .WithLeadingConsonants("vm").Weight(5)
+                            .WithLeadingConsonants("vm").Weight(2)
+                            .WithTrailingConsonants("tsrc").Weight(1));
+            }
+            */
+
+            Separator();
+
             {
 
                 // Normally the constructor takes a SyllableProvider
@@ -43,6 +161,9 @@ namespace Syllabore.Example
                     Console.WriteLine(g.Next());
                 }
             }
+
+            Separator();
+
             {
 
                 // You can choose to build name generators programmatically.
@@ -61,6 +182,8 @@ namespace Syllabore.Example
 
             }
 
+            Separator();
+
             {
                 // Creating variations of a single name
                 var g = new NameGenerator().UsingMutator(new VowelMutator());
@@ -78,6 +201,8 @@ namespace Syllabore.Example
                     }
                 }
             }
+
+            Separator();
 
             {
                 Console.WriteLine();
@@ -117,14 +242,17 @@ namespace Syllabore.Example
                 Console.WriteLine();
 
             }
+
+            Separator();
+
             {
                 var provider = new SyllableProvider();
                 provider.WithVowels("a", "e", "o", "y");
                 provider.WithLeadingConsonants("v", "s", "t", "l", "r");
                 provider.WithTrailingConsonants("z", "r", "t");
                 provider.WithVowelSequences("ey", "ay", "oy");
-                provider.DisallowLeadingConsonantSequences();
-                provider.DisallowTrailingConsonantSequences();
+                // provider.DisallowLeadingConsonantSequences(); // They will be off if nothing is defined
+                // provider.DisallowTrailingConsonantSequences();  // They will be off if nothing is defined
 
                 var shifter = new VowelMutator("a", "e", "o", "y");
 
@@ -140,6 +268,9 @@ namespace Syllabore.Example
                 g.LimitSyllableCount(2, 3);
 
             }
+
+            Separator();
+
             {
                 var name = new Name("syl", "la", "bore");
                 var mutator = new NameMutator()
@@ -153,5 +284,11 @@ namespace Syllabore.Example
             }
 
         }
+
+        public static void Separator()
+        {
+            Console.WriteLine("----------------------");
+        }
+
     }
 }
