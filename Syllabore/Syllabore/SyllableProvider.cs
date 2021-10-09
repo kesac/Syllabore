@@ -6,6 +6,10 @@ using System.Text.Json.Serialization;
 
 namespace Syllabore
 {
+    /// <summary>
+    /// Used by <see cref="SyllableProvider"/> to support context-aware
+    /// method chaining.
+    /// </summary>
     public enum Context
     {
         None,
@@ -20,7 +24,9 @@ namespace Syllabore
     }
 
     /// <summary>
-    /// Generates syllables based on a set of configurable vowels and consonants.
+    /// Generates syllables based on a set of configurable vowels and consonants. A instance
+    /// of this class should have its consonant and vowel pools defined before being added to
+    /// a <see cref="NameGenerator"/>.
     /// </summary>
     [Serializable]
     public class SyllableProvider : IProvider
@@ -296,18 +302,27 @@ namespace Syllabore
         }
         /**/
 
+        /// <summary>
+        /// Used to manage the probability of vowels/consonants turning into sequences, of leading
+        /// consonants starting a syllable, of trailing consonants ending a syllable, etc.
+        /// </summary>
         public SyllableProvider WithProbability(Func<SyllableProviderProbability, SyllableProviderProbability> configure)
         {
             this.Probability = configure(this.Probability);
             return this;
         }
 
+        /// <summary>
+        /// Specifying a value of <c>true</c> will permit generation of empty strings
+        /// as syllables. This is a scenario if there are no vowels/consonants to choose from or if the probability
+        /// table does not guarantee that syllable output is never a zero-length string. By default, this is <c>false</c>
+        /// and <see cref="SyllableProvider"/> throws an Exception whenever an empty string is generated.
+        /// </summary>
         public SyllableProvider AllowEmptyStrings(bool allow)
         {
             this.AllowEmptyStringGeneration = allow;
             return this;
         }
-
 
         private string NextLeadingConsonant()
         {

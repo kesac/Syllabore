@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Syllabore
 {
+    /// <summary>
+    /// Convenience methods for dealing with Names.
+    /// </summary>
     public static class NameExtensions
     {
 

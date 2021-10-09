@@ -9,7 +9,7 @@ namespace Syllabore
     /// <summary>
     /// <p>
     /// Randomly generates names by constructing syllables and joining them together.
-    /// Optionally, it can also filter its output through a <c>INameValidator</c>.
+    /// It can also filter its output through a <see cref="IValidator"/> if one is specified.
     /// </p>
     /// <p>
     /// Use <c>Next()</c> to return names as strings and <c>NextName()</c>

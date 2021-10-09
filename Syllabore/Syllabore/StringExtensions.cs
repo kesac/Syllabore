@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace Syllabore
 {
+    /// <summary>
+    /// Convenience methods for dealing with strings.
+    /// </summary>
     public static class StringExtensions
     {
         public static string[] Atomize(this string s)

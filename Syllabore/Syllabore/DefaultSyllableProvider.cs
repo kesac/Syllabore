@@ -5,8 +5,9 @@ using System.Text;
 namespace Syllabore
 {
     /// <summary>
-    /// A quick and dirty standlone syllable provider for quick use. Custom providers
-    /// should use <c>ConfigurableSyllableProvider</c> instead.
+    /// This is the default provider that <see cref="NameGenerator"/> uses 
+    /// when a custom provider is not specified during instantiation.
+    /// This is included in Syllabore as a convenience.
     /// </summary>
     public class DefaultSyllableProvider : SyllableProvider
     {

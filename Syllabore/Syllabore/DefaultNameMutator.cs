@@ -5,9 +5,10 @@ using System.Text;
 namespace Syllabore
 {
     /// <summary>
-    /// Creates variations on names by replacing one syllable
-    /// with another syllable. This class uses the DefaultSyllableProvider
-    /// by default.
+    /// This is the default mutator that <see cref="NameGenerator"/> uses 
+    /// when a custom mutator is not specified during instantiation.
+    /// This mutator creates variations of names by replacing one syllable
+    /// with another syllable. Syllables are derived from <see cref="DefaultSyllableProvider"/>.
     /// </summary>
     public class DefaultNameMutator : NameMutator
     {

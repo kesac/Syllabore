@@ -12,6 +12,10 @@ namespace Syllabore
         SyllableRemoval,
         Lambda // Note: this cannot be serialized
     }
+
+    /// <summary>
+    /// Represents one action or step in a mutation chain.
+    /// </summary>
     public class MutationStep
     {
         public MutationStepType Type { get; set; }

@@ -5,6 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace Syllabore
 {
+    /// <summary>
+    /// Used to manage probabilities in SyllableProvider.
+    /// </summary>
     public class SyllableProviderProbability
     {
         public class SyllableProbability

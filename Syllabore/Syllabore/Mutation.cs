@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace Syllabore
 {
     /// <summary>
-    /// Used by NameGenerator through ConfigurableNameMutator to capture
+    /// Used by <see cref="NameGenerator"/> through <see cref="NameMutator"/> to capture
     /// mutations to produce variations on names. This class also has
     /// an optional condition that must be fulfilled for the mutation
     /// to occur.
@@ -90,7 +90,6 @@ namespace Syllabore
             return this;
         }
 
-        
         public Mutation ExecuteUnserializableAction(Action<Name> unserializableAction)
         {
             this.Steps.Add(new MutationStep(unserializableAction));

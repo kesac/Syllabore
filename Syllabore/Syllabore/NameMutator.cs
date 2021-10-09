@@ -6,6 +6,11 @@ using System.Text.RegularExpressions;
 
 namespace Syllabore
 {
+
+    /// <summary>
+    /// Takes source names and applies one or more mutations
+    /// to create a name variations.
+    /// </summary>
     [Serializable]
     public class NameMutator : IMutator
     {

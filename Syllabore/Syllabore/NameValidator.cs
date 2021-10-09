@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace Syllabore
 {
     /// <summary>
-    /// Validates names by checking them against a set of configurable constraints.
+    /// Validates names produced by a <see cref="NameGenerator"/> against a set of configurable constraints.
     /// </summary>
     [Serializable]
     public class NameValidator : IValidator
