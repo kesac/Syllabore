@@ -93,7 +93,13 @@ namespace Syllabore
         /// <returns></returns>
         public Mutation ReplaceSyllable(int index, string replacement)
         {
-            this.Steps.Add(new MutationStep(MutationStepType.SyllableReplacement, index.ToString(), replacement));
+            this.Steps.Add(new MutationStep(MutationStepType.ReplaceSyllable, index.ToString(), replacement));
+            return this;
+        }
+
+        public Mutation ReplaceAll(string substring, string replacement)
+        {
+            this.Steps.Add(new MutationStep(MutationStepType.ReplaceAllSubstring, substring, replacement));
             return this;
         }
 
@@ -108,7 +114,7 @@ namespace Syllabore
         /// <returns></returns>
         public Mutation InsertSyllable(int index, string syllable)
         {
-            this.Steps.Add(new MutationStep(MutationStepType.SyllableInsertion, index.ToString(), syllable));
+            this.Steps.Add(new MutationStep(MutationStepType.InsertSyllable, index.ToString(), syllable));
             return this;
         }
 
@@ -117,7 +123,7 @@ namespace Syllabore
         /// </summary>
         public Mutation AppendSyllable(string syllable)
         {
-            this.Steps.Add(new MutationStep(MutationStepType.SyllableAppend, syllable));
+            this.Steps.Add(new MutationStep(MutationStepType.AppendSyllable, syllable));
             return this;
         }
 
@@ -129,7 +135,7 @@ namespace Syllabore
         /// last syllable of a name.</param>
         public Mutation RemoveSyllable(int index)
         {
-            this.Steps.Add(new MutationStep(MutationStepType.SyllableRemoval, index.ToString()));
+            this.Steps.Add(new MutationStep(MutationStepType.RemoveSyllable, index.ToString()));
             return this;
         }
 

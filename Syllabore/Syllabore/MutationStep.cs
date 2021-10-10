@@ -6,11 +6,12 @@ namespace Syllabore
 {
     public enum MutationStepType
     {
-        SyllableInsertion,
-        SyllableAppend,
-        SyllableReplacement,
-        SyllableRemoval,
-        Lambda // Note: this cannot be serialized
+        InsertSyllable,
+        AppendSyllable,
+        ReplaceSyllable,
+        RemoveSyllable,
+        Lambda, // Note: this one cannot be serialized
+        ReplaceAllSubstring
     }
 
     /// <summary>
@@ -41,7 +42,7 @@ namespace Syllabore
 
         public void Apply(Name name)
         {
-            if(this.Type == MutationStepType.SyllableInsertion)
+            if(this.Type == MutationStepType.InsertSyllable)
             {
                 int index = int.Parse(this.Arguments[0]);
                 string insertion = this.Arguments[1];
@@ -53,13 +54,13 @@ namespace Syllabore
 
                 name.Syllables.Insert(index, insertion);
             }
-            else if (this.Type == MutationStepType.SyllableAppend)
+            else if (this.Type == MutationStepType.AppendSyllable)
             {
                 string append = this.Arguments[0];
 
                 name.Syllables.Add(append);
             }
-            else if (this.Type == MutationStepType.SyllableReplacement)
+            else if (this.Type == MutationStepType.ReplaceSyllable)
             {
                 int index = int.Parse(this.Arguments[0]);
                 string replacement = this.Arguments[1];
@@ -71,7 +72,7 @@ namespace Syllabore
 
                 name.Syllables[index] = replacement;
             }
-            else if (this.Type == MutationStepType.SyllableRemoval)
+            else if (this.Type == MutationStepType.RemoveSyllable)
             {
                 int index = int.Parse(this.Arguments[0]);
 
@@ -81,6 +82,21 @@ namespace Syllabore
                 }
 
                 name.Syllables.RemoveAt(index);
+            }
+            else if(this.Type == MutationStepType.ReplaceAllSubstring)
+            {
+                string substring = this.Arguments[0].ToLower();
+                string replacement = this.Arguments[1].ToLower();
+
+                for(int i = 0; i < name.Syllables.Count; i++)
+                {
+                    var syllable = name.Syllables[i].ToLower();
+                    if (syllable.Contains(substring))
+                    {
+                        name.Syllables[i] = syllable.Replace(substring, replacement);
+                    }
+                }
+
             }
             else if(this.Type == MutationStepType.Lambda)
             {
