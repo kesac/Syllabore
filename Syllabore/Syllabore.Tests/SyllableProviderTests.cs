@@ -11,6 +11,72 @@ namespace Syllabore.Tests
     public class SyllableProviderTests
     {
 
+
+        // This is just a helper method to provide a vanilla
+        // provider with one instance of every vowel/consonant 
+        // combination defined
+        private static SyllableProvider GetDefaultProviderWithAllComponentsDefined()
+        {
+            return new SyllableProvider()
+                .WithLeadingConsonants("b").Sequences("cc")
+                .WithTrailingConsonants("d").Sequences("ff")
+                .WithVowels("o").Sequences("uu")
+                .WithProbability(x => x.LeadingConsonantExists(1.0));
+        }
+
+        private bool EachOutputNeverContainsAnyOf(SyllableProvider p, params string[] invalidSubstrings)
+        {
+            bool outputNeverAppears = true;
+            for (int i = 0; i < 1000; i++)
+            {
+                var s = p.NextSyllable();
+                if (s.ContainsAny(invalidSubstrings))
+                {
+                    outputNeverAppears = false;
+                    break;
+                }
+            }
+
+            return outputNeverAppears;
+        }
+
+        private bool EachOutputContainsAnyOf(SyllableProvider p, params string[] validSubstrings)
+        {
+            bool outputAlwaysAppears = true;
+            for (int i = 0; i < 1000; i++)
+            {
+                var s = p.NextSyllable();
+                if (!s.ContainsAny(validSubstrings))
+                {
+                    outputAlwaysAppears = false;
+                    break;
+                }
+            }
+
+            return outputAlwaysAppears;
+        }
+
+        private bool AllOutputContainsAtLeastOnce(SyllableProvider p, params string[] validSubstrings)
+        {
+            bool[] substringAppeared = new bool[validSubstrings.Length];
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var s = p.NextSyllable();
+
+                for (int j = 0; j < validSubstrings.Length; j++)
+                {
+                    if (s.Contains(validSubstrings[j]))
+                    {
+                        substringAppeared[j] = true;
+                    }
+                }
+            }
+
+            return substringAppeared.All(x => x);
+
+        }
+
         [TestMethod]
         public void Provider_WithNothingDefined_ThrowsException()
         {
@@ -180,11 +246,6 @@ namespace Syllabore.Tests
 
             // Defining at least one vowel sequence, set to 100% probability
             // without any possibility of vowels starting name shoudl work
-            // provider.WithVowelSequenceProbability(1.0).WithStartingSyllableLeadingVowelSequenceProbability(1.0);
-            //provider.WithProbability(x => x.OfVowelSequences(1.0).OfStartingSyllableLeadingVowelSequence(1.0));
-            //provider.WithProbability(vowelBecomesVowelSequence: 1.0, startingSyllableStartsWithVowelSequence: 1.0);
-            //provider.AllowVowelSequences(1.0).AllowVowelSequencesBeginStartingSyllables(1.0);
-            
             provider.WithProbability(x => x
                 .VowelExists(1.0)
                 .VowelBecomesSequence(1.0));
@@ -195,14 +256,8 @@ namespace Syllabore.Tests
             }
             
             // The normal scenario where at least one individual vowel is defined
-            //provider.WithVowels("a").WithProbability(x => x.OfVowelSequences(0));
-            //provider.WithVowels("a").WithProbability(vowelBecomesVowelSequence: 0);
-
-            
             provider.WithVowels("a")
                     .WithProbability(x => x.VowelBecomesSequence(0));
-
-            // .AndSequences().Chance(0.0);
 
             for (int i = 0; i < 1000; i++)
             {
@@ -211,6 +266,7 @@ namespace Syllabore.Tests
             
         }
 
+        [TestMethod]
         public void Provider_WithCustomComponents_AllComponentsAppearInProviderOutput()
         {
             // In this test we define one instance of a vowel, vowel sequence
@@ -230,22 +286,6 @@ namespace Syllabore.Tests
                         .LeadingConsonantExists(0.50)
                         .TrailingConsonantExists(0.50)
                         .StartingSyllable.LeadingVowelExists(0.25));
-                    // .AllowLeadingVowelSequencesInStartingSyllable().Chance(0.25);
-
-                    /*
-                    .WithProbability(
-                        vowelBecomesVowelSequence: 0.5,
-                        startingSyllableStartsWithVowel: 0.25,
-                        syllableStartsWithConsonant: 0.50,
-                        syllableEndsWithConsonant: 0.50);
-                    */
-            /*
-            .WithProbability(y => y
-                .OfVowelSequences(0.5)
-                .OfStartingSyllableLeadingVowels(0.25)
-                .OfLeadingConsonantSequences(0.50)
-                .OfTrailingConsonants(0.50));
-            */
 
             bool foundVowel = false;
             bool foundVowelSequence = false;
@@ -345,14 +385,6 @@ namespace Syllabore.Tests
                         .LeadingConsonantExists(0.50)
                         .TrailingConsonantExists(0.50)));
 
-            /*
-                    .WithProbability(
-                        vowelBecomesVowelSequence: 0.5,
-                        startingSyllableStartsWithVowel: 0.25,
-                        syllableStartsWithConsonant: 0.50,
-                        syllableEndsWithConsonant: 0.50));
-            */
-
             bool foundVowel = false;
             bool foundVowelSequence = false;
             bool foundStartingConsonant = false;
@@ -390,8 +422,6 @@ namespace Syllabore.Tests
                     .WithVowels("ea")
                     .WithTrailingConsonants("tz")
                     .WithProbability(x => x.LeadingConsonantExists(1.0)))
-                    //.WithProbability(syllableStartsWithConsonant: 1.0))
-                    // .WithProbability(Context.LeadingConsonant, 1.0))
                 .UsingValidator(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 3 characters
 
             try
@@ -407,21 +437,6 @@ namespace Syllabore.Tests
                 Assert.Fail(e.Message);
             }
 
-        }
-
-
-
-        // This is just a helper method to provide a vanilla
-        // provider with one instance of every vowel/consonant 
-        // combination defined
-        private static SyllableProvider GetDefaultProviderWithAllComponentsDefined()
-        {
-            return new SyllableProvider()
-                .WithLeadingConsonants("b").Sequences("cc")
-                .WithTrailingConsonants("d").Sequences("ff")
-                .WithVowels("o").Sequences("uu")
-                .WithProbability(x => x.LeadingConsonantExists(1.0));
-                //.WithProbability(syllableStartsWithConsonant: 1.0);
         }
 
         [TestMethod]
@@ -761,57 +776,6 @@ namespace Syllabore.Tests
 
         }
 
-        private bool EachOutputNeverContainsAnyOf(SyllableProvider p, params string[] invalidSubstrings)
-        {
-            bool outputNeverAppears = true;
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = p.NextSyllable();
-                if (s.ContainsAny(invalidSubstrings)){
-                    outputNeverAppears = false;
-                    break;
-                }
-            }
-
-            return outputNeverAppears;
-        }
-
-        private bool EachOutputContainsAnyOf(SyllableProvider p, params string[] validSubstrings)
-        {
-            bool outputAlwaysAppears = true;
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = p.NextSyllable();
-                if (!s.ContainsAny(validSubstrings))
-                {
-                    outputAlwaysAppears = false;
-                    break;
-                }
-            }
-
-            return outputAlwaysAppears;
-        }
-
-        private bool AllOutputContainsAtLeastOnce(SyllableProvider p, params string[] validSubstrings)
-        {
-            bool[] substringAppeared = new bool[validSubstrings.Length];
-
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = p.NextSyllable();
-
-                for(int j = 0; j < validSubstrings.Length; j++)
-                {
-                    if (s.Contains(validSubstrings[j]))
-                    {
-                        substringAppeared[j] = true;
-                    }
-                }
-            }
-
-            return substringAppeared.All(x => x);
-
-        }
 
     }
 }
