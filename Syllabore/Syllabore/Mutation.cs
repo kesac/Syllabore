@@ -7,9 +7,8 @@ namespace Syllabore
 {
     /// <summary>
     /// Used by <see cref="NameGenerator"/> through <see cref="NameMutator"/> to capture
-    /// mutations to produce variations on names. This class also has
-    /// an optional condition that must be fulfilled for the mutation
-    /// to occur.
+    /// mutations that produce variations on names. Mutations can also have
+    /// an optional condition that must be fulfilled for the mutation to occur.
     /// </summary>
     public class Mutation
     {
@@ -44,6 +43,18 @@ namespace Syllabore
             return this.When(int.MinValue, regex);
         }
 
+        /// <summary>
+        /// Adds a condition to this mutation. The condition is a regex pattern applied
+        /// to a syllable at the specified index. It must be satisfied for the entire mutation
+        /// to run. Note that while multiple calls to <c>When()</c> are possible, only the last
+        /// call will have an effect.
+        /// </summary>
+        /// <param name="index">The index of the syllable that the condition operates 
+        /// on. A negative index can be provided to traverse from the end of the name
+        /// instead. (For example, an index -1 will be interpreted as the last syllable
+        /// of a name.</param>
+        /// <param name="regex">The pattern that must be satisfied.</param>
+        /// <returns></returns>
         public Mutation When(int index, string regex)
         {
             if (index == int.MaxValue)
@@ -60,36 +71,72 @@ namespace Syllabore
             return this;
         }
 
+        /// <summary>
+        /// Applies a weight to this mutation that influences the probability of being used over others.
+        /// Given two mutations X and Y with a weight of 3 and 1 respectively, mutation X will be applied 75% of the time.
+        /// All mutations default to a weight of 1.
+        /// </summary>
         public Mutation WithWeight(int weight)
         {
             this.Weight = weight;
             return this;
         }
 
+        /// <summary>
+        /// Adds a mutation step that replaces a syllable at the specified index with
+        /// a desired string.
+        /// </summary>
+        /// <param name="index">The index can be a negative integer to traverse from the
+        /// end of the name instead. (For example, an index -1 will be interpreted as the
+        /// last syllable of a name.</param>
+        /// <param name="replacement">The string to substitute in.</param>
+        /// <returns></returns>
         public Mutation ReplaceSyllable(int index, string replacement)
         {
             this.Steps.Add(new MutationStep(MutationStepType.SyllableReplacement, index.ToString(), replacement));
             return this;
         }
 
+        /// <summary>
+        /// Adds a mutation step that inserts a new syllable at the specified index. The
+        /// syllable at that index and the others after it will be pushed one index to the right.
+        /// </summary>
+        /// <param name="index">The index can be a negative integer to traverse from the
+        /// end of the name instead. (For example, an index -1 will be interpreted as the
+        /// last syllable of a name.</param>
+        /// <param name="replacement">The string to insert.</param>
+        /// <returns></returns>
         public Mutation InsertSyllable(int index, string syllable)
         {
             this.Steps.Add(new MutationStep(MutationStepType.SyllableInsertion, index.ToString(), syllable));
             return this;
         }
 
+        /// <summary>
+        /// Adds a mutation step that appends a new syllable to the end of a name.
+        /// </summary>
         public Mutation AppendSyllable(string syllable)
         {
             this.Steps.Add(new MutationStep(MutationStepType.SyllableAppend, syllable));
             return this;
         }
 
+        /// <summary>
+        /// Adds a mutation step that removes the syllable at the specified index.
+        /// </summary>
+        /// <param name="index">The index can be a negative integer to traverse from the
+        /// end of the name instead. (For example, an index -1 will be interpreted as the
+        /// last syllable of a name.</param>
         public Mutation RemoveSyllable(int index)
         {
             this.Steps.Add(new MutationStep(MutationStepType.SyllableRemoval, index.ToString()));
             return this;
         }
 
+        /// <summary>
+        /// Executes the specified action on a name. Note that this mutation step cannot
+        /// be serialized.
+        /// </summary>
         public Mutation ExecuteUnserializableAction(Action<Name> unserializableAction)
         {
             this.Steps.Add(new MutationStep(unserializableAction));
