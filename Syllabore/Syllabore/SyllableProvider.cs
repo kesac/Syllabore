@@ -32,7 +32,7 @@ namespace Syllabore
     public class SyllableProvider : IProvider
     {
         public const double DefaultChanceLeadingConsonantExists = 0.95;
-        public const double DefaultChanceLeadingConsonantBecomesSequences = 0.25;
+        public const double DefaultChanceLeadingConsonantBecomesSequence = 0.25;
         public const double DefaultChanceVowelExists = 1.0;
         public const double DefaultChanceVowelBecomesSequence = 0.25;
         public const double DefaultChanceTrailingConsonantExists = 0.10;
@@ -189,7 +189,7 @@ namespace Syllabore
 
             if(this.Probability.ChanceLeadingConsonantBecomesSequence == null)
             {
-                this.Probability.ChanceLeadingConsonantBecomesSequence = DefaultChanceLeadingConsonantBecomesSequences;
+                this.Probability.ChanceLeadingConsonantBecomesSequence = DefaultChanceLeadingConsonantBecomesSequence;
             }
 
             this.Context = Context.LeadingConsonantSequence;

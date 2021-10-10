@@ -27,6 +27,26 @@ namespace Syllabore
             return this;
         }
 
+        public NameValidator DoNotAllowStart(params string[] regex)
+        {
+            foreach (string s in regex)
+            {
+                this.InvalidPatterns.Add("^" + s.Trim());
+            }
+
+            return this;
+        }
+
+        public NameValidator DoNotAllowEnding(params string[] regex)
+        {
+            foreach(string s in regex)
+            {
+                this.InvalidPatterns.Add(s.Trim() + "$");
+            }
+
+            return this;
+        }
+
         /// <summary>
         /// Returns true if the specified name does not match any of this validator's contraints, else returns false.
         /// </summary>
