@@ -1,0 +1,33 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: "Restore: Syllabore"
+      run: dotnet restore ./Syllabore/Syllabore/Syllabore.csproj
+    - name: "Build: Syllabore"
+      run: dotnet build ./Syllabore/Syllabore/Syllabore.csproj --no-restore
+    - name: "Restore: Syllabore.Example"
+      run: dotnet restore ./Syllabore/Syllabore.Example/Syllabore.Example.csproj
+    - name: "Build: Syllabore.Example"
+      run: dotnet build ./Syllabore/Syllabore.Example/Syllabore.Example.csproj --no-restore
+    - name: "Restore: Syllabore.Tests"
+      run: dotnet restore ./Syllabore/Syllabore.Tests/Syllabore.Tests.csproj
+    - name: "Build: Syllabore.Tests"
+      run: dotnet build ./Syllabore/Syllabore.Tests/Syllabore.Tests.csproj --no-restore
+    - name: "Run: Syllabore.Tests"
+      run: dotnet test ./Syllabore/Syllabore.Tests/Syllabore.Tests.csproj --no-build --verbosity normal
