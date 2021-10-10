@@ -18,8 +18,12 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./Syllabore/Syllabore/Syllabore.csproj
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build ./Syllabore/Syllabore/Syllabore.csproj --no-restore
+    - name: Restore dependencies
+      run: dotnet restore ./Syllabore/Syllabore.Tests/Syllabore.Tests.csproj
+    - name: Build
+      run: dotnet build ./Syllabore/Syllabore.Tests/Syllabore.Tests.csproj --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test ./Syllabore/Syllabore.Tests/Syllabore.Tests.csproj --no-build --verbosity normal
