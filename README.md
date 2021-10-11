@@ -1,15 +1,9 @@
 # Syllabore
-Syllabore is a fantasy name generator and class library, and **does not use pre-made lists of names**.
-
-Name generation is accomplished by generating syllables from vowel-consonant pools and sequencing them into names. 
-
-These are concepts Syllabore uses when generating names:
-* **Providers** - used to randomly generate syllables. Providers maintain vowel-consonant pools used to construct syllables from scratch
-* **Mutators** - an optional mechanism to randomly adjust *or mutate* names during the generation process. This is useful in iterating or evolving a name by replacing syllables, swapping a vowel for another vowel, adding new components to the name, etc.
-* **Validators** - an optional mechanism to validate syllable or letter sequences during name generation. A name generator will only output names that pass through its  validator. This is useful in avoiding undesirable letter combinations and improve the quality of output
-
 [![Nuget](https://img.shields.io/nuget/v/Syllabore)](https://www.nuget.org/packages/Syllabore/)
 
+Syllabore is a fantasy name generator and class library, and **does not use pre-made lists of names**. Name generation is accomplished by generating syllables from vowel-consonant pools and sequencing them into names. 
+
+### [See the wiki for more information.](https://github.com/kesac/Syllabore/wiki)
 
 ## Quick Start
 A generator is setup to work without any additional configuration. Just instantiate ```NameGenerator``` as-is and start calling ``Next()``:
@@ -22,7 +16,7 @@ for (int i = 0; i < 10; i++)
 }
 
 ```
-A default ```NameGenerator``` uses ```DefaultSyllableProvider``` for syllable generation, will not have a mutation step, and will not have a name validator.
+A default ```NameGenerator``` uses [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/Defaults) for syllable generation and will not use mutations step or validators. 
 
 ## Customizing Name Generation
 You can customize a name generator programmatically. Here is a basic three-syllable name generator:
