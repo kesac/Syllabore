@@ -57,7 +57,7 @@ namespace Syllabore
 
             foreach (var pattern in this.InvalidPatterns)
             {
-                if (Regex.IsMatch(name.ToString(), pattern))
+                if (Regex.IsMatch(name.ToString(), pattern, RegexOptions.IgnoreCase))
                 {
                     isValid = false;
                     break;
