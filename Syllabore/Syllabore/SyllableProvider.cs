@@ -148,7 +148,6 @@ namespace Syllabore
             foreach (var c in consonants)
             {
                 changes.AddRange(c.Atomize().Select(x => new Grapheme(x)));
-                changes.AddRange(c.Atomize().Select(x => new Grapheme(x)));
             }
 
             this.LeadingConsonants.AddRange(changes);
