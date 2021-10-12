@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -41,15 +42,18 @@ namespace Syllabore
         public const double DefaultChanceLeadingVowelInStartingSyllableBecomesSequence = 0.25;
 
         private Random Random { get; set; }
-        public Context Context { get; set; } // For contextual commands like .Probability()
+        private Context Context { get; set; } // For contextual command .Sequences()
+        private List<Grapheme> LastChanges { get; set; } // For contextual command .Weight()
+        
+
         public SyllableProviderProbability Probability { get; set; }
 
-        public List<string> LeadingConsonants { get; set; }
-        public List<string> LeadingConsonantSequences { get; set; }
-        public List<string> Vowels { get; set; }
-        public List<string> VowelSequences { get; set; }
-        public List<string> TrailingConsonants { get; set; }
-        public List<string> TrailingConsonantSequences { get; set; }
+        public List<Grapheme> LeadingConsonants { get; set; }
+        public List<Grapheme> LeadingConsonantSequences { get; set; }
+        public List<Grapheme> Vowels { get; set; }
+        public List<Grapheme> VowelSequences { get; set; }
+        public List<Grapheme> TrailingConsonants { get; set; }
+        public List<Grapheme> TrailingConsonantSequences { get; set; }
 
         public bool AllowEmptyStringGeneration { get; set; }
 
@@ -123,14 +127,15 @@ namespace Syllabore
             this.Random = new Random();
             this.Probability = new SyllableProviderProbability();
             this.Context = Context.None;
+            this.LastChanges = new List<Grapheme>();
             this.AllowEmptyStringGeneration = false;
 
-            this.LeadingConsonants = new List<string>();
-            this.LeadingConsonantSequences = new List<string>();
-            this.Vowels = new List<string>();
-            this.VowelSequences = new List<string>();
-            this.TrailingConsonants = new List<string>();
-            this.TrailingConsonantSequences = new List<string>();
+            this.LeadingConsonants = new List<Grapheme>();
+            this.LeadingConsonantSequences = new List<Grapheme>();
+            this.Vowels = new List<Grapheme>();
+            this.VowelSequences = new List<Grapheme>();
+            this.TrailingConsonants = new List<Grapheme>();
+            this.TrailingConsonantSequences = new List<Grapheme>();
         }
 
         /// <summary>
@@ -138,11 +143,17 @@ namespace Syllabore
         /// </summary>
         public SyllableProvider WithConsonants(params string[] consonants)
         {
+            var changes = new List<Grapheme>();
+
             foreach (var c in consonants)
             {
-                this.LeadingConsonants.AddRange(c.Atomize());
-                this.TrailingConsonants.AddRange(c.Atomize());
+                changes.AddRange(c.Atomize().Select(x => new Grapheme(x)));
+                changes.AddRange(c.Atomize().Select(x => new Grapheme(x)));
             }
+
+            this.LeadingConsonants.AddRange(changes);
+            this.TrailingConsonants.AddRange(changes);
+            this.LastChanges.ReplaceWith(changes);
 
             if (this.Probability.ChanceLeadingConsonantExists == null)
             {
@@ -164,12 +175,18 @@ namespace Syllabore
         /// </summary>
         public SyllableProvider WithLeadingConsonants(params string[] consonants)
         {
+
+            var changes = new List<Grapheme>();
+
             foreach (var c in consonants)
             {
-                this.LeadingConsonants.AddRange(c.Atomize());
+                changes.AddRange(c.Atomize().Select(x => new Grapheme(x)));
             }
 
-            if(this.Probability.ChanceLeadingConsonantExists == null)
+            this.LeadingConsonants.AddRange(changes);
+            this.LastChanges.ReplaceWith(changes);
+
+            if (this.Probability.ChanceLeadingConsonantExists == null)
             {
                 this.Probability.ChanceLeadingConsonantExists = DefaultChanceLeadingConsonantExists;
             }
@@ -185,7 +202,10 @@ namespace Syllabore
         /// </summary>
         public SyllableProvider WithLeadingConsonantSequences(params string[] consonantSequences)
         {
-            this.LeadingConsonantSequences.AddRange(consonantSequences);
+            var changes = consonantSequences.Select(x => new Grapheme(x)).ToList();
+
+            this.LeadingConsonantSequences.AddRange(changes);
+            this.LastChanges.ReplaceWith(changes);
 
             if(this.Probability.ChanceLeadingConsonantBecomesSequence == null)
             {
@@ -202,12 +222,17 @@ namespace Syllabore
         /// </summary>
         public SyllableProvider WithVowels(params string[] vowels)
         {
+            var changes = new List<Grapheme>();
+
             foreach (var v in vowels)
             {
-                this.Vowels.AddRange(v.Atomize());
+                changes.AddRange(v.Atomize().Select(x => new Grapheme(x)));
             }
 
-            if(this.Probability.ChanceVowelExists == null)
+            this.Vowels.AddRange(changes);
+            this.LastChanges.ReplaceWith(changes);
+
+            if (this.Probability.ChanceVowelExists == null)
             {
                 this.Probability.ChanceVowelExists = DefaultChanceVowelExists;
             }
@@ -222,7 +247,10 @@ namespace Syllabore
         /// </summary>
         public SyllableProvider WithVowelSequences(params string[] vowelSequences)
         {
-            this.VowelSequences.AddRange(vowelSequences);
+            var changes = vowelSequences.Select(x => new Grapheme(x)).ToList();
+
+            this.VowelSequences.AddRange(changes);
+            this.LastChanges.ReplaceWith(changes);
 
             if(this.Probability.ChanceVowelBecomesSequence == null)
             {
@@ -239,12 +267,17 @@ namespace Syllabore
         /// </summary>
         public SyllableProvider WithTrailingConsonants(params string[] consonants)
         {
+            var changes = new List<Grapheme>();
+
             foreach (var c in consonants)
             {
-                this.TrailingConsonants.AddRange(c.Atomize());
+                changes.AddRange(c.Atomize().Select(x => new Grapheme(x)));
             }
 
-            if(this.Probability.ChanceTrailingConsonantExists == null)
+            this.TrailingConsonants.AddRange(changes);
+            this.LastChanges.ReplaceWith(changes);
+
+            if (this.Probability.ChanceTrailingConsonantExists == null)
             {
                 this.Probability.ChanceTrailingConsonantExists = DefaultChanceTrailingConsonantExists;
             }
@@ -260,7 +293,9 @@ namespace Syllabore
         /// </summary>
         public SyllableProvider WithTrailingConsonantSequences(params string[] consonantSequences)
         {
-            this.TrailingConsonantSequences.AddRange(consonantSequences);
+            var changes = consonantSequences.Select(x => new Grapheme(x)).ToList();
+            this.TrailingConsonantSequences.AddRange(changes);
+            this.LastChanges.ReplaceWith(changes);
 
             if(this.Probability.ChanceTrailingConsonantBecomesSequence == null)
             {
@@ -272,8 +307,10 @@ namespace Syllabore
             return this;
         }
 
-        // TODO - Docs
-
+        /// <summary>
+        /// Defines the specified sequences for leading consonants, trailing consonants,
+        /// or vowels depending on the context.
+        /// </summary>
         public SyllableProvider Sequences(params string[] sequences)
         {
             switch (this.Context)
@@ -295,12 +332,18 @@ namespace Syllabore
             return this;
         }
 
-        /*
+        
         public SyllableProvider Weight(int weight)
         {
+
+            foreach(var g in this.LastChanges)
+            {
+                g.Weight = weight;
+            }
+
             return this;
         }
-        /**/
+        
 
         /// <summary>
         /// Used to manage the probability of vowels/consonants turning into sequences, of leading
@@ -328,7 +371,8 @@ namespace Syllabore
         {
             if(this.LeadingConsonants.Count > 0)
             {
-                return this.LeadingConsonants[this.Random.Next(this.LeadingConsonants.Count)];
+                //return this.LeadingConsonants[this.Random.Next(this.LeadingConsonants.Count)].Value;
+                return this.LeadingConsonants.RandomWeightedChoice().Value;
             }
             else
             {
@@ -340,7 +384,8 @@ namespace Syllabore
         {
             if (this.LeadingConsonantSequences.Count > 0)
             {
-                return this.LeadingConsonantSequences[this.Random.Next(this.LeadingConsonantSequences.Count)];
+                //return this.LeadingConsonantSequences[this.Random.Next(this.LeadingConsonantSequences.Count)].Value;
+                return this.LeadingConsonantSequences.RandomWeightedChoice().Value;
             }
             else
             {
@@ -352,7 +397,8 @@ namespace Syllabore
         {
             if (this.Vowels.Count > 0)
             {
-                return this.Vowels[this.Random.Next(this.Vowels.Count)];
+                //return this.Vowels[this.Random.Next(this.Vowels.Count)].Value;
+                return this.Vowels.RandomWeightedChoice().Value;
             }
             else
             {
@@ -364,7 +410,8 @@ namespace Syllabore
         {
             if (this.VowelSequences.Count > 0)
             {
-                return this.VowelSequences[this.Random.Next(this.VowelSequences.Count)];
+                // return this.VowelSequences[this.Random.Next(this.VowelSequences.Count)].Value;
+                return this.VowelSequences.RandomWeightedChoice().Value;
             }
             else
             {
@@ -376,7 +423,8 @@ namespace Syllabore
         {
             if (this.TrailingConsonants.Count > 0)
             {
-                return this.TrailingConsonants[this.Random.Next(this.TrailingConsonants.Count)];
+                //return this.TrailingConsonants[this.Random.Next(this.TrailingConsonants.Count)].Value;
+                return this.TrailingConsonants.RandomWeightedChoice().Value;
             }
             else
             {
@@ -388,7 +436,8 @@ namespace Syllabore
         {
             if (this.TrailingConsonantSequences.Count > 0)
             {
-                return this.TrailingConsonantSequences[this.Random.Next(this.TrailingConsonantSequences.Count)];
+                // return this.TrailingConsonantSequences[this.Random.Next(this.TrailingConsonantSequences.Count)].Value;
+                return this.TrailingConsonantSequences.RandomWeightedChoice().Value;
             }
             else
             {
