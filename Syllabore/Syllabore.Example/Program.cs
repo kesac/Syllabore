@@ -9,6 +9,7 @@ namespace Syllabore.Example
     {
         public static void Main(string[] args)
         {
+
             { 
                 // Quickest way to use Syllabore's name generator
                 // without specifying any configuration. This instance
@@ -119,24 +120,13 @@ namespace Syllabore.Example
                             .WithProbability(x => x
                                 .LeadingConsonantExists(1.0)
                                 .TrailingConsonantExists(0.20)));
-            }
 
-            Separator();
-            
-            /*
-            {
-                // An example of manipulating frequency of individual consonants
-                // and vowels. This generator will use 'a' as a vowel three times
-                // more likely than 'e' or 'i'.
-                var g = new NameGenerator()
-                        .UsingProvider(x => x
-                            .WithVowels("a").Weight(3)
-                            .WithVowels("ei").Weight(1)
-                            .WithLeadingConsonants("vm").Weight(5)
-                            .WithLeadingConsonants("vm").Weight(2)
-                            .WithTrailingConsonants("tsrc").Weight(1));
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+
             }
-            */
 
             Separator();
 
@@ -280,6 +270,29 @@ namespace Syllabore.Example
                 for(int i = 0; i < 20; i++)
                 {
                     Console.WriteLine(mutator.Mutate(name));
+                }
+            }
+
+            Separator();
+
+            {
+                var g = new JPGenerator();
+
+                for (int i = 0; i < 20; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Fantasy-sounding names, maybe
+                var g = new FantasyGenerator();
+
+                for (int i = 0; i < 20; i++)
+                {
+                    Console.WriteLine(g.Next());
                 }
             }
 
