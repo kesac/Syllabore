@@ -18,6 +18,9 @@ namespace Syllabore
     /// </summary>
     public class NameGenerator : IGenerator, IMutator
     {
+
+        private const double DefaultMutationProbability = 1.0;
+
         private Random Random { get; set; }
 
         public SyllableProvider Provider { get; set; }
@@ -33,7 +36,7 @@ namespace Syllabore
         /// A value of 0 means a mutation can never occur and a value of 1
         /// means a mutation will always occur.
         /// </summary>
-        public double MutationProbability { get; set; }
+        public double? MutationProbability { get; set; }
 
         /// <summary>
         /// Maximum attempts this generator will attempt to satisfy the
@@ -103,6 +106,12 @@ namespace Syllabore
         public NameGenerator UsingMutator(Func<NameMutator, NameMutator> configure)
         {
             this.Mutator = configure(new NameMutator());
+
+            if (!this.MutationProbability.HasValue)
+            {
+                this.MutationProbability = DefaultMutationProbability;
+            }
+
             return this;
         }
 
@@ -237,7 +246,7 @@ namespace Syllabore
                     }
                 }
 
-                if(this.Random.NextDouble() < this.MutationProbability)
+                if(this.MutationProbability.HasValue && this.Random.NextDouble() < this.MutationProbability)
                 {
                     result =  this.Mutator.Mutate(result);
                 }
