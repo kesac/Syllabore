@@ -91,10 +91,8 @@ namespace Syllabore.Tests
             Assert.IsNotNull(g2.Validator.InvalidPatterns);
             Assert.IsTrue(g.Validator.InvalidPatterns.UnorderedListEquals(g2.Validator.InvalidPatterns));
 
-
         }
 
-        
-
     }
+
 }

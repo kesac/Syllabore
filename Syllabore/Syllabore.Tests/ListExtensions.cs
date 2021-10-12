@@ -8,9 +8,14 @@ namespace Syllabore
 {
     public static class ListExtensions
     {
-        public static bool UnorderedListEquals<T>(this List<T> list, List<T> otherList)
+        public static bool UnorderedListEquals(this List<string> first, List<string> second)
         {
-            return list.ToHashSet<T>().SetEquals(otherList.ToHashSet<T>());
+            return first.ToHashSet<string>().SetEquals(second.ToHashSet<string>());
+        }
+
+        public static bool UnorderedListEquals(this List<Grapheme> first, List<Grapheme> second)
+        {
+            return first.Select(x => x.Value).ToHashSet<string>().SetEquals(second.Select(x => x.Value).ToHashSet<string>());
         }
 
     }
