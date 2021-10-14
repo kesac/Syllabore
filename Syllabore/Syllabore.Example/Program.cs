@@ -205,7 +205,7 @@ namespace Syllabore.Example
                     .UsingMutator(m => m
                         .WithMutation(x => x.ReplaceSyllable(0, "Gran"))
                         .WithMutation(x => x.ReplaceSyllable(0, "Bri"))
-                        .WithMutation(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard").WithWeight(2))
+                        .WithMutation(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
                         .WithMutation(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
                         .WithMutation(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis"))
                         .WithMutationCount(1))
