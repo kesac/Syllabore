@@ -90,10 +90,24 @@ namespace Syllabore
             return this;
         }
 
+        /// <summary>
+        /// Applies a weight to the last added mutation that influences the probability of being used over others.
+        /// Given two mutations X and Y with a weight of 3 and 1 respectively, mutation X will be applied 75% of the time.
+        /// All mutations default to a weight of 1.
+        /// </summary>
+        public NameMutator Weight(int weight)
+        {
+            this.Mutations[this.Mutations.Count - 1].Weight = weight;
+            return this;
+        }
+
         public NameMutator Join(NameMutator m)
         {
-            this.Mutations.AddRange(m.Mutations);
-            return this;
+            NameMutator newMutator = new NameMutator() { MutationLimit = this.MutationLimit };
+
+            newMutator.Mutations.AddRange(this.Mutations);
+            newMutator.Mutations.AddRange(m.Mutations);
+            return newMutator;
         }
 
         public NameMutator WithMutationCount(int limit)

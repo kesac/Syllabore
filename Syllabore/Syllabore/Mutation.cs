@@ -71,16 +71,6 @@ namespace Syllabore
             return this;
         }
 
-        /// <summary>
-        /// Applies a weight to this mutation that influences the probability of being used over others.
-        /// Given two mutations X and Y with a weight of 3 and 1 respectively, mutation X will be applied 75% of the time.
-        /// All mutations default to a weight of 1.
-        /// </summary>
-        public Mutation WithWeight(int weight)
-        {
-            this.Weight = weight;
-            return this;
-        }
 
         /// <summary>
         /// Adds a mutation step that replaces a syllable at the specified index with
