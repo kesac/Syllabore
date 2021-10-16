@@ -10,22 +10,97 @@ namespace Syllabore.Tests
     public class NameValidationTests
     {
 
+
+        [TestMethod, Timeout(10000)]
+        public void NameValidation_WhenPrefixConstraintSpecified_OutputReflectsConstraints()
+        {
+            var g = new NameGenerator()
+                    .UsingProvider(x => x
+                        .WithVowels("aei")
+                        .WithConsonants("str"));
+
+            g.Provider.WithProbability(x => x.StartingSyllable.LeadingVowelExists(1));
+            
+            for (int i = 0; i < 1000; i++)
+            {
+                var name = g.Next();
+                Assert.IsTrue(name.StartsWith("A","E","I"));
+            }
+
+            g.UsingValidator(x => x.DoNotAllowStart("a")); // this method should be case insensitive too
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var name = g.Next();
+                Assert.IsTrue(name.StartsWith("E", "I"));
+            }
+
+        }
+
+        [TestMethod, Timeout(10000)]
+        public void NameValidation_WhenSuffixConstraintSpecified_OutputReflectsConstraints()
+        {
+            var g = new NameGenerator()
+                    .UsingProvider(x => x
+                        .WithVowels("aei")
+                        .WithLeadingConsonants("str"));
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var name = g.Next();
+                Assert.IsTrue(name.EndsWith("a", "e", "i"));
+            }
+
+            g.UsingValidator(x => x.DoNotAllowEnding("I")); // this method should be case insensitive too
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var name = g.Next();
+                Assert.IsTrue(name.EndsWith("a", "e"));
+            }
+
+        }
+
+        [TestMethod, Timeout(10000)]
+        public void NameValidation_WhenNonRegexConstraintSpecified_OutputReflectsConstraints()
+        {
+            var g = new NameGenerator()
+                    .UsingProvider(x => x
+                        .WithVowels("aei")
+                        .WithLeadingConsonants("str"));
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var name = g.Next();
+                Assert.IsTrue(name.ContainsAny("a", "e", "i"));
+            }
+
+            g.UsingValidator(x => x.DoNotAllow("e")); // this method should be case insensitive too
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var name = g.Next();
+                Assert.IsFalse(name.ContainsAny("E","e"));
+            }
+
+        }
+
         [TestMethod, Timeout(10000)]
         public void NameValidation_WhenRegexConstraintsSpecified_OutputReflectsConstraints()
         {
             var generator = new NameGenerator()
-                .UsingProvider(x => x
-                    .WithVowels("a")
-                    .WithVowelSequences("ee")
-                    .WithLeadingConsonants("b")
-                    .WithLeadingConsonantSequences("cc")
-                    .WithTrailingConsonants("d")
-                    .WithTrailingConsonantSequences("ff"))
-                .UsingValidator(x => x
-                    .DoNotAllowPattern(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
-                    .DoNotAllowPattern(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
+                            .UsingProvider(x => x
+                                .WithVowels("a")
+                                .WithVowelSequences("ee")
+                                .WithLeadingConsonants("b")
+                                .WithLeadingConsonantSequences("cc")
+                                .WithTrailingConsonants("d")
+                                .WithTrailingConsonantSequences("ff"))
+                                .UsingValidator(x => x
+                                    .DoNotAllowPattern(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
+                                    .DoNotAllowPattern(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
 
-            for (int i = 1000; i < 1; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 Assert.IsFalse(Regex.IsMatch(generator.Next(), "(ee|cc|ff)"));
             }
@@ -48,7 +123,7 @@ namespace Syllabore.Tests
             generator.UsingProvider(provider);
             generator.UsingValidator(validator);
 
-            for (int i = 1000; i < 1; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 var original = generator.Next();
                 var name = new StringBuilder(original.ToLower());
