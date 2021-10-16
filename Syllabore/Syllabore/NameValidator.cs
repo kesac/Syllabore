@@ -5,17 +5,49 @@ using System.Text.RegularExpressions;
 
 namespace Syllabore
 {
+
+    public enum ConditionType
+    {
+        Contains,
+        StartsWith,
+        EndsWith,
+        MatchesPattern
+    }
+
+    public class Condition
+    {
+        public ConditionType Type { get; set; }
+        public string Value { get; set; }
+
+        public Condition(ConditionType type, string value)
+        {
+            this.Type = type;
+            this.Value = value;
+        }
+
+    }
+
     /// <summary>
     /// Validates names produced by a <see cref="NameGenerator"/> against a set of configurable constraints.
     /// </summary>
     [Serializable]
     public class NameValidator : IValidator
     {
-        public List<string> InvalidPatterns { get; set; }
+        public List<Condition> Conditions { get; set; }
 
         public NameValidator()
         {
-            this.InvalidPatterns = new List<string>();
+            this.Conditions = new List<Condition>();
+        }
+
+        public NameValidator DoNotAllow(params string[] substring)
+        {
+            foreach(string s in substring)
+            {
+                this.Conditions.Add(new Condition(ConditionType.Contains, s));
+            }
+
+            return this;
         }
 
         /// <summary>
@@ -23,25 +55,31 @@ namespace Syllabore
         /// </summary>
         public NameValidator DoNotAllowPattern(params string[] regex)
         {
-            this.InvalidPatterns.AddRange(regex);
-            return this;
-        }
-
-        public NameValidator DoNotAllowStart(params string[] regex)
-        {
-            foreach (string s in regex)
+            foreach(string r in regex)
             {
-                this.InvalidPatterns.Add("^" + s.Trim());
+                this.Conditions.Add(new Condition(ConditionType.MatchesPattern, r));
             }
 
             return this;
         }
 
-        public NameValidator DoNotAllowEnding(params string[] regex)
+        public NameValidator DoNotAllowStart(params string[] prefixes)
         {
-            foreach(string s in regex)
+            foreach (string s in prefixes)
             {
-                this.InvalidPatterns.Add(s.Trim() + "$");
+                this.Conditions.Add(new Condition(ConditionType.StartsWith, s));
+                // this.Conditions.Add("^" + s.Trim());
+            }
+
+            return this;
+        }
+
+        public NameValidator DoNotAllowEnding(params string[] suffixes)
+        {
+            foreach(string s in suffixes)
+            {
+                this.Conditions.Add(new Condition(ConditionType.EndsWith, s));
+                //this.Conditions.Add(s.Trim() + "$");
             }
 
             return this;
@@ -55,15 +93,36 @@ namespace Syllabore
 
             bool isValid = true;
 
-            foreach (var pattern in this.InvalidPatterns)
+            foreach (var c in this.Conditions)
             {
-                if (Regex.IsMatch(name.ToString(), pattern, RegexOptions.IgnoreCase))
+                var lowercaseName = name.ToString().ToLower();
+                var lowercaseValue = c.Value.ToLower();
+
+                if (c.Type == ConditionType.Contains && lowercaseName.Contains(lowercaseValue))
                 {
                     isValid = false;
+                }
+                else if (c.Type == ConditionType.StartsWith && lowercaseName.StartsWith(lowercaseValue))
+                {
+                    isValid = false;
+                }
+                else if (c.Type == ConditionType.EndsWith && lowercaseName.EndsWith(lowercaseValue))
+                {
+                    isValid = false;
+                }
+                else if (c.Type == ConditionType.MatchesPattern && Regex.IsMatch(name.ToString(), c.Value, RegexOptions.IgnoreCase))
+                {
+                    isValid = false;
+                }
+
+                if(!isValid)
+                {
                     break;
                 }
+
             }
             return isValid;
         }
+
     }
 }
