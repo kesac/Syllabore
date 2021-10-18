@@ -86,10 +86,10 @@ namespace Syllabore.Tests
 
             // Invalid regular expressions
             Assert.IsNotNull(g.Validator);
-            Assert.IsNotNull(g.Validator.Conditions);
+            Assert.IsNotNull(g.Validator.Constraints);
             Assert.IsNotNull(g2.Validator);
-            Assert.IsNotNull(g2.Validator.Conditions);
-            Assert.IsTrue(g.Validator.Conditions.UnorderedListEquals(g2.Validator.Conditions));
+            Assert.IsNotNull(g2.Validator.Constraints);
+            Assert.IsTrue(g.Validator.Constraints.UnorderedListEquals(g2.Validator.Constraints));
 
         }
 
