@@ -14,7 +14,7 @@ namespace Syllabore.Example
                 // Quickest way to use Syllabore's name generator
                 // without specifying any configuration. This instance
                 // will default to using StandaloneSyllableProvider for
-                // name generator and will not use any NameValidator to
+                // name generator and will not use any NameFilter to
                 // improve output.
                 var g = new NameGenerator();
 
@@ -133,18 +133,18 @@ namespace Syllabore.Example
             {
 
                 // Normally the constructor takes a SyllableProvider
-                // and NameValidator. There are "Standalone" classes
+                // and NameFilter. There are "Standalone" classes
                 // available for quick and dirty use. It is recommended
-                // you create your own by using ISyllableProvider/INameValidator
-                // or inheriting from ConfigurableSyllableProvider/ConfigurableNameValidator.
+                // you create your own by using IProvider/IFilter
+                // or inheriting from SyllableProvider/NameFilter.
 
                 var provider = new DefaultSyllableProvider();
-                var validator = new NameValidator()
+                var filter = new NameFilter()
                         .DoNotAllowPattern(@"[j|p|q|w]$")             // Invalidate these awkward endings
                         .DoNotAllowPattern(@"(\w)\1\1")               // Invalidate any sequence of 3 or more identical letters
                         .DoNotAllowPattern(@"([^aeiouAEIOU])\1\1\1"); // Invalidate any sequence of 4 or more consonants
                 
-                var g = new NameGenerator(provider, validator);
+                var g = new NameGenerator(provider, filter);
 
                 for (int i = 0; i < 10; i++)
                 {
@@ -209,7 +209,7 @@ namespace Syllabore.Example
                         .WithMutation(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
                         .WithMutation(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis"))
                         .WithMutationCount(1))
-                    .UsingValidator(v => v
+                    .UsingFilter(v => v
                         .DoNotAllowPattern(
                             @".{12,}",
                             @"(\w)\1\1",             // Prevents any letter from occuring three times in a row
@@ -246,15 +246,15 @@ namespace Syllabore.Example
 
                 var shifter = new VowelMutator("a", "e", "o", "y");
 
-                var validator = new NameValidator();
-                validator.DoNotAllowPattern(@"(\w)\1\1");
-                validator.DoNotAllowPattern(@"([^aeoyAEOY])\1");
-                validator.DoNotAllowPattern(@".*([y|Y]).*([y|Y]).*");
-                validator.DoNotAllowPattern(@".*([z|Z]).*([z|Z]).*");
-                validator.DoNotAllowPattern(@"(zs)");
-                validator.DoNotAllowPattern(@"(y[v|t])");
+                var filter = new NameFilter();
+                filter.DoNotAllowPattern(@"(\w)\1\1");
+                filter.DoNotAllowPattern(@"([^aeoyAEOY])\1");
+                filter.DoNotAllowPattern(@".*([y|Y]).*([y|Y]).*");
+                filter.DoNotAllowPattern(@".*([z|Z]).*([z|Z]).*");
+                filter.DoNotAllowPattern(@"(zs)");
+                filter.DoNotAllowPattern(@"(y[v|t])");
 
-                var g = new NameGenerator(provider, shifter, validator);
+                var g = new NameGenerator(provider, shifter, filter);
                 g.LimitSyllableCount(2, 3);
 
             }

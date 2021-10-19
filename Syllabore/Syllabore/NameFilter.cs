@@ -31,11 +31,11 @@ namespace Syllabore
     /// Validates names produced by a <see cref="NameGenerator"/> against a set of configurable constraints.
     /// </summary>
     [Serializable]
-    public class NameValidator : IValidator
+    public class NameFilter : IFilter
     {
         public List<Constraint> Constraints { get; set; }
 
-        public NameValidator()
+        public NameFilter()
         {
             this.Constraints = new List<Constraint>();
         }
@@ -43,7 +43,7 @@ namespace Syllabore
         /// <summary>
         /// Makes a name invalid if it contains any of the specified substrings.
         /// </summary>
-        public NameValidator DoNotAllow(params string[] substring)
+        public NameFilter DoNotAllow(params string[] substring)
         {
             foreach(string s in substring)
             {
@@ -56,7 +56,7 @@ namespace Syllabore
         /// <summary>
         /// Makes a name invalid if it matches any of the specified regular expressions.
         /// </summary>
-        public NameValidator DoNotAllowPattern(params string[] regex)
+        public NameFilter DoNotAllowPattern(params string[] regex)
         {
             foreach(string r in regex)
             {
@@ -69,7 +69,7 @@ namespace Syllabore
         /// <summary>
         /// Makes a name invalid if it starts with any of the specified substrings.
         /// </summary>
-        public NameValidator DoNotAllowStart(params string[] prefixes)
+        public NameFilter DoNotAllowStart(params string[] prefixes)
         {
             foreach (string s in prefixes)
             {
@@ -83,7 +83,7 @@ namespace Syllabore
         /// <summary>
         /// Makes a name invalid if it ends with any of the specified substrings.
         /// </summary>
-        public NameValidator DoNotAllowEnding(params string[] suffixes)
+        public NameFilter DoNotAllowEnding(params string[] suffixes)
         {
             foreach(string s in suffixes)
             {
@@ -95,7 +95,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Returns true if the specified name does not match any of this validator's contraints, else returns false.
+        /// Returns true if the specified name does not match any of this filter's contraints, else returns false.
         /// </summary>
         public bool IsValidName(Name name)
         {

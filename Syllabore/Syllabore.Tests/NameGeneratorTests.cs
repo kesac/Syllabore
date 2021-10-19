@@ -62,10 +62,10 @@ namespace Syllabore.Tests
         public void NameGeneration_WhenInfiniteGeneration_ExceptionThrown()
         {
             var generator = new NameGenerator()
-                .UsingValidator(new NameValidator()
-                .DoNotAllowPattern(".")) // Set validator to reject names with at least 1 character
-                .LimitSyllableCount(10)  // Ensure the generator only produces names with at least 1 character
-                .LimitRetries(1000);  // All futile attempts
+                .UsingFilter(x => x
+                    .DoNotAllowPattern(".")) // Set filter to reject names with at least 1 character
+                    .LimitSyllableCount(10)  // Ensure the generator only produces names with at least 1 character
+                    .LimitRetries(1000);  // All futile attempts
 
             Assert.ThrowsException<InvalidOperationException>(() => generator.Next());
 
@@ -98,7 +98,7 @@ namespace Syllabore.Tests
                 //.WithProbability(vowelBecomesVowelSequence: 1.0)
                 //.DisallowStartingSyllableLeadingVowels()
                 //.DisallowLeadingVowelsInStartingSyllables())
-                .UsingValidator(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 2 characters
+                .UsingFilter(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 2 characters
 
             try
             {

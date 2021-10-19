@@ -422,7 +422,7 @@ namespace Syllabore.Tests
                     .WithVowels("ea")
                     .WithTrailingConsonants("tz")
                     .WithProbability(x => x.LeadingConsonantExists(1.0)))
-                .UsingValidator(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 3 characters
+                .UsingFilter(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 3 characters
 
             try
             {

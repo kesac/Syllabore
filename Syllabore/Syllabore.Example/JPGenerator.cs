@@ -26,7 +26,7 @@ namespace Syllabore.Example
                     .WithMutation(x => x
                         .ReplaceAll("hu", "fu").ReplaceAll("si", "shi")
                         .ReplaceAll("ti", "chi").ReplaceAll("tu", "tsu")))
-                .UsingValidator(x => x
+                .UsingFilter(x => x
                     .DoNotAllowEnding("[aeiou]{2}") // Avoids two-vowel endings
                     .DoNotAllowPattern("yi", "ye", "wi", "wu", "we", "sf"))
                 .LimitMutationChance(1.0)

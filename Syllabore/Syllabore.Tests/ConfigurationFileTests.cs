@@ -22,7 +22,7 @@ namespace Syllabore.Tests
                         .WithTrailingConsonantSequences("mn"))
                     .UsingMutator(x => x
                         .WithMutationCount(3))
-                    .UsingValidator(x => x
+                    .UsingFilter(x => x
                         .DoNotAllowPattern(
                             "zzzy",
                             "abcd"))
@@ -85,11 +85,11 @@ namespace Syllabore.Tests
             Assert.IsTrue(p1.Probability.ChanceTrailingConsonantBecomesSequence == p2.Probability.ChanceTrailingConsonantBecomesSequence);
 
             // Invalid regular expressions
-            Assert.IsNotNull(g.Validator);
-            Assert.IsNotNull(g.Validator.Constraints);
-            Assert.IsNotNull(g2.Validator);
-            Assert.IsNotNull(g2.Validator.Constraints);
-            Assert.IsTrue(g.Validator.Constraints.UnorderedListEquals(g2.Validator.Constraints));
+            Assert.IsNotNull(g.Filter);
+            Assert.IsNotNull(g.Filter.Constraints);
+            Assert.IsNotNull(g2.Filter);
+            Assert.IsNotNull(g2.Filter.Constraints);
+            Assert.IsTrue(g.Filter.Constraints.UnorderedListEquals(g2.Filter.Constraints));
 
         }
 

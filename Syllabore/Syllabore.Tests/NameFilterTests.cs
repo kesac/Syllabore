@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace Syllabore.Tests
 {
     [TestClass]
-    public class NameValidationTests
+    public class NameFilterTests
     {
 
 
@@ -27,7 +27,7 @@ namespace Syllabore.Tests
                 Assert.IsTrue(name.StartsWith("A","E","I"));
             }
 
-            g.UsingValidator(x => x.DoNotAllowStart("a")); // this method should be case insensitive too
+            g.UsingFilter(x => x.DoNotAllowStart("a")); // this method should be case insensitive too
 
             for (int i = 0; i < 1000; i++)
             {
@@ -51,7 +51,7 @@ namespace Syllabore.Tests
                 Assert.IsTrue(name.EndsWith("a", "e", "i"));
             }
 
-            g.UsingValidator(x => x.DoNotAllowEnding("I")); // this method should be case insensitive too
+            g.UsingFilter(x => x.DoNotAllowEnding("I")); // this method should be case insensitive too
 
             for (int i = 0; i < 1000; i++)
             {
@@ -75,7 +75,7 @@ namespace Syllabore.Tests
                 Assert.IsTrue(name.ContainsAny("a", "e", "i"));
             }
 
-            g.UsingValidator(x => x.DoNotAllow("e")); // this method should be case insensitive too
+            g.UsingFilter(x => x.DoNotAllow("e")); // this method should be case insensitive too
 
             for (int i = 0; i < 1000; i++)
             {
@@ -96,7 +96,7 @@ namespace Syllabore.Tests
                                 .WithLeadingConsonantSequences("cc")
                                 .WithTrailingConsonants("d")
                                 .WithTrailingConsonantSequences("ff"))
-                                .UsingValidator(x => x
+                                .UsingFilter(x => x
                                     .DoNotAllowPattern(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
                                     .DoNotAllowPattern(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
 
@@ -112,16 +112,16 @@ namespace Syllabore.Tests
         {
 
             var provider = new DefaultSyllableProvider();
-            var validator = new NameValidator();
-            validator.DoNotAllowPattern(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
+            var filter = new NameFilter();
+            filter.DoNotAllowPattern(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
 
-            Assert.IsTrue(validator.IsValidName(new Name() { Syllables = new List<String>() { "bc" } }));
-            Assert.IsFalse(validator.IsValidName(new Name() { Syllables = new List<String>() { "bcd" } }));
-            Assert.IsFalse(validator.IsValidName(new Name() { Syllables = new List<String>() { "bcdf" } }));
+            Assert.IsTrue(filter.IsValidName(new Name() { Syllables = new List<String>() { "bc" } }));
+            Assert.IsFalse(filter.IsValidName(new Name() { Syllables = new List<String>() { "bcd" } }));
+            Assert.IsFalse(filter.IsValidName(new Name() { Syllables = new List<String>() { "bcdf" } }));
 
             var generator = new NameGenerator();
             generator.UsingProvider(provider);
-            generator.UsingValidator(validator);
+            generator.UsingFilter(filter);
 
             for (int i = 0; i < 1000; i++)
             {

@@ -9,7 +9,7 @@ namespace Syllabore
     /// <summary>
     /// <p>
     /// Randomly generates names by constructing syllables and joining them together.
-    /// It can also filter its output through a <see cref="IValidator"/> if one is specified.
+    /// It can also filter its output through a <see cref="IFilter"/> if one is specified.
     /// </p>
     /// <p>
     /// Use <c>Next()</c> to return names as strings and <c>NextName()</c>
@@ -25,7 +25,7 @@ namespace Syllabore
 
         public SyllableProvider Provider { get; set; }
         public NameMutator Mutator { get; set; }
-        public NameValidator Validator { get; set; }
+        public NameFilter Filter { get; set; }
         public int MinimumSyllables { get; set; }
         public int MaximumSyllables { get; set; }
 
@@ -40,15 +40,15 @@ namespace Syllabore
 
         /// <summary>
         /// Maximum attempts this generator will attempt to satisfy the
-        /// NameValidator before it throws an Exception. This is used to protect
+        /// NameFilter before it throws an Exception. This is used to protect
         /// against scenarios where a NameGenerator has been configured in such
-        /// a way that it can't generate any name that would satisfy its own validator.
+        /// a way that it can't generate any name that would satisfy its own filter.
         /// </summary>
         public int MaximumRetries { get; set; }
 
         /// <summary>
         /// When there are no constructor arguments, the name generator is configured to
-        /// use DefaultSyllableProvider, DefaultNameMutator, and no name validator.
+        /// use DefaultSyllableProvider, DefaultNameMutator, and no name filter.
         /// </summary>
         public NameGenerator() : this(new DefaultSyllableProvider(), new DefaultNameMutator(), null) { }
 
@@ -56,13 +56,13 @@ namespace Syllabore
 
         public NameGenerator(SyllableProvider provider, NameMutator mutator) : this(provider, mutator, null) { }
 
-        public NameGenerator(SyllableProvider provider, NameValidator validator) : this(provider, new DefaultNameMutator(), validator) { }
+        public NameGenerator(SyllableProvider provider, NameFilter filter) : this(provider, new DefaultNameMutator(), filter) { }
 
-        public NameGenerator(SyllableProvider provider, NameMutator mutator, NameValidator validator)
+        public NameGenerator(SyllableProvider provider, NameMutator mutator, NameFilter filter)
         {
             this.UsingProvider(provider)
                 .UsingMutator(mutator)
-                .UsingValidator(validator)
+                .UsingFilter(filter)
                 .LimitSyllableCount(2, 2)
                 .LimitRetries(1000);
 
@@ -90,16 +90,16 @@ namespace Syllabore
             return this;
         }
 
-        public NameGenerator UsingValidator(Func<NameValidator, NameValidator> configure)
+        public NameGenerator UsingFilter(Func<NameFilter, NameFilter> configure)
         {
-            this.Validator = configure(new NameValidator());
+            this.Filter = configure(new NameFilter());
             return this;
         }
 
         // Right now this is ok
-        public NameGenerator UsingValidator(NameValidator validator)
+        public NameGenerator UsingFilter(NameFilter filter)
         {
-            this.Validator = validator;
+            this.Filter = filter;
             return this;
         }
         
@@ -251,18 +251,18 @@ namespace Syllabore
                     result =  this.Mutator.Mutate(result);
                 }
 
-                validNameGenerated = this.Validator != null ? this.Validator.IsValidName(result) : true;
+                validNameGenerated = this.Filter != null ? this.Filter.IsValidName(result) : true;
 
                 if (totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
                 {
-                    throw new InvalidOperationException("This NameGenerator has run out of attempts generating a valid name. It may be configured in such a way that it cannot generate names that satisfy the specified NameValidator.");
+                    throw new InvalidOperationException("This NameGenerator has run out of attempts generating a valid name. It may be configured in such a way that it cannot generate names that satisfy the specified NameFilter.");
                 }
             }
 
             return result;
         }
 
-        // Mutation will use this NameGenerator's mutator, but subject output to the validator (if there is one)
+        // Mutation will use this NameGenerator's mutator, but subject output to the filter (if there is one)
         public Name Mutate(Name sourceName)
         {
 
@@ -278,11 +278,11 @@ namespace Syllabore
             while (!validNameGenerated)
             {
                 result = this.Mutator.Mutate(sourceName);
-                validNameGenerated = this.Validator != null ? this.Validator.IsValidName(result) : true;
+                validNameGenerated = this.Filter != null ? this.Filter.IsValidName(result) : true;
 
                 if (totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
                 {
-                    throw new InvalidOperationException("This NameGenerator has run out of attempts generating a valid name variation through mutations. It may be configured in such a way that there does not exist any mutation that can satisfy the specified NameValidator."); ;
+                    throw new InvalidOperationException("This NameGenerator has run out of attempts generating a valid name variation through mutations. It may be configured in such a way that there does not exist any mutation that can satisfy the specified NameFilter."); ;
                 }
             }
 
