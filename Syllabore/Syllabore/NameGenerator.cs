@@ -16,27 +16,18 @@ namespace Syllabore
     /// to return names as Name structs which gives you access to the syllable sequence.
     /// </p>
     /// </summary>
-    public class NameGenerator : IGenerator, IMutator
+    public class NameGenerator : IGenerator
     {
 
-        private const double DefaultMutationProbability = 1.0;
+        private const double DefaultTransformChance = 1.0;
 
         private Random Random { get; set; }
 
         public SyllableProvider Provider { get; set; }
-        public NameMutator Mutator { get; set; }
+        public NameTransformer Modifier { get; set; }
         public NameFilter Filter { get; set; }
         public int MinimumSyllables { get; set; }
         public int MaximumSyllables { get; set; }
-
-        /// <summary>
-        /// A number from 0 to 1 inclusive that represents the probablity
-        /// that this NameGenerator's mutator will apply a mutation
-        /// during name generation (during a call to Next() or NextName()).
-        /// A value of 0 means a mutation can never occur and a value of 1
-        /// means a mutation will always occur.
-        /// </summary>
-        public double? MutationProbability { get; set; }
 
         /// <summary>
         /// Maximum attempts this generator will attempt to satisfy the
@@ -50,20 +41,20 @@ namespace Syllabore
         /// When there are no constructor arguments, the name generator is configured to
         /// use DefaultSyllableProvider, DefaultNameMutator, and no name filter.
         /// </summary>
-        public NameGenerator() : this(new DefaultSyllableProvider(), new DefaultNameMutator(), null) { }
+        public NameGenerator() : this(new DefaultSyllableProvider(), new DefaultNameTransformer(), null) { }
 
-        public NameGenerator(SyllableProvider provider) : this(provider, new DefaultNameMutator(), null) { }
+        public NameGenerator(SyllableProvider provider) : this(provider, new DefaultNameTransformer(), null) { }
 
-        public NameGenerator(SyllableProvider provider, NameMutator mutator) : this(provider, mutator, null) { }
+        public NameGenerator(SyllableProvider provider, NameTransformer mutator) : this(provider, mutator, null) { }
 
-        public NameGenerator(SyllableProvider provider, NameFilter filter) : this(provider, new DefaultNameMutator(), filter) { }
+        public NameGenerator(SyllableProvider provider, NameFilter filter) : this(provider, new DefaultNameTransformer(), filter) { }
 
-        public NameGenerator(SyllableProvider provider, NameMutator mutator, NameFilter filter)
+        public NameGenerator(SyllableProvider provider, NameTransformer mutator, NameFilter filter)
         {
             this.UsingProvider(provider)
-                .UsingMutator(mutator)
+                .UsingTransformer(mutator)
                 .UsingFilter(filter)
-                .LimitSyllableCount(2, 2)
+                .UsingSyllableCount(2, 2)
                 .LimitRetries(1000);
 
             this.Random = new Random();
@@ -103,30 +94,32 @@ namespace Syllabore
             return this;
         }
         
-        public NameGenerator UsingMutator(Func<NameMutator, NameMutator> configure)
+        public NameGenerator UsingTransformer(Func<NameTransformer, NameTransformer> configure)
         {
-            this.Mutator = configure(new NameMutator());
+            this.Modifier = configure(new NameTransformer());
 
-            if (!this.MutationProbability.HasValue)
+            
+            if (!this.Modifier.TransformChance.HasValue)
             {
-                this.MutationProbability = DefaultMutationProbability;
+                this.Modifier.TransformChance = DefaultTransformChance;
             }
+            
 
             return this;
         }
 
-        public NameGenerator UsingMutator(NameMutator mutator)
+        public NameGenerator UsingTransformer(NameTransformer mutator)
         {
-            this.Mutator = mutator ?? throw new ArgumentNullException("The specified IMutator is null.");
+            this.Modifier = mutator ?? throw new ArgumentNullException("The specified IMutator is null.");
             return this;
         }
 
-        public NameGenerator LimitSyllableCount(int length)
+        public NameGenerator UsingSyllableCount(int length)
         {
-            return this.LimitSyllableCount(length, length);
+            return this.UsingSyllableCount(length, length);
         }
 
-        public NameGenerator LimitSyllableCount(int min, int max)
+        public NameGenerator UsingSyllableCount(int min, int max)
         {
 
             if(min < 1)
@@ -156,18 +149,7 @@ namespace Syllabore
             return this;
         }
 
-        public NameGenerator LimitMutationChance(double probability)
-        {
 
-            if (probability < 0 || probability > 1)
-            {
-                throw new ArgumentException("The mutation probability must be a number between 0 and 1 inclusive.");
-            }
-
-            this.MutationProbability = probability;
-
-            return this;
-        }
 
         /// <summary>
         /// Generates a random name. The syllable length of the generated name is determined by the properties <c>MinimumSyllables</c> and <c>MaximumSyllables</c>.
@@ -246,9 +228,9 @@ namespace Syllabore
                     }
                 }
 
-                if(this.MutationProbability.HasValue && this.Random.NextDouble() < this.MutationProbability)
+                if(this.Modifier.TransformChance.HasValue && this.Random.NextDouble() < this.Modifier.TransformChance)
                 {
-                    result =  this.Mutator.Mutate(result);
+                    result = this.Modifier.Transform(result);
                 }
 
                 validNameGenerated = this.Filter != null ? this.Filter.IsValidName(result) : true;
@@ -262,8 +244,12 @@ namespace Syllabore
             return result;
         }
 
-        // Mutation will use this NameGenerator's mutator, but subject output to the filter (if there is one)
-        public Name Mutate(Name sourceName)
+        // If this gets uncommented, remember to add the ITransformer interface again
+        //
+        // Mutation will use this NameGenerator's mutator, but subject output to the filter (if there is one).
+        // Using transforming a name this way will ignore the transform chance.
+        /* 
+        public Name Transform(Name sourceName)
         {
 
             if (sourceName.Syllables.Count < 1)
@@ -277,7 +263,7 @@ namespace Syllabore
 
             while (!validNameGenerated)
             {
-                result = this.Mutator.Mutate(sourceName);
+                result = this.Modifier.Transform(sourceName);
                 validNameGenerated = this.Filter != null ? this.Filter.IsValidName(result) : true;
 
                 if (totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
@@ -288,6 +274,7 @@ namespace Syllabore
 
             return result ?? throw new InvalidOperationException("The NameGenerator has failed to produce a name variation through mutations.");
         }
+        /**/
 
 
     }

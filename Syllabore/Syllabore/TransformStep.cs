@@ -17,24 +17,24 @@ namespace Syllabore
     /// <summary>
     /// Represents one action or step in a mutation chain.
     /// </summary>
-    public class MutationStep
+    public class TransformStep
     {
         public MutationStepType Type { get; set; }
         public List<string> Arguments { get; set; }
         private Action<Name> UnserializableAction { get; set; }
 
-        public MutationStep()
+        public TransformStep()
         {
             this.Arguments = new List<string>();
         }
 
-        public MutationStep(MutationStepType type, params string[] args)
+        public TransformStep(MutationStepType type, params string[] args)
         {
             this.Type = type;
             this.Arguments = new List<string>(args);
         }
 
-        public MutationStep(Action<Name> unserializableAction)
+        public TransformStep(Action<Name> unserializableAction)
         {
             this.Type = MutationStepType.Lambda;
             this.UnserializableAction = unserializableAction;

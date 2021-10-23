@@ -6,13 +6,13 @@ using System.Text.Json.Serialization;
 namespace Syllabore
 {
     /// <summary>
-    /// Used by <see cref="NameGenerator"/> through <see cref="NameMutator"/> to capture
+    /// Used by <see cref="NameGenerator"/> through <see cref="NameTransformer"/> to capture
     /// mutations that produce variations on names. Mutations can also have
     /// an optional condition that must be fulfilled for the mutation to occur.
     /// </summary>
-    public class Mutation
+    public class Transform
     {
-        public List<MutationStep> Steps { get; set; }
+        public List<TransformStep> Steps { get; set; }
 
         /// <summary>
         /// A positive integer that influences the probability of this mutation being used over others.
@@ -23,9 +23,9 @@ namespace Syllabore
         public int? ConditionalIndex { get; set; }
         public string ConditionalRegex { get; set; }
 
-        public Mutation()
+        public Transform()
         {
-            this.Steps = new List<MutationStep>();
+            this.Steps = new List<TransformStep>();
             this.Weight = 1;
             this.ConditionalIndex = null;
             this.ConditionalRegex = null;
@@ -38,7 +38,7 @@ namespace Syllabore
             }
         }
 
-        public Mutation When(string regex)
+        public Transform When(string regex)
         {
             return this.When(int.MinValue, regex);
         }
@@ -55,7 +55,7 @@ namespace Syllabore
         /// of a name.</param>
         /// <param name="regex">The pattern that must be satisfied.</param>
         /// <returns></returns>
-        public Mutation When(int index, string regex)
+        public Transform When(int index, string regex)
         {
             if (index == int.MaxValue)
             {
@@ -81,15 +81,15 @@ namespace Syllabore
         /// last syllable of a name.</param>
         /// <param name="replacement">The string to substitute in.</param>
         /// <returns></returns>
-        public Mutation ReplaceSyllable(int index, string replacement)
+        public Transform ReplaceSyllable(int index, string replacement)
         {
-            this.Steps.Add(new MutationStep(MutationStepType.ReplaceSyllable, index.ToString(), replacement));
+            this.Steps.Add(new TransformStep(MutationStepType.ReplaceSyllable, index.ToString(), replacement));
             return this;
         }
 
-        public Mutation ReplaceAll(string substring, string replacement)
+        public Transform ReplaceAll(string substring, string replacement)
         {
-            this.Steps.Add(new MutationStep(MutationStepType.ReplaceAllSubstring, substring, replacement));
+            this.Steps.Add(new TransformStep(MutationStepType.ReplaceAllSubstring, substring, replacement));
             return this;
         }
 
@@ -102,18 +102,18 @@ namespace Syllabore
         /// last syllable of a name.</param>
         /// <param name="replacement">The string to insert.</param>
         /// <returns></returns>
-        public Mutation InsertSyllable(int index, string syllable)
+        public Transform InsertSyllable(int index, string syllable)
         {
-            this.Steps.Add(new MutationStep(MutationStepType.InsertSyllable, index.ToString(), syllable));
+            this.Steps.Add(new TransformStep(MutationStepType.InsertSyllable, index.ToString(), syllable));
             return this;
         }
 
         /// <summary>
         /// Adds a mutation step that appends a new syllable to the end of a name.
         /// </summary>
-        public Mutation AppendSyllable(string syllable)
+        public Transform AppendSyllable(string syllable)
         {
-            this.Steps.Add(new MutationStep(MutationStepType.AppendSyllable, syllable));
+            this.Steps.Add(new TransformStep(MutationStepType.AppendSyllable, syllable));
             return this;
         }
 
@@ -123,9 +123,9 @@ namespace Syllabore
         /// <param name="index">The index can be a negative integer to traverse from the
         /// end of the name instead. (For example, an index -1 will be interpreted as the
         /// last syllable of a name.</param>
-        public Mutation RemoveSyllable(int index)
+        public Transform RemoveSyllable(int index)
         {
-            this.Steps.Add(new MutationStep(MutationStepType.RemoveSyllable, index.ToString()));
+            this.Steps.Add(new TransformStep(MutationStepType.RemoveSyllable, index.ToString()));
             return this;
         }
 
@@ -133,9 +133,9 @@ namespace Syllabore
         /// Executes the specified action on a name. Note that this mutation step cannot
         /// be serialized.
         /// </summary>
-        public Mutation ExecuteUnserializableAction(Action<Name> unserializableAction)
+        public Transform ExecuteUnserializableAction(Action<Name> unserializableAction)
         {
-            this.Steps.Add(new MutationStep(unserializableAction));
+            this.Steps.Add(new TransformStep(unserializableAction));
             return this;
         }
         

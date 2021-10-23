@@ -10,18 +10,18 @@ namespace Syllabore
     /// This mutator creates variations of names by replacing one syllable
     /// with another syllable. Syllables are derived from <see cref="DefaultSyllableProvider"/>.
     /// </summary>
-    public class DefaultNameMutator : NameMutator
+    public class DefaultNameTransformer : NameTransformer
     {
         private IProvider Provider { get; set; }
 
         private Random Random { get; set; }
 
-        public DefaultNameMutator()
+        public DefaultNameTransformer()
         {
             this.Provider = new DefaultSyllableProvider();
             this.Random = new Random();
 
-            this.WithMutation(x => x
+            this.WithTransform(x => x
                 .ExecuteUnserializableAction(name => {
                     int index = this.Random.Next(name.Syllables.Count);
 
