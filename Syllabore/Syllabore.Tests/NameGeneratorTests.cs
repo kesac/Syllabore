@@ -21,8 +21,8 @@ namespace Syllabore.Tests
         {
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, null, null));
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(new DefaultSyllableProvider(), null, null));
-            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new DefaultNameMutator(), null));
-            Assert.IsNotNull(new NameGenerator(new DefaultSyllableProvider(), new DefaultNameMutator(), null).Next());
+            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new DefaultNameTransformer(), null));
+            Assert.IsNotNull(new NameGenerator(new DefaultSyllableProvider(), new DefaultNameTransformer(), null).Next());
         }
 
         [TestMethod]
@@ -31,19 +31,19 @@ namespace Syllabore.Tests
             var generator = new NameGenerator();
 
             // Single argument
-            Assert.ThrowsException<ArgumentException>(() => generator.LimitSyllableCount(-1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.LimitSyllableCount(0).Next());
-            Assert.IsNotNull(generator.LimitSyllableCount(1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(-1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(0).Next());
+            Assert.IsNotNull(generator.UsingSyllableCount(1).Next());
 
             // Double argument
-            Assert.ThrowsException<ArgumentException>(() => generator.LimitSyllableCount(-1, 1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.LimitSyllableCount(0, 1).Next());
-            Assert.IsNotNull(generator.LimitSyllableCount(1, 1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.LimitSyllableCount(1, -1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.LimitSyllableCount(1, 0).Next());
-            Assert.IsNotNull(generator.LimitSyllableCount(4, 5).Next());
-            Assert.IsNotNull(generator.LimitSyllableCount(5, 5).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.LimitSyllableCount(6, 5).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(-1, 1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(0, 1).Next());
+            Assert.IsNotNull(generator.UsingSyllableCount(1, 1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(1, -1).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(1, 0).Next());
+            Assert.IsNotNull(generator.UsingSyllableCount(4, 5).Next());
+            Assert.IsNotNull(generator.UsingSyllableCount(5, 5).Next());
+            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(6, 5).Next());
 
         }
 
@@ -64,7 +64,7 @@ namespace Syllabore.Tests
             var generator = new NameGenerator()
                 .UsingFilter(x => x
                     .DoNotAllowPattern(".")) // Set filter to reject names with at least 1 character
-                    .LimitSyllableCount(10)  // Ensure the generator only produces names with at least 1 character
+                    .UsingSyllableCount(10)  // Ensure the generator only produces names with at least 1 character
                     .LimitRetries(1000);  // All futile attempts
 
             Assert.ThrowsException<InvalidOperationException>(() => generator.Next());
@@ -114,6 +114,23 @@ namespace Syllabore.Tests
             }
 
         }
+
+        [TestMethod]
+        public void NameGeneration_UseMutatorDirectly_MutationsAppear()
+        {
+            var name = new Name("syl", "la", "bore");
+            var mutator = new NameTransformer()
+                            .WithTransform(x => x.AppendSyllable("test"))
+                            .Join(new DefaultNameTransformer());
+
+            for (int i = 0; i < 20; i++)
+            {
+                Assert.IsTrue(name.ToString() != mutator.Transform(name).ToString());
+            }
+
+        }
+
+        
 
     }
 }

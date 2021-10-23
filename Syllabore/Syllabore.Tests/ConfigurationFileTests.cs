@@ -20,15 +20,14 @@ namespace Syllabore.Tests
                         .WithVowelSequences("ey")
                         .WithTrailingConsonants("trs")
                         .WithTrailingConsonantSequences("mn"))
-                    .UsingMutator(x => x
-                        .WithMutationCount(3))
+                    .UsingTransformer(x => x
+                        .Select(3).Chance(0.5))
                     .UsingFilter(x => x
                         .DoNotAllowPattern(
                             "zzzy",
                             "abcd"))
-                    .LimitMutationChance(0.50)
                     .LimitRetries(100)
-                    .LimitSyllableCount(4, 10);
+                    .UsingSyllableCount(4, 10);
         }
 
         [TestMethod]
@@ -53,8 +52,8 @@ namespace Syllabore.Tests
             Assert.IsTrue(g.MaximumRetries == g2.MaximumRetries);
             Assert.IsTrue(g.MaximumSyllables == g2.MaximumSyllables);
             Assert.IsTrue(g.MinimumSyllables == g2.MinimumSyllables);
-            Assert.IsTrue(g.MutationProbability == g2.MutationProbability);
-            Assert.AreEqual(g.Mutator.MutationLimit, g2.Mutator.MutationLimit);
+            Assert.IsTrue(g.Modifier.TransformChance == g2.Modifier.TransformChance);
+            Assert.AreEqual(g.Modifier.SelectionLimit, g2.Modifier.SelectionLimit);
 
             var p1 = g.Provider;
             var p2 = g2.Provider;
