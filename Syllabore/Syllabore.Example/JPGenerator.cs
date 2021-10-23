@@ -22,15 +22,14 @@ namespace Syllabore.Example
                     .WithProbability(x => x
                         .LeadingConsonantBecomesSequence(0.1)
                         .StartingSyllable.LeadingVowelExists(0.20)))
-                .UsingMutator(x => x
-                    .WithMutation(x => x
+                .UsingTransformer(x => x
+                    .WithTransform(x => x
                         .ReplaceAll("hu", "fu").ReplaceAll("si", "shi")
                         .ReplaceAll("ti", "chi").ReplaceAll("tu", "tsu")))
                 .UsingFilter(x => x
                     .DoNotAllowEnding("[aeiou]{2}") // Avoids two-vowel endings
                     .DoNotAllowPattern("yi", "ye", "wi", "wu", "we", "sf"))
-                .LimitMutationChance(1.0)
-                .LimitSyllableCount(2, 4);
+                .UsingSyllableCount(2, 4);
 
             // Example output:
             // Zako

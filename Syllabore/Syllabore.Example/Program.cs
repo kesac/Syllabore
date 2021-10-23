@@ -11,116 +11,99 @@ namespace Syllabore.Example
         {
 
             { 
-                // Quickest way to use Syllabore's name generator
-                // without specifying any configuration. This instance
-                // will default to using StandaloneSyllableProvider for
-                // name generator and will not use any NameFilter to
-                // improve output.
+
+                // You can use name generators without any customization
                 var g = new NameGenerator();
 
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
-            }
 
-            Separator();
-
-            {
-                // Example of customizing name generator
-                // with a custom vowel and consonant pool
-                var p = new SyllableProvider();
-                p.WithVowels("aei");
-                p.WithConsonants("trs");
-
-                var g = new NameGenerator();
-                g.UsingProvider(p);
-
-                Console.WriteLine(g.Next());
-                
-
-                // Same example, but with method chaining.
-                // The rest of the examples will use this style.
-
-                g = new NameGenerator()
-                    .UsingProvider(x => x
-                        .WithVowels("aei")
-                        .WithConsonants("trs"));
-
-                Console.WriteLine(g.Next());
-                
-            }
-
-            Separator();
-
-            {
-                // Example of differentiating between leading and
-                // trailing consonants
-                var g = new NameGenerator()
-                    .UsingProvider(x => x
-                        .WithVowels("aei")
-                        .WithLeadingConsonants("vmnl")
-                        .WithTrailingConsonants("tsrc"));
-
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-            }
-
-            Separator();
-
-            {
-                // Example of introducing sequences:
-                // Vowels and consonants have a probability
-                // of turning into a vowel sequences and consonant
-                // sequences respectively
-                var g = new NameGenerator()
-                    .UsingProvider(x => x
-                        .WithVowels("aeiou")
-                        .WithVowelSequences("oo", "ea")
-                        .WithLeadingConsonants("vmnl")
-                        .WithLeadingConsonantSequences("wh", "tr")
-                        .WithTrailingConsonants("tsrc")
-                        .WithTrailingConsonantSequences("st","rd"));
-
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-
-                // Same example, but using context-aware AndSequences()
-
-                g = new NameGenerator()
-                    .UsingProvider(x => x
-                        .WithVowels("aeiou").Sequences("oo", "ea")
-                        .WithLeadingConsonants("vmnl").Sequences("wh", "tr")
-                        .WithTrailingConsonants("tsrc").Sequences("st", "rd"));
-
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
+                // A "default" name generator will use all vowels and
+                // consonants of the English alphabet with no custom weighting
+                // or filtering. Expect the output to be wild and exotic.
 
             }
 
             Separator();
 
             {
-                // An example of manipulating general frequency
-                // of leading and trailing consonants. In this example,
-                // the name generator will use syllables that always have
-                // a leading consonant, but only have a trailing one 20% of the
-                // time.
+                // To tailor name generation, first think about
+                // what vowels and consonants you want to use:
                 var g = new NameGenerator()
                         .UsingProvider(x => x
-                            .WithVowels("aei")
-                            .WithLeadingConsonants("vmnl")
-                            .WithTrailingConsonants("tsrc")
+                            .WithVowels("ae")
+                            .WithConsonants("strmnl"));
+            }
+            {
+                // Consonants can also be defined based
+                // a desired positioning:
+                var g = new NameGenerator()
+                        .UsingProvider(x => x
+                            .WithVowels("ae")
+                            .WithLeadingConsonants("str")
+                            .WithTrailingConsonants("mnl"));
+
+                // In a syllable, leading consonants appear before
+                // the vowel and trailing consonants appear after
+
+            }
+            {
+                // You can also introduce vowel sequences or consonant
+                // sequences that have a chance of being substituted in
+                // for a normal vowel or consonant: 
+                var g = new NameGenerator()
+                        .UsingProvider(x => x
+                            .WithVowels("ae")
+                            .WithVowelSequences("ou", "ui")
+                            .WithLeadingConsonants("str")
+                            .WithLeadingConsonantSequences("wh", "fr")
+                            .WithTrailingConsonants("mnl")
+                            .WithTrailingConsonantSequences("ld","rd"));
+
+                // Note that probabilities can be controlled. There is an
+                // example of this further down.
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+
+                // This example is the same as the previous one except
+                // it uses context-aware calls to Sequences() 
+                g = new NameGenerator()
+                    .UsingProvider(x => x
+                        .WithVowels("ae").Sequences("ou", "ui")
+                        .WithLeadingConsonants("str").Sequences("wh", "fr")
+                        .WithTrailingConsonants("mnl").Sequences("ld", "rd"));
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+
+            }
+
+            Separator();
+
+            {
+                // The NameGenerator also allows you to define how often
+                // sequence substitution occurs, how often leading or trailing consonants
+                // occur, etc.
+                var g = new NameGenerator()
+                        .UsingProvider(x => x
+                            .WithVowels("ae")
+                            .WithLeadingConsonants("str")
+                            .WithTrailingConsonants("mnl")
                             .WithProbability(x => x
                                 .LeadingConsonantExists(1.0)
                                 .TrailingConsonantExists(0.20)));
 
+                // In this example, the name generator will use syllables that always have
+                // a leading consonant, but only have a trailing one 20% of the
+                // time.
+
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(g.Next());
@@ -131,37 +114,62 @@ namespace Syllabore.Example
             Separator();
 
             {
-
-                // Normally the constructor takes a SyllableProvider
-                // and NameFilter. There are "Standalone" classes
-                // available for quick and dirty use. It is recommended
-                // you create your own by using IProvider/IFilter
-                // or inheriting from SyllableProvider/NameFilter.
-
-                var provider = new DefaultSyllableProvider();
-                var filter = new NameFilter()
-                        .DoNotAllowPattern(@"[j|p|q|w]$")             // Invalidate these awkward endings
-                        .DoNotAllowPattern(@"(\w)\1\1")               // Invalidate any sequence of 3 or more identical letters
-                        .DoNotAllowPattern(@"([^aeiouAEIOU])\1\1\1"); // Invalidate any sequence of 4 or more consonants
-                
-                var g = new NameGenerator(provider, filter);
-
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-            }
-
-            Separator();
-
-            {
-
-                // You can choose to build name generators programmatically.
+                // You can also give custom weights to vowels
+                // and consonants. A higher weight means a higher
+                // frequency compared those with lower weights.
                 var g = new NameGenerator()
-                    .UsingProvider(x => x
-                        .WithLeadingConsonants("str")
-                        .WithVowels("ae"))
-                    .LimitSyllableCount(3);
+                        .UsingProvider(x => x
+                            .WithVowels("a").Weight(4)
+                            .WithVowels("e").Weight(1)
+                            .WithLeadingConsonants("str"));
+
+                // In this example, the vowel 'a' will appear 4 times
+                // more likely than an 'e'
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+
+            }
+
+            Separator();
+
+            {
+
+                // Filters can be used to improve output, by preventing
+                // specific substrings or patterns from occuring:
+                var g = new NameGenerator()
+                            .UsingFilter(x => x
+                                .DoNotAllowEnding("j","p","q","w")             // Invalidate these awkward endings
+                                .DoNotAllowPattern(@"(\w)\1\1")                // Invalidate any sequence of 3 or more identical letters
+                                .DoNotAllowPattern(@"([^aeiouAEIOU])\1\1\1")); // Invalidate any sequence of 4 or more consonants
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+
+                // Transformers can be used to apply a transform
+                // to a name during the generation process:
+                var g = new NameGenerator()
+                        .UsingProvider(x => x
+                            .WithVowels("ae")
+                            .WithLeadingConsonants("str"))
+                        .UsingTransformer(x => x
+                            .Select(1).Chance(0.5)
+                            .WithTransform(x => x.AppendSyllable("gard")).Weight(2)
+                            .WithTransform(x => x.AppendSyllable("dar")))
+                        .UsingSyllableCount(3);
+
+                // In this example, the name generation is creating
+                // variations of the name *gard and *dar, with the former
+                // being twice more likely to be generated.
 
                 for(int i = 0; i < 10; i++)
                 {
@@ -175,8 +183,9 @@ namespace Syllabore.Example
             Separator();
 
             {
-                // Creating variations of a single name
-                var g = new NameGenerator().UsingMutator(new VowelMutator());
+                
+                /*
+                var g = new NameGenerator().UsingTransformer(new VowelMutator());
 
                 for(int i = 0; i < 3; i++)
                 {
@@ -185,40 +194,41 @@ namespace Syllabore.Example
 
                     for (int j = 0; j < 4; j++)
                     {
-                        var variation = g.Mutate(name);
+                        var variation = g.Transform(name);
                         Console.WriteLine(variation);
 
                     }
                 }
+                */
             }
 
             Separator();
 
             {
+
+                // This example shows a custom provider, transformer, and filter:
                 Console.WriteLine();
                 var g = new NameGenerator()
-                    .UsingProvider(p => p
-                        .WithVowels("aeoy")
-                        .WithLeadingConsonants("vstlr")
-                        .WithTrailingConsonants("zrt")
-                        .WithVowelSequences("ey", "ay", "oy"))
-                    .UsingMutator(m => m
-                        .WithMutation(x => x.ReplaceSyllable(0, "Gran"))
-                        .WithMutation(x => x.ReplaceSyllable(0, "Bri"))
-                        .WithMutation(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
-                        .WithMutation(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
-                        .WithMutation(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis"))
-                        .WithMutationCount(1))
-                    .UsingFilter(v => v
-                        .DoNotAllowPattern(
-                            @".{12,}",
-                            @"(\w)\1\1",             // Prevents any letter from occuring three times in a row
-                            @".*([y|Y]).*([y|Y]).*", // Prevents double y
-                            @".*([z|Z]).*([z|Z]).*", // Prevents double z
-                            @"(zs)",                 // Prevents "zs"
-                            @"(y[v|t])"))            // Prevents "yv" and "yt"
-                    .LimitMutationChance(0.99)
-                    .LimitSyllableCount(2, 4);
+                        .UsingProvider(p => p
+                            .WithVowels("aeoy")
+                            .WithLeadingConsonants("vstlr")
+                            .WithTrailingConsonants("zrt")
+                            .WithVowelSequences("ey", "ay", "oy"))
+                        .UsingTransformer(m => m
+                            .Select(1).Chance(0.99)
+                            .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
+                            .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
+                            .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
+                            .WithTransform(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
+                            .WithTransform(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis")))
+                        .UsingFilter(v => v
+                            .DoNotAllow("yv", "yt", "zs")
+                            .DoNotAllowPattern(
+                                @".{12,}",
+                                @"(\w)\1\1",              // Prevents any letter from occuring three times in a row
+                                @".*([y|Y]).*([y|Y]).*",  // Prevents double y
+                                @".*([z|Z]).*([z|Z]).*")) // Prevents double z
+                        .UsingSyllableCount(2, 4);
 
                 ConfigurationFile.Save(g, "city-name-generator.txt");
                 var g2 = ConfigurationFile.Load("city-name-generator.txt");
@@ -236,6 +246,8 @@ namespace Syllabore.Example
             Separator();
 
             {
+                // An example without using method chaining
+
                 var provider = new SyllableProvider();
                 provider.WithVowels("a", "e", "o", "y");
                 provider.WithLeadingConsonants("v", "s", "t", "l", "r");
@@ -255,21 +267,22 @@ namespace Syllabore.Example
                 filter.DoNotAllowPattern(@"(y[v|t])");
 
                 var g = new NameGenerator(provider, shifter, filter);
-                g.LimitSyllableCount(2, 3);
+                g.UsingSyllableCount(2, 3);
 
             }
 
             Separator();
 
             {
+                // Creating variations of a single name
                 var name = new Name("syl", "la", "bore");
-                var mutator = new NameMutator()
-                                .Join(new DefaultNameMutator())
+                var mutator = new NameTransformer()
+                                .Join(new DefaultNameTransformer())
                                 .Join(new VowelMutator());
 
                 for(int i = 0; i < 20; i++)
                 {
-                    Console.WriteLine(mutator.Mutate(name));
+                    Console.WriteLine(mutator.Transform(name));
                 }
             }
 

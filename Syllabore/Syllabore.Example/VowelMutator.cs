@@ -7,7 +7,7 @@ namespace Syllabore
 {
     
     /// Experimental: finds vowels in a name then changes it to another vowel
-    public class VowelMutator : NameMutator
+    public class VowelMutator : NameTransformer
     {
         private static readonly string[] DefaultVowels = { "a", "e", "i", "o", "u" };
         private List<string> VowelPool { get; set; }
@@ -26,7 +26,7 @@ namespace Syllabore
                 this.VowelPool.AddRange(v.Atomize());
             }
 
-            this.WithMutation(x => x
+            this.WithTransform(x => x
                 .ExecuteUnserializableAction(name => 
                 {
                     int index = this.Random.Next(name.Syllables.Count);
