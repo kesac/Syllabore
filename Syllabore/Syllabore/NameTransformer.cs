@@ -12,7 +12,7 @@ namespace Syllabore
     /// to a name to create a new name.
     /// </summary>
     [Serializable]
-    public class NameTransformer : ITransformer
+    public class NameTransformer : INameTransformer
     {
 
 

@@ -7,7 +7,7 @@ namespace Syllabore
     /// <summary>
     /// Used to validate randomly generated names.
     /// </summary>
-    public interface IFilter
+    public interface INameFilter
     {
         /// <summary>
         /// Returns true if the specified name is a valid. Otherwise, it returns false.

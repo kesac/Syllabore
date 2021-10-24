@@ -9,14 +9,14 @@ namespace Syllabore
     /// <summary>
     /// <p>
     /// Randomly generates names by constructing syllables and joining them together.
-    /// It can also filter its output through a <see cref="IFilter"/> if one is specified.
+    /// It can also filter its output through a <see cref="INameFilter"/> if one is specified.
     /// </p>
     /// <p>
     /// Use <c>Next()</c> to return names as strings and <c>NextName()</c>
     /// to return names as Name structs which gives you access to the syllable sequence.
     /// </p>
     /// </summary>
-    public class NameGenerator : IGenerator
+    public class NameGenerator : INameGenerator
     {
 
         private const double DefaultTransformChance = 1.0;

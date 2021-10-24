@@ -7,7 +7,7 @@ namespace Syllabore
     /// <summary>
     /// Generates syllables useful for building names.
     /// </summary>
-    public interface IProvider
+    public interface ISyllableProvider
     {
         /// <summary>
         /// Generates a random syllable suitable for starting name.

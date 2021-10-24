@@ -9,7 +9,7 @@ namespace Syllabore
     /// of syllables that were sequenced to make names or simple strings 
     /// if inspection is not required.
     /// </summary>
-    interface IGenerator
+    public interface INameGenerator
     {
         string Next();
         string Next(int syllableLength);

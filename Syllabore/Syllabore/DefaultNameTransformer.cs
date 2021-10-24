@@ -12,7 +12,7 @@ namespace Syllabore
     /// </summary>
     public class DefaultNameTransformer : NameTransformer
     {
-        private IProvider Provider { get; set; }
+        private ISyllableProvider Provider { get; set; }
 
         private Random Random { get; set; }
 

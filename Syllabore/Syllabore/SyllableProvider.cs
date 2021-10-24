@@ -30,7 +30,7 @@ namespace Syllabore
     /// a <see cref="NameGenerator"/>.
     /// </summary>
     [Serializable]
-    public class SyllableProvider : IProvider
+    public class SyllableProvider : ISyllableProvider
     {
         public const double DefaultChanceLeadingConsonantExists = 0.95;
         public const double DefaultChanceLeadingConsonantBecomesSequence = 0.25;
