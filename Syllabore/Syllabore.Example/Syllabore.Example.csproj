@@ -9,10 +9,4 @@
     <ProjectReference Include="..\Syllabore\Syllabore.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Data\basic.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
