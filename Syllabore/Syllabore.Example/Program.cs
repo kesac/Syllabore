@@ -289,6 +289,30 @@ namespace Syllabore.Example
             Separator();
 
             {
+                var g = new NameGenerator()
+                        .UsingProvider(new FiniteSyllableSet()
+                            .UsingSyllablePoolSize(16, 8, 4)
+                            .WithVowels("ae").Weight(2)
+                            .WithVowels("iou")
+                            .WithLeadingConsonants("str").Weight(2)
+                            .WithLeadingConsonants("lmncvbyzwkd"))
+                        .UsingSyllableCount(2,4);
+
+                // In this example, the name generation is creating
+                // variations of the name *gard and *dar, with the former
+                // being twice more likely to be generated.
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+
+                Console.WriteLine();
+            }
+
+            Separator();
+
+            {
                 var g = new JPGenerator();
 
                 for (int i = 0; i < 20; i++)
