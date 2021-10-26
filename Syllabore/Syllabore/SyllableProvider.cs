@@ -446,18 +446,18 @@ namespace Syllabore
         }
 
 
-        public string NextStartingSyllable()
+        public virtual string NextStartingSyllable()
         {
             return GenerateSyllable(true);
         }
 
-        public string NextSyllable()
+        public virtual string NextSyllable()
         {
             return GenerateSyllable(false);
         }
 
 
-        public string NextEndingSyllable()
+        public virtual string NextEndingSyllable()
         {
             return GenerateSyllable(false);
         }
