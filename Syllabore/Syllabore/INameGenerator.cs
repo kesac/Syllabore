@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Archigen;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,9 +10,9 @@ namespace Syllabore
     /// of syllables that were sequenced to make names or simple strings 
     /// if inspection is not required.
     /// </summary>
-    public interface INameGenerator
+    public interface INameGenerator : IGenerator<string>
     {
-        string Next();
+        // string Next();
         string Next(int syllableLength);
         Name NextName();
         Name NextName(int syllableLength);
