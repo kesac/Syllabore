@@ -5,7 +5,7 @@ using System.Text;
 namespace Syllabore
 {
     // Represents a weighted vowel or consonant.
-    public class Grapheme
+    public class Grapheme : IWeighted
     {
         public string Value { get; set; }
         public int Weight { get; set; }
