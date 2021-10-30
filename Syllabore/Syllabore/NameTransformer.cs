@@ -14,8 +14,6 @@ namespace Syllabore
     [Serializable]
     public class NameTransformer : INameTransformer
     {
-
-
         private Random Random;
         public List<Transform> Transforms { get; set; }
         public int SelectionLimit { get; set; }
@@ -37,32 +35,14 @@ namespace Syllabore
             this.SelectionLimit = 1;
         }
 
-        private Transform GetWeightedSelection()
-        {
-            int totalWeight = this.Transforms.Sum(x => x.Weight);
-            int selection = this.Random.Next(totalWeight);
-
-            int runningTotal = 0;
-            for (int j = 0; j < totalWeight; j++)
-            {
-                runningTotal += this.Transforms[j].Weight;
-                if (selection < runningTotal)
-                {
-                    return this.Transforms[j];
-                }
-            }
-
-            throw new InvalidOperationException("GetWeightedSelection() failed generated a selection that is in range of total weights");
-        }
-
-
         public Name Transform(Name sourceName)
         {
             var result = new Name(sourceName);
 
             for (int i = 0; this.Transforms.Count > 0 && i < this.SelectionLimit; i++)
             {
-                var transform = this.GetWeightedSelection();
+                //var transform = this.GetWeightedSelection();
+                var transform = this.Transforms.RandomWeightedItem<Transform>();
                 var canApplyTransform = transform.ConditionalRegex == null;
 
                 if (transform.ConditionalRegex != null)
