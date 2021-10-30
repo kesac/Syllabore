@@ -371,7 +371,7 @@ namespace Syllabore
             if(this.LeadingConsonants.Count > 0)
             {
                 //return this.LeadingConsonants[this.Random.Next(this.LeadingConsonants.Count)].Value;
-                return this.LeadingConsonants.RandomWeightedChoice().Value;
+                return this.LeadingConsonants.RandomWeightedItem().Value;
             }
             else
             {
@@ -384,7 +384,7 @@ namespace Syllabore
             if (this.LeadingConsonantSequences.Count > 0)
             {
                 //return this.LeadingConsonantSequences[this.Random.Next(this.LeadingConsonantSequences.Count)].Value;
-                return this.LeadingConsonantSequences.RandomWeightedChoice().Value;
+                return this.LeadingConsonantSequences.RandomWeightedItem().Value;
             }
             else
             {
@@ -397,7 +397,7 @@ namespace Syllabore
             if (this.Vowels.Count > 0)
             {
                 //return this.Vowels[this.Random.Next(this.Vowels.Count)].Value;
-                return this.Vowels.RandomWeightedChoice().Value;
+                return this.Vowels.RandomWeightedItem().Value;
             }
             else
             {
@@ -410,7 +410,7 @@ namespace Syllabore
             if (this.VowelSequences.Count > 0)
             {
                 // return this.VowelSequences[this.Random.Next(this.VowelSequences.Count)].Value;
-                return this.VowelSequences.RandomWeightedChoice().Value;
+                return this.VowelSequences.RandomWeightedItem().Value;
             }
             else
             {
@@ -423,7 +423,7 @@ namespace Syllabore
             if (this.TrailingConsonants.Count > 0)
             {
                 //return this.TrailingConsonants[this.Random.Next(this.TrailingConsonants.Count)].Value;
-                return this.TrailingConsonants.RandomWeightedChoice().Value;
+                return this.TrailingConsonants.RandomWeightedItem().Value;
             }
             else
             {
@@ -436,7 +436,7 @@ namespace Syllabore
             if (this.TrailingConsonantSequences.Count > 0)
             {
                 // return this.TrailingConsonantSequences[this.Random.Next(this.TrailingConsonantSequences.Count)].Value;
-                return this.TrailingConsonantSequences.RandomWeightedChoice().Value;
+                return this.TrailingConsonantSequences.RandomWeightedItem().Value;
             }
             else
             {
