@@ -10,7 +10,7 @@ namespace Syllabore
     /// mutations that produce variations on names. Mutations can also have
     /// an optional condition that must be fulfilled for the mutation to occur.
     /// </summary>
-    public class Transform
+    public class Transform : IWeighted
     {
         public List<TransformStep> Steps { get; set; }
 
