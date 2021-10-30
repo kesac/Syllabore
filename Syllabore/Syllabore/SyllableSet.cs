@@ -8,7 +8,7 @@ namespace Syllabore
     // and only returns syllables from that set. This gives
     // the appearance of cohesion across all output and is useful
     // for simulating names that might come from a specific region.
-    public class FiniteSyllableSet : SyllableProvider
+    public class SyllableSet : SyllableProvider
     {
 
         public int StartingSyllableMax { get; set; }
@@ -21,27 +21,19 @@ namespace Syllabore
 
         public bool IsInitialized { get; set; }
 
-        public FiniteSyllableSet() : base()
+        public SyllableSet(int startingMax, int normalMax, int endingMax)
         {
             this.StartingSyllables = new HashSet<string>();
             this.NormalSyllables = new HashSet<string>();
             this.EndingSyllables = new HashSet<string>();
 
-            this.StartingSyllableMax = 8;
-            this.NormalSyllableMax = 16;
-            this.EndingSyllableMax = 8;
-
-        }
-
-        public FiniteSyllableSet UsingSyllablePoolSize(int startingMax, int normalMax, int endingMax)
-        {
             this.StartingSyllableMax = startingMax;
             this.NormalSyllableMax = normalMax;
             this.EndingSyllableMax = endingMax;
-            return this;
+
         }
 
-        public FiniteSyllableSet Initialize()
+        public SyllableSet Initialize()
         {
             this.IsInitialized = true;
 
@@ -73,7 +65,7 @@ namespace Syllabore
                 this.Initialize();
             }
 
-            return this.StartingSyllables.RandomChoice<string>();
+            return this.StartingSyllables.RandomItem<string>();
         }
 
         public override string NextSyllable()
@@ -84,7 +76,7 @@ namespace Syllabore
                 this.Initialize();
             }
 
-            return this.NormalSyllables.RandomChoice<string>();
+            return this.NormalSyllables.RandomItem<string>();
         }
 
         public override string NextEndingSyllable()
@@ -94,7 +86,7 @@ namespace Syllabore
                 this.Initialize();
             }
 
-            return this.EndingSyllables.RandomChoice<string>();
+            return this.EndingSyllables.RandomItem<string>();
         }
 
 

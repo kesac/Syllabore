@@ -290,8 +290,7 @@ namespace Syllabore.Example
 
             {
                 var g = new NameGenerator()
-                        .UsingProvider(new FiniteSyllableSet()
-                            .UsingSyllablePoolSize(16, 8, 4)
+                        .UsingProvider(new SyllableSet(1, 1, 4)
                             .WithVowels("ae").Weight(2)
                             .WithVowels("iou")
                             .WithLeadingConsonants("str").Weight(2)
