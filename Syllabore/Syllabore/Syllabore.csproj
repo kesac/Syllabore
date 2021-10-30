@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Archigen" Version="0.9.3-alpha" />
+    <PackageReference Include="Archigen" Version="1.0.0" />
     <PackageReference Include="System.Text.Json" Version="4.7.2" />
   </ItemGroup>
 
