@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Syllabore.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +9,7 @@ using System.Text;
 namespace Syllabore.Tests
 {
     [TestClass]
-    public class ConfigurationFileTests
+    public class NameGeneratorConfigTests
     {
         private NameGenerator InitializeNameGenerator()
         {
@@ -34,7 +35,7 @@ namespace Syllabore.Tests
         public void ConfigurationFile_Serialization_Succeeds()
         {
             var g = InitializeNameGenerator();
-            ConfigurationFile.Save(g, "test.txt");
+            NameGeneratorConfig.Save(g, "test.txt");
             Assert.IsTrue(File.Exists("test.txt"));
         }
 
@@ -42,9 +43,9 @@ namespace Syllabore.Tests
         public void ConfigurationFile_Deserialization_Succeeds()
         {
             var g = InitializeNameGenerator();
-            ConfigurationFile.Save(g, "test.txt");
+            NameGeneratorConfig.Save(g, "test.txt");
 
-            var g2 = ConfigurationFile.Load("test.txt");
+            var g2 = NameGeneratorConfig.Load("test.txt");
             Assert.IsNotNull(g2);
             Assert.IsTrue(g != g2);
 
@@ -52,11 +53,15 @@ namespace Syllabore.Tests
             Assert.IsTrue(g.MaximumRetries == g2.MaximumRetries);
             Assert.IsTrue(g.MaximumSyllables == g2.MaximumSyllables);
             Assert.IsTrue(g.MinimumSyllables == g2.MinimumSyllables);
-            Assert.IsTrue(g.Modifier.TransformChance == g2.Modifier.TransformChance);
-            Assert.AreEqual(g.Modifier.SelectionLimit, g2.Modifier.SelectionLimit);
+            Assert.IsTrue(g.Transformer.TransformChance == g2.Transformer.TransformChance);
 
-            var p1 = g.Provider;
-            var p2 = g2.Provider;
+            var t1 = (NameTransformer)g.Transformer; // The default type
+            var t2 = (NameTransformer)g2.Transformer;
+
+            Assert.AreEqual(t1.SelectionLimit, t2.SelectionLimit);
+
+            var p1 = (SyllableProvider)g.Provider;  // The default type
+            var p2 = (SyllableProvider)g2.Provider;
 
             // Components of a syllable
             Assert.IsTrue(p1.LeadingConsonants.UnorderedListEquals(p2.LeadingConsonants));
@@ -84,11 +89,15 @@ namespace Syllabore.Tests
             Assert.IsTrue(p1.Probability.ChanceTrailingConsonantBecomesSequence == p2.Probability.ChanceTrailingConsonantBecomesSequence);
 
             // Invalid regular expressions
-            Assert.IsNotNull(g.Filter);
-            Assert.IsNotNull(g.Filter.Constraints);
-            Assert.IsNotNull(g2.Filter);
-            Assert.IsNotNull(g2.Filter.Constraints);
-            Assert.IsTrue(g.Filter.Constraints.UnorderedListEquals(g2.Filter.Constraints));
+
+            var f = (NameFilter)g.Filter;
+            var f2 = (NameFilter)g2.Filter;
+
+            Assert.IsNotNull(f);
+            Assert.IsNotNull(f.Constraints);
+            Assert.IsNotNull(f2);
+            Assert.IsNotNull(f2.Constraints);
+            Assert.IsTrue(f.Constraints.UnorderedListEquals(f2.Constraints));
 
         }
 
