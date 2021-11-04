@@ -14,13 +14,13 @@ namespace Syllabore.Tests
         [TestMethod, Timeout(10000)]
         public void NameValidation_WhenPrefixConstraintSpecified_OutputReflectsConstraints()
         {
-            var g = new NameGenerator()
-                    .UsingProvider(x => x
+            var p = new SyllableProvider()
                         .WithVowels("aei")
-                        .WithConsonants("str"));
+                        .WithConsonants("str")
+                        .WithProbability(x => x.StartingSyllable.LeadingVowelExists(1));
 
-            g.Provider.WithProbability(x => x.StartingSyllable.LeadingVowelExists(1));
-            
+            var g = new NameGenerator().UsingProvider(p);
+                    
             for (int i = 0; i < 1000; i++)
             {
                 var name = g.Next();

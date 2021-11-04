@@ -9,7 +9,7 @@ namespace Syllabore
     public static class ListExtensions
     {
 
-        public static bool UnorderedListEquals(this List<Constraint> first, List<Constraint> second)
+        public static bool UnorderedListEquals(this List<FilterConstraint> first, List<FilterConstraint> second)
         {
             //return first.ToHashSet<Condition>().SetEquals(second.ToHashSet<Condition>());
             return first.Select(x => (x.Type, x.Value)).ToHashSet().SetEquals(second.Select(x => (x.Type, x.Value)).ToHashSet());
