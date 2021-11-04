@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace Syllabore
 {
 
-    public enum Condition
+    public enum FilterCondition
     {
         Contains,
         StartsWith,
@@ -14,12 +14,12 @@ namespace Syllabore
         MatchesPattern
     }
 
-    public class Constraint
+    public class FilterConstraint
     {
-        public Condition Type { get; set; }
+        public FilterCondition Type { get; set; }
         public string Value { get; set; }
 
-        public Constraint(Condition type, string value)
+        public FilterConstraint(FilterCondition type, string value)
         {
             this.Type = type;
             this.Value = value;
@@ -33,11 +33,11 @@ namespace Syllabore
     [Serializable]
     public class NameFilter : INameFilter
     {
-        public List<Constraint> Constraints { get; set; }
+        public List<FilterConstraint> Constraints { get; set; }
 
         public NameFilter()
         {
-            this.Constraints = new List<Constraint>();
+            this.Constraints = new List<FilterConstraint>();
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Syllabore
         {
             foreach(string s in substring)
             {
-                this.Constraints.Add(new Constraint(Condition.Contains, s));
+                this.Constraints.Add(new FilterConstraint(FilterCondition.Contains, s));
             }
 
             return this;
@@ -60,7 +60,7 @@ namespace Syllabore
         {
             foreach(string r in regex)
             {
-                this.Constraints.Add(new Constraint(Condition.MatchesPattern, r));
+                this.Constraints.Add(new FilterConstraint(FilterCondition.MatchesPattern, r));
             }
 
             return this;
@@ -73,7 +73,7 @@ namespace Syllabore
         {
             foreach (string s in prefixes)
             {
-                this.Constraints.Add(new Constraint(Condition.StartsWith, s));
+                this.Constraints.Add(new FilterConstraint(FilterCondition.StartsWith, s));
                 // this.Conditions.Add("^" + s.Trim());
             }
 
@@ -87,7 +87,7 @@ namespace Syllabore
         {
             foreach(string s in suffixes)
             {
-                this.Constraints.Add(new Constraint(Condition.EndsWith, s));
+                this.Constraints.Add(new FilterConstraint(FilterCondition.EndsWith, s));
                 //this.Conditions.Add(s.Trim() + "$");
             }
 
@@ -107,19 +107,19 @@ namespace Syllabore
                 var lowercaseName = name.ToString().ToLower();
                 var lowercaseValue = c.Value.ToLower();
 
-                if (c.Type == Condition.Contains && lowercaseName.Contains(lowercaseValue))
+                if (c.Type == FilterCondition.Contains && lowercaseName.Contains(lowercaseValue))
                 {
                     isValid = false;
                 }
-                else if (c.Type == Condition.StartsWith && lowercaseName.StartsWith(lowercaseValue))
+                else if (c.Type == FilterCondition.StartsWith && lowercaseName.StartsWith(lowercaseValue))
                 {
                     isValid = false;
                 }
-                else if (c.Type == Condition.EndsWith && lowercaseName.EndsWith(lowercaseValue))
+                else if (c.Type == FilterCondition.EndsWith && lowercaseName.EndsWith(lowercaseValue))
                 {
                     isValid = false;
                 }
-                else if (c.Type == Condition.MatchesPattern && Regex.IsMatch(name.ToString(), c.Value, RegexOptions.IgnoreCase))
+                else if (c.Type == FilterCondition.MatchesPattern && Regex.IsMatch(name.ToString(), c.Value, RegexOptions.IgnoreCase))
                 {
                     isValid = false;
                 }
