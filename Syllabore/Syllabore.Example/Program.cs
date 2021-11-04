@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Syllabore.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -230,12 +231,12 @@ namespace Syllabore.Example
                                 @".*([z|Z]).*([z|Z]).*")) // Prevents double z
                         .UsingSyllableCount(2, 4);
 
-                ConfigurationFile.Save(g, "city-name-generator.txt");
-                var g2 = ConfigurationFile.Load("city-name-generator.txt");
+                NameGeneratorConfig.Save(g, "city-name-generator.txt");
+                var g2 = NameGeneratorConfig.Load("city-name-generator.txt");
 
                 for (int i = 0; i < 50; i++)
                 {
-                    var name = g.NextName();
+                    var name = g2.NextName();
                     Console.WriteLine(name);
                 }
 
