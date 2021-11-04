@@ -12,8 +12,9 @@ namespace Syllabore
     /// It can also filter its output through a <see cref="INameFilter"/> if one is specified.
     /// </p>
     /// <p>
-    /// Use <c>Next()</c> to return names as strings and <c>NextName()</c>
-    /// to return names as Name structs which gives you access to the syllable sequence.
+    /// Use <see cref="Next()"/> to return names as strings and <see cref="NextName()"/>
+    /// to return names as <see cref="Name"/> structs. The former method gives access to the 
+    /// individual syllables of the name.
     /// </p>
     /// </summary>
     public class NameGenerator : INameGenerator
@@ -23,9 +24,9 @@ namespace Syllabore
 
         private Random Random { get; set; }
 
-        public SyllableProvider Provider { get; set; }
-        public NameTransformer Modifier { get; set; }
-        public NameFilter Filter { get; set; }
+        public ISyllableProvider Provider { get; set; }
+        public INameTransformer Transformer { get; set; }
+        public INameFilter Filter { get; set; }
         public int MinimumSyllables { get; set; }
         public int MaximumSyllables { get; set; }
 
@@ -39,20 +40,20 @@ namespace Syllabore
 
         /// <summary>
         /// When there are no constructor arguments, the name generator is configured to
-        /// use DefaultSyllableProvider, DefaultNameMutator, and no name filter.
+        /// use <see cref="SyllableProvider"/>, <see cref="NameTransformer"/>, and a null <see cref="INameFilter"/>.
         /// </summary>
         public NameGenerator() : this(new DefaultSyllableProvider(), new DefaultNameTransformer(), null) { }
 
-        public NameGenerator(SyllableProvider provider) : this(provider, new DefaultNameTransformer(), null) { }
+        public NameGenerator(ISyllableProvider provider) : this(provider, new DefaultNameTransformer(), null) { }
 
-        public NameGenerator(SyllableProvider provider, NameTransformer mutator) : this(provider, mutator, null) { }
+        public NameGenerator(ISyllableProvider provider, INameTransformer transformer) : this(provider, transformer, null) { }
 
-        public NameGenerator(SyllableProvider provider, NameFilter filter) : this(provider, new DefaultNameTransformer(), filter) { }
+        public NameGenerator(ISyllableProvider provider, INameFilter filter) : this(provider, new DefaultNameTransformer(), filter) { }
 
-        public NameGenerator(SyllableProvider provider, NameTransformer mutator, NameFilter filter)
+        public NameGenerator(ISyllableProvider provider, INameTransformer transformer, INameFilter filter)
         {
             this.UsingProvider(provider)
-                .UsingTransformer(mutator)
+                .UsingTransformer(transformer)
                 .UsingFilter(filter)
                 .UsingSyllableCount(2, 2)
                 .LimitRetries(1000);
@@ -75,7 +76,7 @@ namespace Syllabore
         /// Sets the specified ISyllableProvider as the new syllable provider for this NameGenerator.
         /// The old ISyllableProvider is replaced if one was previously defined.
         /// </summary>
-        public NameGenerator UsingProvider(SyllableProvider provider)
+        public NameGenerator UsingProvider(ISyllableProvider provider)
         {
             this.Provider = provider ?? throw new ArgumentNullException("The specified ISyllableProvider is null.");
             return this;
@@ -88,29 +89,35 @@ namespace Syllabore
         }
 
         // Right now this is ok
-        public NameGenerator UsingFilter(NameFilter filter)
+        public NameGenerator UsingFilter(INameFilter filter)
         {
             this.Filter = filter;
             return this;
         }
         
+        /// <summary>
+        /// Sets this NameGenerator's transformer as a new instance of <see cref="NameTransformer"/>.
+        /// </summary>
         public NameGenerator UsingTransformer(Func<NameTransformer, NameTransformer> configure)
         {
-            this.Modifier = configure(new NameTransformer());
+            this.Transformer = configure(new NameTransformer());
 
             
-            if (!this.Modifier.TransformChance.HasValue)
+            if (!this.Transformer.TransformChance.HasValue)
             {
-                this.Modifier.TransformChance = DefaultTransformChance;
+                this.Transformer.TransformChance = DefaultTransformChance;
             }
             
 
             return this;
         }
 
-        public NameGenerator UsingTransformer(NameTransformer mutator)
+        /// <summary>
+        /// Sets the desired <see cref="INameTransformer"/> as this NameGenerator's new transformer.
+        /// </summary>
+        public NameGenerator UsingTransformer(INameTransformer transformer)
         {
-            this.Modifier = mutator ?? throw new ArgumentNullException("The specified IMutator is null.");
+            this.Transformer = transformer ?? throw new ArgumentNullException("The specified INameTransformer is null.");
             return this;
         }
 
@@ -228,9 +235,9 @@ namespace Syllabore
                     }
                 }
 
-                if(this.Modifier.TransformChance.HasValue && this.Random.NextDouble() < this.Modifier.TransformChance)
+                if(this.Transformer.TransformChance.HasValue && this.Random.NextDouble() < this.Transformer.TransformChance)
                 {
-                    result = this.Modifier.Transform(result);
+                    result = this.Transformer.Transform(result);
                 }
 
                 validNameGenerated = this.Filter != null ? this.Filter.IsValidName(result) : true;
