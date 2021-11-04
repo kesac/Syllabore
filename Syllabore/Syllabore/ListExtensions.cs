@@ -5,21 +5,42 @@ using System.Text;
 
 namespace Syllabore
 {
+    /// <summary>
+    /// Convenience methods for manipulating or drawing elements
+    /// from <see cref="IList{T}"/>.
+    /// </summary>
     public static class ListExtensions
     {
         private static Random Random = new Random();
 
-        public static void ReplaceWith<T>(this List<T> graphemes, List<T> values)
+        /// <summary>
+        /// Clears the contents of the current list and replaces it
+        /// with all elements of the new list.
+        /// </summary>
+        public static void ReplaceWith<T>(this IList<T> current, IList<T> newValues)
         {
-            graphemes.Clear();
-            graphemes.AddRange(values);
+            current.Clear();
+
+            // AddRange doesn't exist for IList<T>
+            foreach(var value in newValues)
+            {
+                current.Add(value);
+            }
+
         }
 
-        public static int TotalWeight<T>(this List<T> weightedItems) where T : IWeighted
+        /// <summary>
+        /// Given a list of <see cref="IWeighted"/>, this method returns the sum of
+        /// all elements' <c>Weight</c> property.
+        /// </summary>
+        public static int TotalWeight<T>(this IList<T> weightedItems) where T : IWeighted
         {
             return weightedItems.Sum(x => x.Weight);
         }
 
+        /// <summary>
+        /// Returns a random item from an <see cref="IList{T}"/>.
+        /// </summary>
         public static T RandomItem<T>(this IList<T> list)
         {
 
@@ -36,12 +57,21 @@ namespace Syllabore
 
         }
 
+        /// <summary>
+        /// Returns a random item from an <see cref="ISet{T}"/>.
+        /// </summary>
         public static T RandomItem<T>(this ISet<T> set)
         {
             return set.ToList<T>().RandomItem<T>();
         }
 
-        public static T RandomWeightedItem<T>(this List<T> weightedItems) where T : IWeighted
+        /// <summary>
+        /// Returns a weighted-random item from an <see cref="IList{T}"/>, 
+        /// where <c>T</c> implements <see cref="IWeighted"/>.
+        /// Elements with a higher <c>Weight</c> value will have a higher probability
+        /// of being selected over elements with lower <c>Weight</c> values.
+        /// </summary>
+        public static T RandomWeightedItem<T>(this IList<T> weightedItems) where T : IWeighted
         {
             int totalWeight = weightedItems.TotalWeight();
             int randomSelection = Random.Next(totalWeight);

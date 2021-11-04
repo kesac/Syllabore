@@ -18,14 +18,6 @@ namespace Syllabore
         public List<Transform> Transforms { get; set; }
         public int SelectionLimit { get; set; }
 
-        /// <summary>
-        /// A number from 0 to 1 inclusive that represents the probablity
-        /// that a NameGenerator mutator will apply a transform from this
-        /// transformer during name generation (during a call to Next() or
-        /// NextName()).
-        /// A value of 0 means a mutation can never occur and a value of 1
-        /// means a mutation will always occur.
-        /// </summary>
         public double? TransformChance { get; set; }
 
         public NameTransformer()
