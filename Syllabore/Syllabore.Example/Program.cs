@@ -231,8 +231,10 @@ namespace Syllabore.Example
                                 @".*([z|Z]).*([z|Z]).*")) // Prevents double z
                         .UsingSyllableCount(2, 4);
 
-                NameGeneratorConfig.Save(g, "city-name-generator.txt");
-                var g2 = NameGeneratorConfig.Load("city-name-generator.txt");
+                var s = new NameGeneratorSerializer();
+
+                s.Serialize(g, "city-name-generator.txt");
+                var g2 = s.Deserialize("city-name-generator.txt");
 
                 for (int i = 0; i < 50; i++)
                 {
@@ -291,11 +293,12 @@ namespace Syllabore.Example
 
             {
                 var g = new NameGenerator()
-                        .UsingProvider(new SyllableSet(1, 1, 4)
-                            .WithVowels("ae").Weight(2)
-                            .WithVowels("iou")
-                            .WithLeadingConsonants("str").Weight(2)
-                            .WithLeadingConsonants("lmncvbyzwkd"))
+                        .UsingProvider(new SyllableSet(2, 24, 2)
+                            .InitializeWith(x => x
+                                .WithVowels("ae").Weight(2)
+                                .WithVowels("iou")
+                                .WithLeadingConsonants("str").Weight(2)
+                                .WithLeadingConsonants("lmncvbyzwkd")))
                         .UsingSyllableCount(2,4);
 
                 // In this example, the name generation is creating
