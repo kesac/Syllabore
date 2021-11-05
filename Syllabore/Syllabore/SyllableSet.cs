@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Syllabore
 {
@@ -8,7 +9,7 @@ namespace Syllabore
     // and only returns syllables from that set. This gives
     // the appearance of cohesion across all output and is useful
     // for simulating names that might come from a specific region.
-    public class SyllableSet : SyllableProvider
+    public class SyllableSet : ISyllableProvider
     {
 
         public int StartingSyllableMax { get; set; }
@@ -19,7 +20,7 @@ namespace Syllabore
         public HashSet<string> NormalSyllables { get; set; }
         public HashSet<string> EndingSyllables { get; set; }
 
-        public bool IsInitialized { get; set; }
+        public SyllableSet() : this(8, 8, 8) { }
 
         public SyllableSet(int startingMax, int normalMax, int endingMax)
         {
@@ -30,65 +31,44 @@ namespace Syllabore
             this.StartingSyllableMax = startingMax;
             this.NormalSyllableMax = normalMax;
             this.EndingSyllableMax = endingMax;
-
         }
 
-        public SyllableSet Initialize()
+        public SyllableSet InitializeWith(Func<SyllableProvider, SyllableProvider> config)
         {
-            this.IsInitialized = true;
+            this.InitializeWith(config(new SyllableProvider()));
+            return this;
+        }
+
+        public SyllableSet InitializeWith(ISyllableProvider provider)
+        {
 
             this.StartingSyllables.Clear();
-            for(int i = 0; i < this.StartingSyllableMax; i++)
+            for (int i = 0; i < this.StartingSyllableMax; i++)
             {
-                this.StartingSyllables.Add(base.NextStartingSyllable());
+                this.StartingSyllables.Add(provider.NextStartingSyllable());
             }
 
             this.NormalSyllables.Clear();
             for (int i = 0; i < this.NormalSyllableMax; i++)
             {
-                this.NormalSyllables.Add(base.NextSyllable());
+                this.NormalSyllables.Add(provider.NextSyllable());
             }
 
             this.EndingSyllables.Clear();
             for (int i = 0; i < this.EndingSyllableMax; i++)
             {
-                this.EndingSyllables.Add(base.NextEndingSyllable());
+                this.EndingSyllables.Add(provider.NextEndingSyllable());
             }
 
             return this;
         }
 
-        public override string NextStartingSyllable()
-        {
-            if (!this.IsInitialized)
-            {
-                this.Initialize();
-            }
 
-            return this.StartingSyllables.RandomItem<string>();
-        }
+        public string NextStartingSyllable() => this.StartingSyllables.RandomItem<string>();
 
-        public override string NextSyllable()
-        {
+        public string NextSyllable() => this.NormalSyllables.RandomItem<string>();
 
-            if (!this.IsInitialized)
-            {
-                this.Initialize();
-            }
-
-            return this.NormalSyllables.RandomItem<string>();
-        }
-
-        public override string NextEndingSyllable()
-        {
-            if (!this.IsInitialized)
-            {
-                this.Initialize();
-            }
-
-            return this.EndingSyllables.RandomItem<string>();
-        }
-
+        public string NextEndingSyllable() => this.EndingSyllables.RandomItem<string>();
 
     }
 }
