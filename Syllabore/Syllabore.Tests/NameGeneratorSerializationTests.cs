@@ -9,7 +9,7 @@ using System.Text;
 namespace Syllabore.Tests
 {
     [TestClass]
-    public class NameGeneratorConfigTests
+    public class NameGeneratorSerializationTests
     {
         private NameGenerator InitializeNameGenerator()
         {
@@ -35,17 +35,51 @@ namespace Syllabore.Tests
         public void ConfigurationFile_Serialization_Succeeds()
         {
             var g = InitializeNameGenerator();
-            NameGeneratorConfig.Save(g, "test.txt");
+            var f = new NameGeneratorSerializer();
+            f.Serialize(g, "test.txt");
             Assert.IsTrue(File.Exists("test.txt"));
         }
+
+        [TestMethod]
+        public void ConfigurationFile_CanSerializeNonDefaultTypes()
+        {
+            var output = "NameGenerator_WithSyllableSet.json";
+
+            var p = new SyllableSet(4, 16, 4)
+                    .InitializeWith(x => x
+                        .WithConsonants("str")
+                        .WithVowels("aeiou"));
+                        
+            var g = InitializeNameGenerator().UsingProvider(p);
+
+            var n = new NameGeneratorSerializer().UsingProviderType(typeof(SyllableSet));
+
+            n.Serialize(g, output);
+            Assert.IsTrue(File.Exists(output));
+
+            var g2 = n.Deserialize(output);
+
+            Assert.IsNotNull(g2.Provider);
+            Assert.IsTrue(g2.Provider is SyllableSet);
+
+            var s = g2.Provider as SyllableSet;
+
+            Assert.IsTrue(s.StartingSyllableMax == 4);
+            Assert.IsTrue(s.NormalSyllableMax == 16);
+            Assert.IsTrue(s.EndingSyllableMax == 4);
+        }
+
 
         [TestMethod]
         public void ConfigurationFile_Deserialization_Succeeds()
         {
             var g = InitializeNameGenerator();
-            NameGeneratorConfig.Save(g, "test.txt");
+            var n = new NameGeneratorSerializer();
 
-            var g2 = NameGeneratorConfig.Load("test.txt");
+            n.Serialize(g, "test.txt");
+
+            var g2 = n.Deserialize("test.txt");
+
             Assert.IsNotNull(g2);
             Assert.IsTrue(g != g2);
 
