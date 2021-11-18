@@ -8,7 +8,7 @@ Syllabore is a fantasy name generator and class library, and **does not use pre-
 var g = new NameGenerator();
 Console.WriteLine(g.Next());
 ```
-A ```NameGenerator``` can be used with no customizations. Every call to ``Next()`` will return a different name. An uncustomized name generator will use [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/Defaults), no transformers, and no filters. 
+Every call to ``Next()`` on a ```NameGenerator```  will return a different name. An uncustomized name generator will use [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/Defaults), no transformers, and no filters by default. 
 
 # Tailoring Syllables
 Modify a name generator's ```SyllableProvider``` to customize vowels and consonants used in syllable generation:
@@ -24,6 +24,7 @@ Lena
 Salna
 Rasse
 ```
+See the [wiki](https://github.com/kesac/Syllabore/wiki) for more examples on customizing providers. The topics of consonant positioning, vowel/consonant sequences, and grapheme weights are not shown here.
 
 # Using Transformers
 Transformers can be used to apply a transform to a name during the generation process:
