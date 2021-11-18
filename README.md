@@ -3,60 +3,82 @@
 
 Syllabore is a fantasy name generator and class library, and **does not use pre-made lists of names**. Name generation is accomplished by generating syllables from vowel-consonant pools and sequencing them into names. 
 
-### [See the wiki for more information.](https://github.com/kesac/Syllabore/wiki)
-
 ## Quick Start
-A generator is setup to work without any additional configuration. Just instantiate ```NameGenerator``` as-is and start calling ``Next()``:
 ```csharp
 var g = new NameGenerator();
-
-for (int i = 0; i < 10; i++)
-{
-    Console.WriteLine(g.Next());
-}
-
+Console.WriteLine(g.Next());
 ```
-A default ```NameGenerator``` uses [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/Defaults) for syllable generation and will not use mutations step or validators. 
+A ```NameGenerator``` can be used with no customizations. Every call to ``Next()`` will return a different name. An uncustomized name generator will use [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/Defaults), no transformers, and no filters. 
 
-## Customizing Name Generation
-You can customize a name generator programmatically. Here is a basic three-syllable name generator:
+## Tailoring Syllables
+Modify a name generator's ```SyllableProvider``` to customize vowels and consonants used in syllable generation:
 ```csharp
 var g = new NameGenerator()
-    .UsingProvider(x => x
-        .WithLeadingConsonants("str")
-        .WithVowels("ae"))
-    .LimitSyllableCount(3);
+        .UsingProvider(x => x
+            .WithVowels("ae")
+            .WithConsonants("strmnl"));     
 ```
-This example would create names like:
+This example will create names like:
 ```
-Tetara
-Resata
-Resere
-Sasata
+Lena
+Salna
+Rasse
 ```
 
+## Using Name Transformers
+Transformers can be used to apply a transform to a name during the generation process:
+```csharp
+var g = new NameGenerator()
+        .UsingProvider(x => x
+            .WithVowels("ae")
+            .WithLeadingConsonants("str"))
+        .UsingTransformer(x => x
+            .Select(1).Chance(0.5)
+            .WithTransform(x => x.AppendSyllable("gard")).Weight(2)
+            .WithTransform(x => x.AppendSyllable("dar")))
+        .UsingSyllableCount(3);
+```
+This example ensures names end up with a specific suffix 50% of the time:
+```
+Satagard
+Resadar
+Teregard
+```
+
+## Using Name Filters
+Filters can be used to improve output, by preventing specific substrings or patterns from occuring:
+```csharp
+var g = new NameGenerator()
+            .UsingFilter(x => x
+                .DoNotAllowEnding("j","p","q","w")             // Avoid awkward endings
+                .DoNotAllowPattern(@"(\w)\1\1")                // Avoid any sequence of 3 or more identical letters
+                .DoNotAllowPattern(@"([^aeiouAEIOU])\1\1\1")); // Avoid any sequence of 4 or more consonants
+```
+
+## Customizing Name Generators
 Here is a more complicated name generator that could be suitable for naming cities:
 ```csharp
 var g = new NameGenerator()
-    .UsingProvider(p => p
-        .WithVowels("aeoy")
-        .WithLeadingConsonants("vstlr")
-        .WithTrailingConsonants("zrt")
-        .WithVowelSequences("ey", "ay", "oy"))
-    .UsingMutator(m => m
-        .WithMutation(x => { x.Syllables[0] = "gran"; })
-        .WithMutation(x => x.Syllables.Add("opolis")).When(x => x.EndsWithConsonant())
-        .WithMutation(x => x.Syllables.Add("polis")).When(x => x.EndsWithVowel())
-        .WithMutationCount(1))
-    .UsingValidator(v => v
-        .DoNotAllowPattern(
-            @"(\w)\1\1",             // no letters three times in a row
-            @".*([y|Y]).*([y|Y]).*", // two y's in same name
-            @".*([z|Z]).*([z|Z]).*", // two z's in same name
-            @"(zs)",                 // this just looks weird
-            @"(y[v|t])"))            // this also looks weird 
-    .LimitMutationChance(0.50)
-    .LimitSyllableCount(2, 3);
+        .UsingProvider(p => p
+            .WithVowels("aeoy")
+            .WithLeadingConsonants("vstlr")
+            .WithTrailingConsonants("zrt")
+            .WithVowelSequences("ey", "ay", "oy"))
+        .UsingTransformer(m => m
+            .Select(1).Chance(0.99)
+            .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
+            .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
+            .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
+            .WithTransform(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
+            .WithTransform(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis")))
+        .UsingFilter(v => v
+            .DoNotAllow("yv", "yt", "zs")
+            .DoNotAllowPattern(
+                @".{12,}",
+                @"(\w)\1\1",              // Prevents any letter from occuring three times in a row
+                @".*([y|Y]).*([y|Y]).*",  // Prevents double y
+                @".*([z|Z]).*([z|Z]).*")) // Prevents double z
+        .UsingSyllableCount(2, 4);
 ```
 This example would create names like:
 ```
@@ -66,47 +88,22 @@ Sola
 Grantero
 ```
 
-## Mutators and Creating Variations
-You can use Syllabore to produce variations of a specific name by accessing mutators directly. Here is a quick example of producing variations:
-```csharp
-var g = new NameGenerator();
+## Capturing name generator settings in a file
+The easiest way is to serialize a ```NameGenerator``` object into a json file. You can use the ```NameGeneratorSerializer``` class for this purpose:
 
-for(int i = 0; i < 3; i++)
-{
-    var name = g.NextName();
-    Console.WriteLine(name);
-
-    for (int j = 0; j < 4; j++)
-    {
-        // Variations will be different to the original
-        // in that one syllable is replaced with a new
-        // randomly generated syllable
-        var variation = g.NextVariation(name);
-        Console.WriteLine(variation);
-    }
-}
-```
-In this example, the ```NameGenerator``` defaults to using ```DefaultNameMutator``` for its mutator. Mutation will not occur on calls to ```NextName()``` because a default ```NameGenerator``` has a mutation chance to 0%. You can increase the percentage or call ```NextVariation()``` directly to create a variation of a name.
-
-Here is another example of configuring the mutation step of a ```NameGenerator```:
 ```csharp
 var g = new NameGenerator()
-    .UsingMutator(new VowelMutator())
-    .LimitMutationChance(0.25);
+var s = new NameGeneratorSerializer();
+
+// Write the name generator to disk
+s.Serialize(g, "name-generator.json");
+
+// Load the json file and generate a new name from it
+var g2 = s.Deserialize("name-generator.json");
+Console.WriteLine(g2.Next());
 ```
-In this example, the name generator has been given a custom mutation step in which one vowel of one syllable in a name is changed to different vowel. This is set to occur 25% of the time whenever ```Next()``` is called.
-
-
-## Capturing NameGenerator settings in a file <sup>1</sup>
-The static methods ```Save()``` and ```Load()``` of the ```ConfigurationFile``` class let you serialize and deserialize any instance of ```NameGenerator```.
-
-```csharp
-var g = new NameGenerator();
-ConfigurationFile.Save(g, "settings.json");
-
-var deserialized = ConfigurationFile.Load("settings.json");
-```
-<sup>1</sup>*As of v1.1, ```Mutations``` defined for a NameGenerator cannot be serialized. This is because the current implementation of ```NameMutators``` use lambdas.*
+## Advanced Use
+[See the wiki for more information.](https://github.com/kesac/Syllabore/wiki)
 
 # Installation
 Syllabore is available as a NuGet package. You can install it from your [NuGet package manager in Visual Studio](https://docs.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio) (search for "Syllabore") or by running the following command in your NuGet package manager console:
@@ -115,7 +112,7 @@ Install-Package Syllabore
 ```
 
 # License
-
+```
 MIT License
 
 Copyright (c) 2019-2021 Kevin Sacro
@@ -137,4 +134,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
+```
