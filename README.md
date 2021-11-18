@@ -50,10 +50,11 @@ Filters can be used to improve output, by preventing specific substrings or patt
 ```csharp
 var g = new NameGenerator()
             .UsingFilter(x => x
-                .DoNotAllowEnding("j","p","q","w")             // Avoid awkward endings
-                .DoNotAllowPattern(@"(\w)\1\1")                // Avoid any sequence of 3 or more identical letters
-                .DoNotAllowPattern(@"([^aeiouAEIOU])\1\1\1")); // Avoid any sequence of 4 or more consonants
+                .DoNotAllowEnding("j","p","q","w")
+                .DoNotAllowPattern(@"(\w)\1\1")
+                .DoNotAllowPattern(@"([^aeiouAEIOU])\1\1\1"));
 ```
+This example avoids awkward sounding endings, avoids any sequence of 3 or more identical letters, and avoids any sequence of 4 or more consonants.
 
 ## Customizing Name Generators
 Here is a more complicated name generator that could be suitable for naming cities:
