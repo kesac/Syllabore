@@ -24,7 +24,7 @@ Lena
 Salna
 Rasse
 ```
-See the [wiki](https://github.com/kesac/Syllabore/wiki) for more examples on customizing providers. The topics of consonant positioning, vowel/consonant sequences, and grapheme weights are not shown here.
+See the [wiki](https://github.com/kesac/Syllabore/wiki/v2.x-Customizing-Syllable-Providers) for more examples on customizing providers. The topics of consonant positioning, vowel/consonant sequences, and grapheme weights are not shown here.
 
 # Using Transformers
 Transformers can be used to apply a transform to a name during the generation process:
