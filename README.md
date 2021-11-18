@@ -3,14 +3,14 @@
 
 Syllabore is a fantasy name generator and class library, and **does not use pre-made lists of names**. Name generation is accomplished by generating syllables from vowel-consonant pools and sequencing them into names. 
 
-## Quick Start
+# Quick Start
 ```csharp
 var g = new NameGenerator();
 Console.WriteLine(g.Next());
 ```
 A ```NameGenerator``` can be used with no customizations. Every call to ``Next()`` will return a different name. An uncustomized name generator will use [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/Defaults), no transformers, and no filters. 
 
-## Tailoring Syllables
+# Tailoring Syllables
 Modify a name generator's ```SyllableProvider``` to customize vowels and consonants used in syllable generation:
 ```csharp
 var g = new NameGenerator()
@@ -25,7 +25,7 @@ Salna
 Rasse
 ```
 
-## Using Name Transformers
+# Using Transformers
 Transformers can be used to apply a transform to a name during the generation process:
 ```csharp
 var g = new NameGenerator()
@@ -45,7 +45,7 @@ Resadar
 Teregard
 ```
 
-## Using Name Filters
+# Using Filters
 Filters can be used to improve output, by preventing specific substrings or patterns from occuring:
 ```csharp
 var g = new NameGenerator()
@@ -56,7 +56,7 @@ var g = new NameGenerator()
 ```
 This example avoids awkward sounding endings, avoids any sequence of 3 or more identical letters, and avoids any sequence of 4 or more consonants.
 
-## Customizing Name Generators
+# Putting It All Together
 Here is a more complicated name generator that could be suitable for naming cities:
 ```csharp
 var g = new NameGenerator()
@@ -89,8 +89,8 @@ Sola
 Grantero
 ```
 
-## Capturing name generator settings in a file
-The easiest way is to serialize a ```NameGenerator``` object into a json file. You can use the ```NameGeneratorSerializer``` class for this purpose:
+# Serialization
+The easiest way to capture name generator settings is to just serialize a ```NameGenerator``` object into a json file. You can use the ```NameGeneratorSerializer``` class for this purpose which has a method of dealing with polymorphic deserialization:
 
 ```csharp
 var g = new NameGenerator()
@@ -103,7 +103,7 @@ s.Serialize(g, "name-generator.json");
 var g2 = s.Deserialize("name-generator.json");
 Console.WriteLine(g2.Next());
 ```
-## Advanced Use
+# Advanced Use
 [See the wiki for more information.](https://github.com/kesac/Syllabore/wiki)
 
 # Installation
