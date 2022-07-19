@@ -1,7 +1,8 @@
-# Syllabore
+![](https://i.imgur.com/qUMcu2tm.png) 
+
 [![Nuget](https://img.shields.io/nuget/v/Syllabore)](https://www.nuget.org/packages/Syllabore/)
 
-Syllabore is a fantasy name generator and class library, and **does not use pre-made lists of names**. Name generation is accomplished by generating syllables from vowel-consonant pools and sequencing them into names. 
+Syllabore is a fantasy name generator and class library, and **does not use pre-made lists of names**. Name generation is accomplished by generating syllables from vowel-consonant pools and sequencing them into names. See the quick start guide below or [visit the wiki for advanced information.](https://github.com/kesac/Syllabore/wiki) 
 
 # Quick Start
 ```csharp
