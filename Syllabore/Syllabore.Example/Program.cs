@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Syllabore.Example.Spaceship;
 
 namespace Syllabore.Example
 {
@@ -16,7 +17,7 @@ namespace Syllabore.Example
                 // You can use name generators without any customization
                 var g = new NameGenerator();
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -66,10 +67,12 @@ namespace Syllabore.Example
                 // Note that probabilities can be controlled. There is an
                 // example of this further down.
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
+
+                Separator();
 
                 // This example is the same as the previous one except
                 // it uses context-aware calls to Sequences() 
@@ -79,7 +82,7 @@ namespace Syllabore.Example
                         .WithLeadingConsonants("str").Sequences("wh", "fr")
                         .WithTrailingConsonants("mnl").Sequences("ld", "rd"));
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -105,7 +108,7 @@ namespace Syllabore.Example
                 // a leading consonant, but only have a trailing one 20% of the
                 // time.
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -127,7 +130,7 @@ namespace Syllabore.Example
                 // In this example, the vowel 'a' will appear 4 times
                 // more likely than an 'e'
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -146,7 +149,7 @@ namespace Syllabore.Example
                                 .DoNotAllowPattern(@"(\w)\1\1")                // Invalidate any sequence of 3 or more identical letters
                                 .DoNotAllowPattern(@"([^aeiouAEIOU])\1\1\1")); // Invalidate any sequence of 4 or more consonants
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -172,7 +175,7 @@ namespace Syllabore.Example
                 // variations of the name *gard and *dar, with the former
                 // being twice more likely to be generated.
 
-                for(int i = 0; i < 10; i++)
+                for(int i = 0; i < 5; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -182,10 +185,8 @@ namespace Syllabore.Example
             }
 
             Separator();
-
+            /*
             {
-                
-                /*
                 var g = new NameGenerator().UsingTransformer(new VowelMutator());
 
                 for(int i = 0; i < 3; i++)
@@ -200,10 +201,11 @@ namespace Syllabore.Example
 
                     }
                 }
-                */
+                
             }
 
             Separator();
+            */
 
             {
 
@@ -236,7 +238,7 @@ namespace Syllabore.Example
                 s.Serialize(g, "city-name-generator.txt");
                 var g2 = s.Deserialize("city-name-generator.txt");
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     var name = g2.NextName();
                     Console.WriteLine(name);
@@ -283,7 +285,7 @@ namespace Syllabore.Example
                                 .Join(new DefaultNameTransformer())
                                 .Join(new VowelMutator());
 
-                for(int i = 0; i < 20; i++)
+                for(int i = 0; i < 5; i++)
                 {
                     Console.WriteLine(mutator.Transform(name));
                 }
@@ -305,7 +307,7 @@ namespace Syllabore.Example
                 // variations of the name *gard and *dar, with the former
                 // being twice more likely to be generated.
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -318,7 +320,7 @@ namespace Syllabore.Example
             {
                 var g = new JPGenerator();
 
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -330,7 +332,67 @@ namespace Syllabore.Example
                 // Fantasy-sounding names, maybe
                 var g = new FantasyGenerator();
 
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 5; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Spaceship-sounding names, maybe
+                var g = new SpaceshipGeneratorV1();
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Spaceship-sounding names, maybe
+                var g = new SpaceshipGeneratorV2();
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Spaceship-sounding names, maybe
+                var g = new SpaceshipGeneratorV3();
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Spaceship-sounding names, maybe
+                var g = new SpaceshipGeneratorV4();
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Spaceship-sounding names, maybe
+                var g = new SpaceshipGeneratorV5();
+
+                for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
