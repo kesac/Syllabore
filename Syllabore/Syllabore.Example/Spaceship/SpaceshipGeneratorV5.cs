@@ -13,7 +13,7 @@ namespace Syllabore.Example.Spaceship
 
         /// <summary>
         /// Building a name generator for spaceships.
-        /// Part 5 of 5: Adding an optional transform.
+        /// Part 5 of 5: Adding specific suffixes.
         /// </summary>
         public SpaceshipGeneratorV5()
         {
@@ -31,15 +31,19 @@ namespace Syllabore.Example.Spaceship
 
             _shipGenerator = new NameGenerator()
                 .UsingProvider(x => x
-                    .WithVowels("aeyo")
-                    .WithVowelSequences("ei", "ia")
-                    .WithLeadingConsonants("dfghlmnrstv"))
+                    .WithVowels("aoi")
+                    .WithVowelSequences("ei", "ia", "ou", "eu")
+                    .WithLeadingConsonants("rstlmn").Weight(4)
+                    .WithLeadingConsonants("cdgp").Weight(2))
                 .UsingTransformer(x => x
-                    .Chance(0.50)
-                    .WithTransform(x => x.ReplaceSyllable(-1, "des"))
+                    .Select(1) // Only apply one transform
+                    .Chance(0.50) // Only allow transform to be used 50% of the time
+                    .WithTransform(x => x.ReplaceSyllable(-1, "des")) // Index -1 is the last position
                     .WithTransform(x => x.ReplaceSyllable(-1, "rus"))
                     .WithTransform(x => x.ReplaceSyllable(-1, "vium")))
-                .UsingSyllableCount(2, 4);
+                .UsingFilter(x => x
+                    .DoNotAllowPattern(@"(\w)\1"))
+                .UsingSyllableCount(3);
         }
 
         public string Next()

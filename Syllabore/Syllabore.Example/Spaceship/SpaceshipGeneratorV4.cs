@@ -31,10 +31,13 @@ namespace Syllabore.Example.Spaceship
 
             _shipGenerator = new NameGenerator()
                 .UsingProvider(x => x
-                    .WithVowels("aeyo")
-                    .WithVowelSequences("ei", "ia")
-                    .WithLeadingConsonants("dfghlmnrstv"))
-                .UsingSyllableCount(2, 4);
+                    .WithVowels("aoi")
+                    .WithVowelSequences("ei", "ia", "ou", "eu")
+                    .WithLeadingConsonants("rstlmn").Weight(4)
+                    .WithLeadingConsonants("cdgp").Weight(2))
+                .UsingFilter(x => x
+                    .DoNotAllowPattern(@"(\w)\1")) // Two of the same letters consecutively
+                .UsingSyllableCount(3);
         }
 
         public string Next()
