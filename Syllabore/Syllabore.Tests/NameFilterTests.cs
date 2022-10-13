@@ -108,6 +108,29 @@ namespace Syllabore.Tests
         }
 
         [TestMethod, Timeout(10000)]
+        public void NameValidation_WhenRegexConstraintsSpecified3_OutputReflectsConstraints()
+        {
+            var g = new NameGenerator();
+            g.UsingSyllableCount(2, 3);
+
+            var f = new NameFilter();
+            f.DoNotAllowEnding("f", "g", "h", "j", "q", "v", "w", "z");
+            f.DoNotAllowPattern("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
+
+            f.DoNotAllowPattern("(q[^u])"); // Q must always be followed by a u
+            f.DoNotAllowPattern("([^tsao]w)"); // W must always be preceded with a t, s, a, or o
+            f.DoNotAllow("pn"); // Looks a little awkward
+
+            Assert.IsFalse(f.IsValidName(new Name() { Syllables = new List<string>() { "qello" } }));
+            Assert.IsTrue(f.IsValidName(new Name() { Syllables = new List<string>() { "quello" } }));
+
+            Assert.IsFalse(f.IsValidName(new Name() { Syllables = new List<string>() { "lwas" } }));
+            Assert.IsTrue(f.IsValidName(new Name() { Syllables = new List<string>() { "twas" } }));
+
+            g.UsingFilter(f);
+        }
+
+        [TestMethod, Timeout(10000)]
         public void NameValidation_WhenRegexConstraintsSpecified2_OutputReflectsConstraints()
         {
 
