@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Syllabore.Example.Spaceship;
+using Syllabore.Example.Planets;
 
 namespace Syllabore.Example
 {
@@ -391,6 +392,66 @@ namespace Syllabore.Example
             {
                 // Spaceship-sounding names, maybe
                 var g = new SpaceshipGeneratorV5();
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Spaceship-sounding names, maybe
+                var g = new PlanetGeneratorV1();
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Spaceship-sounding names, maybe
+                var g = new PlanetGeneratorV2();
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Spaceship-sounding names, maybe
+                var g = new PlanetGeneratorV3();
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Spaceship-sounding names, maybe
+                var g = new PlanetGeneratorV4();
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Spaceship-sounding names, maybe
+                var g = new PlanetGeneratorV7();
 
                 for (int i = 0; i < 10; i++)
                 {
