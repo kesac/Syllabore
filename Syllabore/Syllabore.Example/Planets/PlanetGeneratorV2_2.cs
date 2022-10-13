@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Syllabore.Example.Planets
 {
-    public class PlanetGeneratorV2 : NameGenerator
+    public class PlanetGeneratorV2_2 : NameGenerator
     {
 
-        public PlanetGeneratorV2()
+        public PlanetGeneratorV2_2()
         {
             this.UsingSyllableCount(2, 3);
 
@@ -21,6 +21,7 @@ namespace Syllabore.Example.Planets
 
             var f = new NameFilter();
             f.DoNotAllowEnding("f", "g", "j", "v");
+            f.DoNotAllowPattern("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
 
             this.UsingFilter(f);
         }

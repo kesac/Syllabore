@@ -405,7 +405,7 @@ namespace Syllabore.Example
                 // Spaceship-sounding names, maybe
                 var g = new PlanetGeneratorV1();
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -415,7 +415,19 @@ namespace Syllabore.Example
 
             {
                 // Spaceship-sounding names, maybe
-                var g = new PlanetGeneratorV2();
+                var g = new PlanetGeneratorV1_3();
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                // Spaceship-sounding names, maybe
+                var g = new PlanetGeneratorV2_4();
 
                 for (int i = 0; i < 10; i++)
                 {
@@ -435,29 +447,6 @@ namespace Syllabore.Example
                 }
             }
 
-            Separator();
-
-            {
-                // Spaceship-sounding names, maybe
-                var g = new PlanetGeneratorV4();
-
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-            }
-
-            Separator();
-
-            {
-                // Spaceship-sounding names, maybe
-                var g = new PlanetGeneratorV7();
-
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-            }
 
         }
 

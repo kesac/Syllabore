@@ -7,15 +7,17 @@ using System.Threading.Tasks;
 namespace Syllabore.Example.Planets
 {
 
-    public class PlanetGeneratorV1 : NameGenerator
+    public class PlanetGeneratorV1_2 : NameGenerator
     {
-        public PlanetGeneratorV1()
+        public PlanetGeneratorV1_2()
         {
             this.UsingSyllableCount(2, 3);
 
             var p = new SyllableProvider();
             p.WithVowels("aieou");
-            p.WithConsonants("bcdfghjklmnpqrstvwxyz");
+            p.WithLeadingConsonants("bcdfghklmnpqrstvxyz");
+            p.WithTrailingConsonants("cdfgklmnprstv");
+            p.WithProbability(x => x.TrailingConsonantExists(0.50));
 
             this.UsingProvider(p);
 

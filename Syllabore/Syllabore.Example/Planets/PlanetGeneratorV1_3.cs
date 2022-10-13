@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Syllabore.Example.Planets
 {
-    public class PlanetGeneratorV2 : NameGenerator
-    {
 
-        public PlanetGeneratorV2()
+    public class PlanetGeneratorV1_3 : NameGenerator
+    {
+        public PlanetGeneratorV1_3()
         {
             this.UsingSyllableCount(2, 3);
 
@@ -19,11 +19,6 @@ namespace Syllabore.Example.Planets
                 .WithTrailingConsonants("cdfgklmnprstv")
                 .WithProbability(x => x.TrailingConsonantExists(0.50)));
 
-            var f = new NameFilter();
-            f.DoNotAllowEnding("f", "g", "j", "v");
-
-            this.UsingFilter(f);
         }
-
     }
 }

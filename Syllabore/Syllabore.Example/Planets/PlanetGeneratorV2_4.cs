@@ -6,25 +6,21 @@ using System.Threading.Tasks;
 
 namespace Syllabore.Example.Planets
 {
-    public class PlanetGeneratorV7 : NameGenerator
+    public class PlanetGeneratorV2_4 : NameGenerator
     {
-        /// <summary>
-        /// Step 7 of X: (Optional) Weight the consonant and vowel pool
-        /// </summary>
-        public PlanetGeneratorV7()
+
+        public PlanetGeneratorV2_4()
         {
             this.UsingSyllableCount(2, 3);
 
             this.UsingProvider(x => x
-                .WithConsonants("bcdhlmnprst").Weight(4)
-                .WithConsonants("gfjk").Weight(2)
-                .WithConsonants("vqwxyz").Weight(1)
-                .WithVowels("e").Weight(3)
-                .WithVowels("ai").Weight(2)
-                .WithVowels("ou").Weight(1));
+                .WithVowels("aieou")
+                .WithLeadingConsonants("bcdfghklmnpqrstvxyz")
+                .WithTrailingConsonants("cdfgklmnprstv")
+                .WithProbability(x => x.TrailingConsonantExists(0.50)));
 
             this.UsingFilter(x => x
-                .DoNotAllowEnding("f", "g", "h", "j", "q", "v", "w", "z")
+                .DoNotAllowEnding("f", "g", "j", "v")
                 .DoNotAllowPattern("([^aieou]{3})")
                 .DoNotAllowPattern("(q[^u])")
                 .DoNotAllowPattern("([^tsao]w)")

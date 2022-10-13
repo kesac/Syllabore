@@ -6,17 +6,21 @@ using System.Threading.Tasks;
 
 namespace Syllabore.Example.Planets
 {
-    public class PlanetGeneratorV4 : NameGenerator
+    public class PlanetGeneratorV2_3 : NameGenerator
     {
-        /// <summary>
-        /// Step 4 of X: Filter out a few patterns for aesthetic reasons.
-        /// </summary>
-        public PlanetGeneratorV4()
+
+        public PlanetGeneratorV2_3()
         {
             this.UsingSyllableCount(2, 3);
 
+            this.UsingProvider(x => x
+                .WithVowels("aieou")
+                .WithLeadingConsonants("bcdfghklmnpqrstvxyz")
+                .WithTrailingConsonants("cdfgklmnprstv")
+                .WithProbability(x => x.TrailingConsonantExists(0.50)));
+
             var f = new NameFilter();
-            f.DoNotAllowEnding("f", "g", "h", "j", "q", "v", "w", "z");
+            f.DoNotAllowEnding("f", "g", "j", "v");
             f.DoNotAllowPattern("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
 
             f.DoNotAllowPattern("(q[^u])"); // Q must always be followed by a u
