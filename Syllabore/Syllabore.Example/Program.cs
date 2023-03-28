@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Syllabore.Example.Spaceship;
 using Syllabore.Example.Planets;
+using Syllabore.Example.RandomString;
 
 namespace Syllabore.Example
 {
@@ -447,6 +448,17 @@ namespace Syllabore.Example
                 }
             }
 
+            Separator();
+
+            {
+                // Random string generator
+                var g = new RandomTextGenerator();
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next().ToUpper());
+                }
+            }
 
         }
 
