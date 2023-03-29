@@ -1,12 +1,16 @@
-![](https://i.imgur.com/qUMcu2tm.png) 
-
 [![Nuget](https://img.shields.io/nuget/v/Syllabore)](https://www.nuget.org/packages/Syllabore/)
 
-Syllabore is a fantasy name generator and class library, and **does not use pre-made lists of names**. 
+![](https://i.imgur.com/qUMcu2tm.png) 
 
-Name generation is accomplished by generating syllables from vowel-consonant pools and sequencing them into names. See the quick start guide below or [visit the wiki for advanced information.](https://github.com/kesac/Syllabore/wiki) 
+### What is this?
+ * **Syllabore** is a fantasy name generator and class library 
+ * It does **not** use pre-made name lists and does **not** access generative AI services
+ * It can be embedded into any .NET program and used 100% offline
 
-Syllabore is an example of procedural generation and does not use generative AI services. It can be used 100% offline.
+### How are names generated?
+ * Name generation is accomplished by generating syllables from vowel-consonant pools and sequencing them into names
+ * **Syllabore** is an example of procedural generation
+
 
 # Quick Start
 ```csharp
