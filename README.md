@@ -2,25 +2,50 @@
 
 ![](https://i.imgur.com/qUMcu2tm.png) 
 
-### What is this?
- * **Syllabore** is a fantasy name generator and class library 
- * It does **not** use pre-made name lists and does **not** access generative AI services
- * It can be embedded into any .NET program and used 100% offline
+## Overview
+#### What is this?
+ * **Syllabore** is a procedural name generator and does not use pre-made lists of names
+ * It can be embedded into a .NET program and used 100% offline
 
-### How are names generated?
- * Name generation is accomplished by generating syllables from vowel-consonant pools and sequencing them into names
- * **Syllabore** is an example of procedural generation
+#### How are names generated?
+ * **Syllabore** first constructs syllables out of characters (_graphemes_)
+ * Then it sequences syllables into names
 
+## Table of Contents
+ 1. [Quick Start](#quick-start)
+ 1. [Tailoring Characters](#tailoring-characters)
+ 1. [Transformations](#transformations)
+ 1. [Filtering](#filtering)
+ 1. [Putting It All Together](#putting-it-all-together)
+ 1. [Serialization](#serialization)
+ 1. [Advanced Use](#advanced-use)
+ 1. [Installation](#installation)
+ 1. [License](#license)
 
-# Quick Start
+## Quick Start
+Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/Defaults) will be used in syllables. 
+
 ```csharp
 var g = new NameGenerator();
 Console.WriteLine(g.Next());
 ```
-Every call to ``Next()`` on a ```NameGenerator```  will return a different name. An uncustomized name generator will use [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/Defaults), no transformers, and no filters by default. 
+This will return names like:
+```
+Taigla
+Zoren
+Ocri
+```
 
-# Tailoring Syllables
-Modify a name generator's ```SyllableProvider``` to customize vowels and consonants used in syllable generation:
+## Tailoring Characters
+Each ```NameGenerator``` uses a ```SyllableProvider``` internally. You can specify the characters (_graphemes_) to use in name generation by supplying your own ```SyllableProvider```:
+```csharp
+var p = new SyllableProvider()
+        .WithVowels("ae")
+        .WithConsonants("strmnl");
+
+var g = new NameGenerator().UsingProvider(p);     
+```
+Or in a more compact way:
 ```csharp
 var g = new NameGenerator()
         .UsingProvider(x => x
@@ -35,48 +60,68 @@ Rasse
 ```
 See the [wiki](https://github.com/kesac/Syllabore/wiki/v2.x-Customizing-Syllable-Providers) for more examples on customizing providers. The topics of consonant positioning, vowel/consonant sequences, and grapheme weights are not shown here.
 
-# Using Transformers
-Transformers can be used to apply a transform to a name during the generation process:
+## Transformations
+A ```NameTransformer``` can be used to apply a transformation to a name during the generation process. This is optional and a vanilla ```NameGenerator``` will not have one by default.
+
+Here's an example of transforming names to have specific suffixes:
+```csharp
+var t = new NameTransformer()
+         .WithTransform(x => x.AppendSyllable("gard"))
+         .WithTransform(x => x.AppendSyllable("llia"));
+
+var g = new NameGenerator()
+        .UsingTransformer(t)
+        .UsingSyllableCount(1, 2);
+```
+Or in a more compact way:
 ```csharp
 var g = new NameGenerator()
-        .UsingProvider(x => x
-            .WithVowels("ae")
-            .WithLeadingConsonants("str"))
         .UsingTransformer(x => x
-            .Select(1).Chance(0.5)
-            .WithTransform(x => x.AppendSyllable("gard")).Weight(2)
-            .WithTransform(x => x.AppendSyllable("dar")))
-        .UsingSyllableCount(3);
+            .WithTransform(x => x.AppendSyllable("gard"))
+            .WithTransform(x => x.AppendSyllable("llia")))
+        .UsingSyllableCount(1, 2);
 ```
-This example ensures names end up with a specific suffix 50% of the time:
+This produces names like:
 ```
-Satagard
-Resadar
-Teregard
+Togard
+Heshigard
+Vallia
 ```
+(In the example, you'll notice we made a call to ```UsingSyllableCount()```. This call set the minimum syllable count to 1 and maximum to 2. The default syllable count in **Syllable** is 2 for both minimum and maximum.)
 
-# Using Filters
-Filters can be used to improve output, by preventing specific substrings or patterns from occuring:
+## Filtering Output
+You can use a ```NameFilter``` to preventing specific substrings or patterns from occurring during name generation. Filters are optional and a vanilla ```NameGenerator``` will not have one by default.
+
+Here is an example to avoid awkward sounding consonant endings, sequences of 3 or more identical letters, and sequences of 4 or more consonants.
+```csharp
+var f = new NameFilter()
+        .DoNotAllowEnding("j","p","q","w")
+        .DoNotAllowPattern(@"(\w)\1\1")
+        .DoNotAllowPattern(@"([^aeiouAEIOU])\1\1\1");
+
+var g = new NameGenerator().UsingFilter(f);
+```
+Or in a more compact way:
 ```csharp
 var g = new NameGenerator()
-            .UsingFilter(x => x
-                .DoNotAllowEnding("j","p","q","w")
-                .DoNotAllowPattern(@"(\w)\1\1")
-                .DoNotAllowPattern(@"([^aeiouAEIOU])\1\1\1"));
+        .UsingFilter(x => x
+            .DoNotAllowEnding("j","p","q","w")
+            .DoNotAllowPattern(@"(\w)\1\1")
+            .DoNotAllowPattern(@"([^aeiouAEIOU])\1\1\1"));
 ```
-This example avoids awkward sounding endings, avoids any sequence of 3 or more identical letters, and avoids any sequence of 4 or more consonants.
+A ```NameGenerator``` using this filter will _not_ produce names like "Rukaaa" or "Tesoj".
 
-# Putting It All Together
+## Putting It All Together
 Here is a more complicated name generator that could be suitable for naming cities:
 ```csharp
 var g = new NameGenerator()
         .UsingProvider(p => p
             .WithVowels("aeoy")
-            .WithLeadingConsonants("vstlr")
-            .WithTrailingConsonants("zrt")
+            .WithLeadingConsonants("vstlr") // Only used to start a syllable
+            .WithTrailingConsonants("zrt")  // Only used to end a syllable
             .WithVowelSequences("ey", "ay", "oy"))
         .UsingTransformer(m => m
-            .Select(1).Chance(0.99)
+            .Select(1).Chance(0.99) // 99% chance to choose 1 transform
             .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
             .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
             .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
@@ -99,8 +144,10 @@ Sola
 Grantero
 ```
 
-# Serialization
-The easiest way to capture name generator settings is to just serialize a ```NameGenerator``` object into a json file. You can use the ```NameGeneratorSerializer``` class for this purpose which has a method of dealing with polymorphic deserialization:
+Check out the [wiki](https://github.com/kesac/Syllabore/wiki) for more advanced guides!
+
+## Serialization
+The easiest way to preserve name generator settings is to just serialize a ```NameGenerator``` object into a json file. You can use the ```NameGeneratorSerializer``` class for this purpose which has a method of dealing with polymorphic deserialization:
 
 ```csharp
 var g = new NameGenerator();
@@ -108,21 +155,22 @@ var s = new NameGeneratorSerializer();
 
 // Write the name generator to disk
 s.Serialize(g, "name-generator.json");
-
-// Load the json file and generate a new name from it
-var g2 = s.Deserialize("name-generator.json");
-Console.WriteLine(g2.Next());
 ```
-# Advanced Use
-[See the wiki for more information.](https://github.com/kesac/Syllabore/wiki)
+Then when you're ready, you can load from the json file you created earlier:
+```csharp
+var generator = s.Deserialize("name-generator.json");
+Console.WriteLine(generator.Next());
+```
+## Advanced Use
+[See the wiki for more information.](https://github.com/kesac/Syllabore/wiki) The wiki contains extra technical information, additional guides, etc.
 
-# Installation
+## Installation
 Syllabore is available as a NuGet package. You can install it from your [NuGet package manager in Visual Studio](https://docs.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio) (search for "Syllabore") or by running the following command in your NuGet package manager console:
 ```
 Install-Package Syllabore
 ```
 
-# License
+## License
 ```
 MIT License
 
