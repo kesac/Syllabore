@@ -1,6 +1,6 @@
 [![Nuget](https://img.shields.io/nuget/v/Syllabore)](https://www.nuget.org/packages/Syllabore/)
 
-![](https://i.imgur.com/qUMcu2tm.png) 
+![](https://i.imgur.com/Y98oNli.png) 
 
 ## Overview
 #### What is this?
