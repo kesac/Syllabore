@@ -1,8 +1,6 @@
 [![Nuget](https://img.shields.io/nuget/v/Syllabore)](https://www.nuget.org/packages/Syllabore/)
 
 ![](https://i.imgur.com/Y98oNli.png) 
-
-## Overview
 #### What is this?
  * **Syllabore** is a procedural name generator and does not use pre-made lists of names
  * It can be embedded into a .NET program and used 100% offline
@@ -15,12 +13,13 @@
  1. [Quick Start](#quick-start)
  1. [Tailoring Characters](#tailoring-characters)
  1. [Transformations](#transformations)
- 1. [Filtering](#filtering)
+ 1. [Filtering](#filtering-output)
  1. [Putting It All Together](#putting-it-all-together)
  1. [Serialization](#serialization)
  1. [Advanced Use](#advanced-use)
  1. [Installation](#installation)
  1. [License](#license)
+ 1. [Acknowledgements](#acknowledgements)
 
 ## Quick Start
 Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/Defaults) will be used in syllables. 
@@ -90,7 +89,7 @@ Vallia
 (In the example, you'll notice we made a call to ```UsingSyllableCount()```. This call set the minimum syllable count to 1 and maximum to 2. The default syllable count in **Syllable** is 2 for both minimum and maximum.)
 
 ## Filtering Output
-You can use a ```NameFilter``` to preventing specific substrings or patterns from occurring during name generation. Filters are optional and a vanilla ```NameGenerator``` will not have one by default.
+You can use a ```NameFilter``` to prevent specific substrings or patterns from occurring during name generation. Filters are optional and a vanilla ```NameGenerator``` will not have one by default.
 
 Here is an example to avoid awkward sounding consonant endings, sequences of 3 or more identical letters, and sequences of 4 or more consonants.
 ```csharp
