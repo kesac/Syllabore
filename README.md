@@ -17,6 +17,7 @@
  1. [Putting It All Together](#putting-it-all-together)
  1. [Serialization](#serialization)
  1. [Installation](#installation)
+ 1. [Compatibility](#compatibility)
  1. [License](#license)
 
 ## Quick Start
@@ -137,6 +138,16 @@ Syllabore is available as a NuGet package. You can install it from your [NuGet p
 ```
 Install-Package Syllabore
 ```
+## Compatibility
+Syllabore was created as a .NET Standard 2.0 class library. This means it will be immediately compatible with applications using:
+ * .NET 5.0 and higher
+ * .NET Core 2.0 and higher
+ * .NET Framework 4.6.1 through 4.8.1
+ * Mono 5.4, 6.4
+ 
+Syllabore _should_ work in the following game engines, but I have not done adequate testing yet:
+ * Unity
+ * Godot
 
 ## License
 ```
