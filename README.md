@@ -22,7 +22,7 @@
  1. [Acknowledgements](#acknowledgements)
 
 ## Quick Start
-Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/Defaults) will be used in syllables. 
+Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/DefaultSyllableProvider) will be used in syllables. 
 
 ```csharp
 var g = new NameGenerator();
