@@ -7,19 +7,19 @@ using System.Text.Json;
 namespace Syllabore
 {
     /// <summary>
-    /// <p>
-    /// Randomly generates names by constructing syllables and joining them together.
-    /// It can also filter its output through a <see cref="INameFilter"/> if one is specified.
-    /// </p>
-    /// <p>
-    /// Use <see cref="Next()"/> to return names as strings and <see cref="NextName()"/>
+    /// <para>
+    /// Generates names by constructing syllables and joining them together.
+    /// It can also filter its output through an <see cref="INameFilter"/> if one is specified.
+    /// </para>
+    /// <para>
+    /// Call <see cref="Next()"/> to return names as strings and <see cref="NextName()"/>
     /// to return names as <see cref="Name"/> structs. The former method gives access to the 
     /// individual syllables of the name.
-    /// </p>
+    /// </para>
     /// </summary>
     public class NameGenerator : INameGenerator
     {
-
+        private const int DefaultMaximumRetries = 1000;
         private const double DefaultTransformChance = 1.0;
 
         private Random Random { get; set; }
@@ -33,38 +33,60 @@ namespace Syllabore
         /// <summary>
         /// Maximum attempts this generator will attempt to satisfy the
         /// NameFilter before it throws an Exception. This is used to protect
-        /// against scenarios where a NameGenerator has been configured in such
+        /// against scenarios where a <see cref="NameGenerator"/> has been configured in such
         /// a way that it can't generate any name that would satisfy its own filter.
         /// </summary>
         public int MaximumRetries { get; set; }
 
         /// <summary>
         /// When there are no constructor arguments, the name generator is configured to
-        /// use <see cref="SyllableProvider"/>, <see cref="NameTransformer"/>, and a null <see cref="INameFilter"/>.
+        /// use a <see cref="DefaultSyllableProvider"/>, no <see cref="INameTransformer"/>, and no <see cref="INameFilter"/>.
         /// </summary>
-        public NameGenerator() : this(new DefaultSyllableProvider(), new DefaultNameTransformer(), null) { }
+        public NameGenerator() : this(new DefaultSyllableProvider(), null, null) { }
 
-        public NameGenerator(ISyllableProvider provider) : this(provider, new DefaultNameTransformer(), null) { }
+        /// <summary>
+        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableProvider"/>.
+        /// No <see cref="INameTransformer"/> or <see cref="INameFilter"/> will be used.
+        /// </summary>
+        public NameGenerator(ISyllableProvider provider) : this(provider, null, null) { }
 
+        /// <summary>
+        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableProvider"/> and
+        /// <see cref="INameTransformer"/>. No <see cref="INameFilter"/> will be used.
+        /// </summary>
         public NameGenerator(ISyllableProvider provider, INameTransformer transformer) : this(provider, transformer, null) { }
 
-        public NameGenerator(ISyllableProvider provider, INameFilter filter) : this(provider, new DefaultNameTransformer(), filter) { }
+        /// <summary>
+        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableProvider"/> and
+        /// <see cref="INameFilter"/>. No <see cref="INameTransformer"/> will be used.
+        /// </summary>
+        public NameGenerator(ISyllableProvider provider, INameFilter filter) : this(provider, null, filter) { }
 
+        /// <summary>
+        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableProvider"/>, 
+        /// <see cref="INameFilter"/>, and <see cref="INameTransformer"/>.
+        /// </summary>
         public NameGenerator(ISyllableProvider provider, INameTransformer transformer, INameFilter filter)
         {
             this.UsingProvider(provider)
-                .UsingTransformer(transformer)
-                .UsingFilter(filter)
                 .UsingSyllableCount(2, 2)
-                .LimitRetries(1000);
+                .LimitRetries(DefaultMaximumRetries);
+
+            if (transformer != null)
+            {
+                this.UsingTransformer(transformer);
+            }
+
+            if (filter != null)
+            {
+                this.UsingFilter(filter);
+            }
 
             this.Random = new Random();
         }
 
         /// <summary>
-        /// Creates a new ConfigurableSyllableProvider for this NameGenerator.
-        /// The new ConfigurableSyllableProvider replaces the old SyllableProvider if
-        /// one is already defined.
+        /// Sets the syllable provider of this <see cref="NameGenerator"/> to the specified <see cref="SyllableProvider"/>.
         /// </summary>
         public NameGenerator UsingProvider(Func<SyllableProvider,SyllableProvider> configure)
         {
@@ -73,8 +95,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Sets the specified ISyllableProvider as the new syllable provider for this NameGenerator.
-        /// The old ISyllableProvider is replaced if one was previously defined.
+        /// Sets the syllable provider of this <see cref="NameGenerator"/> to the specified <see cref="ISyllableProvider"/>.
         /// </summary>
         public NameGenerator UsingProvider(ISyllableProvider provider)
         {
@@ -82,21 +103,29 @@ namespace Syllabore
             return this;
         }
 
+        /// <summary>
+        /// Sets the name filter of this <see cref="NameGenerator"/> to the specified <see cref="NameFilter"/>.
+        /// A vanilla <see cref="NameGenerator"/> does not use filters by default.
+        /// </summary>
         public NameGenerator UsingFilter(Func<NameFilter, NameFilter> configure)
         {
             this.Filter = configure(new NameFilter());
             return this;
         }
 
-        // Right now this is ok
+        /// <summary>
+        /// Sets the name filter of this <see cref="NameGenerator"/> to the specified <see cref="INameFilter"/>.
+        /// A vanilla <see cref="NameGenerator"/> does not use filters by default.
+        /// </summary>
         public NameGenerator UsingFilter(INameFilter filter)
         {
-            this.Filter = filter;
+            this.Filter = filter ?? throw new ArgumentNullException("The specified INameFilter is null.");
             return this;
         }
-        
+
         /// <summary>
-        /// Sets this NameGenerator's transformer as a new instance of <see cref="NameTransformer"/>.
+        /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="NameTransformer"/>.
+        /// A vanilla <see cref="NameGenerator"/> does not use transformers by default.
         /// </summary>
         public NameGenerator UsingTransformer(Func<NameTransformer, NameTransformer> configure)
         {
@@ -113,7 +142,8 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Sets the desired <see cref="INameTransformer"/> as this NameGenerator's new transformer.
+        /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="INameTransformer"/>.
+        /// A vanilla <see cref="NameGenerator"/> does not use transformers by default.
         /// </summary>
         public NameGenerator UsingTransformer(INameTransformer transformer)
         {
@@ -121,11 +151,18 @@ namespace Syllabore
             return this;
         }
 
+        /// <summary>
+        /// Sets the minimum and maximum syllable count of generated names to the specified value.
+        /// (Both minimum and maximum will be set to the same value.)
+        /// </summary>
         public NameGenerator UsingSyllableCount(int length)
         {
             return this.UsingSyllableCount(length, length);
         }
 
+        /// <summary>
+        /// Sets the minimum and maximum syllable length of generated names.
+        /// </summary>
         public NameGenerator UsingSyllableCount(int min, int max)
         {
 
@@ -143,6 +180,16 @@ namespace Syllabore
             return this;
         }
 
+        /// <summary>
+        /// <para>
+        /// Sets the maximum number of generation retries before an exception is thrown.
+        /// Retry limits are useful in detecting <see cref="NameGenerator"/>s that
+        /// cannot satisfy their own <see cref="NameFilter"/>.
+        /// </para>
+        /// <para>
+        /// The default retry limit is 1000.
+        /// </para>
+        /// </summary>
         public NameGenerator LimitRetries(int limit)
         {
 
@@ -159,8 +206,12 @@ namespace Syllabore
 
 
         /// <summary>
-        /// Generates a random name. The syllable length of the generated name is determined by the properties <c>MinimumSyllables</c> and <c>MaximumSyllables</c>.
-        /// If you need to access individual syllables, use NextName() instead.
+        /// <para>
+        /// Generates and returns a random name. The name will be consistent with this <see cref="NameGenerator"/>'s syllable provider, name transformer (if it is used), and name filter (if it is used).
+        /// </para>
+        /// <para>
+        /// If you need to access to individual syllables of a name, use <see cref="NextName"/> instead.
+        /// </para>
         /// </summary>
         public string Next()
         {
@@ -177,8 +228,15 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Generates a random name with the specified syllable length and returns as a string.
-        /// If you need to access individual syllables, use NextName() instead.
+        /// <para>
+        /// Generates and returns a random name with the specified syllable length. The specified syllable length 
+        /// will override the <see cref="NameGenerator"/>'s <see cref="MinimumSyllables"/> and <see cref="MaximumSyllables"/> 
+        /// set by <see cref="UsingSyllableCount(int, int)"/>. The name will be consistent with this <see cref="NameGenerator"/>'s 
+        /// syllable provider, name transformer (if it is used), and name filter (if it is used).
+        /// </para>
+        /// <para>
+        /// If you need to access to individual syllables of a name, use <see cref="NextName"/> instead.
+        /// </para>
         /// </summary>
         public string Next(int syllableLength)
         {
@@ -186,7 +244,8 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Generates a random name and returns it as a Name struct. The syllable length of the generated name is determined by the properties <c>MinimumSyllables</c> and <c>MaximumSyllables</c>.
+        /// Identical to <see cref="Next()"/> except a <see cref="Name"/> struct is returned instead of a string. 
+        /// The struct is useful in obtaining the syllables that make up the name.
         /// </summary>
         public Name NextName()
         {
@@ -200,7 +259,8 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Generates a random name with the specified syllable length and returns it as a Name struct.
+        /// Identical to <see cref="Next(int)"/> except a <see cref="Name"/> struct is returned instead of a string. 
+        /// The struct is useful in obtaining the syllables that make up the name.
         /// </summary>
         public Name NextName(int syllableLength)
         {
@@ -235,7 +295,9 @@ namespace Syllabore
                     }
                 }
 
-                if(this.Transformer.TransformChance.HasValue && this.Random.NextDouble() < this.Transformer.TransformChance)
+                if (this.Transformer != null 
+                    && this.Transformer.TransformChance.HasValue 
+                    && this.Random.NextDouble() < this.Transformer.TransformChance)
                 {
                     result = this.Transformer.Transform(result);
                 }
@@ -250,39 +312,6 @@ namespace Syllabore
 
             return result;
         }
-
-        // If this gets uncommented, remember to add the ITransformer interface again
-        //
-        // Mutation will use this NameGenerator's mutator, but subject output to the filter (if there is one).
-        // Using transforming a name this way will ignore the transform chance.
-        /* 
-        public Name Transform(Name sourceName)
-        {
-
-            if (sourceName.Syllables.Count < 1)
-            {
-                throw new ArgumentException("It's not possible to create variations on a name that has 0 syllables.");
-            }
-
-            var validNameGenerated = false;
-            var totalAttempts = 0;
-            Name result = null;
-
-            while (!validNameGenerated)
-            {
-                result = this.Modifier.Transform(sourceName);
-                validNameGenerated = this.Filter != null ? this.Filter.IsValidName(result) : true;
-
-                if (totalAttempts++ >= this.MaximumRetries && !validNameGenerated)
-                {
-                    throw new InvalidOperationException("This NameGenerator has run out of attempts generating a valid name variation through mutations. It may be configured in such a way that there does not exist any mutation that can satisfy the specified NameFilter."); ;
-                }
-            }
-
-            return result ?? throw new InvalidOperationException("The NameGenerator has failed to produce a name variation through mutations.");
-        }
-        /**/
-
 
     }
 }
