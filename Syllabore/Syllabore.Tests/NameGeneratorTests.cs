@@ -20,9 +20,13 @@ namespace Syllabore.Tests
         public void Constructor_WhenAnyParameterNull_ArgumentNullExceptionThrown()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, null, null));
-            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(new DefaultSyllableProvider(), null, null));
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new DefaultNameTransformer(), null));
+            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, null, new NameFilter()));
+            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new DefaultNameTransformer(), new NameFilter()));
+
+            Assert.IsNotNull(new NameGenerator(new DefaultSyllableProvider(), null, null).Next());
             Assert.IsNotNull(new NameGenerator(new DefaultSyllableProvider(), new DefaultNameTransformer(), null).Next());
+            Assert.IsNotNull(new NameGenerator(new DefaultSyllableProvider(), new DefaultNameTransformer(), new NameFilter()).Next());
         }
 
         [TestMethod]
