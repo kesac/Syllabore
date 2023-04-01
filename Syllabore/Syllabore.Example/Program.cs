@@ -298,7 +298,9 @@ namespace Syllabore.Example
             {
                 var g = new NameGenerator()
                         .UsingProvider(new SyllableSet(2, 24, 2)
-                            .InitializeWith(x => x
+                            .WithStartingSyllable("ko", "ro")
+                            .WithEndingSyllable("re", "ke")
+                            .WithProvider(x => x
                                 .WithVowels("ae").Weight(2)
                                 .WithVowels("iou")
                                 .WithLeadingConsonants("str").Weight(2)
