@@ -45,10 +45,13 @@ namespace Syllabore.Tests
         {
             var output = "NameGenerator_WithSyllableSet.json";
 
-            var p = new SyllableSet(4, 16, 4)
-                    .InitializeWith(x => x
+            var p = new SyllableSet(2, 16, 2)
+                    .WithProvider(x => x
                         .WithConsonants("str")
-                        .WithVowels("aeiou"));
+                        .WithVowels("aeiou"))
+                    .WithStartingSyllable("ra")
+                    .WithMiddleSyllable("ro")
+                    .WithEndingSyllable("ri");
                         
             var g = InitializeNameGenerator().UsingProvider(p);
 
@@ -64,11 +67,16 @@ namespace Syllabore.Tests
 
             var s = g2.Provider as SyllableSet;
 
-            Assert.IsTrue(s.StartingSyllableMax == 4);
-            Assert.IsTrue(s.NormalSyllableMax == 16);
-            Assert.IsTrue(s.EndingSyllableMax == 4);
-        }
+            for (int i = 0; i < 50; i++)
+            {
+                g2.Next();
+            }
 
+            Assert.IsTrue(s.StartingSyllables.Count == 2);
+            Assert.IsTrue(s.MiddleSyllables.Count == 16);
+            Assert.IsTrue(s.EndingSyllables.Count == 2);
+
+        }
 
         [TestMethod]
         public void ConfigurationFile_Deserialization_Succeeds()
