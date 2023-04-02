@@ -5,17 +5,17 @@ using System.Text;
 namespace Syllabore
 {
     /// <summary>
-    /// This is the default mutator that <see cref="NameGenerator"/> uses 
-    /// when a custom mutator is not specified during instantiation.
-    /// This mutator creates variations of names by replacing one syllable
+    /// This transformer creates variations of names by replacing one syllable
     /// with another syllable. Syllables are derived from <see cref="DefaultSyllableProvider"/>.
     /// </summary>
+    [Obsolete("No longer used", false)]
     public class DefaultNameTransformer : NameTransformer
     {
         private ISyllableProvider Provider { get; set; }
 
         private Random Random { get; set; }
 
+        [Obsolete("No longer used", false)]
         public DefaultNameTransformer()
         {
             this.Provider = new DefaultSyllableProvider();
