@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Syllabore
 {
-    public enum MutationStepType
+    public enum TransformStepType
     {
         InsertSyllable,
         AppendSyllable,
@@ -19,7 +19,7 @@ namespace Syllabore
     /// </summary>
     public class TransformStep
     {
-        public MutationStepType Type { get; set; }
+        public TransformStepType Type { get; set; }
         public List<string> Arguments { get; set; }
         private Action<Name> UnserializableAction { get; set; }
 
@@ -28,7 +28,7 @@ namespace Syllabore
             this.Arguments = new List<string>();
         }
 
-        public TransformStep(MutationStepType type, params string[] args)
+        public TransformStep(TransformStepType type, params string[] args)
         {
             this.Type = type;
             this.Arguments = new List<string>(args);
@@ -36,13 +36,13 @@ namespace Syllabore
 
         public TransformStep(Action<Name> unserializableAction)
         {
-            this.Type = MutationStepType.Lambda;
+            this.Type = TransformStepType.Lambda;
             this.UnserializableAction = unserializableAction;
         }
 
         public void Apply(Name name)
         {
-            if(this.Type == MutationStepType.InsertSyllable)
+            if(this.Type == TransformStepType.InsertSyllable)
             {
                 int index = int.Parse(this.Arguments[0]);
                 string insertion = this.Arguments[1];
@@ -54,13 +54,13 @@ namespace Syllabore
 
                 name.Syllables.Insert(index, insertion);
             }
-            else if (this.Type == MutationStepType.AppendSyllable)
+            else if (this.Type == TransformStepType.AppendSyllable)
             {
                 string append = this.Arguments[0];
 
                 name.Syllables.Add(append);
             }
-            else if (this.Type == MutationStepType.ReplaceSyllable)
+            else if (this.Type == TransformStepType.ReplaceSyllable)
             {
                 int index = int.Parse(this.Arguments[0]);
                 string replacement = this.Arguments[1];
@@ -72,7 +72,7 @@ namespace Syllabore
 
                 name.Syllables[index] = replacement;
             }
-            else if (this.Type == MutationStepType.RemoveSyllable)
+            else if (this.Type == TransformStepType.RemoveSyllable)
             {
                 int index = int.Parse(this.Arguments[0]);
 
@@ -83,7 +83,7 @@ namespace Syllabore
 
                 name.Syllables.RemoveAt(index);
             }
-            else if(this.Type == MutationStepType.ReplaceAllSubstring)
+            else if(this.Type == TransformStepType.ReplaceAllSubstring)
             {
                 string substring = this.Arguments[0].ToLower();
                 string replacement = this.Arguments[1].ToLower();
@@ -98,7 +98,7 @@ namespace Syllabore
                 }
 
             }
-            else if(this.Type == MutationStepType.Lambda)
+            else if(this.Type == TransformStepType.Lambda)
             {
                 UnserializableAction(name);
             }

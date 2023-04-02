@@ -7,17 +7,17 @@ namespace Syllabore
 {
     /// <summary>
     /// Used by <see cref="NameGenerator"/> through <see cref="NameTransformer"/> to capture
-    /// mutations that produce variations on names. Mutations can also have
-    /// an optional condition that must be fulfilled for the mutation to occur.
+    /// transforms that produce variations on names. Transforms can also have
+    /// an optional condition that must be fulfilled for the transform to occur.
     /// </summary>
     public class Transform : IWeighted
     {
         public List<TransformStep> Steps { get; set; }
 
         /// <summary>
-        /// A positive integer that influences the probability of this mutation being used over others.
-        /// Given two mutations X and Y with a weight of 3 and 1 respectively, mutation X will be applied 75% of the time.
-        /// All mutations default to a weight of 1.
+        /// A positive integer that influences the probability of this transform being used over others.
+        /// Given two transforms X and Y with a weight of 3 and 1 respectively, transform X will be applied 75% of the time.
+        /// All transforms default to a weight of 1.
         /// </summary>
         public int Weight { get; set; }
         public int? ConditionalIndex { get; set; }
@@ -44,8 +44,8 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Adds a condition to this mutation. The condition is a regex pattern applied
-        /// to a syllable at the specified index. It must be satisfied for the entire mutation
+        /// Adds a condition to this transform. The condition is a regex pattern applied
+        /// to a syllable at the specified index. It must be satisfied for the entire transform
         /// to run. Note that while multiple calls to <c>When()</c> are possible, only the last
         /// call will have an effect.
         /// </summary>
@@ -73,7 +73,7 @@ namespace Syllabore
 
 
         /// <summary>
-        /// Adds a mutation step that replaces a syllable at the specified index with
+        /// Adds a transform step that replaces a syllable at the specified index with
         /// a desired string.
         /// </summary>
         /// <param name="index">The index can be a negative integer to traverse from the
@@ -83,13 +83,13 @@ namespace Syllabore
         /// <returns></returns>
         public Transform ReplaceSyllable(int index, string replacement)
         {
-            this.Steps.Add(new TransformStep(MutationStepType.ReplaceSyllable, index.ToString(), replacement));
+            this.Steps.Add(new TransformStep(TransformStepType.ReplaceSyllable, index.ToString(), replacement));
             return this;
         }
 
         public Transform ReplaceAll(string substring, string replacement)
         {
-            this.Steps.Add(new TransformStep(MutationStepType.ReplaceAllSubstring, substring, replacement));
+            this.Steps.Add(new TransformStep(TransformStepType.ReplaceAllSubstring, substring, replacement));
             return this;
         }
 
@@ -104,33 +104,33 @@ namespace Syllabore
         /// <returns></returns>
         public Transform InsertSyllable(int index, string syllable)
         {
-            this.Steps.Add(new TransformStep(MutationStepType.InsertSyllable, index.ToString(), syllable));
+            this.Steps.Add(new TransformStep(TransformStepType.InsertSyllable, index.ToString(), syllable));
             return this;
         }
 
         /// <summary>
-        /// Adds a mutation step that appends a new syllable to the end of a name.
+        /// Adds a transform step that appends a new syllable to the end of a name.
         /// </summary>
         public Transform AppendSyllable(string syllable)
         {
-            this.Steps.Add(new TransformStep(MutationStepType.AppendSyllable, syllable));
+            this.Steps.Add(new TransformStep(TransformStepType.AppendSyllable, syllable));
             return this;
         }
 
         /// <summary>
-        /// Adds a mutation step that removes the syllable at the specified index.
+        /// Adds a transform step that removes the syllable at the specified index.
         /// </summary>
         /// <param name="index">The index can be a negative integer to traverse from the
         /// end of the name instead. (For example, an index -1 will be interpreted as the
         /// last syllable of a name.</param>
         public Transform RemoveSyllable(int index)
         {
-            this.Steps.Add(new TransformStep(MutationStepType.RemoveSyllable, index.ToString()));
+            this.Steps.Add(new TransformStep(TransformStepType.RemoveSyllable, index.ToString()));
             return this;
         }
 
         /// <summary>
-        /// Executes the specified action on a name. Note that this mutation step cannot
+        /// Executes the specified action on a name. Note that this transform step cannot
         /// be serialized.
         /// </summary>
         public Transform ExecuteUnserializableAction(Action<Name> unserializableAction)
