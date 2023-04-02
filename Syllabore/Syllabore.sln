@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.452
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Syllabore", "Syllabore\Syllabore.csproj", "{E4920BB6-04EB-494B-BF70-FBB664925C30}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Syllabore.Example", "Syllabore.Example\Syllabore.Example.csproj", "{4E89CF7F-AD8B-41FA-A13E-25EA8517B66F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syllabore.Tests", "Syllabore.Tests\Syllabore.Tests.csproj", "{53049EA8-CD37-44BC-8E8C-658FD27085FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Syllabore.Tests", "Syllabore.Tests\Syllabore.Tests.csproj", "{53049EA8-CD37-44BC-8E8C-658FD27085FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
