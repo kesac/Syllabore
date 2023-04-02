@@ -6,9 +6,7 @@ using System.Text;
 namespace Syllabore
 {
     /// <summary>
-    /// Generates names. Provides <see cref="Name"/> objects to allow inspection
-    /// of syllables that were sequenced to make names or simple strings 
-    /// if inspection is not required.
+    /// Generates names as strings or <see cref="Name"/> objects.
     /// </summary>
     public interface INameGenerator : IGenerator<string>
     {

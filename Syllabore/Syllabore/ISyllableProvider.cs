@@ -5,7 +5,7 @@ using System.Text;
 namespace Syllabore
 {
     /// <summary>
-    /// Generates syllables useful for building names.
+    /// Generates syllables that can be sequenced into names.
     /// </summary>
     public interface ISyllableProvider
     {

@@ -9,7 +9,7 @@ namespace Syllabore
 
     /// <summary>
     /// Takes source names and applies one or more transforms
-    /// to a name to create a new name.
+    /// to create a new name.
     /// </summary>
     [Serializable]
     public class NameTransformer : INameTransformer

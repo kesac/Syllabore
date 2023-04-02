@@ -13,7 +13,7 @@ namespace Syllabore
     /// </para>
     /// <para>
     /// Call <see cref="Next()"/> to return names as strings and <see cref="NextName()"/>
-    /// to return names as <see cref="Name"/> structs. The former method gives access to the 
+    /// to return names as <see cref="Name"/> objects. The latter method gives access to the 
     /// individual syllables of the name.
     /// </para>
     /// </summary>
@@ -244,8 +244,8 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Identical to <see cref="Next()"/> except a <see cref="Name"/> struct is returned instead of a string. 
-        /// The struct is useful in obtaining the syllables that make up the name.
+        /// Identical to <see cref="Next()"/> except a <see cref="Name"/> object is returned instead of a string. 
+        /// The object is useful in obtaining the syllables that make up the name.
         /// </summary>
         public Name NextName()
         {
@@ -259,8 +259,8 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Identical to <see cref="Next(int)"/> except a <see cref="Name"/> struct is returned instead of a string. 
-        /// The struct is useful in obtaining the syllables that make up the name.
+        /// Identical to <see cref="Next(int)"/> except a <see cref="Name"/> object is returned instead of a string. 
+        /// The object is useful in obtaining the syllables that make up the name.
         /// </summary>
         public Name NextName(int syllableLength)
         {

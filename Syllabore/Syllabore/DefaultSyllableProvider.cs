@@ -5,9 +5,13 @@ using System.Text;
 namespace Syllabore
 {
     /// <summary>
-    /// This is the default provider that <see cref="NameGenerator"/> uses 
-    /// when a custom provider is not specified during instantiation.
-    /// This is included in Syllabore as a convenience.
+    /// <para>
+    /// The default syllable provider used by a vanilla instance
+    /// of <see cref="NameGenerator"/>.
+    /// </para>
+    /// <para>
+    /// All graphemes of the English language are used in this syllable provider.
+    /// </para>
     /// </summary>
     public class DefaultSyllableProvider : SyllableProvider
     {

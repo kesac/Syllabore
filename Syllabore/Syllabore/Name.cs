@@ -3,11 +3,14 @@
 namespace Syllabore
 {
     /// <summary>
-    /// Represents a generated name. Can be returned by <see cref="NameGenerator"/> for callers
+    /// Represents a name. Can be returned by <see cref="NameGenerator"/> for callers
     /// to access the syllables of a name.
     /// </summary>
     public class Name
     {
+        /// <summary>
+        /// Ordered syllables that make up this name.
+        /// </summary>
         public List<string> Syllables { get; set; }
 
         /// <summary>
@@ -19,7 +22,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// A name with the desired starting syllables.
+        /// Instantiates a name with the desired starting syllables.
         /// </summary>
         /// <param name="syllable"></param>
         public Name(params string[] syllable)
@@ -28,8 +31,8 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// A name that is a copy of the specified name. (This constructor
-        /// is useful for mutators.)
+        /// Instantiates a name that is a copy of the specified name. (This constructor
+        /// is useful for a <see cref="INameTransformer"/>.)
         /// </summary>
         /// <param name="copy"></param>
         public Name(Name copy) {
