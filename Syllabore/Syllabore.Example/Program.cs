@@ -457,6 +457,28 @@ namespace Syllabore.Example
                 }
             }
 
+            Separator();
+
+            {
+                // eg. How to combine two NameGenerators
+                var g = new NameFormatter("{firstname} {lastname}")
+                        .UsingGenerator("firstname", new NameGenerator()
+                            .UsingSyllableCount(2, 3)
+                            .UsingProvider(x => x
+                                .WithConsonants("strlmn")
+                                .WithVowels("aeo")))
+                        .UsingGenerator("lastname", new NameGenerator()
+                            .UsingSyllableCount(2, 4)
+                            .UsingProvider(x => x
+                                .WithConsonants("bcdhky")
+                                .WithVowels("oiyu")));
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(g.Next());
+                }
+            }
+
         }
 
         public static void Separator()
