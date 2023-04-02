@@ -284,8 +284,9 @@ namespace Syllabore.Example
                 // Creating variations of a single name
                 var name = new Name("syl", "la", "bore");
                 var mutator = new NameTransformer()
-                                .Join(new DefaultNameTransformer())
-                                .Join(new VowelMutator());
+                                .Join(new NameTransformer()
+                                    .WithTransform(x => x.ReplaceSyllable(0, "test"))
+                                .Join(new VowelMutator()));
 
                 for(int i = 0; i < 5; i++)
                 {
