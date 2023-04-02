@@ -23,6 +23,9 @@ namespace Syllabore
         public int? ConditionalIndex { get; set; }
         public string ConditionalRegex { get; set; }
 
+        /// <summary>
+        /// Instantiates a new <see cref="Transform"/>.
+        /// </summary>
         public Transform()
         {
             this.Steps = new List<TransformStep>();
@@ -30,6 +33,11 @@ namespace Syllabore
             this.ConditionalIndex = null;
             this.ConditionalRegex = null;
         }
+        
+        /// <summary>
+        /// Applies the <see cref="Transform"/> on the specified <see cref="Name"/>.
+        /// </summary>
+        /// <param name="name"></param>
         public void Apply(Name name)
         {
             foreach (var step in this.Steps)
@@ -38,16 +46,10 @@ namespace Syllabore
             }
         }
 
-        public Transform When(string regex)
-        {
-            return this.When(int.MinValue, regex);
-        }
-
         /// <summary>
         /// Adds a condition to this transform. The condition is a regex pattern applied
         /// to a syllable at the specified index. It must be satisfied for the entire transform
-        /// to run. Note that while multiple calls to <c>When()</c> are possible, only the last
-        /// call will have an effect.
+        /// to run. If multiple calls are made, only the call will have an effect.
         /// </summary>
         /// <param name="index">The index of the syllable that the condition operates 
         /// on. A negative index can be provided to traverse from the end of the name
@@ -87,6 +89,10 @@ namespace Syllabore
             return this;
         }
 
+        /// <summary>
+        /// Adds a transform step that replaces all instances of the specified substring in each syllable with
+        /// a desired string. Note that the substring must be completely contained in a syllable to be replaced.
+        /// </summary>
         public Transform ReplaceAll(string substring, string replacement)
         {
             this.Steps.Add(new TransformStep(TransformStepType.ReplaceAllSubstring, substring, replacement));
@@ -94,7 +100,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Adds a mutation step that inserts a new syllable at the specified index. The
+        /// Adds a transform step that inserts a new syllable at the specified index. The
         /// syllable at that index and the others after it will be pushed one index to the right.
         /// </summary>
         /// <param name="index">The index can be a negative integer to traverse from the

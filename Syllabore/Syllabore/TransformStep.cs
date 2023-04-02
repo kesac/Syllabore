@@ -40,6 +40,10 @@ namespace Syllabore
             this.UnserializableAction = unserializableAction;
         }
 
+        /// <summary>
+        /// Applies this transform step to the specified <see cref="Name"/>.
+        /// This method is destructive.
+        /// </summary>
         public void Apply(Name name)
         {
             if(this.Type == TransformStepType.InsertSyllable)

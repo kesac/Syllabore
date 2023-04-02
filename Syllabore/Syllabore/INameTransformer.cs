@@ -17,11 +17,11 @@ namespace Syllabore
         /// <see cref="NameGenerator.NextName"/>).
         /// </para>
         /// <para>
-        /// A value of 0 means a mutation can never occur and a value of 1
+        /// A value of 0 means a transform can never occur and a value of 1
         /// means a mutation will always occur.
         /// </para>
         /// </summary>
-        double? TransformChance { get; set; }
+        double TransformChance { get; set; }
 
         Name Transform(Name sourceName);
     }
