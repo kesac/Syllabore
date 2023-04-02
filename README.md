@@ -134,10 +134,24 @@ Console.WriteLine(generator.Next());
 ```
 
 ## Installation
-Syllabore is available as a NuGet package. You can install it from your [NuGet package manager in Visual Studio](https://docs.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio) (search for "Syllabore") or by running the following command in your NuGet package manager console:
+### .NET apps
+Syllabore is available as a NuGet package. You can install it from your [NuGet package manager in Visual Studio](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio) (search for "Syllabore") or by running the following command in your NuGet package manager console:
 ```
 Install-Package Syllabore
 ```
+
+### Godot
+Edit your ```.csproj``` file and add a ```PackageReference``` to Syllabore. Your file should look something like this:
+```
+<Project Sdk="Godot.NET.Sdk/4.0.1">
+  ...
+  <ItemGroup>
+    <PackageReference Include="Syllabore" Version="2.0.2" />
+  </ItemGroup>
+  ...
+</Project>
+```
+
 ## Compatibility
 Syllabore was created as a .NET Standard 2.0 class library. This means it will be immediately compatible with applications using:
  * .NET 5.0 and higher
