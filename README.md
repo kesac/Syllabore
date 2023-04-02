@@ -135,7 +135,7 @@ Console.WriteLine(generator.Next());
 
 ## Installation
 ### .NET apps
-Syllabore is available as a NuGet package. You can install it from your [NuGet package manager in Visual Studio](https://docs.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio) (search for "Syllabore") or by running the following command in your NuGet package manager console:
+Syllabore is available as a NuGet package. You can install it from your [NuGet package manager in Visual Studio](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio) (search for "Syllabore") or by running the following command in your NuGet package manager console:
 ```
 Install-Package Syllabore
 ```
