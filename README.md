@@ -145,9 +145,11 @@ Syllabore was created as a .NET Standard 2.0 class library. This means it will b
  * .NET Framework 4.6.1 through 4.8.1
  * Mono 5.4, 6.4
  
+Syllabore has been tested and known to work in the following game engines:
+ * Godot 4 (Use the .NET version and reference Syllabore in your .csproj file)
+ 
 Syllabore _should_ work in the following game engines, but I have not done adequate testing yet:
  * Unity
- * Godot
 
 ## License
 ```
