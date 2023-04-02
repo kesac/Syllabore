@@ -122,7 +122,7 @@ namespace Syllabore
         /// <summary>
         /// Sets the syllable provider of this <see cref="NameGenerator"/> to the specified <see cref="SyllableProvider"/>.
         /// </summary>
-        public NameGenerator UsingProvider(Func<SyllableProvider,SyllableProvider> configure)
+        public NameGenerator UsingProvider(Func<SyllableProvider, SyllableProvider> configure)
         {
             this.Provider = configure(new SyllableProvider());
             return this;
@@ -133,7 +133,7 @@ namespace Syllabore
         /// </summary>
         public NameGenerator UsingProvider(ISyllableProvider provider)
         {
-            this.Provider = provider ?? throw new ArgumentNullException("The specified ISyllableProvider is null.");
+            this.Provider = provider ?? throw new ArgumentNullException("provider", "The specified ISyllableProvider is null.");
             return this;
         }
 
@@ -153,7 +153,7 @@ namespace Syllabore
         /// </summary>
         public NameGenerator UsingFilter(INameFilter filter)
         {
-            this.Filter = filter ?? throw new ArgumentNullException("The specified INameFilter is null.");
+            this.Filter = filter ?? throw new ArgumentNullException("filter", "The specified INameFilter is null.");
             return this;
         }
 
@@ -182,7 +182,7 @@ namespace Syllabore
         /// </summary>
         public NameGenerator UsingTransformer(INameTransformer transformer)
         {
-            this.Transformer = transformer ?? throw new ArgumentNullException("The specified INameTransformer is null.");
+            this.Transformer = transformer ?? throw new ArgumentNullException("transformer", "The specified INameTransformer is null.");
             return this;
         }
 
