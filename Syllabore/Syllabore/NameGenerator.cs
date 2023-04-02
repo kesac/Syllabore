@@ -20,14 +20,48 @@ namespace Syllabore
     public class NameGenerator : INameGenerator
     {
         private const int DefaultMaximumRetries = 1000;
-        private const double DefaultTransformChance = 1.0;
+        // private const double DefaultTransformChance = 1.0;
 
         private Random Random { get; set; }
 
+        /// <summary>
+        /// <para>
+        /// The syllable provider used by this <see cref="NameGenerator"/>
+        /// to construct syllables.
+        /// </para>
+        /// <para>
+        /// A vanilla <see cref="NameGenerator"/> will use a 
+        /// <see cref="DefaultSyllableProvider"/> by default.
+        /// </para>
+        /// </summary>
         public ISyllableProvider Provider { get; set; }
+
+        /// <summary>
+        /// <para>
+        /// The name transformer used during name generation.
+        /// A vanilla <see cref="NameGenerator"/> will not use a 
+        /// transformer by default.
+        /// </para>
+        /// </summary>
         public INameTransformer Transformer { get; set; }
+
+        /// <summary>
+        /// <para>
+        /// The filter used to validate a <see cref="NameGenerator"/>'s output.
+        /// A vanilla <see cref="NameGenerator"/> will not use a 
+        /// filter by default.
+        /// </para>
+        /// </summary>
         public INameFilter Filter { get; set; }
+
+        /// <summary>
+        /// The minimum number of syllables a generated name can have.
+        /// </summary>
         public int MinimumSyllables { get; set; }
+
+        /// <summary>
+        /// The maximum number of syllables a generated name can have.
+        /// </summary>
         public int MaximumSyllables { get; set; }
 
         /// <summary>
@@ -131,11 +165,12 @@ namespace Syllabore
         {
             this.Transformer = configure(new NameTransformer());
 
-            
+            /*
             if (!this.Transformer.TransformChance.HasValue)
             {
                 this.Transformer.TransformChance = DefaultTransformChance;
             }
+            */
             
 
             return this;
@@ -295,9 +330,10 @@ namespace Syllabore
                     }
                 }
 
-                if (this.Transformer != null 
-                    && this.Transformer.TransformChance.HasValue 
-                    && this.Random.NextDouble() < this.Transformer.TransformChance)
+                //if (this.Transformer != null 
+                //    && this.Transformer.TransformChance.HasValue 
+                //    && this.Random.NextDouble() < this.Transformer.TransformChance)
+                if (this.Transformer != null)
                 {
                     result = this.Transformer.Transform(result);
                 }
