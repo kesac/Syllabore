@@ -13,9 +13,7 @@ namespace Syllabore.Example
     {
         public static void Main(string[] args)
         {
-
             { 
-
                 // You can use name generators without any customization
                 var g = new NameGenerator();
 
@@ -187,27 +185,23 @@ namespace Syllabore.Example
             }
 
             Separator();
-            /*
+            
             {
-                var g = new NameGenerator().UsingTransformer(new VowelMutator());
+                var g = new NameGenerator();
+                var m = new VowelMutator();
 
-                for(int i = 0; i < 3; i++)
+                for(int i = 0; i < 10; i++)
                 {
                     var name = g.NextName();
-                    Console.WriteLine(name);
+                    var variation = m.Transform(name);
 
-                    for (int j = 0; j < 4; j++)
-                    {
-                        var variation = g.Transform(name);
-                        Console.WriteLine(variation);
-
-                    }
+                    Console.WriteLine(name + "\t-> " + variation);
                 }
                 
             }
 
             Separator();
-            */
+            
 
             {
 
