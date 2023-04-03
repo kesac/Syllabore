@@ -8,7 +8,7 @@ namespace Syllabore.Tests
     {
 
         [TestMethod]
-        public void Constructor_WithNoParameter_SuccessfulNameGeneration()
+        public void Constructor_WithNoParameter_ExceptionThrown()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new NameFormatter(null));
         }
@@ -28,6 +28,26 @@ namespace Syllabore.Tests
                 Assert.IsTrue(f.Next() != String.Empty);
             }
 
+        }
+
+        [TestMethod]
+
+        public void Constructor_WhenNullGeneratorGiven_SuccessfulNameGeneration()
+        {
+            var f = new NameFormatter("John {name} Smith")
+                    .UsingGenerator("another-property", new NameGenerator());
+
+            for (int i = 0; i < 100; i++)
+            {
+                Assert.IsTrue(f.Next() != String.Empty);
+            }
+        }
+
+        [TestMethod]
+
+        public void Constructor_WhenPropertyBoundToNull_ExceptionThrown()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new NameFormatter("John {name} Smith").UsingGenerator("name", null));
         }
 
     }
