@@ -12,7 +12,6 @@ namespace Syllabore
     /// </summary>
     public class NameFormatter : IGenerator
     {
-        private Random Random { get; set; }
         public string Format { get; set; }
         public Dictionary<string, INameGenerator> BoundNameGenerators { get; set; }
 
@@ -31,7 +30,6 @@ namespace Syllabore
         {
             this.Format = format ?? throw new ArgumentNullException("format", "The desired format cannot be null");
             this.BoundNameGenerators = new Dictionary<string, INameGenerator>();
-            this.Random = new Random();
         }
 
         /// <summary>
