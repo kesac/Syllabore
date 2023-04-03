@@ -37,7 +37,7 @@ namespace Syllabore
         /// </summary>
         public NameFormatter UsingGenerator(string property, INameGenerator generator)
         {
-            this.BoundNameGenerators[property] = generator;
+            this.BoundNameGenerators[property] = generator ?? throw new ArgumentNullException("generator", "The specified generator cannot be null");
             return this;
         }
 
