@@ -664,6 +664,40 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
+        public void Provider_WithTogglingOfTrailingConsonants_TurnsOnOrOffAsExpected_v2()
+        {
+            // By default, consonants can start a syllable
+
+            var provider = GetDefaultProviderWithAllComponentsDefined();
+            bool trailingConsonantDetected = false;
+            for (int i = 0; i < 1000; i++)
+            {
+                var s = provider.NextSyllable();
+                if (s.EndsWith("d", "f")) { trailingConsonantDetected = true; break; }
+            }
+            Assert.IsTrue(trailingConsonantDetected);
+
+            provider.WithProbability(TrailingConsonants: 0);
+            trailingConsonantDetected = false;
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var s = provider.NextSyllable();
+                if (s.EndsWith("d", "f")) { trailingConsonantDetected = true; break; }
+            }
+            Assert.IsFalse(trailingConsonantDetected);
+
+            provider.WithProbability(TrailingConsonants: 0.5);
+            trailingConsonantDetected = false; // In which case we expect this variable to be true again
+            for (int i = 0; i < 1000; i++)
+            {
+                var s = provider.NextSyllable();
+                if (s.EndsWith("d", "f")) { trailingConsonantDetected = true; break; }
+            }
+            Assert.IsTrue(trailingConsonantDetected);
+        }
+
+        [TestMethod]
         public void Provider_WithTogglingOfLeadingConsonantSequenceSequences_TurnsOnOrOffAsExpected()
         {
             // By default, consonant sequences can start a syllable
