@@ -119,6 +119,8 @@ namespace Syllabore
             this.Random = new Random();
         }
 
+        #region Syllable Customization
+
         /// <summary>
         /// Sets the syllable provider of this <see cref="NameGenerator"/> to the specified <see cref="SyllableProvider"/>.
         /// </summary>
@@ -136,6 +138,10 @@ namespace Syllabore
             this.Provider = provider ?? throw new ArgumentNullException("provider", "The specified ISyllableProvider is null.");
             return this;
         }
+
+        #endregion
+
+        #region Filtering
 
         /// <summary>
         /// Sets the name filter of this <see cref="NameGenerator"/> to the specified <see cref="NameFilter"/>.
@@ -156,6 +162,78 @@ namespace Syllabore
             this.Filter = filter ?? throw new ArgumentNullException("filter", "The specified INameFilter is null.");
             return this;
         }
+
+        /// <summary>
+        /// Makes a name invalid if it contains any of the specified substrings.
+        /// </summary>
+        public NameGenerator DoNotAllow(params string[] substring)
+        {
+            if(this.Filter == null)
+            {
+                this.Filter = new NameFilter().DoNotAllow(substring);
+            }
+            else
+            {
+                (this.Filter as NameFilter)?.DoNotAllow(substring);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Makes a name invalid if it matches any of the specified regular expressions.
+        /// </summary>
+        public NameGenerator DoNotAllowPattern(params string[] regex)
+        {
+            if (this.Filter == null)
+            {
+                this.Filter = new NameFilter().DoNotAllowPattern(regex);
+            }
+            else
+            {
+                (this.Filter as NameFilter)?.DoNotAllowPattern(regex);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Makes a name invalid if it starts with any of the specified substrings.
+        /// </summary>
+        public NameGenerator DoNotAllowStart(params string[] prefixes)
+        {
+            if (this.Filter == null)
+            {
+                this.Filter = new NameFilter().DoNotAllowStart(prefixes);
+            }
+            else
+            {
+                (this.Filter as NameFilter)?.DoNotAllowStart(prefixes);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Makes a name invalid if it ends with any of the specified substrings.
+        /// </summary>
+        public NameGenerator DoNotAllowEnding(params string[] suffixes)
+        {
+            if (this.Filter == null)
+            {
+                this.Filter = new NameFilter().DoNotAllowEnding(suffixes);
+            }
+            else
+            {
+                (this.Filter as NameFilter)?.DoNotAllowEnding(suffixes);
+            }
+
+            return this;
+        }
+
+        #endregion
+
+        #region Transformations
 
         /// <summary>
         /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="NameTransformer"/>.
@@ -186,6 +264,10 @@ namespace Syllabore
             return this;
         }
 
+        #endregion
+
+        #region Generator Settings
+
         /// <summary>
         /// Sets the minimum and maximum syllable count of generated names to the specified value.
         /// (Both minimum and maximum will be set to the same value.)
@@ -215,6 +297,8 @@ namespace Syllabore
             return this;
         }
 
+        #endregion
+
         /// <summary>
         /// <para>
         /// Sets the maximum number of generation retries before an exception is thrown.
@@ -238,7 +322,7 @@ namespace Syllabore
             return this;
         }
 
-
+        #region Procedural Generation
 
         /// <summary>
         /// <para>
@@ -348,6 +432,8 @@ namespace Syllabore
 
             return result;
         }
+
+        #endregion
 
     }
 }
