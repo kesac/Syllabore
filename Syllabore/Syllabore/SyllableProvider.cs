@@ -355,6 +355,52 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Used to manage the probability of vowels/consonants turning into sequences, of leading
+        /// consonants starting a syllable, of trailing consonants ending a syllable, etc.
+        /// </summary>
+        public SyllableProvider WithProbability(
+            double LeadingConsonants = -1,
+            double LeadingConsonantSequences = -1,
+            double Vowels = -1,
+            double VowelSequences = -1,
+            double TrailingConsonants = -1,
+            double TrailingConsonantSequences = -1
+        )
+        {
+            if(LeadingConsonants != -1)
+            {
+                this.Probability.ChanceLeadingConsonantExists = LeadingConsonants;
+            }
+
+            if (LeadingConsonantSequences != -1)
+            {
+                this.Probability.ChanceLeadingConsonantBecomesSequence = LeadingConsonantSequences;
+            }
+
+            if (Vowels != -1)
+            {
+                this.Probability.ChanceVowelExists = Vowels;
+            }
+
+            if (VowelSequences != -1)
+            {
+                this.Probability.ChanceVowelBecomesSequence = VowelSequences;
+            }
+
+            if (TrailingConsonants != -1)
+            {
+                this.Probability.ChanceTrailingConsonantExists = TrailingConsonants;
+            }
+
+            if (TrailingConsonantSequences != -1)
+            {
+                this.Probability.ChanceTrailingConsonantBecomesSequence = TrailingConsonantSequences;
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Specifying a value of <c>true</c> will permit generation of empty strings
         /// as syllables. This is a scenario if there are no vowels/consonants to choose from or if the probability
         /// table does not guarantee that syllable output is never a zero-length string. By default, this is <c>false</c>
