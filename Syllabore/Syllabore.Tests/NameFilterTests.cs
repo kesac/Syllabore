@@ -10,8 +10,32 @@ namespace Syllabore.Tests
     public class NameFilterTests
     {
 
-
+        /* Create a unit test that calls methods that start with "DoNot" and verifies that the name is not valid. */
         [TestMethod, Timeout(10000)]
+        public void NameValidation_WithoutInstantiatingNameFilterExplicitly_OutputReflectsConstraints()
+        {
+            var g = new NameGenerator()
+                    .UsingProvider(x => x
+                        .WithVowels("aei")
+                        .WithLeadingConsonants("bcdf"))
+                    .DoNotAllow("a")
+                    .DoNotAllowStart("b")
+                    .DoNotAllowEnding("c")
+                    .DoNotAllowPattern("e");
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var name = g.Next().ToLower();
+                Assert.IsFalse(name.ContainsAny("a", "e"));
+                Assert.IsFalse(name.StartsWith("b"));
+                Assert.IsFalse(name.EndsWith("c"));
+            }
+
+        }
+
+
+
+            [TestMethod, Timeout(10000)]
         public void NameValidation_WhenPrefixConstraintSpecified_OutputReflectsConstraints()
         {
             var p = new SyllableProvider()
@@ -96,9 +120,9 @@ namespace Syllabore.Tests
                                 .WithLeadingConsonantSequences("cc")
                                 .WithTrailingConsonants("d")
                                 .WithTrailingConsonantSequences("ff"))
-                                .UsingFilter(x => x
-                                    .DoNotAllowPattern(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
-                                    .DoNotAllowPattern(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
+                            .UsingFilter(x => x
+                                .DoNotAllowPattern(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
+                                .DoNotAllowPattern(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
 
             for (int i = 0; i < 1000; i++)
             {

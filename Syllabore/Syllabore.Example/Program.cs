@@ -244,6 +244,46 @@ namespace Syllabore.Example
 
             }
 
+            {
+
+                // An example using >= v2.0.3 methods
+                Console.WriteLine();
+                var g = new NameGenerator()
+                        .UsingProvider(p => p
+                            .WithVowels("aeoy")
+                            .WithLeadingConsonants("vstlr")
+                            .WithTrailingConsonants("zrt")
+                            .WithVowelSequences("ey", "ay", "oy"))
+                        .UsingTransformer(m => m
+                            .Select(1).Chance(0.99)
+                            .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
+                            .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
+                            .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
+                            .WithTransform(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
+                            .WithTransform(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis")))
+                        .DoNotAllow("yv", "yt", "zs")
+                        .DoNotAllowPattern(
+                            @".{12,}",
+                            @"(\w)\1\1",              // Prevents any letter from occuring three times in a row
+                            @".*([y|Y]).*([y|Y]).*",  // Prevents double y
+                            @".*([z|Z]).*([z|Z]).*") // Prevents double z
+                        .UsingSyllableCount(2, 4);
+
+                var s = new NameGeneratorSerializer();
+
+                s.Serialize(g, "city-name-generator.txt");
+                var g2 = s.Deserialize("city-name-generator.txt");
+
+                for (int i = 0; i < 10; i++)
+                {
+                    var name = g2.NextName();
+                    Console.WriteLine(name);
+                }
+
+                Console.WriteLine();
+
+            }
+
             Separator();
 
             {
