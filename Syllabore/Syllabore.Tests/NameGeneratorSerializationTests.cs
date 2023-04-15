@@ -14,7 +14,7 @@ namespace Syllabore.Tests
         private NameGenerator InitializeNameGenerator()
         {
             return new NameGenerator()
-                    .UsingProvider(x => x
+                    .UsingSyllables(x => x
                         .WithLeadingConsonants("bcd")
                         .WithLeadingConsonantSequences("dr")
                         .WithVowels("aieou")
@@ -53,7 +53,7 @@ namespace Syllabore.Tests
                     .WithMiddleSyllable("ro")
                     .WithEndingSyllable("ri");
                         
-            var g = InitializeNameGenerator().UsingProvider(p);
+            var g = InitializeNameGenerator().UsingSyllables(p);
 
             var n = new NameGeneratorSerializer().UsingProviderType(typeof(SyllableSet));
 

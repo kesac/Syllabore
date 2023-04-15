@@ -14,14 +14,15 @@ namespace Syllabore.Tests
         [TestMethod, Timeout(10000)]
         public void NameValidation_WithoutInstantiatingNameFilterExplicitly_OutputReflectsConstraints()
         {
+            // Purposely using depcreated method UsingProvider()
             var g = new NameGenerator()
                     .UsingProvider(x => x
                         .WithVowels("aei")
                         .WithLeadingConsonants("bcdf"))
                     .DoNotAllow("a")
-                    .DoNotAllowStart("b")
-                    .DoNotAllowEnding("c")
-                    .DoNotAllowPattern("e");
+                    .DoNotAllow("^b")
+                    .DoNotAllow("c$")
+                    .DoNotAllow("e");
 
             for (int i = 0; i < 1000; i++)
             {
@@ -43,7 +44,7 @@ namespace Syllabore.Tests
                         .WithConsonants("str")
                         .WithProbability(x => x.StartingSyllable.LeadingVowelExists(1));
 
-            var g = new NameGenerator().UsingProvider(p);
+            var g = new NameGenerator().UsingSyllables(p);
                     
             for (int i = 0; i < 1000; i++)
             {
@@ -65,7 +66,7 @@ namespace Syllabore.Tests
         public void NameValidation_WhenSuffixConstraintSpecified_OutputReflectsConstraints()
         {
             var g = new NameGenerator()
-                    .UsingProvider(x => x
+                    .UsingSyllables(x => x
                         .WithVowels("aei")
                         .WithLeadingConsonants("str"));
 
@@ -89,7 +90,7 @@ namespace Syllabore.Tests
         public void NameValidation_WhenNonRegexConstraintSpecified_OutputReflectsConstraints()
         {
             var g = new NameGenerator()
-                    .UsingProvider(x => x
+                    .UsingSyllables(x => x
                         .WithVowels("aei")
                         .WithLeadingConsonants("str"));
 
@@ -113,7 +114,7 @@ namespace Syllabore.Tests
         public void NameValidation_WhenRegexConstraintsSpecified_OutputReflectsConstraints()
         {
             var generator = new NameGenerator()
-                            .UsingProvider(x => x
+                            .UsingSyllables(x => x
                                 .WithVowels("a")
                                 .WithVowelSequences("ee")
                                 .WithLeadingConsonants("b")
@@ -167,7 +168,7 @@ namespace Syllabore.Tests
             Assert.IsFalse(filter.IsValidName(new Name() { Syllables = new List<String>() { "bcdf" } }));
 
             var generator = new NameGenerator();
-            generator.UsingProvider(provider);
+            generator.UsingSyllables(provider);
             generator.UsingFilter(filter);
 
             for (int i = 0; i < 1000; i++)

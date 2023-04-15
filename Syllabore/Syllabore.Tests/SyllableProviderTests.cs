@@ -164,7 +164,7 @@ namespace Syllabore.Tests
         public void Provider_WithOnlyVowelsDefined_NameGenerationWorks()
         {
             // Define all vowels
-            var generator = new NameGenerator().UsingProvider(x => x.WithVowels("aeiou"));
+            var generator = new NameGenerator().UsingSyllables(x => x.WithVowels("aeiou"));
 
             for (int i = 0; i < 1000; i++)
             {
@@ -232,7 +232,7 @@ namespace Syllabore.Tests
                     .VowelExists(1.0)
                     .VowelBecomesSequence(0));
 
-            var generator = new NameGenerator().UsingProvider(provider);
+            var generator = new NameGenerator().UsingSyllables(provider);
 
             
             Assert.ThrowsException<InvalidOperationException>(() => // Some will succeed, but expecting some to fail
@@ -376,7 +376,7 @@ namespace Syllabore.Tests
             // but checking output of a NameGenerator
 
             var generator = new NameGenerator()
-                .UsingProvider(x => x
+                .UsingSyllables(x => x
                     .WithVowels("a").Sequences("ee")
                     .WithLeadingConsonants("b").Sequences("cc")
                     .WithTrailingConsonants("d").Sequences("ff")
@@ -417,7 +417,7 @@ namespace Syllabore.Tests
         {
             // It is valid for a name generator to use a provider with no sequences defined
             var generator = new NameGenerator()
-                .UsingProvider(x => x
+                .UsingSyllables(x => x
                     .WithLeadingConsonants("srt")
                     .WithVowels("ea")
                     .WithTrailingConsonants("tz")

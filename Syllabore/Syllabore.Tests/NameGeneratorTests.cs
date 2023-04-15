@@ -91,7 +91,7 @@ namespace Syllabore.Tests
         {
             // It is valid for a name generator to use a provider that only uses sequences
             var generator = new NameGenerator()
-                .UsingProvider(x => x
+                .UsingSyllables(x => x
                     .WithLeadingConsonantSequences("sr")
                     .WithVowelSequences("ea")
                     .WithTrailingConsonantSequences("bz")
