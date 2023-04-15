@@ -102,8 +102,8 @@ namespace Syllabore.Tests
 
             Assert.AreEqual(t1.SelectionLimit, t2.SelectionLimit);
 
-            var p1 = (SyllableProvider)g.Provider;  // The default type
-            var p2 = (SyllableProvider)g2.Provider;
+            var p1 = (SyllableGenerator)g.Provider;  // The default type
+            var p2 = (SyllableGenerator)g2.Provider;
 
             // Components of a syllable
             Assert.IsTrue(p1.LeadingConsonants.UnorderedListEquals(p2.LeadingConsonants));

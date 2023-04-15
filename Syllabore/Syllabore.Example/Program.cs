@@ -35,6 +35,7 @@ namespace Syllabore.Example
                 // what vowels and consonants you want to use:
                 var g = new NameGenerator("ae", "strml");
 
+                // Or...
                 g = new NameGenerator()
                         .UsingSyllables(x => x
                             .WithVowels("ae")
@@ -150,6 +151,12 @@ namespace Syllabore.Example
                                 .DoNotAllowEnding("j","p","q","w")             // Invalidate these awkward endings
                                 .DoNotAllow(@"(\w)\1\1")                // Invalidate any sequence of 3 or more identical letters
                                 .DoNotAllow(@"([^aeiouAEIOU])\1\1\1")); // Invalidate any sequence of 4 or more consonants
+
+                // or
+                g = new NameGenerator()
+                        .DoNotAllow("j$", "p$", "q$", "w$")             // Invalidate these awkward endings
+                        .DoNotAllow(@"(\w)\1\1")                // Invalidate any sequence of 3 or more identical letters
+                        .DoNotAllow(@"([^aeiouAEIOU])\1\1\1"); // Invalidate any sequence of 4 or more 
 
                 for (int i = 0; i < 5; i++)
                 {
@@ -289,25 +296,25 @@ namespace Syllabore.Example
             {
                 // An example without using method chaining
 
-                var provider = new SyllableProvider();
-                provider.WithVowels("a", "e", "o", "y");
-                provider.WithLeadingConsonants("v", "s", "t", "l", "r");
-                provider.WithTrailingConsonants("z", "r", "t");
-                provider.WithVowelSequences("ey", "ay", "oy");
+                var syllables = new SyllableGenerator();
+                syllables.WithVowels("a", "e", "o", "y");
+                syllables.WithLeadingConsonants("v", "s", "t", "l", "r");
+                syllables.WithTrailingConsonants("z", "r", "t");
+                syllables.WithVowelSequences("ey", "ay", "oy");
                 // provider.DisallowLeadingConsonantSequences(); // They will be off if nothing is defined
                 // provider.DisallowTrailingConsonantSequences();  // They will be off if nothing is defined
 
                 var shifter = new VowelMutator("a", "e", "o", "y");
 
                 var filter = new NameFilter();
-                filter.DoNotAllowPattern(@"(\w)\1\1");
-                filter.DoNotAllowPattern(@"([^aeoyAEOY])\1");
-                filter.DoNotAllowPattern(@".*([y|Y]).*([y|Y]).*");
-                filter.DoNotAllowPattern(@".*([z|Z]).*([z|Z]).*");
-                filter.DoNotAllowPattern(@"(zs)");
-                filter.DoNotAllowPattern(@"(y[v|t])");
+                filter.DoNotAllow(@"(\w)\1\1");
+                filter.DoNotAllow(@"([^aeoyAEOY])\1");
+                filter.DoNotAllow(@".*([y|Y]).*([y|Y]).*");
+                filter.DoNotAllow(@".*([z|Z]).*([z|Z]).*");
+                filter.DoNotAllow(@"(zs)");
+                filter.DoNotAllow(@"(y[v|t])");
 
-                var g = new NameGenerator(provider, shifter, filter);
+                var g = new NameGenerator(syllables, shifter, filter);
                 g.UsingSyllableCount(2, 3);
 
             }

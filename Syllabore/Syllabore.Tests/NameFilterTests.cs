@@ -39,7 +39,7 @@ namespace Syllabore.Tests
             [TestMethod, Timeout(10000)]
         public void NameValidation_WhenPrefixConstraintSpecified_OutputReflectsConstraints()
         {
-            var p = new SyllableProvider()
+            var p = new SyllableGenerator()
                         .WithVowels("aei")
                         .WithConsonants("str")
                         .WithProbability(x => x.StartingSyllable.LeadingVowelExists(1));
@@ -159,7 +159,7 @@ namespace Syllabore.Tests
         public void NameValidation_WhenRegexConstraintsSpecified2_OutputReflectsConstraints()
         {
 
-            var provider = new DefaultSyllableProvider();
+            var provider = new DefaultSyllableGenerator();
             var filter = new NameFilter();
             filter.DoNotAllowPattern(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
 

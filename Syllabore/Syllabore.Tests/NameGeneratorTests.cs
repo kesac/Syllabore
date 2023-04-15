@@ -35,9 +35,9 @@ namespace Syllabore.Tests
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, null, new NameFilter()));
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new NameTransformer(), new NameFilter()));
 
-            Assert.IsNotNull(new NameGenerator(new DefaultSyllableProvider(), null, null).Next());
-            Assert.IsNotNull(new NameGenerator(new DefaultSyllableProvider(), new NameTransformer(), null).Next());
-            Assert.IsNotNull(new NameGenerator(new DefaultSyllableProvider(), new NameTransformer(), new NameFilter()).Next());
+            Assert.IsNotNull(new NameGenerator(new DefaultSyllableGenerator(), null, null).Next());
+            Assert.IsNotNull(new NameGenerator(new DefaultSyllableGenerator(), new NameTransformer(), null).Next());
+            Assert.IsNotNull(new NameGenerator(new DefaultSyllableGenerator(), new NameTransformer(), new NameFilter()).Next());
         }
 
         [TestMethod]

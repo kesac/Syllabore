@@ -15,16 +15,16 @@ namespace Syllabore.Tests
         // This is just a helper method to provide a vanilla
         // provider with one instance of every vowel/consonant 
         // combination defined
-        private static SyllableProvider GetDefaultProviderWithAllComponentsDefined()
+        private static SyllableGenerator GetDefaultProviderWithAllComponentsDefined()
         {
-            return new SyllableProvider()
+            return new SyllableGenerator()
                 .WithLeadingConsonants("b").Sequences("cc")
                 .WithTrailingConsonants("d").Sequences("ff")
                 .WithVowels("o").Sequences("uu")
                 .WithProbability(x => x.LeadingConsonantExists(1.0));
         }
 
-        private bool EachOutputNeverContainsAnyOf(SyllableProvider p, params string[] invalidSubstrings)
+        private bool EachOutputNeverContainsAnyOf(SyllableGenerator p, params string[] invalidSubstrings)
         {
             bool outputNeverAppears = true;
             for (int i = 0; i < 1000; i++)
@@ -40,7 +40,7 @@ namespace Syllabore.Tests
             return outputNeverAppears;
         }
 
-        private bool EachOutputContainsAnyOf(SyllableProvider p, params string[] validSubstrings)
+        private bool EachOutputContainsAnyOf(SyllableGenerator p, params string[] validSubstrings)
         {
             bool outputAlwaysAppears = true;
             for (int i = 0; i < 1000; i++)
@@ -56,7 +56,7 @@ namespace Syllabore.Tests
             return outputAlwaysAppears;
         }
 
-        private bool AllOutputContainsAtLeastOnce(SyllableProvider p, params string[] validSubstrings)
+        private bool AllOutputContainsAtLeastOnce(SyllableGenerator p, params string[] validSubstrings)
         {
             bool[] substringAppeared = new bool[validSubstrings.Length];
 
@@ -82,7 +82,7 @@ namespace Syllabore.Tests
         {
             // Instantiating a provider, but not defining any vowels, consonants, probabilities
             // will produce empty strings, which by default will cause an error to be thrown
-            var provider = new SyllableProvider();
+            var provider = new SyllableGenerator();
             Assert.ThrowsException<InvalidOperationException>(() => provider.NextStartingSyllable());
             Assert.ThrowsException<InvalidOperationException>(() => provider.NextSyllable());
             Assert.ThrowsException<InvalidOperationException>(() => provider.NextEndingSyllable());
@@ -93,7 +93,7 @@ namespace Syllabore.Tests
         {
             // Instantiating a provider, but not defining any vowels, consonants, probabilities
             // will produce empty strings, which by default will cause an error to be thrown
-            var provider = new SyllableProvider().AllowEmptyStrings(true);
+            var provider = new SyllableGenerator().AllowEmptyStrings(true);
             Assert.AreEqual(provider.NextStartingSyllable(), string.Empty);
             Assert.AreEqual(provider.NextSyllable(), string.Empty);
             Assert.AreEqual(provider.NextEndingSyllable(), string.Empty);
@@ -103,7 +103,7 @@ namespace Syllabore.Tests
         public void Provider_WithOneVowelsDefinedThroughProvider_OnlyTheOneVowelAppearsInOutput()
         {
             // Define one and only one vowel then check name output
-            var provider = new SyllableProvider()
+            var provider = new SyllableGenerator()
                     .WithVowels("a")
                     .WithConsonants("bcdfg");
 
@@ -121,7 +121,7 @@ namespace Syllabore.Tests
             }
 
             // Change the one and only vowel and check name output again
-            provider = new SyllableProvider()
+            provider = new SyllableGenerator()
                 .WithVowels("y")
                 .WithConsonants("bcdfg");
 
@@ -145,7 +145,7 @@ namespace Syllabore.Tests
         public void Provider_WithOnlyVowelsDefined_Allowed()
         {
             // Define all vowels
-            var provider = new SyllableProvider().WithVowels("aeiou");
+            var provider = new SyllableGenerator().WithVowels("aeiou");
 
             // Check that every syllable-generating method works and generates nothing but the vowels
             for (int i = 0; i < 1000; i++)
@@ -182,7 +182,7 @@ namespace Syllabore.Tests
             // syllable generation should throw an error because empty strings are not permitted
             // by providers by default 
 
-            var provider = new SyllableProvider()
+            var provider = new SyllableGenerator()
                     .WithLeadingConsonants("b")
                     .WithLeadingConsonantSequences("bb", "bbb")
                     .WithTrailingConsonants("b")
@@ -226,7 +226,7 @@ namespace Syllabore.Tests
         {
             // Defining at least one vowel sequence, but no individual vowels also shouldn't work if
             // the probability of vowel sequences is not set to 100%
-            var provider = new SyllableProvider()
+            var provider = new SyllableGenerator()
                 .WithVowelSequences("aa")
                 .WithProbability(x => x
                     .VowelExists(1.0)
@@ -274,7 +274,7 @@ namespace Syllabore.Tests
             // and trailing consonant sequence, then check that each instance occurs
             // at least once in the provider's syllable generation.
 
-            var provider = new SyllableProvider()
+            var provider = new SyllableGenerator()
                     .WithVowels("a")
                     .WithVowelSequences("ee")
                     .WithLeadingConsonants("b")
@@ -740,7 +740,7 @@ namespace Syllabore.Tests
         public void Provider_CustomConsonantProbabilityDefined_AffectsSyllableGenerationCorrectly()
         {
 
-            var provider = new SyllableProvider()
+            var provider = new SyllableGenerator()
                     .WithVowels("a")
                     .WithVowelSequences("ee")
                     .WithLeadingConsonants("b")

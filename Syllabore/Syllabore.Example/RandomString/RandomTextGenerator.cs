@@ -12,7 +12,7 @@ namespace Syllabore.Example.RandomString
 
         public RandomTextGenerator()
         {
-            var provider = new SyllableProvider()
+            var provider = new SyllableGenerator()
                 .WithConsonants(AlphanumericCharacters)
                 .WithVowels(AlphanumericCharacters);
 

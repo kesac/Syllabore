@@ -13,7 +13,7 @@ namespace Syllabore.Example.Planets
         {
             this.UsingSyllableCount(2, 3);
 
-            var p = new SyllableProvider();
+            var p = new SyllableGenerator();
             p.WithVowels("aieou");
             p.WithConsonants("bcdfghjklmnpqrstvwxyz");
 
