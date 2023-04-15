@@ -102,7 +102,7 @@ namespace Syllabore
         /// </summary>
         public NameGenerator(ISyllableProvider provider, INameTransformer transformer, INameFilter filter)
         {
-            this.UsingProvider(provider)
+            this.UsingSyllables(provider)
                 .UsingSyllableCount(2, 2)
                 .LimitRetries(DefaultMaximumRetries);
 
@@ -122,22 +122,83 @@ namespace Syllabore
         #region Syllable Customization
 
         /// <summary>
-        /// Sets the syllable provider of this <see cref="NameGenerator"/> to the specified <see cref="SyllableProvider"/>.
+        /// Deprecated. Use <see cref="UsingSyllables(Func{SyllableProvider, SyllableProvider})"/>
+        /// or <see cref="UsingSyllables(ISyllableProvider)"/> instead.
         /// </summary>
+
+        [Obsolete("Use UsingSyllables() instead", false)]
         public NameGenerator UsingProvider(Func<SyllableProvider, SyllableProvider> configure)
+        {
+            return this.UsingSyllables(configure);
+        }
+
+        /// <summary>
+        /// Deprecated. Use <see cref="UsingSyllables(Func{SyllableProvider, SyllableProvider})"/>
+        /// or <see cref="UsingSyllables(ISyllableProvider)"/> instead.
+        /// </summary>
+
+        [Obsolete("Use UsingSyllables() instead", false)]
+        public NameGenerator UsingProvider(ISyllableProvider provider)
+        {
+            return this.UsingSyllables(provider);
+        }
+
+
+        /// <summary>
+        /// <para>
+        /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="SyllableProvider"/>.
+        /// </para>
+        /// <para>
+        /// When multiple calls to this method or <see cref="UsingCharacters(string, string)"></see> are made, the last call will take precedence.
+        /// </para>
+        /// </summary>
+        public NameGenerator UsingSyllables(Func<SyllableProvider, SyllableProvider> configure)
         {
             this.Provider = configure(new SyllableProvider());
             return this;
         }
 
         /// <summary>
-        /// Sets the syllable provider of this <see cref="NameGenerator"/> to the specified <see cref="ISyllableProvider"/>.
+        /// <para>
+        /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="ISyllableProvider"/>.
+        /// </para>
+        /// <para>
+        /// When multiple calls to this method or <see cref="UsingCharacters(string, string)"></see> are made, the last call will take precedence.
+        /// </para>
         /// </summary>
-        public NameGenerator UsingProvider(ISyllableProvider provider)
+        public NameGenerator UsingSyllables(ISyllableProvider provider)
         {
             this.Provider = provider ?? throw new ArgumentNullException("provider", "The specified ISyllableProvider is null.");
             return this;
         }
+
+        /// <summary>
+        /// <para>
+        /// Sets vowels and consonants to use during name generation. 
+        /// </para>
+        /// <para>
+        /// When multiple calls to this method or <see cref="UsingSyllables(ISyllableProvider)"></see> are made, the last call will take precedence.
+        /// </para>
+        /// <para>
+        /// Implicitly, this method
+        /// instantiates a new <see cref="SyllableProvider"/> for this <see cref="NameGenerator"/> to use.
+        /// If you need more granular control over syllable generation and character selection, you should
+        /// use <see cref="UsingSyllables(Func{SyllableProvider, SyllableProvider})"/> or <see cref="UsingSyllables(ISyllableProvider)"/>.
+        /// </para>
+        /// </summary>
+        public NameGenerator UsingCharacters(string vowels, string consonants)
+        {
+
+            var provider = new SyllableProvider();
+
+            provider.WithVowels(vowels);
+            provider.WithConsonants(consonants);
+
+            this.Provider = provider;
+
+            return this;
+        }
+
 
         #endregion
 
@@ -164,68 +225,20 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Makes a name invalid if it contains any of the specified substrings.
+        /// <para>
+        /// Prevents the specified regular expression(s) from appearing in generated names.
+        /// This method is an alternative to <see cref="UsingFilter(INameFilter)"/>.
+        /// </para>
         /// </summary>
-        public NameGenerator DoNotAllow(params string[] substring)
-        {
-            if(this.Filter == null)
-            {
-                this.Filter = new NameFilter().DoNotAllow(substring);
-            }
-            else
-            {
-                (this.Filter as NameFilter)?.DoNotAllow(substring);
-            }
-
-            return this;
-        }
-
-        /// <summary>
-        /// Makes a name invalid if it matches any of the specified regular expressions.
-        /// </summary>
-        public NameGenerator DoNotAllowPattern(params string[] regex)
+        public NameGenerator DoNotAllow(params string[] regex)
         {
             if (this.Filter == null)
             {
-                this.Filter = new NameFilter().DoNotAllowPattern(regex);
+                this.Filter = new NameFilter().DoNotAllow(regex);
             }
             else
             {
-                (this.Filter as NameFilter)?.DoNotAllowPattern(regex);
-            }
-
-            return this;
-        }
-
-        /// <summary>
-        /// Makes a name invalid if it starts with any of the specified substrings.
-        /// </summary>
-        public NameGenerator DoNotAllowStart(params string[] prefixes)
-        {
-            if (this.Filter == null)
-            {
-                this.Filter = new NameFilter().DoNotAllowStart(prefixes);
-            }
-            else
-            {
-                (this.Filter as NameFilter)?.DoNotAllowStart(prefixes);
-            }
-
-            return this;
-        }
-
-        /// <summary>
-        /// Makes a name invalid if it ends with any of the specified substrings.
-        /// </summary>
-        public NameGenerator DoNotAllowEnding(params string[] suffixes)
-        {
-            if (this.Filter == null)
-            {
-                this.Filter = new NameFilter().DoNotAllowEnding(suffixes);
-            }
-            else
-            {
-                (this.Filter as NameFilter)?.DoNotAllowEnding(suffixes);
+                (this.Filter as NameFilter)?.DoNotAllow(regex);
             }
 
             return this;
