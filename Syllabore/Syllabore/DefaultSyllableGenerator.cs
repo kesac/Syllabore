@@ -13,7 +13,7 @@ namespace Syllabore
     /// All graphemes of the English language are used in this syllable provider.
     /// </para>
     /// </summary>
-    public class DefaultSyllableProvider : SyllableProvider
+    public class DefaultSyllableGenerator : SyllableGenerator
     {
 
         private static readonly string[] DefaultLeadingConsonants = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Y", "Z" };
@@ -23,7 +23,7 @@ namespace Syllabore
         private static readonly string[] DefaultTrailingConsonants = { "B", "C", "D", "F", "G", "H", "K", "L", "M", "N", "P", "R", "S", "T", "V", "X", "Y"};
         private static readonly string[] DefaultTrailingConsonantSequences = { "CK", "ST", "SC", "NG", "NK", "RSH", "LSH", "RK", "RST", "NCT", "XT" };
 
-        public DefaultSyllableProvider()
+        public DefaultSyllableGenerator()
         {
             this.WithLeadingConsonants(DefaultLeadingConsonants)
                 .WithLeadingConsonantSequences(DefaultLeadingConsonantSequences)
