@@ -15,7 +15,7 @@ namespace Syllabore.Example.Planets
         {
             this.UsingSyllableCount(2, 3);
 
-            this.UsingProvider(x => x
+            this.UsingSyllables(x => x
                 .WithVowels("aie").Weight(2)
                 .WithVowels("ou").Weight(1)
                 .WithLeadingConsonants("bcdfghlmnprstvy").Weight(2)

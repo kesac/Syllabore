@@ -19,7 +19,7 @@ namespace Syllabore.Example.Planets
             p.WithTrailingConsonants("cdfgklmnprstv");
             p.WithProbability(x => x.TrailingConsonantExists(0.50));
 
-            this.UsingProvider(p);
+            this.UsingSyllables(p);
 
         }
     }

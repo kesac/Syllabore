@@ -17,7 +17,7 @@ namespace Syllabore.Example.Planets
             p.WithVowels("aieou");
             p.WithConsonants("bcdfghjklmnpqrstvwxyz");
 
-            this.UsingProvider(p);
+            this.UsingSyllables(p);
 
         }
     }

@@ -11,7 +11,7 @@ namespace Syllabore.Example
     {
         public FantasyGenerator()
         {
-            this.UsingProvider(x => x
+            this.UsingSyllables(x => x
                     .WithVowels("e").Weight(4)
                     .WithVowels("ai").Weight(2)
                     .WithVowels("uo")

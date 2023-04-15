@@ -34,7 +34,7 @@ namespace Syllabore.Example
                 // To tailor name generation, first think about
                 // what vowels and consonants you want to use:
                 var g = new NameGenerator()
-                        .UsingProvider(x => x
+                        .UsingSyllables(x => x
                             .WithVowels("ae")
                             .WithConsonants("strmnl"));
             }
@@ -42,7 +42,7 @@ namespace Syllabore.Example
                 // Consonants can also be defined based
                 // a desired positioning:
                 var g = new NameGenerator()
-                        .UsingProvider(x => x
+                        .UsingSyllables(x => x
                             .WithVowels("ae")
                             .WithLeadingConsonants("str")
                             .WithTrailingConsonants("mnl"));
@@ -56,7 +56,7 @@ namespace Syllabore.Example
                 // sequences that have a chance of being substituted in
                 // for a normal vowel or consonant: 
                 var g = new NameGenerator()
-                        .UsingProvider(x => x
+                        .UsingSyllables(x => x
                             .WithVowels("ae")
                             .WithVowelSequences("ou", "ui")
                             .WithLeadingConsonants("str")
@@ -77,7 +77,7 @@ namespace Syllabore.Example
                 // This example is the same as the previous one except
                 // it uses context-aware calls to Sequences() 
                 g = new NameGenerator()
-                    .UsingProvider(x => x
+                    .UsingSyllables(x => x
                         .WithVowels("ae").Sequences("ou", "ui")
                         .WithLeadingConsonants("str").Sequences("wh", "fr")
                         .WithTrailingConsonants("mnl").Sequences("ld", "rd"));
@@ -96,7 +96,7 @@ namespace Syllabore.Example
                 // sequence substitution occurs, how often leading or trailing consonants
                 // occur, etc.
                 var g = new NameGenerator()
-                        .UsingProvider(x => x
+                        .UsingSyllables(x => x
                             .WithVowels("ae")
                             .WithLeadingConsonants("str")
                             .WithTrailingConsonants("mnl")
@@ -122,7 +122,7 @@ namespace Syllabore.Example
                 // and consonants. A higher weight means a higher
                 // frequency compared those with lower weights.
                 var g = new NameGenerator()
-                        .UsingProvider(x => x
+                        .UsingSyllables(x => x
                             .WithVowels("a").Weight(4)
                             .WithVowels("e").Weight(1)
                             .WithLeadingConsonants("str"));
@@ -146,8 +146,8 @@ namespace Syllabore.Example
                 var g = new NameGenerator()
                             .UsingFilter(x => x
                                 .DoNotAllowEnding("j","p","q","w")             // Invalidate these awkward endings
-                                .DoNotAllowPattern(@"(\w)\1\1")                // Invalidate any sequence of 3 or more identical letters
-                                .DoNotAllowPattern(@"([^aeiouAEIOU])\1\1\1")); // Invalidate any sequence of 4 or more consonants
+                                .DoNotAllow(@"(\w)\1\1")                // Invalidate any sequence of 3 or more identical letters
+                                .DoNotAllow(@"([^aeiouAEIOU])\1\1\1")); // Invalidate any sequence of 4 or more consonants
 
                 for (int i = 0; i < 5; i++)
                 {
@@ -162,7 +162,7 @@ namespace Syllabore.Example
                 // Transformers can be used to apply a transform
                 // to a name during the generation process:
                 var g = new NameGenerator()
-                        .UsingProvider(x => x
+                        .UsingSyllables(x => x
                             .WithVowels("ae")
                             .WithLeadingConsonants("str"))
                         .UsingTransformer(x => x
@@ -208,7 +208,7 @@ namespace Syllabore.Example
                 // This example shows a custom provider, transformer, and filter:
                 Console.WriteLine();
                 var g = new NameGenerator()
-                        .UsingProvider(p => p
+                        .UsingSyllables(p => p
                             .WithVowels("aeoy")
                             .WithLeadingConsonants("vstlr")
                             .WithTrailingConsonants("zrt")
@@ -222,7 +222,7 @@ namespace Syllabore.Example
                             .WithTransform(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis")))
                         .UsingFilter(v => v
                             .DoNotAllow("yv", "yt", "zs")
-                            .DoNotAllowPattern(
+                            .DoNotAllow(
                                 @".{12,}",
                                 @"(\w)\1\1",              // Prevents any letter from occuring three times in a row
                                 @".*([y|Y]).*([y|Y]).*",  // Prevents double y
@@ -249,7 +249,8 @@ namespace Syllabore.Example
                 // An example using >= v2.0.3 methods
                 Console.WriteLine();
                 var g = new NameGenerator()
-                        .UsingProvider(p => p
+                        .UsingCharacters("aeoy", "vstlr") // instantiates a new SyllableProvider implicitly
+                        .UsingSyllables(p => p // Overwrites previous call to .UsingCharacters()
                             .WithVowels("aeoy")
                             .WithLeadingConsonants("vstlr")
                             .WithTrailingConsonants("zrt")
@@ -261,11 +262,9 @@ namespace Syllabore.Example
                             .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
                             .WithTransform(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
                             .WithTransform(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis")))
-                        .DoNotAllow("yv", "yt", "zs")
-                        .DoNotAllowPattern(
-                            @".{12,}",
-                            @"(\w)\1\1",              // Prevents any letter from occuring three times in a row
-                            @".*([y|Y]).*([y|Y]).*",  // Prevents double y
+                        .DoNotAllow(
+                            @"(\w)\1\1",             // Prevents any letter from occuring three times in a row
+                            @".*([y|Y]).*([y|Y]).*", // Prevents double y
                             @".*([z|Z]).*([z|Z]).*") // Prevents double z
                         .UsingSyllableCount(2, 4);
 
@@ -332,7 +331,7 @@ namespace Syllabore.Example
 
             {
                 var g = new NameGenerator()
-                        .UsingProvider(new SyllableSet(2, 24, 2)
+                        .UsingSyllables(new SyllableSet(2, 24, 2)
                             .WithStartingSyllable("ko", "ro")
                             .WithEndingSyllable("re", "ke")
                             .WithProvider(x => x
@@ -504,12 +503,12 @@ namespace Syllabore.Example
                 var g = new NameFormatter("{firstname} {lastname}")
                         .UsingGenerator("firstname", new NameGenerator()
                             .UsingSyllableCount(2, 3)
-                            .UsingProvider(x => x
+                            .UsingSyllables(x => x
                                 .WithConsonants("strlmn")
                                 .WithVowels("aeo")))
                         .UsingGenerator("lastname", new NameGenerator()
                             .UsingSyllableCount(2, 4)
-                            .UsingProvider(x => x
+                            .UsingSyllables(x => x
                                 .WithConsonants("bcdhky")
                                 .WithVowels("oiyu")));
 

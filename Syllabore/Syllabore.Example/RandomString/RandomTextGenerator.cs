@@ -16,7 +16,7 @@ namespace Syllabore.Example.RandomString
                 .WithConsonants(AlphanumericCharacters)
                 .WithVowels(AlphanumericCharacters);
 
-            this.UsingProvider(provider);
+            this.UsingSyllables(provider);
 
             this.UsingSyllableCount(8);
 

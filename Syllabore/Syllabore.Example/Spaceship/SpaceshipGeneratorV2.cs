@@ -18,7 +18,7 @@ namespace Syllabore.Example.Spaceship
         public SpaceshipGeneratorV2()
         {
             _prefixGenerator = new NameGenerator()
-                .UsingProvider(x => x
+                .UsingSyllables(x => x
                     .WithConsonants("UVXSHMLAMN")
                     .WithProbability(x => x
                         .VowelExists(0.0)

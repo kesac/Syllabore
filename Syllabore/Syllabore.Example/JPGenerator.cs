@@ -11,7 +11,7 @@ namespace Syllabore.Example
     {
         public JPGenerator()
         {
-            this.UsingProvider(x => x
+            this.UsingSyllables(x => x
                     .WithLeadingConsonants("khns").Weight(4)
                     .WithLeadingConsonants("rmyjd").Weight(2)
                     .WithLeadingConsonants("bgptwz")
