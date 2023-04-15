@@ -31,10 +31,10 @@ namespace Syllabore
         /// </para>
         /// <para>
         /// A vanilla <see cref="NameGenerator"/> will use a 
-        /// <see cref="DefaultSyllableProvider"/> by default.
+        /// <see cref="DefaultSyllableGenerator"/> by default.
         /// </para>
         /// </summary>
-        public ISyllableProvider Provider { get; set; }
+        public ISyllableGenerator Provider { get; set; }
 
         /// <summary>
         /// <para>
@@ -72,41 +72,43 @@ namespace Syllabore
         /// </summary>
         public int MaximumRetries { get; set; }
 
+        #region Constructors
+
         /// <summary>
         /// When there are no constructor arguments, the name generator is configured to
-        /// use a <see cref="DefaultSyllableProvider"/>, no <see cref="INameTransformer"/>, and no <see cref="INameFilter"/>.
+        /// use a <see cref="DefaultSyllableGenerator"/>, no <see cref="INameTransformer"/>, and no <see cref="INameFilter"/>.
         /// </summary>
-        public NameGenerator() : this(new DefaultSyllableProvider(), null, null) { }
+        public NameGenerator() : this(new DefaultSyllableGenerator(), null, null) { }
 
         /// <summary>
-        /// Instantiates a new <see cref="NameGenerator"/> with a new <see cref="SyllableProvider"/> that generates 
+        /// Instantiates a new <see cref="NameGenerator"/> with a new <see cref="SyllableGenerator"/> that generates 
         /// syllables using the specified vowels and consonants. No <see cref="INameTransformer"/> or <see cref="INameFilter"/> will be used.
         /// </summary>
-        public NameGenerator(string vowels, string consonants) : this(new SyllableProvider().WithVowels(vowels).WithConsonants(consonants), null, null) { }
+        public NameGenerator(string vowels, string consonants) : this(new SyllableGenerator().WithVowels(vowels).WithConsonants(consonants), null, null) { }
 
         /// <summary>
-        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableProvider"/>.
+        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableGenerator"/>.
         /// No <see cref="INameTransformer"/> or <see cref="INameFilter"/> will be used.
         /// </summary>
-        public NameGenerator(ISyllableProvider provider) : this(provider, null, null) { }
+        public NameGenerator(ISyllableGenerator provider) : this(provider, null, null) { }
 
         /// <summary>
-        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableProvider"/> and
+        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableGenerator"/> and
         /// <see cref="INameTransformer"/>. No <see cref="INameFilter"/> will be used.
         /// </summary>
-        public NameGenerator(ISyllableProvider provider, INameTransformer transformer) : this(provider, transformer, null) { }
+        public NameGenerator(ISyllableGenerator provider, INameTransformer transformer) : this(provider, transformer, null) { }
 
         /// <summary>
-        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableProvider"/> and
+        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableGenerator"/> and
         /// <see cref="INameFilter"/>. No <see cref="INameTransformer"/> will be used.
         /// </summary>
-        public NameGenerator(ISyllableProvider provider, INameFilter filter) : this(provider, null, filter) { }
+        public NameGenerator(ISyllableGenerator provider, INameFilter filter) : this(provider, null, filter) { }
 
         /// <summary>
-        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableProvider"/>, 
+        /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableGenerator"/>, 
         /// <see cref="INameFilter"/>, and <see cref="INameTransformer"/>.
         /// </summary>
-        public NameGenerator(ISyllableProvider provider, INameTransformer transformer, INameFilter filter)
+        public NameGenerator(ISyllableGenerator provider, INameTransformer transformer, INameFilter filter)
         {
             this.UsingSyllables(provider)
                 .UsingSyllableCount(2, 2)
@@ -125,26 +127,28 @@ namespace Syllabore
             this.Random = new Random();
         }
 
+        #endregion
+
         #region Syllable Customization
 
         /// <summary>
-        /// Deprecated. Use <see cref="UsingSyllables(Func{SyllableProvider, SyllableProvider})"/>
-        /// or <see cref="UsingSyllables(ISyllableProvider)"/> instead.
+        /// Deprecated. Use <see cref="UsingSyllables(Func{SyllableGenerator, SyllableGenerator})"/>
+        /// or <see cref="UsingSyllables(ISyllableGenerator)"/> instead.
         /// </summary>
 
         [Obsolete("Use UsingSyllables() instead", false)]
-        public NameGenerator UsingProvider(Func<SyllableProvider, SyllableProvider> configure)
+        public NameGenerator UsingProvider(Func<SyllableGenerator, SyllableGenerator> configure)
         {
             return this.UsingSyllables(configure);
         }
 
         /// <summary>
-        /// Deprecated. Use <see cref="UsingSyllables(Func{SyllableProvider, SyllableProvider})"/>
-        /// or <see cref="UsingSyllables(ISyllableProvider)"/> instead.
+        /// Deprecated. Use <see cref="UsingSyllables(Func{SyllableGenerator, SyllableGenerator})"/>
+        /// or <see cref="UsingSyllables(ISyllableGenerator)"/> instead.
         /// </summary>
 
         [Obsolete("Use UsingSyllables() instead", false)]
-        public NameGenerator UsingProvider(ISyllableProvider provider)
+        public NameGenerator UsingProvider(ISyllableGenerator provider)
         {
             return this.UsingSyllables(provider);
         }
@@ -152,27 +156,27 @@ namespace Syllabore
 
         /// <summary>
         /// <para>
-        /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="SyllableProvider"/>.
+        /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="SyllableGenerator"/>.
         /// </para>
         /// <para>
         /// When multiple calls to this method or <see cref="UsingCharacters(string, string)"></see> are made, the last call will take precedence.
         /// </para>
         /// </summary>
-        public NameGenerator UsingSyllables(Func<SyllableProvider, SyllableProvider> configure)
+        public NameGenerator UsingSyllables(Func<SyllableGenerator, SyllableGenerator> configure)
         {
-            this.Provider = configure(new SyllableProvider());
+            this.Provider = configure(new SyllableGenerator());
             return this;
         }
 
         /// <summary>
         /// <para>
-        /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="ISyllableProvider"/>.
+        /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="ISyllableGenerator"/>.
         /// </para>
         /// <para>
         /// When multiple calls to this method or <see cref="UsingCharacters(string, string)"></see> are made, the last call will take precedence.
         /// </para>
         /// </summary>
-        public NameGenerator UsingSyllables(ISyllableProvider provider)
+        public NameGenerator UsingSyllables(ISyllableGenerator provider)
         {
             this.Provider = provider ?? throw new ArgumentNullException("provider", "The specified ISyllableProvider is null.");
             return this;
@@ -288,7 +292,7 @@ namespace Syllabore
             return this;
         }
 
-        #endregion
+
 
         /// <summary>
         /// <para>
@@ -312,6 +316,7 @@ namespace Syllabore
 
             return this;
         }
+        #endregion
 
         #region Procedural Generation
 

@@ -11,7 +11,7 @@ namespace Syllabore
     /// usually represent a single vowel, consonant, or sequence.
     /// </para>
     /// <para>
-    /// <see cref="Grapheme"/>s are used by <see cref="SyllableProvider"/>s
+    /// <see cref="Grapheme"/>s are used by <see cref="SyllableGenerator"/>s
     /// to construct syllables.
     /// </para>
     /// </summary>

@@ -6,19 +6,19 @@ namespace Syllabore
 {
     /// <summary>
     /// This transformer creates variations of names by replacing one syllable
-    /// with another syllable. Syllables are derived from <see cref="DefaultSyllableProvider"/>.
+    /// with another syllable. Syllables are derived from <see cref="DefaultSyllableGenerator"/>.
     /// </summary>
     [Obsolete("No longer used", false)]
     public class DefaultNameTransformer : NameTransformer
     {
-        private ISyllableProvider Provider { get; set; }
+        private ISyllableGenerator Provider { get; set; }
 
         private Random Random { get; set; }
 
         [Obsolete("No longer used", false)]
         public DefaultNameTransformer()
         {
-            this.Provider = new DefaultSyllableProvider();
+            this.Provider = new DefaultSyllableGenerator();
             this.Random = new Random();
 
             this.WithTransform(x => x

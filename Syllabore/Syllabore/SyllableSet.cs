@@ -18,13 +18,13 @@ namespace Syllabore
     /// culture, historical period, etc.
     /// </para>
     /// </summary>
-    public class SyllableSet : ISyllableProvider
+    public class SyllableSet : ISyllableGenerator
     {
         public int StartingSyllableMax { get; set; }
         public int MiddleSyllableMax { get; set; }
         public int EndingSyllableMax { get; set; }
 
-        private ISyllableProvider Provider { get; set; }
+        private ISyllableGenerator Provider { get; set; }
 
         public HashSet<string> StartingSyllables { get; set; }
         public HashSet<string> MiddleSyllables { get; set; }
@@ -33,7 +33,7 @@ namespace Syllabore
         /// <summary>
         /// Instantiates a new syllable set with a default size of
         /// 8 starting syllables, 8 middle syllables, and 8 ending syllables.
-        /// The <see cref="DefaultSyllableProvider"/> is used to construct the
+        /// The <see cref="DefaultSyllableGenerator"/> is used to construct the
         /// syllables.
         /// </summary>
         public SyllableSet() : this(8, 8, 8) 
@@ -43,8 +43,8 @@ namespace Syllabore
 
         /// <summary>
         /// Instantiates a new syllable set with the specified sizes.
-        /// A <see cref="DefaultSyllableProvider"/> is used to construct the
-        /// syllables unless replaced with a call to <see cref="WithProvider(ISyllableProvider)"/>.
+        /// A <see cref="DefaultSyllableGenerator"/> is used to construct the
+        /// syllables unless replaced with a call to <see cref="WithProvider(ISyllableGenerator)"/>.
         /// </summary>
         public SyllableSet(int startingSyllableCount, int middleSyllableCount, int endingSyllableCount)
         {
@@ -56,24 +56,24 @@ namespace Syllabore
             this.MiddleSyllableMax = middleSyllableCount;
             this.EndingSyllableMax = endingSyllableCount;
 
-            this.WithProvider(new DefaultSyllableProvider());
+            this.WithProvider(new DefaultSyllableGenerator());
         }
 
         /// <summary>
-        /// Uses the specified <see cref="SyllableProvider"/> to create this
+        /// Uses the specified <see cref="SyllableGenerator"/> to create this
         /// syllable set's finite pool of syllables.
         /// </summary>
-        public SyllableSet WithProvider(Func<SyllableProvider, SyllableProvider> config)
+        public SyllableSet WithProvider(Func<SyllableGenerator, SyllableGenerator> config)
         {
-            this.WithProvider(config(new SyllableProvider()));
+            this.WithProvider(config(new SyllableGenerator()));
             return this;
         }
 
         /// <summary>
-        /// Uses the specified <see cref="ISyllableProvider"/> to create this
+        /// Uses the specified <see cref="ISyllableGenerator"/> to create this
         /// syllable set's finite pool of syllables.
         /// </summary>
-        public SyllableSet WithProvider(ISyllableProvider provider)
+        public SyllableSet WithProvider(ISyllableGenerator provider)
         {
             this.Provider = provider;
             return this;

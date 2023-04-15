@@ -28,16 +28,16 @@ namespace Syllabore.Json
 
         public NameGeneratorSerializer()
         {
-            this.ProviderType = typeof(SyllableProvider);
+            this.ProviderType = typeof(SyllableGenerator);
             this.TransformerType = typeof(NameTransformer);
             this.FilterType = typeof(NameFilter);
         }
 
         /// <summary>
         /// Uses the specified type when serializing or deserializing 
-        /// <see cref="ISyllableProvider"/> property <c>Provider</c> of
+        /// <see cref="ISyllableGenerator"/> property <c>Provider</c> of
         /// <see cref="NameGenerator"/>. By default, the type 
-        /// used is <see cref="SyllableProvider"/>.
+        /// used is <see cref="SyllableGenerator"/>.
         /// </summary>
         public NameGeneratorSerializer UsingProviderType(Type type)
         {
@@ -98,7 +98,7 @@ namespace Syllabore.Json
         private void Save(NameGenerator generator, string path, Type provider, Type transformer, Type filter)
         {
             var options = GetSerializerOptions();
-            options.Converters.Add(new JsonPropertyCast<ISyllableProvider>(provider));
+            options.Converters.Add(new JsonPropertyCast<ISyllableGenerator>(provider));
             options.Converters.Add(new JsonPropertyCast<INameTransformer>(transformer));
             options.Converters.Add(new JsonPropertyCast<INameFilter>(filter));
 
@@ -121,7 +121,7 @@ namespace Syllabore.Json
         private NameGenerator Load(string path, Type provider, Type transformer, Type filter)
         {
             var options = GetSerializerOptions();
-            options.Converters.Add(new JsonPropertyCast<ISyllableProvider>(provider));
+            options.Converters.Add(new JsonPropertyCast<ISyllableGenerator>(provider));
             options.Converters.Add(new JsonPropertyCast<INameTransformer>(transformer));
             options.Converters.Add(new JsonPropertyCast<INameFilter>(filter));
 
@@ -130,9 +130,9 @@ namespace Syllabore.Json
 
             // The parent property is not serialized because it would create a cycle
             // and so needs to be set again.
-            if(g.Provider is SyllableProvider)
+            if(g.Provider is SyllableGenerator)
             {
-                var p = (SyllableProvider)g.Provider;
+                var p = (SyllableGenerator)g.Provider;
                 p.Probability.StartingSyllable.Parent = p.Probability;
             }
             
