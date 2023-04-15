@@ -43,7 +43,7 @@ namespace Syllabore
         /// <summary>
         /// Makes a name invalid if it contains any of the specified substrings.
         /// </summary>
-        public NameFilter DoNotAllow(params string[] substring)
+        public NameFilter DoNotAllowSubstring(params string[] substring)
         {
             foreach(string s in substring)
             {
@@ -56,7 +56,7 @@ namespace Syllabore
         /// <summary>
         /// Makes a name invalid if it matches any of the specified regular expressions.
         /// </summary>
-        public NameFilter DoNotAllowPattern(params string[] regex)
+        public NameFilter DoNotAllow(params string[] regex)
         {
             foreach(string r in regex)
             {
@@ -64,6 +64,15 @@ namespace Syllabore
             }
 
             return this;
+        }
+
+        /// <summary>
+        /// Deprecated. Replaced with DoNotAllow().
+        /// </summary>
+        [Obsolete("Replaced with DoNotAllow()", false)]
+        public NameFilter DoNotAllowPattern(params string[] regex)
+        {
+            return this.DoNotAllow(regex);
         }
 
         /// <summary>
