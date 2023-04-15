@@ -17,6 +17,17 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
+        public void Constructor_WhenBasicConstructorUsed_SuccessfulNameGeneration()
+        {
+            var generator = new NameGenerator("a","strl");
+            for (int i = 0; i < 100; i++)
+            {
+                Assert.IsTrue(generator.Next().Contains("a"));
+            }
+        }
+
+
+        [TestMethod]
         public void Constructor_WhenAnyParameterNull_ArgumentNullExceptionThrown()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, null, null));

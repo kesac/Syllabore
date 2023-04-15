@@ -79,6 +79,12 @@ namespace Syllabore
         public NameGenerator() : this(new DefaultSyllableProvider(), null, null) { }
 
         /// <summary>
+        /// Instantiates a new <see cref="NameGenerator"/> with a new <see cref="SyllableProvider"/> that generates 
+        /// syllables using the specified vowels and consonants. No <see cref="INameTransformer"/> or <see cref="INameFilter"/> will be used.
+        /// </summary>
+        public NameGenerator(string vowels, string consonants) : this(new SyllableProvider().WithVowels(vowels).WithConsonants(consonants), null, null) { }
+
+        /// <summary>
         /// Instantiates a new <see cref="NameGenerator"/> with the specified <see cref="ISyllableProvider"/>.
         /// No <see cref="INameTransformer"/> or <see cref="INameFilter"/> will be used.
         /// </summary>
@@ -171,34 +177,6 @@ namespace Syllabore
             this.Provider = provider ?? throw new ArgumentNullException("provider", "The specified ISyllableProvider is null.");
             return this;
         }
-
-        /// <summary>
-        /// <para>
-        /// Sets vowels and consonants to use during name generation. 
-        /// </para>
-        /// <para>
-        /// When multiple calls to this method or <see cref="UsingSyllables(ISyllableProvider)"></see> are made, the last call will take precedence.
-        /// </para>
-        /// <para>
-        /// Implicitly, this method
-        /// instantiates a new <see cref="SyllableProvider"/> for this <see cref="NameGenerator"/> to use.
-        /// If you need more granular control over syllable generation and character selection, you should
-        /// use <see cref="UsingSyllables(Func{SyllableProvider, SyllableProvider})"/> or <see cref="UsingSyllables(ISyllableProvider)"/>.
-        /// </para>
-        /// </summary>
-        public NameGenerator UsingCharacters(string vowels, string consonants)
-        {
-
-            var provider = new SyllableProvider();
-
-            provider.WithVowels(vowels);
-            provider.WithConsonants(consonants);
-
-            this.Provider = provider;
-
-            return this;
-        }
-
 
         #endregion
 

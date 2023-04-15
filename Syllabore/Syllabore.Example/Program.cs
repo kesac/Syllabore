@@ -33,7 +33,9 @@ namespace Syllabore.Example
             {
                 // To tailor name generation, first think about
                 // what vowels and consonants you want to use:
-                var g = new NameGenerator()
+                var g = new NameGenerator("ae", "strml");
+
+                g = new NameGenerator()
                         .UsingSyllables(x => x
                             .WithVowels("ae")
                             .WithConsonants("strmnl"));
@@ -249,7 +251,6 @@ namespace Syllabore.Example
                 // An example using >= v2.0.3 methods
                 Console.WriteLine();
                 var g = new NameGenerator()
-                        .UsingCharacters("aeoy", "vstlr") // instantiates a new SyllableProvider implicitly
                         .UsingSyllables(p => p // Overwrites previous call to .UsingCharacters()
                             .WithVowels("aeoy")
                             .WithLeadingConsonants("vstlr")
