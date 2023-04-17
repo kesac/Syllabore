@@ -3,8 +3,8 @@
 namespace Syllabore
 {
     /// <summary>
-    /// Represents a name. Can be returned by <see cref="NameGenerator"/> for callers
-    /// to access the syllables of a name.
+    /// Represents a name. Can be returned by a <see cref="INameGenerator"/> for callers
+    /// to access individual syllables of a name.
     /// </summary>
     public class Name
     {

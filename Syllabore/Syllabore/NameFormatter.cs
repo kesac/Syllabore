@@ -12,6 +12,16 @@ namespace Syllabore
     /// </summary>
     public class NameFormatter : IGenerator
     {
+        /// <summary>
+        /// <para>
+        /// The desired format for names. Surround substrings that need to be replaced with 
+        /// a generated name with curly brackets.
+        /// </para>
+        /// <para>
+        /// For example, the format <i>"John {middle-name} Smith"</i> tells a <see cref="NameFormatter"/> that the
+        /// name between the first and last needs to be generated.
+        /// </para>
+        /// </summary>
         public string Format { get; set; }
         public Dictionary<string, INameGenerator> BoundNameGenerators { get; set; }
 
@@ -25,7 +35,6 @@ namespace Syllabore
         /// name between the first and last needs to be generated.
         /// </para>
         /// </summary>
-        /// <param name="format"></param>
         public NameFormatter(string format)
         {
             this.Format = format ?? throw new ArgumentNullException("format", "The desired format cannot be null");

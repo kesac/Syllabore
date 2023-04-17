@@ -10,9 +10,19 @@ namespace Syllabore
     /// </summary>
     public interface INameGenerator : IGenerator<string>
     {
-        // string Next();
+        /// <summary>
+        /// Returns a new name of the specified syllable length.
+        /// </summary>
         string Next(int syllableLength);
+
+        /// <summary>
+        /// Returns a new <see cref="Name"/>.
+        /// </summary>
         Name NextName();
+
+        /// <summary>
+        /// Returns a new <see cref="Name"/> of the specified syllable length.
+        /// </summary>
         Name NextName(int syllableLength);
     }
 }

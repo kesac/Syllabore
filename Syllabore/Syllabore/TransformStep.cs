@@ -15,7 +15,7 @@ namespace Syllabore
     }
 
     /// <summary>
-    /// Represents one action or step in a mutation chain.
+    /// Represents one action or step in a <see cref="Transform"/>.
     /// </summary>
     public class TransformStep
     {

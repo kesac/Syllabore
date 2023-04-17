@@ -7,15 +7,15 @@ namespace Syllabore
 {
     
     /// Experimental: finds vowels in a name then changes it to another vowel
-    public class VowelMutator : TransformSet
+    public class VowelShifter : TransformSet
     {
         private static readonly string[] DefaultVowels = { "a", "e", "i", "o", "u" };
         private List<string> VowelPool { get; set; }
         private Random Random { get; set; }
 
-        public VowelMutator() : this(DefaultVowels) { }
+        public VowelShifter() : this(DefaultVowels) { }
 
-        public VowelMutator(params string[] vowels)
+        public VowelShifter(params string[] vowels)
         {
 
             this.Random = new Random();

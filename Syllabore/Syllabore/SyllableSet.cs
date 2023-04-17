@@ -7,14 +7,14 @@ namespace Syllabore
 {
     /// <summary>
     /// <para>
-    /// A special kind of syllable provider that constructs a finite
+    /// A special kind of syllable generator that constructs a finite
     /// set of syllables and only returns syllables from that set.
-    /// A <see cref="SyllableSet"/> can be used as the syllable provider for
+    /// A <see cref="SyllableSet"/> can be used as the syllable generator for
     /// a <see cref="NameGenerator"/>.
     /// </para>
     /// <para>
-    /// Names constructed from a syllable set can give the appearance
-    /// of cohesion as if they originate from a similar geographic region,
+    /// Names constructed from a <see cref="SyllableSet"/> can give the appearance
+    /// of cohesion as if they originated from a similar geographic region,
     /// culture, historical period, etc.
     /// </para>
     /// </summary>

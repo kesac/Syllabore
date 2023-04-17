@@ -6,9 +6,13 @@ using System.Text.Json.Serialization;
 namespace Syllabore
 {
     /// <summary>
-    /// Used by <see cref="NameGenerator"/> through <see cref="TransformSet"/> to capture
-    /// transforms that produce variations on names. Transforms can also have
-    /// an optional condition that must be fulfilled for the transform to occur.
+    /// <para>
+    /// A <see cref="Transform"/> changes a source name into a new name.
+    /// </para>
+    /// <para>
+    /// <see cref="Transform"/>s can have
+    /// an optional condition that must be fulfilled for a transformation to occur.
+    /// </para>
     /// </summary>
     public class Transform : IWeighted, INameTransformer
     {
@@ -24,7 +28,12 @@ namespace Syllabore
         public string ConditionalRegex { get; set; }
 
         /// <summary>
+        /// <para>
         /// Instantiates a new <see cref="Transform"/>.
+        /// </para>
+        /// <para>
+        /// By default, a <see cref="Transform"/> has no optional condition and a weight of 1.
+        /// </para>
         /// </summary>
         public Transform()
         {
@@ -33,12 +42,16 @@ namespace Syllabore
             this.ConditionalIndex = null;
             this.ConditionalRegex = null;
         }
-        
+
         /// <summary>
-        /// Applies the <see cref="Transform"/> on the specified <see cref="Name"/>.
-        /// This is destructive change on the specified <see cref="Name"/>.
+        /// <para>
+        /// Applies this <see cref="Transform"/> on the specified <see cref="Name"/> in
+        /// a destructive manner.
+        /// </para>
+        /// <para>
+        /// For a non-destructive alternative, use <see cref="Apply(Name)"/> instead.
+        /// </para>
         /// </summary>
-        /// <param name="name"></param>
         public void Modify(Name name)
         {
             foreach (var step in this.Steps)
@@ -47,6 +60,15 @@ namespace Syllabore
             }
         }
 
+        /// <summary>
+        /// <para>
+        /// Applies this <see cref="Transform"/> on the specified <see cref="Name"/>
+        /// and returns a new <see cref="Name"/> as a result.
+        /// </para>
+        /// <para>
+        /// This method leaves the source <see cref="Name"/> unchanged.
+        /// </para>
+        /// </summary>
         public Name Apply(Name name)
         {
             var result = new Name(name);
@@ -59,16 +81,16 @@ namespace Syllabore
 
 
         /// <summary>
-        /// Adds a condition to this transform. The condition is a regex pattern applied
-        /// to a syllable at the specified index. It must be satisfied for the entire transform
-        /// to run. If multiple calls are made, only the call will have an effect.
+        /// <para>
+        /// Adds a condition to this <see cref="Transform"/>. The condition is a regular expression applied
+        /// to a syllable at the specified <paramref name="index"/>. It must be satisfied for the <see cref="Transform"/>
+        /// to be applied successfully.
+        /// </para>
+        /// <para>The specified <paramref name="index"/> determines the location of the syllable 
+        /// that the condition operates on. A negative <paramref name="index"/> can be provided to traverse from the end of the name
+        /// instead. (For example, an index -1 will be interpreted as the last syllable of a name.)
+        /// </para>
         /// </summary>
-        /// <param name="index">The index of the syllable that the condition operates 
-        /// on. A negative index can be provided to traverse from the end of the name
-        /// instead. (For example, an index -1 will be interpreted as the last syllable
-        /// of a name.</param>
-        /// <param name="regex">The pattern that must be satisfied.</param>
-        /// <returns></returns>
         public Transform When(int index, string regex)
         {
             if (index == int.MaxValue)

@@ -8,15 +8,15 @@ namespace Syllabore
 {
 
     /// <summary>
-    /// Takes source names and applies one or more transforms
-    /// to create a new name.
     /// <para>
-    /// By default, all transforms are applied to the source name
-    /// in the order they were added to a <see cref="TransformSet"/>.
+    /// A <see cref="TransformSet"/> receives
+    /// a source name, applies one or more <see cref="Transform"/>s, and creates a new name.
+    /// By default, all <see cref="Transform"/>s of the same set are applied to the source name
+    /// and in the order they were added.
     /// </para>
     /// <para>
-    /// Use <see cref="RandomlySelect(int)"/> to randomize what
-    /// transforms are applied to a name.
+    /// To randomize what transforms are applied, make sure to call <see cref="RandomlySelect(int)"/>
+    /// when configuring a <see cref="TransformSet"/>.
     /// </para>
     /// </summary>
     [Serializable]
@@ -29,7 +29,10 @@ namespace Syllabore
         public int RandomSelectionCount { get; set; }
 
         /// <summary>
-        /// Instantiates a new <see cref="TransformSet"/>
+        /// Instantiates a new <see cref="TransformSet"/>.
+        /// By default, all future <see cref="Transform"/>s that are added
+        /// to this set will be used in the order they were added
+        /// unless there is a call to <see cref="RandomlySelect(int)"/>.
         /// </summary>
         public TransformSet()
         {
@@ -40,8 +43,12 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Applies one or more transforms on the specified 
-        /// <see cref="Name"/> and returns the result.
+        /// Returns a new <see cref="Name"/> that
+        /// is the result of one or more <see cref="Transform"/>s
+        /// applied to the specified source <see cref="Name"/>.
+        /// <para>
+        /// This method leaves the source <see cref="Name"/> untouched.
+        /// </para>
         /// </summary>
         public Name Apply(Name sourceName)
         {
@@ -122,7 +129,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Adds a new transform to this <see cref="TransformSet"/>.
+        /// Adds a new <see cref="Transform"/> to this <see cref="TransformSet"/>.
         /// </summary>
         public TransformSet WithTransform(Transform transform)
         {
@@ -131,7 +138,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Adds a new transform to this <see cref="TransformSet"/>.
+        /// Adds a new <see cref="Transform"/> to this <see cref="TransformSet"/>.
         /// </summary>
         public TransformSet WithTransform(Func<Transform, Transform> config)
         {
@@ -140,9 +147,17 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Applies a weight to the last added transform that influences the probability of being used over others.
-        /// Given two transform X and Y with a weight of 3 and 1 respectively, transform X will be applied 75% of the time.
+        /// <para>
+        /// Applies a weight to the last added transform that influences the probability of being used over others. 
+        /// </para>
+        /// <para>
+        /// For example, given two transform X and Y with a weight of 3 and 1 respectively, transform X will be applied 75% of the time.
         /// All transforms have default weight of 1.
+        /// </para>
+        /// <para>
+        /// Weights are only used if this <see cref="TransformSet"/> has been configured to use random selection 
+        /// through a call to <see cref="RandomlySelect(int)"/>.
+        /// </para>
         /// </summary>
         public TransformSet Weight(int weight)
         {
@@ -151,21 +166,25 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Combines this instance with the specified <see cref="TransformSet"/> instance.
-        /// The resulting <see cref="TransformSet"/> uses the transforms of the
-        /// previous two.
+        /// Combines this <see cref="TransformSet"/> with the specified <see cref="TransformSet"/>.
+        /// A new <see cref="TransformSet"/> that is the combination of the two is returned.
         /// </summary>
-        public TransformSet Join(TransformSet m)
+        public TransformSet Join(TransformSet set)
         {
-            TransformSet newMutator = new TransformSet() { RandomSelectionCount = this.RandomSelectionCount };
+            TransformSet result = new TransformSet() { RandomSelectionCount = this.RandomSelectionCount };
 
-            newMutator.Transforms.AddRange(this.Transforms);
-            newMutator.Transforms.AddRange(m.Transforms);
-            return newMutator;
+            result.Transforms.AddRange(this.Transforms);
+            result.Transforms.AddRange(set.Transforms);
+            return result;
         }
 
         /// <summary>
-        /// Sets the number of transforms to use on each call of <see cref="Apply(Name)"/>.
+        /// <para>
+        /// Sets this <see cref="TransformSet"/> to randomly select transforms to apply to the source name.
+        /// </para>
+        /// <para>
+        /// The <paramref name="limit"/> parameter specifies the maximum number of unique transforms that will be applied.
+        /// </para>
         /// </summary>
         public TransformSet RandomlySelect(int limit)
         {

@@ -8,7 +8,7 @@ namespace Syllabore
     /// <para>
     /// A <see cref="Grapheme"/> is the most basic indivisible unit
     /// of a writing system. In Syllabore, they 
-    /// usually represent a single vowel, consonant, or sequence.
+    /// can represent a single vowel, consonant, or sequence.
     /// </para>
     /// <para>
     /// <see cref="Grapheme"/>s are used by <see cref="SyllableGenerator"/>s
@@ -29,6 +29,9 @@ namespace Syllabore
             this.Weight = 1;
         }
 
+        /// <summary>
+        /// Returns a string representation of this <see cref="Grapheme"/>.
+        /// </summary>
         public override string ToString()
         {
             return this.Value;

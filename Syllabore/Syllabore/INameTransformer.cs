@@ -10,7 +10,7 @@ namespace Syllabore
     public interface INameTransformer
     {
         /// <summary>
-        /// Applies one or more transforms on the specified <see cref="Name"/>
+        /// Applies changes to the specified <see cref="Name"/>
         /// and returns a new <see cref="Name"/> as the result.
         /// </summary>
         Name Apply(Name sourceName);

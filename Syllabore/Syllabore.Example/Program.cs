@@ -233,7 +233,7 @@ namespace Syllabore.Example
             
             {
                 var g = new NameGenerator();
-                var m = new VowelMutator();
+                var m = new VowelShifter();
 
                 for(int i = 0; i < 10; i++)
                 {
@@ -340,7 +340,7 @@ namespace Syllabore.Example
                 // provider.DisallowLeadingConsonantSequences(); // They will be off if nothing is defined
                 // provider.DisallowTrailingConsonantSequences();  // They will be off if nothing is defined
 
-                var shifter = new VowelMutator("a", "e", "o", "y");
+                var shifter = new VowelShifter("a", "e", "o", "y");
 
                 var filter = new NameFilter();
                 filter.DoNotAllow(@"(\w)\1\1");
@@ -363,7 +363,7 @@ namespace Syllabore.Example
                 var mutator = new TransformSet()
                                 .Join(new TransformSet()
                                     .WithTransform(x => x.ReplaceSyllable(0, "test"))
-                                .Join(new VowelMutator()));
+                                .Join(new VowelShifter()));
 
                 for(int i = 0; i < 5; i++)
                 {
@@ -419,55 +419,7 @@ namespace Syllabore.Example
                     Console.WriteLine(g.Next());
                 }
             }
-
-            Separator();
-
-            {
-                // Spaceship-sounding names, maybe
-                var g = new SpaceshipGeneratorV1();
-
-                for (int i = 0; i < 3; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-            }
-
-            Separator();
-
-            {
-                // Spaceship-sounding names, maybe
-                var g = new SpaceshipGeneratorV2();
-
-                for (int i = 0; i < 3; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-            }
-
-            Separator();
-
-            {
-                // Spaceship-sounding names, maybe
-                var g = new SpaceshipGeneratorV3();
-
-                for (int i = 0; i < 3; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-            }
-
-            Separator();
-
-            {
-                // Spaceship-sounding names, maybe
-                var g = new SpaceshipGeneratorV4();
-
-                for (int i = 0; i < 3; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-            }
-
+ 
             Separator();
 
             {
@@ -475,42 +427,6 @@ namespace Syllabore.Example
                 var g = new SpaceshipGeneratorV5();
 
                 for (int i = 0; i < 3; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-            }
-
-            Separator();
-
-            {
-                // Spaceship-sounding names, maybe
-                var g = new PlanetGeneratorV1();
-
-                for (int i = 0; i < 3; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-            }
-
-            Separator();
-
-            {
-                // Spaceship-sounding names, maybe
-                var g = new PlanetGeneratorV1_3();
-
-                for (int i = 0; i < 3; i++)
-                {
-                    Console.WriteLine(g.Next());
-                }
-            }
-
-            Separator();
-
-            {
-                // Spaceship-sounding names, maybe
-                var g = new PlanetGeneratorV2_4();
-
-                for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(g.Next());
                 }

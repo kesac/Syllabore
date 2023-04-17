@@ -28,7 +28,7 @@ namespace Syllabore
     }
 
     /// <summary>
-    /// Validates names produced by a <see cref="NameGenerator"/> against a set of configurable constraints.
+    /// Validates names produced by a <see cref="INameGenerator"/> against a set of configurable constraints.
     /// </summary>
     [Serializable]
     public class NameFilter : INameFilter
