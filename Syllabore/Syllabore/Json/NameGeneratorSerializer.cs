@@ -128,14 +128,17 @@ namespace Syllabore.Json
             string result = File.ReadAllText(path);
             var g = JsonSerializer.Deserialize<NameGenerator>(result, options);
 
+            /*
             // The parent property is not serialized because it would create a cycle
             // and so needs to be set again.
+            
             if(g.Provider is SyllableGenerator)
             {
                 var p = (SyllableGenerator)g.Provider;
-                p.Probability.StartingSyllable.Parent = p.Probability;
+                p.Probability.StartingSyllable.Parent = p.Probability
             }
-            
+            */
+
             return g;
         }
 

@@ -32,30 +32,27 @@ namespace Syllabore
     [Serializable]
     public class SyllableGenerator : ISyllableGenerator
     {
-        public const double DefaultChanceLeadingConsonantExists = 0.95;
-        public const double DefaultChanceLeadingConsonantBecomesSequence = 0.25;
-        public const double DefaultChanceVowelExists = 1.0;
-        public const double DefaultChanceVowelBecomesSequence = 0.25;
-        public const double DefaultChanceTrailingConsonantExists = 0.10;
-        public const double DefaultChanceTrailingConsonantBecomesSequence = 0.25;
-        public const double DefaultChanceLeadingVowelInStartingSyllableExists = 0.10;
-        public const double DefaultChanceLeadingVowelInStartingSyllableBecomesSequence = 0.25;
+        // These probabilities are applied if custom values are not specified
+        private const double DefaultChanceLeadingConsonantExists = 0.95;           // Only applies if consonants are supplied
+        private const double DefaultChanceLeadingConsonantBecomesSequence = 0.25;  // Only if consonant sequences are supplied
+        private const double DefaultChanceVowelExists = 1.0;                       // Only applies if vowels are supplied
+        private const double DefaultChanceVowelBecomesSequence = 0.25;             // Only if vowel sequences are supplied
+        private const double DefaultChanceTrailingConsonantExists = 0.10;          // Only applies if consonants are supplied
+        private const double DefaultChanceTrailingConsonantBecomesSequence = 0.25; // Only if consonant sequences are supplied
 
         private Random Random { get; set; }
         private Context Context { get; set; } // For contextual command .Sequences()
         private List<Grapheme> LastChanges { get; set; } // For contextual command .Weight()
-        
-
-        public SyllableProviderProbability Probability { get; set; }
-
         public List<Grapheme> LeadingConsonants { get; set; }
         public List<Grapheme> LeadingConsonantSequences { get; set; }
         public List<Grapheme> Vowels { get; set; }
         public List<Grapheme> VowelSequences { get; set; }
         public List<Grapheme> TrailingConsonants { get; set; }
         public List<Grapheme> TrailingConsonantSequences { get; set; }
-
+        public SyllableGeneratorProbability Probability { get; set; }
         public bool AllowEmptyStringGeneration { get; set; }
+
+        #region Convenience Properties
 
         public bool LeadingConsonantsAllowed 
         { 
@@ -69,7 +66,7 @@ namespace Syllabore
         {
             get
             {
-                return Probability.ChanceLeadingConsonantBecomesSequence.HasValue && Probability.ChanceLeadingConsonantBecomesSequence > 0;
+                return Probability.ChanceLeadingConsonantIsSequence.HasValue && Probability.ChanceLeadingConsonantIsSequence > 0;
             }
         }
 
@@ -85,7 +82,7 @@ namespace Syllabore
         {
             get
             {
-                return Probability.ChanceVowelBecomesSequence.HasValue && Probability.ChanceVowelBecomesSequence > 0;
+                return Probability.ChanceVowelIsSequence.HasValue && Probability.ChanceVowelIsSequence > 0;
             }
         }
 
@@ -101,7 +98,7 @@ namespace Syllabore
         {
             get
             {
-                return Probability.ChanceTrailingConsonantBecomesSequence.HasValue && Probability.ChanceTrailingConsonantBecomesSequence > 0;
+                return Probability.ChanceTrailingConsonantIsSequence.HasValue && Probability.ChanceTrailingConsonantIsSequence > 0;
             }
         }
 
@@ -109,7 +106,8 @@ namespace Syllabore
         {
             get
             {
-                return Probability.StartingSyllable.ChanceLeadingVowelExists.HasValue && Probability.StartingSyllable.ChanceLeadingVowelExists > 0;
+                //return Probability.StartingSyllable.ChanceLeadingVowelExists.HasValue && Probability.StartingSyllable.ChanceLeadingVowelExists > 0;
+                return Probability.ChanceStartingSyllableLeadingVowelExists.HasValue && Probability.ChanceStartingSyllableLeadingVowelExists > 0;
             }
         }
 
@@ -117,15 +115,17 @@ namespace Syllabore
         {
             get
             {
-                return Probability.StartingSyllable.ChanceLeadingVowelBecomesSequence.HasValue && Probability.StartingSyllable.ChanceLeadingVowelBecomesSequence > 0;
+                // return Probability.StartingSyllable.ChanceLeadingVowelBecomesSequence.HasValue && Probability.StartingSyllable.ChanceLeadingVowelBecomesSequence > 0;
+                return Probability.ChanceStartingSyllableLeadingVowelIsSequence.HasValue && Probability.ChanceStartingSyllableLeadingVowelIsSequence > 0;
             }
         }
 
+        #endregion
 
         public SyllableGenerator()
         {
             this.Random = new Random();
-            this.Probability = new SyllableProviderProbability();
+            this.Probability = new SyllableGeneratorProbability();
             this.Context = Context.None;
             this.LastChanges = new List<Grapheme>();
             this.AllowEmptyStringGeneration = false;
@@ -206,9 +206,9 @@ namespace Syllabore
             this.LeadingConsonantSequences.AddRange(changes);
             this.LastChanges.ReplaceWith(changes);
 
-            if(this.Probability.ChanceLeadingConsonantBecomesSequence == null)
+            if(this.Probability.ChanceLeadingConsonantIsSequence == null)
             {
-                this.Probability.ChanceLeadingConsonantBecomesSequence = DefaultChanceLeadingConsonantBecomesSequence;
+                this.Probability.ChanceLeadingConsonantIsSequence = DefaultChanceLeadingConsonantBecomesSequence;
             }
 
             this.Context = Context.LeadingConsonantSequence;
@@ -251,9 +251,9 @@ namespace Syllabore
             this.VowelSequences.AddRange(changes);
             this.LastChanges.ReplaceWith(changes);
 
-            if(this.Probability.ChanceVowelBecomesSequence == null)
+            if(this.Probability.ChanceVowelIsSequence == null)
             {
-                this.Probability.ChanceVowelBecomesSequence = DefaultChanceVowelBecomesSequence;
+                this.Probability.ChanceVowelIsSequence = DefaultChanceVowelBecomesSequence;
             }
 
             this.Context = Context.VowelSequence;
@@ -296,9 +296,9 @@ namespace Syllabore
             this.TrailingConsonantSequences.AddRange(changes);
             this.LastChanges.ReplaceWith(changes);
 
-            if(this.Probability.ChanceTrailingConsonantBecomesSequence == null)
+            if(this.Probability.ChanceTrailingConsonantIsSequence == null)
             {
-                this.Probability.ChanceTrailingConsonantBecomesSequence = DefaultChanceTrailingConsonantBecomesSequence;
+                this.Probability.ChanceTrailingConsonantIsSequence = DefaultChanceTrailingConsonantBecomesSequence;
             }
 
             this.Context = Context.TrailingConsonantSequence;
@@ -342,8 +342,9 @@ namespace Syllabore
 
             return this;
         }
-        
 
+
+        /*
         /// <summary>
         /// Used to manage the probability of vowels/consonants turning into sequences, of leading
         /// consonants starting a syllable, of trailing consonants ending a syllable, etc.
@@ -352,51 +353,15 @@ namespace Syllabore
         {
             this.Probability = configure(this.Probability);
             return this;
-        }
+        }/**/
 
         /// <summary>
         /// Used to manage the probability of vowels/consonants turning into sequences, of leading
         /// consonants starting a syllable, of trailing consonants ending a syllable, etc.
         /// </summary>
-        public SyllableGenerator WithProbability(
-            double LeadingConsonants = -1,
-            double LeadingConsonantSequences = -1,
-            double Vowels = -1,
-            double VowelSequences = -1,
-            double TrailingConsonants = -1,
-            double TrailingConsonantSequences = -1
-        )
+        public SyllableGenerator WithProbability(Func<ProbabilityBuilder, ProbabilityBuilder> configure)
         {
-            if(LeadingConsonants != -1)
-            {
-                this.Probability.ChanceLeadingConsonantExists = LeadingConsonants;
-            }
-
-            if (LeadingConsonantSequences != -1)
-            {
-                this.Probability.ChanceLeadingConsonantBecomesSequence = LeadingConsonantSequences;
-            }
-
-            if (Vowels != -1)
-            {
-                this.Probability.ChanceVowelExists = Vowels;
-            }
-
-            if (VowelSequences != -1)
-            {
-                this.Probability.ChanceVowelBecomesSequence = VowelSequences;
-            }
-
-            if (TrailingConsonants != -1)
-            {
-                this.Probability.ChanceTrailingConsonantExists = TrailingConsonants;
-            }
-
-            if (TrailingConsonantSequences != -1)
-            {
-                this.Probability.ChanceTrailingConsonantBecomesSequence = TrailingConsonantSequences;
-            }
-
+            this.Probability = configure(new ProbabilityBuilder(this.Probability)).ToProbability();
             return this;
         }
 
@@ -512,11 +477,13 @@ namespace Syllabore
         {
             var output = new StringBuilder();
 
-            if (isStartingSyllable && this.LeadingVowelForStartingSyllableAllowed && this.Random.NextDouble() < this.Probability.StartingSyllable.ChanceLeadingVowelExists)
+            //if (isStartingSyllable && this.LeadingVowelForStartingSyllableAllowed && this.Random.NextDouble() < this.Probability.StartingSyllable.ChanceLeadingVowelExists)
+            if (isStartingSyllable && this.LeadingVowelForStartingSyllableAllowed && this.Random.NextDouble() < this.Probability.ChanceStartingSyllableLeadingVowelExists)
             {
 
                 //if (this.VowelSequencesAllowed && this.Random.NextDouble() < this.ChanceVowelBeginsStartingSyllableAndIsSequence)
-                if (this.VowelSequencesAllowed && this.Random.NextDouble() < this.Probability.StartingSyllable.ChanceLeadingVowelBecomesSequence)
+                //if (this.VowelSequencesAllowed && this.Random.NextDouble() < this.Probability.StartingSyllable.ChanceLeadingVowelBecomesSequence)
+                if (this.VowelSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceStartingSyllableLeadingVowelIsSequence)
                 {
                     output.Append(this.NextVowelSequence());
                 }
@@ -531,7 +498,7 @@ namespace Syllabore
                 if (this.LeadingConsonantsAllowed && this.Random.NextDouble() < this.Probability.ChanceLeadingConsonantExists)
                 {
 
-                    if (this.LeadingConsonantSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceLeadingConsonantBecomesSequence)
+                    if (this.LeadingConsonantSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceLeadingConsonantIsSequence)
                     {
                         output.Append(this.NextLeadingConsonantSequence());
                     }
@@ -543,7 +510,7 @@ namespace Syllabore
 
                 if(this.VowelsAllowed && this.Random.NextDouble() < this.Probability.ChanceVowelExists)
                 {
-                    if (this.VowelSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceVowelBecomesSequence)
+                    if (this.VowelSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceVowelIsSequence)
                     {
                         output.Append(this.NextVowelSequence());
                     }
@@ -558,7 +525,7 @@ namespace Syllabore
             if (this.TrailingConsonantsAllowed && this.Random.NextDouble() < this.Probability.ChanceTrailingConsonantExists)
             {
 
-                if (this.TrailingConsonantSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceTrailingConsonantBecomesSequence)
+                if (this.TrailingConsonantSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceTrailingConsonantIsSequence)
                 {
                     output.Append(this.NextTrailingConsonantSequence());
                 }
