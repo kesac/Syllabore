@@ -6,16 +6,16 @@ namespace Syllabore
 {
     public class ProbabilityBuilder
     {
-        private readonly SyllableGeneratorProbability Probability;
+        private readonly GeneratorProbability Probability;
 
         public ProbabilityBuilder()
         {
-            this.Probability = new SyllableGeneratorProbability();
+            this.Probability = new GeneratorProbability();
         }
 
-        public ProbabilityBuilder(SyllableGeneratorProbability existing)
+        public ProbabilityBuilder(GeneratorProbability existing)
         {
-            this.Probability = new SyllableGeneratorProbability()
+            this.Probability = new GeneratorProbability()
             {
                 ChanceLeadingConsonantExists = existing.ChanceLeadingConsonantExists,
                 ChanceLeadingConsonantIsSequence = existing.ChanceLeadingConsonantIsSequence,
@@ -84,11 +84,11 @@ namespace Syllabore
             return this;
         }
 
-        public SyllableGeneratorProbability ToProbability()
+        public GeneratorProbability ToProbability()
         {
             // We return a new instance so that it is safe to keep using the builder
             // after a call to ToProbability().
-            return new SyllableGeneratorProbability()
+            return new GeneratorProbability()
             {
                 ChanceLeadingConsonantExists = this.Probability.ChanceLeadingConsonantExists,
                 ChanceLeadingConsonantIsSequence = this.Probability.ChanceLeadingConsonantIsSequence,

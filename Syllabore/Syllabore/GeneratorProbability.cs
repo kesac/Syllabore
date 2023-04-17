@@ -8,7 +8,7 @@ namespace Syllabore
     /// <summary>
     /// Contains probalistic settings in a <see cref="SyllableGenerator"/>.
     /// </summary>
-    public class SyllableGeneratorProbability
+    public class GeneratorProbability
     {
         public double? ChanceStartingSyllableLeadingVowelExists { get; set; }
         public double? ChanceStartingSyllableLeadingVowelIsSequence { get; set; }
@@ -19,7 +19,7 @@ namespace Syllabore
         public double? ChanceTrailingConsonantExists { get; set; }
         public double? ChanceTrailingConsonantIsSequence { get; set; }
 
-        public SyllableGeneratorProbability() { }
+        public GeneratorProbability() { }
 
     }
 }

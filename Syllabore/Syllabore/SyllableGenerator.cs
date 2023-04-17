@@ -49,7 +49,7 @@ namespace Syllabore
         public List<Grapheme> VowelSequences { get; set; }
         public List<Grapheme> TrailingConsonants { get; set; }
         public List<Grapheme> TrailingConsonantSequences { get; set; }
-        public SyllableGeneratorProbability Probability { get; set; }
+        public GeneratorProbability Probability { get; set; }
         public bool AllowEmptyStringGeneration { get; set; }
 
         #region Convenience Properties
@@ -125,7 +125,7 @@ namespace Syllabore
         public SyllableGenerator()
         {
             this.Random = new Random();
-            this.Probability = new SyllableGeneratorProbability();
+            this.Probability = new GeneratorProbability();
             this.Context = Context.None;
             this.LastChanges = new List<Grapheme>();
             this.AllowEmptyStringGeneration = false;
