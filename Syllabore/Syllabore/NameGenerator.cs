@@ -118,7 +118,7 @@ namespace Syllabore
 
             if (transformer != null)
             {
-                this.UsingTransforms(transformer);
+                this.UsingTransform(transformer);
             }
 
             if (filter != null)
@@ -232,8 +232,9 @@ namespace Syllabore
 
         #region Transformations
 
+        /*
         /// <summary>
-        /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="NameTransformer"/>.
+        /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="TransformSet"/>.
         /// A vanilla <see cref="NameGenerator"/> does not use transformers by default.
         /// <para>
         /// The name transformer will be applied to every generated name.
@@ -242,10 +243,11 @@ namespace Syllabore
         /// When multiple calls to this method is made, the last call will take precedence.
         /// </para>
         /// </summary>
-        public NameGenerator UsingTransforms(Func<NameTransformer, NameTransformer> configure)
+        public NameGenerator UsingTransforms(Func<TransformSet, TransformSet> configure)
         {
             return this.UsingTransforms(1.0, configure);
         }
+        */
 
         /// <summary>
         /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="INameTransformer"/>.
@@ -257,28 +259,23 @@ namespace Syllabore
         /// When multiple calls to this method is made, the last call will take precedence.
         /// </para>
         /// </summary>
-        public NameGenerator UsingTransforms(INameTransformer transformer)
+        public NameGenerator UsingTransform(INameTransformer transformer)
         {
-            return this.UsingTransforms(1.0, transformer);
+            return this.UsingTransform(1.0, transformer);
         }
 
         /// <summary>
-        /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="NameTransformer"/>.
-        /// A vanilla <see cref="NameGenerator"/> does not use transformers by default.
-        /// <para>
-        /// The value of <paramref name="chance"/> must be between 0.0 and 1.0, inclusive. 
-        /// The value determines the probability that a name will be transformed.
-        /// </para>
+        /// Sets the name transformer of this <see cref="NameGenerator"/> to a new <see cref="TransformSet"/>
+        /// containing the specified <see cref="Transform"/> as the only transform.
         /// <para>
         /// When multiple calls to this method is made, the last call will take precedence.
         /// </para>
         /// </summary>
-        public NameGenerator UsingTransforms(double chance, Func<NameTransformer, NameTransformer> configure)
+        public NameGenerator UsingTransform(Func<Transform, Transform> configure)
         {
-            this.Transformer = configure(new NameTransformer());
-            this.TransformerChance = chance;
-            return this;
+            return this.UsingTransform(1.0, configure);
         }
+
 
         /// <summary>
         /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="INameTransformer"/>.
@@ -291,27 +288,47 @@ namespace Syllabore
         /// When multiple calls to this method is made, the last call will take precedence.
         /// </para>
         /// </summary>
-        public NameGenerator UsingTransforms(double chance, INameTransformer transformer)
+        public NameGenerator UsingTransform(double chance, INameTransformer transformer)
         {
             this.Transformer = transformer ?? throw new ArgumentNullException("transformer", "The specified INameTransformer is null.");
             this.TransformerChance = chance;
             return this;
         }
 
+        /// <summary>
+        /// Sets the name transformer of this <see cref="NameGenerator"/> to a new <see cref="TransformSet"/>
+        /// containing the specified <see cref="Transform"/> as the only transform.
+        /// <para>
+        /// The value of <paramref name="chance"/> must be between 0.0 and 1.0, inclusive.
+        /// The value determines the probability that a name will be transformed.
+        /// </para>
+        /// <para>
+        /// When multiple calls to this method is made, the last call will take precedence.
+        /// </para>
+        /// </summary>
+        public NameGenerator UsingTransform(double chance, Func<Transform, Transform> configure)
+        {
+            var transform = configure(new Transform());
+            this.Transformer = new TransformSet().WithTransform(transform);
+            this.TransformerChance = chance;
+            return this;
+        }
+
+        /// ----
 
         /// <summary>
-        /// Deprecated. Use <see cref="UsingTransforms(Func{NameTransformer, NameTransformer})"/> instead.
+        /// Deprecated. Use <see cref="UsingTransforms(Func{TransformSet, TransformSet})"/> instead.
         /// </summary>
 
         [Obsolete("Use UsingSyllables() instead", false)]
 
-        public NameGenerator UsingTransformer(Func<NameTransformer, NameTransformer> configure)
+        public NameGenerator UsingTransformer(Func<TransformSet, TransformSet> configure)
         {
             return this.UsingTransformer(configure);
         }
 
         /// <summary>
-        /// Deprecated. Use <see cref="UsingTransforms(INameTransformer))"/> instead.
+        /// Deprecated. Use <see cref="UsingTransform(INameTransformer))"/> instead.
         /// </summary>
         [Obsolete("Use UsingSyllables() instead", false)]
 
@@ -495,7 +512,7 @@ namespace Syllabore
                 //if (this.Transformer != null)
                 if (this.Transformer != null && this.Random.NextDouble() < this.TransformerChance)
                 {
-                    result = this.Transformer.Transform(result);
+                    result = this.Transformer.Apply(result);
                 }
 
                 validNameGenerated = this.Filter != null ? this.Filter.IsValidName(result) : true;

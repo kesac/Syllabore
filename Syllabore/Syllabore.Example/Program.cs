@@ -192,10 +192,28 @@ namespace Syllabore.Example
                         .UsingSyllables(x => x
                             .WithVowels("ae")
                             .WithLeadingConsonants("str"))
-                        .UsingTransforms(0.5, x => x
+                        .UsingTransform(0.5, x => x.AppendSyllable("gard"))
+                        .UsingSyllableCount(3);
+
+                // Or simpler
+                g = new NameGenerator()
+                        .UsingSyllables(x => x
+                            .WithVowels("ae")
+                            .WithLeadingConsonants("str"))
+                        .UsingTransform(x => x
+                            .AppendSyllable("gard"))
+                        .UsingSyllableCount(3);
+
+
+                // Or more complex
+                g = new NameGenerator()
+                        .UsingSyllables(x => x
+                            .WithVowels("ae")
+                            .WithLeadingConsonants("str"))
+                        .UsingTransform(0.5, new TransformSet()
                             .WithTransform(x => x.AppendSyllable("gard")).Weight(2)
                             .WithTransform(x => x.AppendSyllable("dar"))
-                            .Select(1))
+                            .RandomlySelect(1))
                         .UsingSyllableCount(3);
 
                 // In this example, the name generation is creating
@@ -220,7 +238,7 @@ namespace Syllabore.Example
                 for(int i = 0; i < 10; i++)
                 {
                     var name = g.NextName();
-                    var variation = m.Transform(name);
+                    var variation = m.Apply(name);
 
                     Console.WriteLine(name + "\t-> " + variation);
                 }
@@ -240,8 +258,8 @@ namespace Syllabore.Example
                             .WithLeadingConsonants("vstlr")
                             .WithTrailingConsonants("zrt")
                             .WithVowelSequences("ey", "ay", "oy"))
-                        .UsingTransforms(0.99, m => m
-                            .Select(1)
+                        .UsingTransform(0.99, new TransformSet()
+                            .RandomlySelect(1)
                             .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
                             .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
                             .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
@@ -281,8 +299,8 @@ namespace Syllabore.Example
                             .WithLeadingConsonants("vstlr")
                             .WithTrailingConsonants("zrt")
                             .WithVowelSequences("ey", "ay", "oy"))
-                        .UsingTransforms(0.99, m => m
-                            .Select(1)
+                        .UsingTransform(0.99, new TransformSet()
+                            .RandomlySelect(1)
                             .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
                             .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
                             .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
@@ -342,14 +360,14 @@ namespace Syllabore.Example
             {
                 // Creating variations of a single name
                 var name = new Name("syl", "la", "bore");
-                var mutator = new NameTransformer()
-                                .Join(new NameTransformer()
+                var mutator = new TransformSet()
+                                .Join(new TransformSet()
                                     .WithTransform(x => x.ReplaceSyllable(0, "test"))
                                 .Join(new VowelMutator()));
 
                 for(int i = 0; i < 5; i++)
                 {
-                    Console.WriteLine(mutator.Transform(name));
+                    Console.WriteLine(mutator.Apply(name));
                 }
             }
 

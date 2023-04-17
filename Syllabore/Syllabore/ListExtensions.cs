@@ -88,7 +88,7 @@ namespace Syllabore
                 }
             }
 
-            throw new InvalidOperationException("A random choice could not be made on the specified list of weighted items. Check if there were any non-positive weights.");
+            throw new InvalidOperationException("A random choice could not be made. Check if the list was empty or if there were any non-positive weights.");
 
         }
 

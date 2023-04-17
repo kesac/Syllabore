@@ -21,10 +21,11 @@ namespace Syllabore.Example
                     .WithVowels("eu")
                     .WithProbability(x => x
                         .OfLeadingConsonantIsSequence(0.1)))
-                .UsingTransforms(x => x
-                    .WithTransform(x => x
-                        .ReplaceAll("hu", "fu").ReplaceAll("si", "shi")
-                        .ReplaceAll("ti", "chi").ReplaceAll("tu", "tsu")))
+                .UsingTransform(x => x
+                    .ReplaceAll("hu", "fu")
+                    .ReplaceAll("si", "shi")
+                    .ReplaceAll("ti", "chi")
+                    .ReplaceAll("tu", "tsu"))
                 .UsingFilter(x => x
                     .DoNotAllowEnding("[aeiou]{2}") // Avoids two-vowel endings
                     .DoNotAllowSubstring("yi", "ye", "wi", "wu", "we", "sf"))

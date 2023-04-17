@@ -29,7 +29,7 @@ namespace Syllabore.Json
         public NameGeneratorSerializer()
         {
             this.ProviderType = typeof(SyllableGenerator);
-            this.TransformerType = typeof(NameTransformer);
+            this.TransformerType = typeof(TransformSet);
             this.FilterType = typeof(NameFilter);
         }
 
@@ -49,7 +49,7 @@ namespace Syllabore.Json
         /// Uses the specified type when serializing or deserializing 
         /// <see cref="INameTransformer"/> property <c>Transformer</c> of
         /// <see cref="NameGenerator"/>. By default, the type 
-        /// used is <see cref="NameTransformer"/>.
+        /// used is <see cref="TransformSet"/>.
         /// </summary>
         public NameGeneratorSerializer UsingTransformerType(Type type)
         {

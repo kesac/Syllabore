@@ -35,8 +35,8 @@ namespace Syllabore.Example.Spaceship
                     .WithVowelSequences("ei", "ia", "ou", "eu")
                     .WithLeadingConsonants("rstlmn").Weight(4)
                     .WithLeadingConsonants("cdgp").Weight(2))
-                .UsingTransforms(0.5, x => x // Only allow transform to be used 50% of the time
-                    .Select(1) // Only apply one transform
+                .UsingTransform(0.5, new TransformSet() // Only allow transform to be used 50% of the time
+                    .RandomlySelect(1) // Only apply one transform
                     .WithTransform(x => x.ReplaceSyllable(-1, "des")) // Index -1 is the last position
                     .WithTransform(x => x.ReplaceSyllable(-1, "rus"))
                     .WithTransform(x => x.ReplaceSyllable(-1, "vium")))

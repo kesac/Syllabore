@@ -6,11 +6,11 @@ using System.Text.Json.Serialization;
 namespace Syllabore
 {
     /// <summary>
-    /// Used by <see cref="NameGenerator"/> through <see cref="NameTransformer"/> to capture
+    /// Used by <see cref="NameGenerator"/> through <see cref="TransformSet"/> to capture
     /// transforms that produce variations on names. Transforms can also have
     /// an optional condition that must be fulfilled for the transform to occur.
     /// </summary>
-    public class Transform : IWeighted
+    public class Transform : IWeighted, INameTransformer
     {
         public List<TransformStep> Steps { get; set; }
 
@@ -36,15 +36,27 @@ namespace Syllabore
         
         /// <summary>
         /// Applies the <see cref="Transform"/> on the specified <see cref="Name"/>.
+        /// This is destructive change on the specified <see cref="Name"/>.
         /// </summary>
         /// <param name="name"></param>
-        public void Apply(Name name)
+        public void Modify(Name name)
         {
             foreach (var step in this.Steps)
             {
-                step.Apply(name);
+                step.Modify(name);
             }
         }
+
+        public Name Apply(Name name)
+        {
+            var result = new Name(name);
+            foreach (var step in this.Steps)
+            {
+                step.Modify(result);
+            }
+            return result;
+        }
+
 
         /// <summary>
         /// Adds a condition to this transform. The condition is a regex pattern applied
@@ -144,6 +156,7 @@ namespace Syllabore
             this.Steps.Add(new TransformStep(unserializableAction));
             return this;
         }
-        
+
+
     }
 }
