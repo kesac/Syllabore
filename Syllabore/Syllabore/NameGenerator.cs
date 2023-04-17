@@ -292,6 +292,15 @@ namespace Syllabore
             return this;
         }
 
+        /// <summary>
+        /// <para>
+        /// Updates the <see cref="GeneratorProbability"/> used by the <see cref="SyllableGenerator"/> inside this
+        /// <see cref="NameGenerator"/>.
+        /// </para>
+        /// <para>
+        /// When multiple calls to this method are made, each probability will reflect the last value they were given.
+        /// </para>
+        /// </summary>
         public NameGenerator UsingProbability(Func<GeneratorProbabilityBuilder, GeneratorProbabilityBuilder> configure)
         {
             if (this.Provider is SyllableGenerator)

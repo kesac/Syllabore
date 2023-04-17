@@ -492,7 +492,7 @@ namespace Syllabore.Tests
             // by increasing the probability to non-zero
             provider.WithProbability(x => x
                 .OfLeadingVowelsInStartingSyllable(0.5)
-                .OfLeadingVowelIsSequenceInStartingVowel(0.5)); // You can turn this off explicitly without adjusting probability settings
+                .OfLeadingVowelIsSequenceInStartingSyllable(0.5)); // You can turn this off explicitly without adjusting probability settings
             leadingVowelDetected = false; // In which case we expect this variable to remain false
             for (int i = 0; i < 1000; i++)
             {
@@ -505,7 +505,7 @@ namespace Syllabore.Tests
             // by setting the probability to zero
             provider.WithProbability(x => x
                 .OfLeadingVowelsInStartingSyllable(0.5)
-                .OfLeadingVowelIsSequenceInStartingVowel(0.0)); 
+                .OfLeadingVowelIsSequenceInStartingSyllable(0.0)); 
             leadingVowelDetected = false; // In which case we expect this variable to be true again
             for (int i = 0; i < 1000; i++)
             {

@@ -36,7 +36,7 @@ namespace Syllabore
         }
 
         // StartingSyllableLeadingVowelIsSequence
-        public GeneratorProbabilityBuilder OfLeadingVowelIsSequenceInStartingVowel(double probability)
+        public GeneratorProbabilityBuilder OfLeadingVowelIsSequenceInStartingSyllable(double probability)
         {
             this.Probability.ChanceStartingSyllableLeadingVowelIsSequence = probability;
             return this;
