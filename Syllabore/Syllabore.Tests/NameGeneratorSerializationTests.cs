@@ -21,7 +21,6 @@ namespace Syllabore.Tests
                         .WithVowelSequences("ey")
                         .WithTrailingConsonants("trs")
                         .WithTrailingConsonantSequences("mn"))
-                    .UsingTransforms(0.5, x => x.Select(3))
                     .UsingFilter(x => x
                         .DoNotAllowPattern(
                             "zzzy",
@@ -80,7 +79,12 @@ namespace Syllabore.Tests
         [TestMethod]
         public void ConfigurationFile_Deserialization_Succeeds()
         {
-            var g = InitializeNameGenerator();
+            var g = InitializeNameGenerator()
+                    .UsingTransform(0.5, new TransformSet()
+                        .RandomlySelect(2)
+                        .WithTransform(x => x.AppendSyllable("tar"))
+                        .WithTransform(x => x.InsertSyllable(0, "arc"))
+                        .WithTransform(x => x.ReplaceSyllable(0, "neo")));
             var n = new NameGeneratorSerializer();
 
             n.Serialize(g, "test.txt");
@@ -96,10 +100,10 @@ namespace Syllabore.Tests
             Assert.IsTrue(g.MinimumSyllables == g2.MinimumSyllables);
             Assert.IsTrue(g.TransformerChance == g2.TransformerChance);
 
-            var t1 = (NameTransformer)g.Transformer; // The default type
-            var t2 = (NameTransformer)g2.Transformer;
+            var t1 = (TransformSet)g.Transformer; // The default type
+            var t2 = (TransformSet)g2.Transformer;
 
-            Assert.AreEqual(t1.SelectionLimit, t2.SelectionLimit);
+            Assert.AreEqual(t1.RandomSelectionCount, t2.RandomSelectionCount);
 
             var p1 = (SyllableGenerator)g.Provider;  // The default type
             var p2 = (SyllableGenerator)g2.Provider;

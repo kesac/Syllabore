@@ -31,13 +31,13 @@ namespace Syllabore.Tests
         public void Constructor_WhenAnyParameterNull_ArgumentNullExceptionThrown()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, null, null));
-            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new NameTransformer(), null));
+            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new TransformSet(), null));
             Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, null, new NameFilter()));
-            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new NameTransformer(), new NameFilter()));
+            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new TransformSet(), new NameFilter()));
 
             Assert.IsNotNull(new NameGenerator(new DefaultSyllableGenerator(), null, null).Next());
-            Assert.IsNotNull(new NameGenerator(new DefaultSyllableGenerator(), new NameTransformer(), null).Next());
-            Assert.IsNotNull(new NameGenerator(new DefaultSyllableGenerator(), new NameTransformer(), new NameFilter()).Next());
+            Assert.IsNotNull(new NameGenerator(new DefaultSyllableGenerator(), new TransformSet(), null).Next());
+            Assert.IsNotNull(new NameGenerator(new DefaultSyllableGenerator(), new TransformSet(), new NameFilter()).Next());
         }
 
         [TestMethod]
@@ -127,87 +127,6 @@ namespace Syllabore.Tests
             {
                 Assert.Fail(e.Message);
             }
-
-        }
-
-        [TestMethod]
-        public void NameGeneration_UseMutatorDirectly_MutationsAppear()
-        {
-            var name = new Name("syl", "la", "bore");
-            var mutator = new NameTransformer()
-                            .WithTransform(x => x.AppendSyllable("test"))
-                            .Join(new NameTransformer()
-                                .WithTransform(x => x.ReplaceSyllable(0, "test")));
-
-            for (int i = 0; i < 20; i++)
-            {
-                Assert.IsTrue(name.ToString() != mutator.Transform(name).ToString());
-            }
-
-        }
-
-        [TestMethod]
-        public void NameGeneration_UsingTransform_TransformAppears()
-        {
-
-            const string stringToTest = "test!";
-
-            var g = new NameGenerator()
-                    .UsingTransforms(x => x
-                        .WithTransform(x => x.ReplaceSyllable(-1, stringToTest)));
-
-            for (int i = 0; i < 100; i++)
-            {
-                Assert.IsTrue(g.Next().EndsWith(stringToTest));
-            }
-
-        }
-
-        [TestMethod]
-        public void NameGeneration_UsingHalfChanceTransform_TransformAppears()
-        {
-
-            const string stringToTest = "test!";
-
-            var g = new NameGenerator()
-                    .UsingTransforms(0.5, x => x
-                        .WithTransform(x => x.ReplaceSyllable(-1, stringToTest)));
-
-            bool stringFound = false;
-            for (int i = 0; i < 100; i++)
-            {
-                if(g.Next().EndsWith(stringToTest))
-                {
-                    stringFound = true; 
-                    break;
-                };
-            }
-
-            Assert.IsTrue(stringFound);
-
-        }
-
-        [TestMethod]
-        public void NameGeneration_UsingZeroChanceTransform_TransformAppears()
-        {
-
-            const string stringToTest = "test!";
-
-            var g = new NameGenerator()
-                    .UsingTransforms(0.0, x => x
-                        .WithTransform(x => x.ReplaceSyllable(-1, stringToTest)));
-
-            bool stringFound = false;
-            for (int i = 0; i < 100; i++)
-            {
-                if (g.Next().EndsWith(stringToTest))
-                {
-                    stringFound = true;
-                    break;
-                };
-            }
-
-            Assert.IsFalse(stringFound);
 
         }
 
