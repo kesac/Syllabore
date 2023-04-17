@@ -359,9 +359,9 @@ namespace Syllabore
         /// Used to manage the probability of vowels/consonants turning into sequences, of leading
         /// consonants starting a syllable, of trailing consonants ending a syllable, etc.
         /// </summary>
-        public SyllableGenerator WithProbability(Func<ProbabilityBuilder, ProbabilityBuilder> configure)
+        public SyllableGenerator WithProbability(Func<GeneratorProbabilityBuilder, GeneratorProbabilityBuilder> configure)
         {
-            this.Probability = configure(new ProbabilityBuilder(this.Probability)).ToProbability();
+            this.Probability = configure(new GeneratorProbabilityBuilder(this.Probability)).ToProbability();
             return this;
         }
 

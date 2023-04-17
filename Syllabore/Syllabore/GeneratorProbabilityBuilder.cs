@@ -4,16 +4,16 @@ using System.Text;
 
 namespace Syllabore
 {
-    public class ProbabilityBuilder
+    public class GeneratorProbabilityBuilder
     {
         private readonly GeneratorProbability Probability;
 
-        public ProbabilityBuilder()
+        public GeneratorProbabilityBuilder()
         {
             this.Probability = new GeneratorProbability();
         }
 
-        public ProbabilityBuilder(GeneratorProbability existing)
+        public GeneratorProbabilityBuilder(GeneratorProbability existing)
         {
             this.Probability = new GeneratorProbability()
             {
@@ -29,56 +29,56 @@ namespace Syllabore
         }
 
         // StartingSyllableLeadingVowelExists
-        public ProbabilityBuilder OfLeadingVowelsInStartingSyllable(double probability)
+        public GeneratorProbabilityBuilder OfLeadingVowelsInStartingSyllable(double probability)
         {
             this.Probability.ChanceStartingSyllableLeadingVowelExists = probability;
             return this;
         }
 
         // StartingSyllableLeadingVowelIsSequence
-        public ProbabilityBuilder OfLeadingVowelIsSequenceInStartingVowel(double probability)
+        public GeneratorProbabilityBuilder OfLeadingVowelIsSequenceInStartingVowel(double probability)
         {
             this.Probability.ChanceStartingSyllableLeadingVowelIsSequence = probability;
             return this;
         }
 
         // LeadingConsonantExists
-        public ProbabilityBuilder OfLeadingConsonants(double probability)
+        public GeneratorProbabilityBuilder OfLeadingConsonants(double probability)
         {
             this.Probability.ChanceLeadingConsonantExists = probability;
             return this;
         }
 
         // LeadingConsonantIsSequence
-        public ProbabilityBuilder OfLeadingConsonantIsSequence(double probability)
+        public GeneratorProbabilityBuilder OfLeadingConsonantIsSequence(double probability)
         {
             this.Probability.ChanceLeadingConsonantIsSequence = probability;
             return this;
         }
 
         // VowelExists
-        public ProbabilityBuilder OfVowels(double probability)
+        public GeneratorProbabilityBuilder OfVowels(double probability)
         {
             this.Probability.ChanceVowelExists = probability;
             return this;
         }
 
         // VowelIsSequence
-        public ProbabilityBuilder OfVowelIsSequence(double probability)
+        public GeneratorProbabilityBuilder OfVowelIsSequence(double probability)
         {
             this.Probability.ChanceVowelIsSequence = probability;
             return this;
         }
 
         // TrailingConsonantExists
-        public ProbabilityBuilder OfTrailingConsonants(double probability)
+        public GeneratorProbabilityBuilder OfTrailingConsonants(double probability)
         {
             this.Probability.ChanceTrailingConsonantExists = probability;
             return this;
         }
 
         // TrailingConsonantIsSequence
-        public ProbabilityBuilder OfTrailingConsonantIsSequence(double probability)
+        public GeneratorProbabilityBuilder OfTrailingConsonantIsSequence(double probability)
         {
             this.Probability.ChanceTrailingConsonantIsSequence = probability;
             return this;

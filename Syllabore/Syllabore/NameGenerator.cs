@@ -292,12 +292,12 @@ namespace Syllabore
             return this;
         }
 
-        public NameGenerator UsingProbability(Func<ProbabilityBuilder, ProbabilityBuilder> configure)
+        public NameGenerator UsingProbability(Func<GeneratorProbabilityBuilder, GeneratorProbabilityBuilder> configure)
         {
             if (this.Provider is SyllableGenerator)
             {
                 var g = (SyllableGenerator)this.Provider;
-                g.Probability = configure(new ProbabilityBuilder(g.Probability)).ToProbability();
+                g.Probability = configure(new GeneratorProbabilityBuilder(g.Probability)).ToProbability();
             }
             return this;
         }
