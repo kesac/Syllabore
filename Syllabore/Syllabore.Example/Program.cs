@@ -192,17 +192,17 @@ namespace Syllabore.Example
                         .UsingSyllables(x => x
                             .WithVowels("ae")
                             .WithLeadingConsonants("str"))
-                        .UsingTransformer(x => x
-                            .Select(1).Chance(0.5)
+                        .UsingTransforms(0.5, x => x
                             .WithTransform(x => x.AppendSyllable("gard")).Weight(2)
-                            .WithTransform(x => x.AppendSyllable("dar")))
+                            .WithTransform(x => x.AppendSyllable("dar"))
+                            .Select(1))
                         .UsingSyllableCount(3);
 
                 // In this example, the name generation is creating
                 // variations of the name *gard and *dar, with the former
                 // being twice more likely to be generated.
 
-                for(int i = 0; i < 5; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -240,8 +240,8 @@ namespace Syllabore.Example
                             .WithLeadingConsonants("vstlr")
                             .WithTrailingConsonants("zrt")
                             .WithVowelSequences("ey", "ay", "oy"))
-                        .UsingTransformer(m => m
-                            .Select(1).Chance(0.99)
+                        .UsingTransforms(0.99, m => m
+                            .Select(1)
                             .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
                             .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
                             .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
@@ -281,8 +281,8 @@ namespace Syllabore.Example
                             .WithLeadingConsonants("vstlr")
                             .WithTrailingConsonants("zrt")
                             .WithVowelSequences("ey", "ay", "oy"))
-                        .UsingTransformer(m => m
-                            .Select(1).Chance(0.99)
+                        .UsingTransforms(0.99, m => m
+                            .Select(1)
                             .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
                             .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
                             .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)

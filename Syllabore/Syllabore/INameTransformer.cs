@@ -9,6 +9,7 @@ namespace Syllabore
     /// </summary>
     public interface INameTransformer
     {
+        /*
         /// <summary>
         /// <para>
         /// A number from 0 to 1 inclusive that represents the probablity
@@ -22,6 +23,7 @@ namespace Syllabore
         /// </para>
         /// </summary>
         double TransformChance { get; set; }
+        */
 
         Name Transform(Name sourceName);
     }

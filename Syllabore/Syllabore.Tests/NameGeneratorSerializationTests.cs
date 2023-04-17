@@ -21,8 +21,7 @@ namespace Syllabore.Tests
                         .WithVowelSequences("ey")
                         .WithTrailingConsonants("trs")
                         .WithTrailingConsonantSequences("mn"))
-                    .UsingTransformer(x => x
-                        .Select(3).Chance(0.5))
+                    .UsingTransforms(0.5, x => x.Select(3))
                     .UsingFilter(x => x
                         .DoNotAllowPattern(
                             "zzzy",
@@ -95,7 +94,7 @@ namespace Syllabore.Tests
             Assert.IsTrue(g.MaximumRetries == g2.MaximumRetries);
             Assert.IsTrue(g.MaximumSyllables == g2.MaximumSyllables);
             Assert.IsTrue(g.MinimumSyllables == g2.MinimumSyllables);
-            Assert.IsTrue(g.Transformer.TransformChance == g2.Transformer.TransformChance);
+            Assert.IsTrue(g.TransformerChance == g2.TransformerChance);
 
             var t1 = (NameTransformer)g.Transformer; // The default type
             var t2 = (NameTransformer)g2.Transformer;

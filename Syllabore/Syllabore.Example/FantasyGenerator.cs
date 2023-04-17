@@ -18,7 +18,7 @@ namespace Syllabore.Example
                     .WithLeadingConsonants("lmnstr").Weight(4)
                     .WithLeadingConsonants("kc").Weight(2)
                     .WithLeadingConsonants("yz").Weight(1))
-                .UsingTransformer(x => x // Note: only one mutation gets chosen out of these four per call to Next()
+                .UsingTransforms(x => x // Note: only one mutation gets chosen out of these four per call to Next()
                     .WithTransform(y => y.AppendSyllable("tia"))
                     .WithTransform(y => y.AppendSyllable("ria"))
                     .WithTransform(y => y.AppendSyllable("lis"))

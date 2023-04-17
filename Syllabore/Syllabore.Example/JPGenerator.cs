@@ -21,7 +21,7 @@ namespace Syllabore.Example
                     .WithVowels("eu")
                     .WithProbability(x => x
                         .OfLeadingConsonantIsSequence(0.1)))
-                .UsingTransformer(x => x
+                .UsingTransforms(x => x
                     .WithTransform(x => x
                         .ReplaceAll("hu", "fu").ReplaceAll("si", "shi")
                         .ReplaceAll("ti", "chi").ReplaceAll("tu", "tsu")))

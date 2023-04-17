@@ -146,7 +146,70 @@ namespace Syllabore.Tests
 
         }
 
-        
+        [TestMethod]
+        public void NameGeneration_UsingTransform_TransformAppears()
+        {
+
+            const string stringToTest = "test!";
+
+            var g = new NameGenerator()
+                    .UsingTransforms(x => x
+                        .WithTransform(x => x.ReplaceSyllable(-1, stringToTest)));
+
+            for (int i = 0; i < 100; i++)
+            {
+                Assert.IsTrue(g.Next().EndsWith(stringToTest));
+            }
+
+        }
+
+        [TestMethod]
+        public void NameGeneration_UsingHalfChanceTransform_TransformAppears()
+        {
+
+            const string stringToTest = "test!";
+
+            var g = new NameGenerator()
+                    .UsingTransforms(0.5, x => x
+                        .WithTransform(x => x.ReplaceSyllable(-1, stringToTest)));
+
+            bool stringFound = false;
+            for (int i = 0; i < 100; i++)
+            {
+                if(g.Next().EndsWith(stringToTest))
+                {
+                    stringFound = true; 
+                    break;
+                };
+            }
+
+            Assert.IsTrue(stringFound);
+
+        }
+
+        [TestMethod]
+        public void NameGeneration_UsingZeroChanceTransform_TransformAppears()
+        {
+
+            const string stringToTest = "test!";
+
+            var g = new NameGenerator()
+                    .UsingTransforms(0.0, x => x
+                        .WithTransform(x => x.ReplaceSyllable(-1, stringToTest)));
+
+            bool stringFound = false;
+            for (int i = 0; i < 100; i++)
+            {
+                if (g.Next().EndsWith(stringToTest))
+                {
+                    stringFound = true;
+                    break;
+                };
+            }
+
+            Assert.IsFalse(stringFound);
+
+        }
 
     }
 }

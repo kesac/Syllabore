@@ -17,7 +17,7 @@ namespace Syllabore
         private Random Random;
         public List<Transform> Transforms { get; set; }
         public int SelectionLimit { get; set; }
-        public double TransformChance { get; set; }
+        // public double TransformChance { get; set; }
 
         /// <summary>
         /// Instantiates a new <see cref="NameTransformer"/>
@@ -27,7 +27,7 @@ namespace Syllabore
             this.Random = new Random();
             this.Transforms = new List<Transform>();
             this.SelectionLimit = 1;
-            this.TransformChance = 1.0;
+            // this.TransformChance = 1.0;
         }
 
         /// <summary>
@@ -38,8 +38,8 @@ namespace Syllabore
         {
             var result = new Name(sourceName);
 
-            if (this.Random.NextDouble() < this.TransformChance)
-            {
+            // if (this.Random.NextDouble() < this.TransformChance)
+            // {
                 for (int i = 0; this.Transforms.Count > 0 && i < this.SelectionLimit; i++)
                 {
                     //var transform = this.GetWeightedSelection();
@@ -73,7 +73,7 @@ namespace Syllabore
                         transform.Apply(result);
                     }
                 }
-            }
+            // }
             
             return result;
         }
@@ -121,6 +121,7 @@ namespace Syllabore
             return this;
         }
 
+        /*
         /// <summary>
         /// Sets the probability a transform will be applied.
         /// </summary>
@@ -136,6 +137,7 @@ namespace Syllabore
 
             return this;
         }
+        */
 
 
     }
