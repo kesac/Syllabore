@@ -22,9 +22,9 @@ namespace Syllabore.Example.Spaceship
                     .WithConsonants("SHMLAMN").Weight(1)
                     .WithConsonants("UVX").Weight(2) // These letters will appear twice more likely than others
                     .WithProbability(x => x
-                        .VowelExists(0.0)
-                        .LeadingConsonantExists(1.0)
-                        .TrailingConsonantExists(0.0)))
+                        .OfVowels(0.0)
+                        .OfLeadingConsonants(1.0)
+                        .OfTrailingConsonants(0.0)))
                 .UsingFilter(x => x
                     .DoNotAllowPattern(@"(\w)\1\1")) // Regex for three consecutive same letters
                 .UsingSyllableCount(3); // In our case, this changes prefix length, not syllable count

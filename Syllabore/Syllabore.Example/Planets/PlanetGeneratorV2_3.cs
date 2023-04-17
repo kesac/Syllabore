@@ -17,7 +17,7 @@ namespace Syllabore.Example.Planets
                 .WithVowels("aieou")
                 .WithLeadingConsonants("bcdfghklmnpqrstvxyz")
                 .WithTrailingConsonants("cdfgklmnprstv")
-                .WithProbability(x => x.TrailingConsonantExists(0.50)));
+                .WithProbability(x => x.OfTrailingConsonants(0.50)));
 
             var f = new NameFilter();
             f.DoNotAllowEnding("f", "g", "j", "v");

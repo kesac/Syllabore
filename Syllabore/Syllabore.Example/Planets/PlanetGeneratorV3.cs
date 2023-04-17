@@ -22,7 +22,7 @@ namespace Syllabore.Example.Planets
                 .WithLeadingConsonants("qkxz").Weight(1)
                 .WithTrailingConsonants("dlmnprst").Weight(2)
                 .WithTrailingConsonants("cdfkvg").Weight(1)
-                .WithProbability(x => x.TrailingConsonantExists(0.50)));
+                .WithProbability(x => x.OfTrailingConsonants(0.50)));
 
             this.UsingFilter(x => x
                 .DoNotAllowEnding("f", "g", "j", "v")

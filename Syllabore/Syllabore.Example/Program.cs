@@ -13,8 +13,12 @@ namespace Syllabore.Example
     {
         public static void Main(string[] args)
         {
-            { 
-                // You can use name generators without any customization
+            {
+                // You can use name generators without any customization.
+                // A "default" name generator will use all vowels and
+                // consonants of the English alphabet with no custom weighting
+                // or filtering. Expect the output to be wild and exotic.
+
                 var g = new NameGenerator();
 
                 for (int i = 0; i < 5; i++)
@@ -22,20 +26,23 @@ namespace Syllabore.Example
                     Console.WriteLine(g.Next());
                 }
 
-                // A "default" name generator will use all vowels and
-                // consonants of the English alphabet with no custom weighting
-                // or filtering. Expect the output to be wild and exotic.
-
             }
 
             Separator();
 
             {
-                // To tailor name generation, first think about
+                // To tailor name generation, specify
                 // what vowels and consonants you want to use:
                 var g = new NameGenerator("ae", "strml");
 
-                // Or...
+                // Or by explicitly declaring a SyllableGenerator first
+                var s = new SyllableGenerator()
+                            .WithVowels("ae")
+                            .WithConsonants("strml");
+
+                g = new NameGenerator().UsingSyllables(s);
+
+                // Or in a more compact way...
                 g = new NameGenerator()
                         .UsingSyllables(x => x
                             .WithVowels("ae")
@@ -43,14 +50,14 @@ namespace Syllabore.Example
             }
             {
                 // Consonants can also be defined based
-                // a desired positioning:
+                // a desired positioning...
                 var g = new NameGenerator()
                         .UsingSyllables(x => x
                             .WithVowels("ae")
                             .WithLeadingConsonants("str")
                             .WithTrailingConsonants("mnl"));
 
-                // In a syllable, leading consonants appear before
+                // ...In a syllable, leading consonants appear before
                 // the vowel and trailing consonants appear after
 
             }
@@ -104,8 +111,19 @@ namespace Syllabore.Example
                             .WithLeadingConsonants("str")
                             .WithTrailingConsonants("mnl")
                             .WithProbability(x => x
-                                .LeadingConsonantExists(1.0)
-                                .TrailingConsonantExists(0.20)));
+                                .OfLeadingConsonants(1.0)
+                                .OfTrailingConsonants(0.20)));
+
+                // Or alternatively
+
+                g = new NameGenerator()
+                        .UsingSyllables(x => x
+                            .WithVowels("ae")
+                            .WithLeadingConsonants("str")
+                            .WithTrailingConsonants("mnl"))
+                        .UsingProbability(x => x
+                            .OfLeadingConsonants(1.0)
+                            .OfTrailingConsonants(0.20));
 
                 // In this example, the name generator will use syllables that always have
                 // a leading consonant, but only have a trailing one 20% of the
@@ -152,7 +170,7 @@ namespace Syllabore.Example
                                 .DoNotAllow(@"(\w)\1\1")                // Invalidate any sequence of 3 or more identical letters
                                 .DoNotAllow(@"([^aeiouAEIOU])\1\1\1")); // Invalidate any sequence of 4 or more consonants
 
-                // or
+                // Or in a more compact way...
                 g = new NameGenerator()
                         .DoNotAllow("j$", "p$", "q$", "w$")             // Invalidate these awkward endings
                         .DoNotAllow(@"(\w)\1\1")                // Invalidate any sequence of 3 or more identical letters

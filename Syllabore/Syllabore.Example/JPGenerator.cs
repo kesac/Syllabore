@@ -20,15 +20,14 @@ namespace Syllabore.Example
                     .WithVowels("io").Weight(2)
                     .WithVowels("eu")
                     .WithProbability(x => x
-                        .LeadingConsonantBecomesSequence(0.1)
-                        .StartingSyllable.LeadingVowelExists(0.20)))
+                        .OfLeadingConsonantIsSequence(0.1)))
                 .UsingTransformer(x => x
                     .WithTransform(x => x
                         .ReplaceAll("hu", "fu").ReplaceAll("si", "shi")
                         .ReplaceAll("ti", "chi").ReplaceAll("tu", "tsu")))
                 .UsingFilter(x => x
                     .DoNotAllowEnding("[aeiou]{2}") // Avoids two-vowel endings
-                    .DoNotAllowPattern("yi", "ye", "wi", "wu", "we", "sf"))
+                    .DoNotAllowSubstring("yi", "ye", "wi", "wu", "we", "sf"))
                 .UsingSyllableCount(2, 4);
 
             // Example output:

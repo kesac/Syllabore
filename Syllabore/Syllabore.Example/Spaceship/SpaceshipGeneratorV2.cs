@@ -21,9 +21,9 @@ namespace Syllabore.Example.Spaceship
                 .UsingSyllables(x => x
                     .WithConsonants("UVXSHMLAMN")
                     .WithProbability(x => x
-                        .VowelExists(0.0)
-                        .LeadingConsonantExists(1.0)
-                        .TrailingConsonantExists(0.0)));
+                        .OfVowels(0.0)
+                        .OfLeadingConsonants(1.0)
+                        .OfTrailingConsonants(0.0)));
 
             _shipGenerator = new NameGenerator();
         }
