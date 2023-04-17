@@ -42,7 +42,7 @@ namespace Syllabore.Tests
             var p = new SyllableGenerator()
                         .WithVowels("aei")
                         .WithConsonants("str")
-                        .WithProbability(x => x.StartingSyllable.LeadingVowelExists(1));
+                        .WithProbability(x => x.OfLeadingVowelsInStartingSyllable(1));
 
             var g = new NameGenerator().UsingSyllables(p);
                     

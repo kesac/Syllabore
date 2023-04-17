@@ -107,9 +107,9 @@ namespace Syllabore.Tests
                     .WithVowelSequences("ea")
                     .WithTrailingConsonantSequences("bz")
                     .WithProbability(x => x
-                        .VowelExists(1.0)
-                        .VowelBecomesSequence(1.0)
-                        .StartingSyllable.LeadingVowelExists(0.0)))
+                        .OfVowels(1.0)
+                        .OfVowelIsSequence(1.0)
+                        .OfLeadingVowelsInStartingSyllable(0.0)))
                 //.WithProbability(vowelBecomesVowelSequence: 1.0)
                 //.DisallowStartingSyllableLeadingVowels()
                 //.DisallowLeadingVowelsInStartingSyllables())
