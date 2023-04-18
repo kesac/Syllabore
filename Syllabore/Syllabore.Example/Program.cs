@@ -40,7 +40,7 @@ namespace Syllabore.Example
                             .WithVowels("ae")
                             .WithConsonants("strml");
 
-                g = new NameGenerator().UsingSyllables(s);
+                g = new NameGenerator(s);
 
                 // Or in a more compact way...
                 g = new NameGenerator()
@@ -164,16 +164,19 @@ namespace Syllabore.Example
 
                 // Filters can be used to improve output, by preventing
                 // specific substrings or patterns from occuring:
+                var f = new NameFilter()
+                        .DoNotAllowStart("thr")               // Prevents "Thrond", but not "Athrun"
+                        .DoNotAllowSubstring("quo", "tse")    // Prevents "Tsen", "Betsey", "Quon"
+                        .DoNotAllowEnding("j", "p", "q", "w") // Prevents "Kaj", but not "Javal"
+                        .DoNotAllow(@"(\w)\1\1");             // Prevents "Mareeen", but not "Mareen"
+                
                 var g = new NameGenerator()
-                            .UsingFilter(x => x
-                                .DoNotAllowEnding("j","p","q","w")             // Invalidate these awkward endings
-                                .DoNotAllow(@"(\w)\1\1")                // Invalidate any sequence of 3 or more identical letters
-                                .DoNotAllow(@"([^aeiouAEIOU])\1\1\1")); // Invalidate any sequence of 4 or more consonants
+                        .UsingFilter(f);
 
                 // Or in a more compact way...
                 g = new NameGenerator()
-                        .DoNotAllow("j$", "p$", "q$", "w$")             // Invalidate these awkward endings
-                        .DoNotAllow(@"(\w)\1\1")                // Invalidate any sequence of 3 or more identical letters
+                        .DoNotAllow("j$", "p$", "q$", "w$")    // Invalidate these awkward endings
+                        .DoNotAllow(@"(\w)\1\1")               // Invalidate any sequence of 3 or more identical letters
                         .DoNotAllow(@"([^aeiouAEIOU])\1\1\1"); // Invalidate any sequence of 4 or more 
 
                 for (int i = 0; i < 5; i++)
@@ -189,11 +192,20 @@ namespace Syllabore.Example
                 // Transformers can be used to apply a transform
                 // to a name during the generation process:
                 var g = new NameGenerator()
-                        .UsingSyllables(x => x
-                            .WithVowels("ae")
-                            .WithLeadingConsonants("str"))
-                        .UsingTransform(0.5, x => x.AppendSyllable("gard"))
-                        .UsingSyllableCount(3);
+                        .UsingTransform(new TransformSet()
+                            .WithTransform(x => x.ReplaceSyllable(0, "te")).Weight(7)
+                            .WithTransform(x => x.AppendSyllable("re")).Weight(3)
+                            .RandomlySelect(1));
+
+
+                g = new NameGenerator("aeo","str")
+                    .UsingTransform(x => x
+                        .When(0, "s").AppendSyllable("la"));
+
+                for (int i = 0; i < 100; i++)
+                {
+                    Console.WriteLine("! " + g.Next());
+                }
 
                 // Or simpler
                 g = new NameGenerator()
@@ -258,7 +270,7 @@ namespace Syllabore.Example
                             .WithLeadingConsonants("vstlr")
                             .WithTrailingConsonants("zrt")
                             .WithVowelSequences("ey", "ay", "oy"))
-                        .UsingTransform(0.99, new TransformSet()
+                        .UsingTransform(new TransformSet()
                             .RandomlySelect(1)
                             .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
                             .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
@@ -378,7 +390,7 @@ namespace Syllabore.Example
                         .UsingSyllables(new SyllableSet(2, 24, 2)
                             .WithStartingSyllable("ko", "ro")
                             .WithEndingSyllable("re", "ke")
-                            .WithProvider(x => x
+                            .WithGenerator(x => x
                                 .WithVowels("ae").Weight(2)
                                 .WithVowels("iou")
                                 .WithLeadingConsonants("str").Weight(2)

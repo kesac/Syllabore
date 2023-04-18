@@ -44,7 +44,7 @@ namespace Syllabore.Tests
             var output = "NameGenerator_WithSyllableSet.json";
 
             var p = new SyllableSet(2, 16, 2)
-                    .WithProvider(x => x
+                    .WithGenerator(x => x
                         .WithConsonants("str")
                         .WithVowels("aeiou"))
                     .WithStartingSyllable("ra")
