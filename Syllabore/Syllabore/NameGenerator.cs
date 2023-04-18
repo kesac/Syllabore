@@ -314,30 +314,6 @@ namespace Syllabore
             return this;
         }
 
-        /// ----
-
-        /// <summary>
-        /// Deprecated. Use <see cref="UsingTransforms(Func{TransformSet, TransformSet})"/> instead.
-        /// </summary>
-
-        [Obsolete("Use UsingSyllables() instead", false)]
-
-        public NameGenerator UsingTransformer(Func<TransformSet, TransformSet> configure)
-        {
-            return this.UsingTransformer(configure);
-        }
-
-        /// <summary>
-        /// Deprecated. Use <see cref="UsingTransform(INameTransformer))"/> instead.
-        /// </summary>
-        [Obsolete("Use UsingSyllables() instead", false)]
-
-        public NameGenerator UsingTransformer(INameTransformer transformer)
-        {
-            return this.UsingTransformer(transformer);
-        }
-
-
         #endregion
 
         #region Generator Settings
