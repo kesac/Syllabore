@@ -82,7 +82,7 @@ Install-Package Syllabore
 
 ### Godot
 Edit your ```.csproj``` file and add a ```PackageReference``` to Syllabore. Your file should look something like this:
-```
+```xml
 <Project Sdk="Godot.NET.Sdk/4.0.1">
   ...
   <ItemGroup>
