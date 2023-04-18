@@ -51,7 +51,7 @@ Each ```NameGenerator``` can be configured to prevent specific substrings or pat
 Here is a basic example of preventing substrings from appearing:
 ```csharp
 var g = new NameGenerator()
-        .DoNotAllow("ist") // Will prevent name like "Misty"
+        .DoNotAllow("ist") // Will prevent names like "Misty"
         .DoNotAllow("ck"); // Will prevent names like "Brock"
 ```
 
