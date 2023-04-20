@@ -12,9 +12,8 @@
 ## Table of Contents
  1. [Quick Start](#quick-start)
  1. [Tailoring Characters](#tailoring-characters)
- 1. [Transformations](#transformations)
  1. [Filtering](#filtering-output)
- 1. [Putting It All Together](#putting-it-all-together)
+ 1. [Transformations](#transformations)
  1. [Installation](#installation)
  1. [Compatibility](#compatibility)
  1. [License](#license)
@@ -34,87 +33,45 @@ Ocri
 ```
 
 ## Tailoring Characters
-Each ```NameGenerator``` uses a ```SyllableProvider``` internally. You can specify the characters (_graphemes_) to use in name generation by supplying your own ```SyllableProvider```:
+For simple generators, you can supply the vowels and consonants to use through the constructor:
 ```csharp
-var g = new NameGenerator()
-        .UsingProvider(x => x
-            .WithVowels("ae")
-            .WithConsonants("strmnl"));     
+var g = new NameGenerator("ae", "srnl");   
 ```
-This example will create names like:
+Names from this generator will only ever have the characters `a` and `e` for vowels, and the characters `s` `r` `n` and `l` for consonants. Calls to ```Next()``` will produce names like:
 ```
 Lena
 Salna
 Rasse
 ```
-See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.1:-Tailoring-Characters) for more examples on how to customize consonant positioning, vowel/consonant sequences, and grapheme weights!
-
-## Transformations
-A ```NameTransformer``` can be used to apply a transformation to a name during the generation process. This is optional and a vanilla ```NameGenerator``` will not have one by default.
-
-Here's an example of transforming names to have specific suffixes:
-```csharp
-var g = new NameGenerator()
-        .UsingSyllableCount(1, 2)
-        .UsingTransformer(x => x
-            .WithTransform(x => x.AppendSyllable("gard"))
-            .WithTransform(x => x.AppendSyllable("llia")));
-```
-This produces names like:
-```
-Togard
-Heshigard
-Vallia
-```
-See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.2:-Transformations) for more information and additional examples.
+See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.1%EA%9E%89-Tailoring-Characters) for more examples on how to control things like vowel sequences, consonant positioning, and more!
 
 ## Filtering Output
-You can use a ```NameFilter``` to prevent specific substrings or patterns from occurring during name generation. Filters are optional and a vanilla ```NameGenerator``` will not have one by default.
+Each ```NameGenerator``` can be configured to prevent specific substrings or patterns from showing up in names. Filtering is completely optional, but is useful in avoiding awkward sounding combinations of characters.
 
-Here is an example to avoid names that start or end with certain characters:
+Here is a basic example of preventing substrings from appearing:
 ```csharp
 var g = new NameGenerator()
-        .UsingFilter(x => x
-            .DoNotAllowStart("x", "z")
-            .DoNotAllowEnding("j", "p", "q"));
+        .DoNotAllow("ist") // Will prevent names like "Misty"
+        .DoNotAllow("ck"); // Will prevent names like "Brock"
 ```
-A ```NameGenerator``` using this filter will _not_ produce names like "Xula" or "Tesoj".
 
-See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.3:-Filtering-Output) for more information and additional examples.
+See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.2%EA%9E%89-Filtering-Output) for additional examples.
 
-## Putting It All Together
-Here is a more complicated name generator that could be suitable for naming cities:
+## Transformations
+A ```Transform``` is a mechanism for changing a source name into a new, modified name. Call ```UsingTransform()``` on a ```NameGenerator``` to specify one or more transformations:
 ```csharp
 var g = new NameGenerator()
-        .UsingProvider(p => p
-            .WithVowels("aeoy")
-            .WithLeadingConsonants("vstlr") // Only used to start a syllable
-            .WithTrailingConsonants("zrt")  // Only used to end a syllable
-            .WithVowelSequences("ey", "ay", "oy"))
-        .UsingTransformer(m => m
-            .Select(1).Chance(0.99) // 99% chance to choose 1 transform
-            .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
-            .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
-            .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
-            .WithTransform(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
-            .WithTransform(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis")))
-        .UsingFilter(v => v
-            .DoNotAllow("yv", "yt", "zs")
-            .DoNotAllowPattern(
-                @".{12,}",
-                @"(\w)\1\1",              // Prevents any letter from occuring three times in a row
-                @".*([y|Y]).*([y|Y]).*",  // Prevents double y
-                @".*([z|Z]).*([z|Z]).*")) // Prevents double z
-        .UsingSyllableCount(2, 4);
+        .UsingTransform(x => x
+            .ReplaceSyllable(0, "zo") // Replace the first syllable
+            .AppendSyllable("ri"));   // Adds a new syllable to end of name
 ```
-This example would create names like:
+Calling ```Next()``` produces names like:
 ```
-Resepolis
-Varosy
-Grantero
+Zocari
+Zoshari
+Zojiri
 ```
-
-Check out the [wiki](https://github.com/kesac/Syllabore/wiki) for more guides!
+See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.3%EA%9E%89-Transformations) for additional examples.
 
 ## Installation
 ### .NET apps
@@ -125,7 +82,7 @@ Install-Package Syllabore
 
 ### Godot
 Edit your ```.csproj``` file and add a ```PackageReference``` to Syllabore. Your file should look something like this:
-```
+```xml
 <Project Sdk="Godot.NET.Sdk/4.0.1">
   ...
   <ItemGroup>
