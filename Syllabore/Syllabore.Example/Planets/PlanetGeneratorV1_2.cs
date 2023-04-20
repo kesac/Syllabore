@@ -13,13 +13,13 @@ namespace Syllabore.Example.Planets
         {
             this.UsingSyllableCount(2, 3);
 
-            var p = new SyllableGenerator();
-            p.WithVowels("aieou");
-            p.WithLeadingConsonants("bcdfghklmnpqrstvxyz");
-            p.WithTrailingConsonants("cdfgklmnprstv");
-            p.WithProbability(x => x.OfTrailingConsonants(0.50));
+            var s = new SyllableGenerator()
+                    .WithVowels("aieou")
+                    .WithLeadingConsonants("bcdfghklmnpqrstvxyz")
+                    .WithTrailingConsonants("cdfgklmnprstv")
+                    .WithProbability(x => x.OfTrailingConsonants(0.50));
 
-            this.UsingSyllables(p);
+            this.UsingSyllables(s);
 
         }
     }

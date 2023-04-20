@@ -21,15 +21,15 @@ namespace Syllabore.Example.Planets
 
             var f = new NameFilter();
             f.DoNotAllowEnding("f", "g", "j", "v");
-            f.DoNotAllowPattern("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
+            f.DoNotAllow("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
 
-            f.DoNotAllowPattern("(q[^u])"); // Q must always be followed by a u
-            f.DoNotAllowPattern("([^tsao]w)"); // W must always be preceded with a t, s, a, or o
+            f.DoNotAllow("(q[^u])"); // Q must always be followed by a u
+            f.DoNotAllow("([^tsao]w)"); // W must always be preceded with a t, s, a, or o
 
             // Some awkward looking combinations
-            f.DoNotAllow("pn", "zz", "yy", "xx");
-            f.DoNotAllowPattern("(y[^aeiou])"); // Avoids things like yt, yw, yz, etc.
-            f.DoNotAllowPattern("(p[^aeioustrlh])"); // Avoids things like pb, pq, pz, etc.
+            f.DoNotAllowSubstring("pn", "zz", "yy", "xx");
+            f.DoNotAllow("(y[^aeiou])"); // Avoids things like yt, yw, yz, etc.
+            f.DoNotAllow("(p[^aeioustrlh])"); // Avoids things like pb, pq, pz, etc.
 
             this.UsingFilter(f);
         }

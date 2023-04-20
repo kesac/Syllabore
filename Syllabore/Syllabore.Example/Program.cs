@@ -472,21 +472,22 @@ namespace Syllabore.Example
 
             {
                 // eg. How to combine two NameGenerators
-                var g = new NameFormatter("{firstname} {lastname}")
-                        .UsingGenerator("firstname", new NameGenerator()
-                            .UsingSyllableCount(2, 3)
-                            .UsingSyllables(x => x
-                                .WithConsonants("strlmn")
-                                .WithVowels("aeo")))
-                        .UsingGenerator("lastname", new NameGenerator()
-                            .UsingSyllableCount(2, 4)
-                            .UsingSyllables(x => x
-                                .WithConsonants("bcdhky")
-                                .WithVowels("oiyu")));
+                var givenNames = new NameGenerator("ae", "lmn");
+
+                var familyNames = new NameGenerator()
+                    .UsingSyllables(x => x
+                        .WithVowels("aeou")
+                        .WithLeadingConsonants("strlmn"))
+                    .UsingTransform(0.5, x => x.AppendSyllable("dar"))
+                    .UsingSyllableCount(3);
+
+                var f = new NameFormatter("{firstname} {lastname}")
+                        .UsingGenerator("firstname", givenNames)
+                        .UsingGenerator("lastname", familyNames);
 
                 for (int i = 0; i < 10; i++)
                 {
-                    Console.WriteLine(g.Next());
+                    Console.WriteLine("!!" + f.Next());
                 }
             }
 

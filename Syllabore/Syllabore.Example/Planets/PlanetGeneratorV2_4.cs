@@ -21,12 +21,12 @@ namespace Syllabore.Example.Planets
 
             this.UsingFilter(x => x
                 .DoNotAllowEnding("f", "g", "j", "v")
-                .DoNotAllowPattern("([^aieou]{3})")
-                .DoNotAllowPattern("(q[^u])")
-                .DoNotAllowPattern("([^tsao]w)")
-                .DoNotAllow("pn", "zz", "yy", "xx")
-                .DoNotAllowPattern("(y[^aeiou])")
-                .DoNotAllowPattern("(p[^aeioustrlh])"));
+                .DoNotAllow("([^aieou]{3})")
+                .DoNotAllow("(q[^u])")
+                .DoNotAllow("([^tsao]w)")
+                .DoNotAllowSubstring("pn", "zz", "yy", "xx")
+                .DoNotAllow("(y[^aeiou])")
+                .DoNotAllow("(p[^aeioustrlh])"));
         }
 
     }
