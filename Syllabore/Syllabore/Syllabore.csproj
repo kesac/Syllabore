@@ -14,7 +14,7 @@
     <PackageTags>csharp name-generation generation syllable syllables fantasy name generator name-generator fantasy-name</PackageTags>
     <Version>2.2.1</Version>
     <AssemblyVersion>2.2.1.0</AssemblyVersion>
-    <FileVersion>2.2.0.0</FileVersion>
+    <FileVersion>2.2.1.0</FileVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
