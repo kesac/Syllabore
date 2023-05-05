@@ -386,8 +386,12 @@ namespace Syllabore.Example
             Separator();
 
             {
-                var g = new NameGenerator()
-                        .UsingSyllables(new SyllableSet(2, 24, 2)
+
+                var s = new SyllableSet();
+                var g = new NameGenerator(s);
+
+                g = new NameGenerator()
+                        .UsingSyllables(new SyllableSet(2, 4, 8)
                             .WithStartingSyllable("ko", "ro")
                             .WithEndingSyllable("re", "ke")
                             .WithGenerator(x => x
@@ -395,13 +399,25 @@ namespace Syllabore.Example
                                 .WithVowels("iou")
                                 .WithLeadingConsonants("str").Weight(2)
                                 .WithLeadingConsonants("lmncvbyzwkd")))
-                        .UsingSyllableCount(2,4);
+                        .UsingSyllableCount(3);
+
+
+                s = new SyllableSet(2, 8, 2)
+                        .WithStartingSyllable("ko", "ro") // Specific syllables provided
+                        .WithEndingSyllable("re", "ke")   // Specific syllables provided
+                        .WithGenerator(x => x
+                            .WithVowels("ae")
+                            .WithLeadingConsonants("strlmn"));
+
+                g = new NameGenerator()
+                    .UsingSyllables(s)
+                    .UsingSyllableCount(3);
 
                 // In this example, the name generation is creating
                 // variations of the name *gard and *dar, with the former
                 // being twice more likely to be generated.
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -487,7 +503,7 @@ namespace Syllabore.Example
 
                 for (int i = 0; i < 10; i++)
                 {
-                    Console.WriteLine("!!" + f.Next());
+                    Console.WriteLine(f.Next());
                 }
             }
 
