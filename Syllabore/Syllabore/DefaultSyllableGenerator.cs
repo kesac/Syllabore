@@ -20,9 +20,9 @@ namespace Syllabore
             this.WithFinalConsonants("dlmnrstx");
             this.WithFinalConsonantSequences("st", "rn", "lt");
             this.WithProbability(x => x
-                    .OfLeadingConsonantIsSequence(0.10)
-                    .OfFinalConsonants(0.50)
-                    .OfFinalConsonantIsSequence(0.25));
+                    .OfLeadingConsonants(0.95, 0.25)
+                    .OfFinalConsonants(0.50, 0.25));
+            
         }
     }
 }

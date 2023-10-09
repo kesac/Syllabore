@@ -50,11 +50,13 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Sets the probability that a leading vowel is a sequence in the starting syllable.
+        /// Sets the probability that a leading vowel exists in the starting syllable
+        /// and the probability that the vowel is a sequence.
         /// </summary>
-        public GeneratorProbabilityBuilder OfLeadingVowelIsSequenceInStartingSyllable(double probability)
+        public GeneratorProbabilityBuilder OfLeadingVowelsInStartingSyllable(double probability, double sequenceProbability)
         {
-            this.Probability.ChanceStartingSyllableLeadingVowelIsSequence = probability;
+            this.Probability.ChanceStartingSyllableLeadingVowelExists = probability;
+            this.Probability.ChanceStartingSyllableLeadingVowelIsSequence = sequenceProbability;
             return this;
         }
 
@@ -68,13 +70,16 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Sets the probability that a leading consonant in any syllable is a consonant sequence.
+        /// Sets the probability that a leading consonant exists within any syllable
+        /// and the probability the consonant is a sequence.
         /// </summary>
-        public GeneratorProbabilityBuilder OfLeadingConsonantIsSequence(double probability)
+        public GeneratorProbabilityBuilder OfLeadingConsonants(double probability, double sequenceProbability)
         {
-            this.Probability.ChanceLeadingConsonantIsSequence = probability;
+            this.Probability.ChanceLeadingConsonantExists = probability;
+            this.Probability.ChanceLeadingConsonantIsSequence = sequenceProbability;
             return this;
         }
+
 
         /// <summary>
         /// Sets the probability that a vowel exists within any syllable.
@@ -86,13 +91,16 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Sets the probability that a vowel in any syllable is a vowel sequence.
+        /// Sets the probability that a vowel exists within any syllable
+        /// and the probability that the vowel is a sequence.
         /// </summary>
-        public GeneratorProbabilityBuilder OfVowelIsSequence(double probability)
+        public GeneratorProbabilityBuilder OfVowels(double probability, double sequenceProbability)
         {
-            this.Probability.ChanceVowelIsSequence = probability;
+            this.Probability.ChanceVowelExists = probability;
+            this.Probability.ChanceVowelIsSequence = sequenceProbability;
             return this;
         }
+
 
         /// <summary>
         /// Sets the probability that a trailing consonant exists within any syllable.
@@ -104,16 +112,18 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Sets the probability that a trailing consonant in any syllable is a consonant sequence.
+        /// Sets the probability that a trailing consonant exists within any syllable
+        /// and the probability that the consonant is a sequence.
         /// </summary>
-        public GeneratorProbabilityBuilder OfTrailingConsonantIsSequence(double probability)
+        public GeneratorProbabilityBuilder OfTrailingConsonants(double probability, double sequenceProbability)
         {
-            this.Probability.ChanceTrailingConsonantIsSequence = probability;
+            this.Probability.ChanceTrailingConsonantExists = probability;
+            this.Probability.ChanceTrailingConsonantIsSequence = sequenceProbability;
             return this;
         }
 
         /// <summary>
-        /// Sets the probability that a Final consonant exists within any syllable.
+        /// Sets the probability that a final consonant exists within an ending syllable.
         /// </summary>
         public GeneratorProbabilityBuilder OfFinalConsonants(double probability)
         {
@@ -122,13 +132,70 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Sets the probability that a final consonant exists within an ending syllable
+        /// and the probability that the final consonant is a sequence.
+        /// </summary>
+        public GeneratorProbabilityBuilder OfFinalConsonants(double probability, double sequenceProbability)
+        {
+            this.Probability.ChanceFinalConsonantExists = probability;
+            this.Probability.ChanceFinalConsonantIsSequence = sequenceProbability;
+            return this;
+        }
+
+        #region Deprecated
+
+        /// <summary>
+        /// Sets the probability that a leading vowel is a sequence in the starting syllable.
+        /// </summary>
+        [Obsolete("Use OfLeadingVowelsInStartingSyllable() instead.")]
+        public GeneratorProbabilityBuilder OfLeadingVowelIsSequenceInStartingSyllable(double probability)
+        {
+            this.Probability.ChanceStartingSyllableLeadingVowelIsSequence = probability;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the probability that a leading consonant in any syllable is a consonant sequence.
+        /// </summary>
+        [Obsolete("Use OfLeadingConsonants() instead.")]
+        public GeneratorProbabilityBuilder OfLeadingConsonantIsSequence(double probability)
+        {
+            this.Probability.ChanceLeadingConsonantIsSequence = probability;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the probability that a vowel in any syllable is a vowel sequence.
+        /// </summary>
+        [Obsolete("Use OfVowels() instead.")]
+        public GeneratorProbabilityBuilder OfVowelIsSequence(double probability)
+        {
+            this.Probability.ChanceVowelIsSequence = probability;
+            return this;
+        }
+
+
+        /// <summary>
         /// Sets the probability that a trailing consonant in any syllable is a consonant sequence.
         /// </summary>
+        [Obsolete("Use OfTrailingConsonants() instead.")]
+        public GeneratorProbabilityBuilder OfTrailingConsonantIsSequence(double probability)
+        {
+            this.Probability.ChanceTrailingConsonantIsSequence = probability;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the probability that a trailing consonant in any syllable is a consonant sequence.
+        /// </summary>
+        [Obsolete("Use OfFinalConsonants() instead.")]
         public GeneratorProbabilityBuilder OfFinalConsonantIsSequence(double probability)
         {
             this.Probability.ChanceFinalConsonantIsSequence = probability;
             return this;
         }
+
+        #endregion
 
         /// <summary>
         /// Returns a new instance of <see cref="GeneratorProbability"/> with the values built

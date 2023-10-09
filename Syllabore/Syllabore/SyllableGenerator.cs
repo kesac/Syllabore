@@ -443,7 +443,8 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator WithProbability(Func<GeneratorProbabilityBuilder, GeneratorProbabilityBuilder> configure)
         {
-            this.Probability = configure(new GeneratorProbabilityBuilder(this.Probability)).ToProbability();
+            var p = new GeneratorProbabilityBuilder(this.Probability);
+            this.Probability = configure(p).ToProbability();
             return this;
         }
 
