@@ -33,6 +33,8 @@ namespace Syllabore
                 ChanceStartingSyllableLeadingVowelIsSequence = existing.ChanceStartingSyllableLeadingVowelIsSequence,
                 ChanceTrailingConsonantExists = existing.ChanceTrailingConsonantExists,
                 ChanceTrailingConsonantIsSequence = existing.ChanceTrailingConsonantIsSequence,
+                ChanceFinalConsonantExists= existing.ChanceFinalConsonantExists,
+                ChanceFinalConsonantIsSequence = existing.ChanceFinalConsonantIsSequence,
                 ChanceVowelExists = existing.ChanceVowelExists,
                 ChanceVowelIsSequence = existing.ChanceVowelIsSequence
             };
@@ -111,6 +113,24 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Sets the probability that a Final consonant exists within any syllable.
+        /// </summary>
+        public GeneratorProbabilityBuilder OfFinalConsonants(double probability)
+        {
+            this.Probability.ChanceFinalConsonantExists = probability;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the probability that a trailing consonant in any syllable is a consonant sequence.
+        /// </summary>
+        public GeneratorProbabilityBuilder OfFinalConsonantIsSequence(double probability)
+        {
+            this.Probability.ChanceFinalConsonantIsSequence = probability;
+            return this;
+        }
+
+        /// <summary>
         /// Returns a new instance of <see cref="GeneratorProbability"/> with the values built
         /// through this <see cref="GeneratorProbabilityBuilder"/>.
         /// </summary>
@@ -126,6 +146,8 @@ namespace Syllabore
                 ChanceStartingSyllableLeadingVowelIsSequence = this.Probability.ChanceStartingSyllableLeadingVowelIsSequence,
                 ChanceTrailingConsonantExists = this.Probability.ChanceTrailingConsonantExists,
                 ChanceTrailingConsonantIsSequence = this.Probability.ChanceTrailingConsonantIsSequence,
+                ChanceFinalConsonantExists = this.Probability.ChanceFinalConsonantExists,
+                ChanceFinalConsonantIsSequence = this.Probability.ChanceFinalConsonantIsSequence,
                 ChanceVowelExists = this.Probability.ChanceVowelExists,
                 ChanceVowelIsSequence = this.Probability.ChanceVowelIsSequence
             };

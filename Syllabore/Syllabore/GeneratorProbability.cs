@@ -18,6 +18,8 @@ namespace Syllabore
         public double? ChanceVowelIsSequence { get; set; }
         public double? ChanceTrailingConsonantExists { get; set; }
         public double? ChanceTrailingConsonantIsSequence { get; set; }
+        public double? ChanceFinalConsonantExists { get; set; }
+        public double? ChanceFinalConsonantIsSequence { get; set; }
 
         public GeneratorProbability() { }
 
