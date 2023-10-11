@@ -229,8 +229,7 @@ namespace Syllabore.Tests
             var provider = new SyllableGenerator()
                 .WithVowelSequences("aa")
                 .WithProbability(x => x
-                    .OfVowels(1.0)
-                    .OfVowelIsSequence(0));
+                    .OfVowels(1.0, 0));
 
             var generator = new NameGenerator().UsingSyllables(provider);
 
@@ -247,8 +246,7 @@ namespace Syllabore.Tests
             // Defining at least one vowel sequence, set to 100% probability
             // without any possibility of vowels starting name shoudl work
             provider.WithProbability(x => x
-                .OfVowels(1.0)
-                .OfVowelIsSequence(1.0));
+                .OfVowels(1.0, 1.0));
 
             for (int i = 0; i < 1000; i++)
             {
@@ -282,7 +280,7 @@ namespace Syllabore.Tests
                     .WithTrailingConsonants("d")
                     .WithTrailingConsonantSequences("ff")
                     .WithProbability(x => x
-                        .OfVowelIsSequence(0.50)
+                        .OfVowels(1, 0.50)
                         .OfLeadingConsonants(0.50)
                         .OfTrailingConsonants(0.50)
                         .OfLeadingVowelsInStartingSyllable(0.25));
