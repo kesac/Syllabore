@@ -26,7 +26,7 @@ namespace Syllabore.Example.Spaceship
                         .OfLeadingConsonants(1.0)
                         .OfTrailingConsonants(0.0)))
                 .UsingFilter(x => x
-                    .DoNotAllowPattern(@"(\w)\1\1"))
+                    .DoNotAllow(@"(\w)\1\1"))
                 .UsingSyllableCount(3);
 
             _shipGenerator = new NameGenerator()
@@ -41,7 +41,7 @@ namespace Syllabore.Example.Spaceship
                     .WithTransform(x => x.ReplaceSyllable(-1, "rus"))
                     .WithTransform(x => x.ReplaceSyllable(-1, "vium")))
                 .UsingFilter(x => x
-                    .DoNotAllowPattern(@"(\w)\1"))
+                    .DoNotAllow(@"(\w)\1"))
                 .UsingSyllableCount(3);
         }
 

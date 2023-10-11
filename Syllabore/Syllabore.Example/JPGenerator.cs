@@ -20,7 +20,7 @@ namespace Syllabore.Example
                     .WithVowels("io").Weight(2)
                     .WithVowels("eu")
                     .WithProbability(x => x
-                        .OfLeadingConsonantIsSequence(0.1)))
+                        .OfLeadingConsonants(1.0, 0.1)))
                 .UsingTransform(x => x
                     .ReplaceAll("hu", "fu")
                     .ReplaceAll("si", "shi")

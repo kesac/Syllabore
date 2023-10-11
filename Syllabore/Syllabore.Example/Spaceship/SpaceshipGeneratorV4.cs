@@ -26,17 +26,17 @@ namespace Syllabore.Example.Spaceship
                         .OfLeadingConsonants(1.0)
                         .OfTrailingConsonants(0.0)))
                 .UsingFilter(x => x
-                    .DoNotAllowPattern(@"(\w)\1\1"))
+                    .DoNotAllow(@"(\w)\1\1"))
                 .UsingSyllableCount(3);
 
             _shipGenerator = new NameGenerator()
                 .UsingSyllables(x => x
-                    .WithVowels("aoi")
-                    .WithVowelSequences("ei", "ia", "ou", "eu")
-                    .WithLeadingConsonants("rstlmn").Weight(4)
-                    .WithLeadingConsonants("cdgp").Weight(2))
+                    .WithVowels("aoi") // Don't need to separate vowels with commas if they're not sequences
+                    .WithVowelSequences("ei", "ia", "ou", "eu") // For sequences though, we'll obviously need the commas
+                    .WithLeadingConsonants("rstlmn").Weight(4) // Weights are relative to each other
+                    .WithLeadingConsonants("cdgp").Weight(2)) // So this line says "2 out of 6" or 33% of the time
                 .UsingFilter(x => x
-                    .DoNotAllowPattern(@"(\w)\1")) // Two of the same letters consecutively
+                    .DoNotAllow(@"(\w)\1")) // Regex again, for two of the same letters consecutively
                 .UsingSyllableCount(3);
         }
 

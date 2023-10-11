@@ -21,7 +21,7 @@ namespace Syllabore.Example
 
                 var g = new NameGenerator();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     Console.WriteLine(g.Next());
                 }
@@ -504,6 +504,16 @@ namespace Syllabore.Example
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(f.Next());
+                }
+            }
+
+            Separator();
+
+            {
+                var englishNames = new WeightedGenerator();
+                for (int i = 0; i < 20; i++)
+                {
+                    Console.WriteLine(englishNames.Next());
                 }
             }
 
