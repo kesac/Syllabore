@@ -17,6 +17,7 @@
     <FileVersion>2.3.1</FileVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Product>$(PackageVersion)</Product>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
