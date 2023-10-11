@@ -10,7 +10,7 @@ namespace Syllabore
     /// A convenience class used for modeling names that have multiple parts
     /// and need multiple generators to create them.
     /// </summary>
-    public class NameFormatter : IGenerator
+    public class NameFormatter : IGenerator<string>
     {
         /// <summary>
         /// <para>
