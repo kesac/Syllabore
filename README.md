@@ -19,7 +19,7 @@
  1. [License](#license)
 
 ## Quick Start
-Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [all consonants and vowels in the English language](https://github.com/kesac/Syllabore/wiki/DefaultSyllableGenerator) will be used in syllables. 
+Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [a subset of consonants and vowels from the English language](https://github.com/kesac/Syllabore/wiki/DefaultSyllableGenerator) will be used. 
 
 ```csharp
 var g = new NameGenerator();
@@ -27,9 +27,9 @@ Console.WriteLine(g.Next());
 ```
 This will return names like:
 ```
-Taigla
-Zoren
-Ocri
+Pheras
+Domar
+Teso
 ```
 
 ## Tailoring Characters
