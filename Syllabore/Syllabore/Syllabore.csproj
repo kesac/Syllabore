@@ -12,10 +12,11 @@
     <RepositoryUrl>https://github.com/kesac/Syllabore</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>csharp name-generation generation syllable syllables fantasy name generator name-generator fantasy-name</PackageTags>
-    <Version>2.2.1</Version>
-    <AssemblyVersion>2.2.1.0</AssemblyVersion>
-    <FileVersion>2.2.1.0</FileVersion>
+    <Version>2.3.1</Version>
+    <AssemblyVersion>2.3.1</AssemblyVersion>
+    <FileVersion>2.3.1</FileVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Product>$(PackageVersion)</Product>
   </PropertyGroup>
 
   <ItemGroup>
