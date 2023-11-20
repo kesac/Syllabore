@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace Syllabore
 {
     /// <summary>
-    /// Contains probability settings in a <see cref="SyllableGenerator"/>.
+    /// Contains the probability settings of a <see cref="SyllableGenerator"/>.
     /// </summary>
     public class GeneratorProbability
     {
@@ -20,8 +20,5 @@ namespace Syllabore
         public double? ChanceTrailingConsonantIsSequence { get; set; }
         public double? ChanceFinalConsonantExists { get; set; }
         public double? ChanceFinalConsonantIsSequence { get; set; }
-
-        public GeneratorProbability() { }
-
     }
 }

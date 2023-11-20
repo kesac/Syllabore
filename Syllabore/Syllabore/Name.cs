@@ -9,12 +9,12 @@ namespace Syllabore
     public class Name
     {
         /// <summary>
-        /// Ordered syllables that make up this name.
+        /// The ordered syllables that make up this name.
         /// </summary>
         public List<string> Syllables { get; set; }
 
         /// <summary>
-        /// An empty name.
+        /// Instantiates an empty name.
         /// </summary>
         public Name()
         {
@@ -22,7 +22,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Instantiates a name with the desired starting syllables.
+        /// Instantiates a new name with the desired starting syllables.
         /// </summary>
         /// <param name="syllable"></param>
         public Name(params string[] syllable)
@@ -31,7 +31,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Instantiates a name that is a copy of the specified name. (This constructor
+        /// Instantiates a new name that is a copy of the specified name. (This constructor
         /// is useful for a <see cref="INameTransformer"/>.)
         /// </summary>
         /// <param name="copy"></param>
@@ -50,15 +50,22 @@ namespace Syllabore
             return result.Substring(0, 1).ToUpper() + result.Substring(1).ToLower();
         }
 
+        /// <summary>
+        /// A <see cref="Name"/> is equal to another
+        /// <see cref="Name"/> if and only if their
+        /// string representations are also equal.
+        /// </summary>
         public override bool Equals(object obj)
         {
-            if(obj is Name){
-                return (((Name)obj).ToString() == this.ToString());
+            if (obj is Name name)
+            {
+                return (name.ToString() == this.ToString());
             }
 
             return false;
         }
 
+        // Needs to exist for the Equals() override.
         public override int GetHashCode()
         {
             return base.GetHashCode();

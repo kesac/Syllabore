@@ -19,10 +19,21 @@ namespace Syllabore
     /// </summary>
     public class NameGenerator : INameGenerator
     {
-        private const int DefaultMaximumRetries = 1000;
-        // private const double DefaultTransformChance = 1.0;
 
-        private Random Random { get; set; }
+        /// <summary>
+        /// <para>
+        /// The default maximum number of attempts a <see cref="NameGenerator"/> 
+        /// will make to satisfy its own <see cref="NameFilter"/>. If the maximum
+        /// number of attempts is exceeded, an <see cref="InvalidOperationException"/> will be thrown.
+        /// </para>
+        /// <para>
+        /// Hitting the limit is indicative of a <see cref="NameGenerator"/> that 
+        /// can never satisfy its own <see cref="NameFilter"/>.
+        /// </para>
+        /// </summary>
+        private const int DefaultMaximumRetries = 1000;
+
+        private Random _random;
 
         /// <summary>
         /// <para>
@@ -37,22 +48,22 @@ namespace Syllabore
         public ISyllableGenerator Provider { get; set; }
 
         /// <summary>
-        /// <para>
         /// The name transformer used during name generation.
         /// A vanilla <see cref="NameGenerator"/> will not use a 
         /// transformer by default.
-        /// </para>
         /// </summary>
         public INameTransformer Transformer { get; set; }
 
+        /// <summary>
+        /// The probability that a name will be transformed 
+        /// during the generation process.
+        /// </summary>
         public double TransformerChance { get; set; }
 
         /// <summary>
-        /// <para>
         /// The filter used to validate a <see cref="NameGenerator"/>'s output.
         /// A vanilla <see cref="NameGenerator"/> will not use a 
         /// filter by default.
-        /// </para>
         /// </summary>
         public INameFilter Filter { get; set; }
 
@@ -126,7 +137,7 @@ namespace Syllabore
                 this.UsingFilter(filter);
             }
 
-            this.Random = new Random();
+            _random = new Random();
         }
 
         #endregion
@@ -393,7 +404,7 @@ namespace Syllabore
                 throw new InvalidOperationException("The value of property MinimumSyllables must be less than or equal to property MaximumSyllables. Both values must be postive integers.");
             }
 
-            var syllableLength = this.Random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
+            var syllableLength = _random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
             return this.Next(syllableLength);
         }
 
@@ -424,7 +435,7 @@ namespace Syllabore
                 throw new InvalidOperationException("The value of property MinimumSyllables must be less than or equal to property MaximumSyllables. Both values must be postive integers.");
             }
 
-            var syllableLength = this.Random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
+            var syllableLength = _random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
             return this.NextName(syllableLength);
         }
 
@@ -464,7 +475,7 @@ namespace Syllabore
                     }
                 }
 
-                if (this.Transformer != null && this.Random.NextDouble() < this.TransformerChance)
+                if (this.Transformer != null && _random.NextDouble() < this.TransformerChance)
                 {
                     result = this.Transformer.Apply(result);
                 }
