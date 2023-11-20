@@ -6,23 +6,24 @@ namespace Syllabore.Tests
     [TestClass]
     public class NameGeneratorTests
     {
+        private readonly NameGenerator _sut = new();
+
         [TestMethod]
         public void Constructor_WhenNoParameter_SuccessfulNameGeneration()
         {
-            var generator = new NameGenerator();
-            for(int i = 0; i < 100; i++)
+            for (int i = 0; i < 100; i++)
             {
-                Assert.IsTrue(generator.Next() != string.Empty);
+                Assert.IsFalse(string.IsNullOrEmpty(_sut.Next()));
             }
         }
 
         [TestMethod]
         public void Constructor_WhenBasicConstructorUsed_SuccessfulNameGeneration()
         {
-            var generator = new NameGenerator("a","strl");
+            var sut = new NameGenerator("a", "strl");
             for (int i = 0; i < 100; i++)
             {
-                Assert.IsTrue(generator.Next().Contains("a"));
+                Assert.IsTrue(sut.Next().Contains("a"));
             }
         }
 
@@ -41,67 +42,96 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void NameGeneration_WhenSyllableLengthPropertyValuesInvalid_InvalidOperationExceptionThrown()
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(int.MinValue)]
+        public void NameGeneration_WhenSyllableLengthPropertyValuesInvalid_SingleArguments_InvalidOperationExceptionThrown(int length)
         {
-            var generator = new NameGenerator();
-
-            // Single argument
-            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(-1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(0).Next());
-            Assert.IsNotNull(generator.UsingSyllableCount(1).Next());
-
-            // Double argument
-            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(-1, 1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(0, 1).Next());
-            Assert.IsNotNull(generator.UsingSyllableCount(1, 1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(1, -1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(1, 0).Next());
-            Assert.IsNotNull(generator.UsingSyllableCount(4, 5).Next());
-            Assert.IsNotNull(generator.UsingSyllableCount(5, 5).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.UsingSyllableCount(6, 5).Next());
-
+            Assert.ThrowsException<ArgumentException>(() => _sut.UsingSyllableCount(length).Next());
         }
 
         [TestMethod]
-        public void NameGeneration_WhenNonPositiveSyllableLengthProvided_ArgumentExceptionThrown()
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(byte.MaxValue)]
+        public void NameGeneration_WhenSyllableLengthPropertyValuesValid_SingleArguments_NotNull(int length)
         {
-            var generator = new NameGenerator();
+            Assert.IsNotNull(_sut.UsingSyllableCount(length).Next());
+        }
 
-            Assert.IsNotNull(generator.Next(1));
-            Assert.ThrowsException<ArgumentException>(() => generator.Next(0));
-            Assert.ThrowsException<ArgumentException>(() => generator.Next(-1));
-            Assert.ThrowsException<ArgumentException>(() => generator.Next(int.MinValue));
+        [TestMethod]
+        [DataRow(-1, 1)]
+        [DataRow(0, 1)]
+        [DataRow(1, -1)]
+        [DataRow(1, 0)]
+        [DataRow(6, 5)]
+        public void NameGeneration_WhenSyllableLengthPropertyValuesInvalid_DoubleArguments_InvalidOperationExceptionThrown(int min, int max)
+        {
+            Assert.ThrowsException<ArgumentException>(() => _sut.UsingSyllableCount(min, max).Next());
+        }
+
+        [TestMethod]
+        [DataRow(1, 1)]
+        [DataRow(4, 5)]
+        [DataRow(5, 5)]
+        public void NameGeneration_WhenSyllableLengthPropertyValuesValid_DoubleArguments_NotNull(int min, int max)
+        {
+            Assert.IsNotNull(_sut.UsingSyllableCount(min, max).Next());
+        }
+
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(-1)]
+        [DataRow(int.MinValue)]
+        public void NameGeneration_WhenNonPositiveSyllableLengthProvided_ArgumentExceptionThrown(int syllableLength)
+        {
+            Assert.ThrowsException<ArgumentException>(() => _sut.Next(syllableLength));
+        }
+
+        [TestMethod]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(byte.MaxValue)]
+        public void NameGeneration_WhenPositiveSyllableLengthProvided_NotNull(int syllableLength)
+        {
+            Assert.IsNotNull(_sut.Next(syllableLength));
         }
 
         [TestMethod]
         public void NameGeneration_WhenInfiniteGeneration_ExceptionThrown()
         {
-            var generator = new NameGenerator()
+            var sut = new NameGenerator()
                 .UsingFilter(x => x
                     .DoNotAllowPattern(".")) // Set filter to reject names with at least 1 character
                     .UsingSyllableCount(10)  // Ensure the generator only produces names with at least 1 character
                     .LimitRetries(1000);  // All futile attempts
 
-            Assert.ThrowsException<InvalidOperationException>(() => generator.Next());
+            Assert.ThrowsException<InvalidOperationException>(() => sut.Next());
 
         }
 
         [TestMethod]
-        public void NameGeneration_WhenMaximumRetriesLessThanOne_ExceptionThrown()
+        [DataRow(-1)]
+        [DataRow(0)]
+        public void NameGeneration_WhenMaximumRetriesLessThanOne_ExceptionThrown(int retryLimit)
         {
-            var generator = new NameGenerator();
+            Assert.ThrowsException<ArgumentException>(() => _sut.LimitRetries(retryLimit).Next());
+        }
 
-            Assert.ThrowsException<ArgumentException>(() => generator.LimitRetries(-1).Next());
-            Assert.ThrowsException<ArgumentException>(() => generator.LimitRetries(0).Next());
-            Assert.IsNotNull(generator.LimitRetries(1).Next());
-
+        [TestMethod]
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(byte.MaxValue)]
+        public void NameGeneration_WhenMaximumRetriesOneOrMore_NotNull(int retryLimit)
+        {
+            Assert.IsNotNull(_sut.LimitRetries(retryLimit).Next());
         }
 
         [TestMethod]
         public void NameGeneration_WithSequencesOnly_Allowed()
         {
             // It is valid for a name generator to use a provider that only uses sequences
-            var generator = new NameGenerator()
+            var sut = new NameGenerator()
                 .UsingSyllables(x => x
                     .WithLeadingConsonantSequences("sr")
                     .WithVowelSequences("ea")
@@ -119,7 +149,7 @@ namespace Syllabore.Tests
             {
                 for (int i = 0; i < 10000; i++)
                 {
-                    var name = generator.Next();
+                    var name = sut.Next();
                     Assert.IsTrue(name.Length > 2);
                 }
             }
@@ -127,8 +157,6 @@ namespace Syllabore.Tests
             {
                 Assert.Fail(e.Message);
             }
-
         }
-
     }
 }
