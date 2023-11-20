@@ -8,10 +8,10 @@ assignees: ''
 ---
 
 **What's not working?**
-Provide a description of the bug here.
+_Provide a description of the bug here._
 
 **How did you get it to break?**
-Provide steps to reproduce the bug here:
-1. Go to '...'
-2. Click on '....'
-3. See error
+_Provide steps to reproduce the bug here:_
+1. _Go to '...'_
+2. _Click on '....'_
+3. _See error_
