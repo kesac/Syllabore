@@ -4,7 +4,7 @@ Thanks for your interest in this project. By contributing to this project, you a
 ## Can I submit pull requests?
 Yes, please create pull requests for:
 - 🚲 Small enhancements
-- 🐛 Bug fixes
+- 🐛 Bug fixes or new tests
 - 🌿 Example code for use in documentation
 
 Your pull requests must:
