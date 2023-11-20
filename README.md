@@ -2,7 +2,7 @@
 
 ![](https://i.imgur.com/Y98oNli.png) 
 #### What is this?
- * **Syllabore** is a procedural name generator and does not use pre-made lists of names
+ * **Syllabore** is a procedural name generator that does not use a pre-made lists of names
  * It can be embedded into a .NET program and used 100% offline
 
 #### How are names generated?
@@ -81,28 +81,24 @@ Install-Package Syllabore
 ```
 
 ### Godot
-Edit your ```.csproj``` file and add a ```PackageReference``` to Syllabore. Your file should look something like this:
-```xml
-<Project Sdk="Godot.NET.Sdk/4.0.1">
-  ...
-  <ItemGroup>
-    <PackageReference Include="Syllabore" Version="2.0.2" />
-  </ItemGroup>
-  ...
-</Project>
+There are a couple ways to do this in Godot:
+- Open your Godot project in Visual Studio and add the Syllabore NuGet package through the [package manager](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio)
+- Or open a command line, `cd` into your Godot project directory, and use the following command:
+```
+dotnet add package Syllabore
 ```
 
 ## Compatibility
-Syllabore was created as a .NET Standard 2.0 class library. This means it will be immediately compatible with applications using:
- * .NET 5.0 and higher
- * .NET Core 2.0 and higher
- * .NET Framework 4.6.1 through 4.8.1
+By design, Syllabore is a .NET Standard 2.0 class library. This means it will be compatible with applications using:
+ * .NET or .NET Core 2.0, 2.1, 2.2, 3.0, 3.1, 5.0, 6.0, 7.0, 8.0
+ * .NET Framework 4.6.1, 4.6.2, 4.7, 4.7.1, 4.7.2, 4.8, 4.8.1
  * Mono 5.4, 6.4
  
 Syllabore has been tested and known to work in the following game engines:
- * Godot 4 (Use the .NET version and reference Syllabore in your .csproj file)
+ * Godot 4 (Using the .NET edition of the engine)
  
 Syllabore _should_ work in the following game engines, but I have not done adequate testing yet:
+ * Godot 3
  * Unity
 
 ## License
