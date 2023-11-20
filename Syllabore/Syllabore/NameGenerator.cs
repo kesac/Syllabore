@@ -232,23 +232,6 @@ namespace Syllabore
 
         #region Transformations
 
-        /*
-        /// <summary>
-        /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="TransformSet"/>.
-        /// A vanilla <see cref="NameGenerator"/> does not use transformers by default.
-        /// <para>
-        /// The name transformer will be applied to every generated name.
-        /// </para>
-        /// <para>
-        /// When multiple calls to this method is made, the last call will take precedence.
-        /// </para>
-        /// </summary>
-        public NameGenerator UsingTransforms(Func<TransformSet, TransformSet> configure)
-        {
-            return this.UsingTransforms(1.0, configure);
-        }
-        */
-
         /// <summary>
         /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="INameTransformer"/>.
         /// A vanilla <see cref="NameGenerator"/> does not use transformers by default.
@@ -469,7 +452,6 @@ namespace Syllabore
                 {
                     if (i == 0 && syllableLength > 1)
                     {
-                        //result.Syllables[i] = this.Provider.NextStartingSyllable();
                         result.Syllables.Add(this.Provider.NextStartingSyllable());
                     }
                     else if (i == syllableLength - 1 && syllableLength > 1)
@@ -482,10 +464,6 @@ namespace Syllabore
                     }
                 }
 
-                //if (this.Transformer != null 
-                //    && this.Transformer.TransformChance.HasValue 
-                //    && this.Random.NextDouble() < this.Transformer.TransformChance)
-                //if (this.Transformer != null)
                 if (this.Transformer != null && this.Random.NextDouble() < this.TransformerChance)
                 {
                     result = this.Transformer.Apply(result);
