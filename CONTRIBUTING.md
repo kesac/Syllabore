@@ -11,6 +11,7 @@ Your pull requests must:
 - Be small and easy to review
 - Contain a description of what is changing and why it needs to be addressed
 - Have a concise title
+- Not break the build
 
 Your code contributions must:
 - Follow the existing style of the project as best as possible
