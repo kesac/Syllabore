@@ -11,7 +11,8 @@ namespace Syllabore
     public interface INameGenerator : IGenerator<string>
     {
         /// <summary>
-        /// Returns a new name of the specified syllable length.
+        /// Returns a string representing a name of the specified syllable length.
+        /// Note that syllable length is not the same as string length.
         /// </summary>
         string Next(int syllableLength);
 
@@ -22,6 +23,7 @@ namespace Syllabore
 
         /// <summary>
         /// Returns a new <see cref="Name"/> of the specified syllable length.
+        /// Note that syllable length is not the same as string length.
         /// </summary>
         Name NextName(int syllableLength);
     }

@@ -13,24 +13,86 @@ namespace Syllabore
     /// </summary>
     public enum Context
     {
+        /// <summary>
+        /// Default generator context.
+        /// </summary>
         None,
+
+        /// <summary>
+        /// The last added <see cref="Grapheme">grapheme(s)</see> are leading consonants.
+        /// </summary>
         LeadingConsonant,
+
+        /// <summary>
+        /// The last added <see cref="Grapheme">grapheme(s)</see> are leading consonant sequences.
+        /// </summary>
         LeadingConsonantSequence,
+
+        /// <summary>
+        /// The last added <see cref="Grapheme">grapheme(s)</see> are vowels.
+        /// </summary>
         Vowel,
+
+        /// <summary>
+        /// The last added <see cref="Grapheme">grapheme(s)</see> are vowel sequences.
+        /// </summary>
         VowelSequence,
+
+        /// <summary>
+        /// The last added <see cref="Grapheme">grapheme(s)</see> are trailing consonants.
+        /// </summary>
         TrailingConsonant,
+
+        /// <summary>
+        /// The last added <see cref="Grapheme">grapheme(s)</see> are trailing consonant sequences.
+        /// </summary>
         TrailingConsonantSequence,
+
+        /// <summary>
+        /// The last added <see cref="Grapheme">grapheme(s)</see> are final consonants.
+        /// </summary>
         LeadingVowelInStartingSyllable,
+
+        /// <summary>
+        /// The last added <see cref="Grapheme">grapheme(s)</see> are final consonant sequences.
+        /// </summary>
         LeadingVowelSequenceInStartingSyllable,
+
+        /// <summary>
+        /// The last added <see cref="Grapheme">grapheme(s)</see> are final consonants.
+        /// </summary>
         FinalConsonant, 
+
+        /// <summary>
+        /// The last added <see cref="Grapheme">grapheme(s)</see> are final consonant sequences.
+        /// </summary>
         FinalConsonantSequence
     }
 
+    /// <summary>
+    /// Descriptors for the position of a syllable within a name.
+    /// </summary>
     public enum SyllablePosition
     {
+        /// <summary>
+        /// An indeterminate position.
+        /// </summary>
         Unknown,
+
+        /// <summary>
+        /// The first syllable of a name.
+        /// </summary>
         Starting,
+
+        /// <summary>
+        /// Any position that is not the 
+        /// first or last syllable of a name.
+        /// </summary>
         Middle,
+
+        /// <summary>
+        /// The last syllable of a name.
+        /// </summary>
         Ending
     }
 
@@ -53,22 +115,78 @@ namespace Syllabore
         private const double DefaultChanceFinalConsonantBecomesSequence = 0.25;    // Only if consonant final sequences are supplied
 
 
-        private Random Random { get; set; }
-        private Context Context { get; set; } // For contextual command .Sequences()
-        private List<Grapheme> LastChanges { get; set; } // For contextual command .Weight()
+        private Random _random { get; set; }
+        private Context _context { get; set; } // For contextual command .Sequences()
+        private List<Grapheme> _lastChanges { get; set; } // For contextual command .Weight()
+
+        /// <summary>
+        /// Leading consonants are consonants that appear before 
+        /// the vowel within a syllable.
+        /// </summary>
         public List<Grapheme> LeadingConsonants { get; set; }
+
+        /// <summary>
+        /// Leading consonants sequences are sequences that appear 
+        /// before the vowel within a syllable. Consonant sequences are made
+        /// up of more than one <see cref="Grapheme"/>, but are treated
+        /// like a single consonant during syllable generation.
+        /// </summary>
         public List<Grapheme> LeadingConsonantSequences { get; set; }
+
+        /// <summary>
+        /// The vowels that can appear within a syllable.
+        /// </summary>
         public List<Grapheme> Vowels { get; set; }
+
+        /// <summary>
+        /// The vowel sequences that can appear within a syllable.
+        /// Sequences are made up of more than one 
+        /// <see cref="Grapheme"/>, but treated as a single vowel.
+        /// </summary>
         public List<Grapheme> VowelSequences { get; set; }
+
+        /// <summary>
+        /// Trailing consonants are consonants that appear after
+        /// the vowel within a syllable.
+        /// </summary>
         public List<Grapheme> TrailingConsonants { get; set; }
+
+        /// <summary>
+        /// Trailing consonant sequences are sequences that appear
+        /// after the vowel within a syllable. Consonant sequences are made
+        /// up of more than one <see cref="Grapheme"/>, but are treated
+        /// like a single consonant during syllable generation.
+        /// </summary>
         public List<Grapheme> TrailingConsonantSequences { get; set; }
+
+        /// <summary>
+        /// Final consonants are identical to trailing consonants, except
+        /// they only appear in the final syllable of a name.
+        /// </summary>
         public List<Grapheme> FinalConsonants { get; set; }
+
+        /// <summary>
+        /// Final consonant sequences are identical to trailing consonant sequences, 
+        /// except they only appear in the final syllable of a name.
+        /// </summary>
         public List<Grapheme> FinalConsonantSequences { get; set; }
+
+        /// <summary>
+        /// The probability settings for this <see cref="SyllableGenerator"/>.
+        /// </summary>
         public GeneratorProbability Probability { get; set; }
+
+        /// <summary>
+        /// When true, <see cref="SyllableGenerator"/> will not throw an exception
+        /// when it generates an empty string. By default, this is false.
+        /// </summary>
         public bool AllowEmptyStringGeneration { get; set; }
 
         #region Convenience Properties
 
+        /// <summary>
+        /// Returns true if the probability of a leading consonant being generated is greater than zero.
+        /// </summary>
         public bool LeadingConsonantsAllowed 
         { 
             get
@@ -77,6 +195,9 @@ namespace Syllabore
             }
         }
 
+        /// <summary>
+        /// Returns true if the probability of a leading consonant sequence being generated is greater than zero.
+        /// </summary>
         public bool LeadingConsonantSequencesAllowed
         {
             get
@@ -85,6 +206,9 @@ namespace Syllabore
             }
         }
 
+        /// <summary>
+        /// Returns true if the probability of a vowel being generated is greater than zero.
+        /// </summary>
         public bool VowelsAllowed
         {
             get
@@ -93,6 +217,9 @@ namespace Syllabore
             }
         }
 
+        /// <summary>
+        /// Returns true if the probability of a vowel sequence being generated is greater than zero.
+        /// </summary>
         public bool VowelSequencesAllowed
         {
             get
@@ -101,6 +228,9 @@ namespace Syllabore
             }
         }
 
+        /// <summary>
+        /// Returns true if the probability of a trailing consonant being generated is greater than zero.
+        /// </summary>
         public bool TrailingConsonantsAllowed
         {
             get
@@ -109,6 +239,9 @@ namespace Syllabore
             }
         }
 
+        /// <summary>
+        /// Returns true if the probability of a trailing consonant sequence being generated is greater than zero.
+        /// </summary>
         public bool TrailingConsonantSequencesAllowed
         {
             get
@@ -117,6 +250,9 @@ namespace Syllabore
             }
         }
 
+        /// <summary>
+        /// Returns true if the probability of a final consonant being generated is greater than zero.
+        /// </summary>
         public bool FinalConsonantsAllowed
         {
             get
@@ -125,6 +261,9 @@ namespace Syllabore
             }
         }
 
+        /// <summary>
+        /// Returns true if the probability of a final consonant sequence being generated is greater than zero.
+        /// </summary>
         public bool FinalConsonantSequencesAllowed
         {
             get
@@ -133,32 +272,40 @@ namespace Syllabore
             }
         }
 
+        /// <summary>
+        /// Returns true if the probability of a leading vowel being generated within the starting syllable is greater than zero.
+        /// </summary>
         public bool LeadingVowelForStartingSyllableAllowed
         {
             get
             {
-                //return Probability.StartingSyllable.ChanceLeadingVowelExists.HasValue && Probability.StartingSyllable.ChanceLeadingVowelExists > 0;
                 return Probability.ChanceStartingSyllableLeadingVowelExists.HasValue && Probability.ChanceStartingSyllableLeadingVowelExists > 0;
             }
         }
 
+        /// <summary>
+        /// Returns true if the probability of a leading vowel sequence being generated within the starting syllable is greater than zero.
+        /// </summary>
         public bool LeadingVowelSequenceForStartingSyllableAllowed
         {
             get
             {
-                // return Probability.StartingSyllable.ChanceLeadingVowelBecomesSequence.HasValue && Probability.StartingSyllable.ChanceLeadingVowelBecomesSequence > 0;
                 return Probability.ChanceStartingSyllableLeadingVowelIsSequence.HasValue && Probability.ChanceStartingSyllableLeadingVowelIsSequence > 0;
             }
         }
 
         #endregion
 
+        /// <summary>
+        /// Instantiates a new <see cref="SyllableGenerator"/> with
+        /// an empty pool of vowels and consonants.
+        /// </summary>
         public SyllableGenerator()
         {
-            this.Random = new Random();
+            _random = new Random();
             this.Probability = new GeneratorProbability();
-            this.Context = Context.None;
-            this.LastChanges = new List<Grapheme>();
+            _context = Context.None;
+            _lastChanges = new List<Grapheme>();
             this.AllowEmptyStringGeneration = false;
 
             this.LeadingConsonants = new List<Grapheme>();
@@ -172,7 +319,10 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Adds the specified consonants as consonants that can occur before or after a vowel.
+        /// Adds the specified consonants into the pool of leading and trailing
+        /// consonants.  Within a syllable, leading consonants are consonants 
+        /// that appear before a vowel and trailing consonants are consonants 
+        /// that appear after a vowel.
         /// </summary>
         public SyllableGenerator WithConsonants(params string[] consonants)
         {
@@ -185,7 +335,7 @@ namespace Syllabore
 
             this.LeadingConsonants.AddRange(changes);
             this.TrailingConsonants.AddRange(changes);
-            this.LastChanges.ReplaceWith(changes);
+            _lastChanges.ReplaceWith(changes);
 
             if (this.Probability.ChanceLeadingConsonantExists == null)
             {
@@ -197,13 +347,14 @@ namespace Syllabore
                 this.Probability.ChanceTrailingConsonantExists = DefaultChanceTrailingConsonantExists;
             }
 
-            this.Context = Context.None;
+            _context = Context.None;
 
             return this;
         }
 
         /// <summary>
-        /// Adds the specified consonants as consonants that can occur before a vowel.
+        /// Adds the specified consonants to the pool of leading consonants.
+        /// Within a syllable, leading consonants are consonants that appear before a vowel.
         /// </summary>
         public SyllableGenerator WithLeadingConsonants(params string[] consonants)
         {
@@ -216,41 +367,42 @@ namespace Syllabore
             }
 
             this.LeadingConsonants.AddRange(changes);
-            this.LastChanges.ReplaceWith(changes);
+            _lastChanges.ReplaceWith(changes);
 
             if (this.Probability.ChanceLeadingConsonantExists == null)
             {
                 this.Probability.ChanceLeadingConsonantExists = DefaultChanceLeadingConsonantExists;
             }
 
-            this.Context = Context.LeadingConsonant;
+            _context = Context.LeadingConsonant;
 
             return this;
         }
 
 
         /// <summary>
-        /// Adds the specified consonant sequences as sequences that can occur before a vowel.
+        /// Adds the specified consonant sequences into the pool of leading consonant sequences.
         /// </summary>
         public SyllableGenerator WithLeadingConsonantSequences(params string[] consonantSequences)
         {
             var changes = consonantSequences.Select(x => new Grapheme(x)).ToList();
 
             this.LeadingConsonantSequences.AddRange(changes);
-            this.LastChanges.ReplaceWith(changes);
+            _lastChanges.ReplaceWith(changes);
 
             if(this.Probability.ChanceLeadingConsonantIsSequence == null)
             {
                 this.Probability.ChanceLeadingConsonantIsSequence = DefaultChanceLeadingConsonantBecomesSequence;
             }
 
-            this.Context = Context.LeadingConsonantSequence;
+            _context = Context.LeadingConsonantSequence;
 
             return this;
         }
 
         /// <summary>
-        /// Adds the specified vowels as vowels that can be used to form the 'center' of syllables.
+        /// Adds the specified vowels to the pool of possible vowels this
+        /// <see cref="SyllableGenerator"/> can generate.
         /// </summary>
         public SyllableGenerator WithVowels(params string[] vowels)
         {
@@ -262,40 +414,43 @@ namespace Syllabore
             }
 
             this.Vowels.AddRange(changes);
-            this.LastChanges.ReplaceWith(changes);
+            _lastChanges.ReplaceWith(changes);
 
             if (this.Probability.ChanceVowelExists == null)
             {
                 this.Probability.ChanceVowelExists = DefaultChanceVowelExists;
             }
 
-            this.Context = Context.Vowel;
+            _context = Context.Vowel;
 
             return this;
         }
 
         /// <summary>
-        /// Adds the specified vowel sequences as sequences that can be used to form the 'center' of syllables.
+        /// Adds the specified vowel sequences to the pool of possible vowel sequences this
+        /// <see cref="SyllableGenerator"/> can generate.
         /// </summary>
         public SyllableGenerator WithVowelSequences(params string[] vowelSequences)
         {
             var changes = vowelSequences.Select(x => new Grapheme(x)).ToList();
 
             this.VowelSequences.AddRange(changes);
-            this.LastChanges.ReplaceWith(changes);
+            _lastChanges.ReplaceWith(changes);
 
             if(this.Probability.ChanceVowelIsSequence == null)
             {
                 this.Probability.ChanceVowelIsSequence = DefaultChanceVowelBecomesSequence;
             }
 
-            this.Context = Context.VowelSequence;
+            _context = Context.VowelSequence;
 
             return this;
         }
 
         /// <summary>
-        /// Adds the specified consonants as consonants that can appear after a vowel.
+        /// Adds the specified consonants to the pool of trailing consonants.
+        /// Within a syllable, trailing consonants are consonants that appear 
+        /// after a vowel.
         /// </summary>
         public SyllableGenerator WithTrailingConsonants(params string[] consonants)
         {
@@ -307,14 +462,14 @@ namespace Syllabore
             }
 
             this.TrailingConsonants.AddRange(changes);
-            this.LastChanges.ReplaceWith(changes);
+            _lastChanges.ReplaceWith(changes);
 
             if (this.Probability.ChanceTrailingConsonantExists == null)
             {
                 this.Probability.ChanceTrailingConsonantExists = DefaultChanceTrailingConsonantExists;
             }
 
-            this.Context = Context.TrailingConsonant;
+            _context = Context.TrailingConsonant;
 
             return this;
         }
@@ -327,21 +482,21 @@ namespace Syllabore
         {
             var changes = consonantSequences.Select(x => new Grapheme(x)).ToList();
             this.TrailingConsonantSequences.AddRange(changes);
-            this.LastChanges.ReplaceWith(changes);
+            _lastChanges.ReplaceWith(changes);
 
             if(this.Probability.ChanceTrailingConsonantIsSequence == null)
             {
                 this.Probability.ChanceTrailingConsonantIsSequence = DefaultChanceTrailingConsonantBecomesSequence;
             }
 
-            this.Context = Context.TrailingConsonantSequence;
+            _context = Context.TrailingConsonantSequence;
 
             return this;
         }
 
         /// <summary>
-        /// Adds the specified consonants as consonants that only appear 
-        /// as the final consonant in an ending syllable.
+        /// Adds the specified consonants to the pool of consonants that must only appear 
+        /// as the trailing consonant of an ending syllable.
         /// </summary>
         public SyllableGenerator WithFinalConsonants(params string[] consonants)
         {
@@ -353,45 +508,45 @@ namespace Syllabore
             }
 
             this.FinalConsonants.AddRange(changes);
-            this.LastChanges.ReplaceWith(changes);
+            _lastChanges.ReplaceWith(changes);
 
             if (this.Probability.ChanceFinalConsonantExists == null)
             {
                 this.Probability.ChanceFinalConsonantExists = DefaultChanceFinalConsonantExists;
             }
 
-            this.Context = Context.FinalConsonant;
+            _context = Context.FinalConsonant;
 
             return this;
         }
 
         /// <summary>
-        /// Adds the specified final consonant sequences as sequences that can only appear 
-        /// as the final consonant sequence in an ending syllable.
+        /// Adds the specified consonant sequences to the pool of sequences that must only appear 
+        /// as the trailing consonant sequence of an ending syllable.
         /// </summary>
         public SyllableGenerator WithFinalConsonantSequences(params string[] consonantSequences)
         {
             var changes = consonantSequences.Select(x => new Grapheme(x)).ToList();
             this.FinalConsonantSequences.AddRange(changes);
-            this.LastChanges.ReplaceWith(changes);
+            _lastChanges.ReplaceWith(changes);
 
             if (this.Probability.ChanceFinalConsonantIsSequence == null)
             {
                 this.Probability.ChanceFinalConsonantIsSequence = DefaultChanceFinalConsonantBecomesSequence;
             }
 
-            this.Context = Context.FinalConsonantSequence;
+            _context = Context.FinalConsonantSequence;
 
             return this;
         }
 
         /// <summary>
-        /// Defines the specified sequences for leading consonants, trailing consonants,
-        /// or vowels depending on the context.
+        /// <em>Contextual on the last call.</em> Adds the specified sequences as
+        /// leading consonants, trailing consonants, or vowels depending on the context.
         /// </summary>
         public SyllableGenerator Sequences(params string[] sequences)
         {
-            switch (this.Context)
+            switch (_context)
             {
                 case Context.LeadingConsonant:
                     this.WithLeadingConsonantSequences(sequences);
@@ -406,18 +561,21 @@ namespace Syllabore
                     this.WithFinalConsonantSequences(sequences);
                     break;
                 default:
-                    this.Context = Context.None;
+                    _context = Context.None;
                     break;
             }
 
             return this;
         }
 
-        
+        /// <summary>
+        /// <em>Contextual on the last call.</em> Sets the weight of the last 
+        /// added <see cref="Grapheme">graphemes</see>.
+        /// </summary>
         public SyllableGenerator Weight(int weight)
         {
 
-            foreach(var g in this.LastChanges)
+            foreach(var g in _lastChanges)
             {
                 g.Weight = weight;
             }
@@ -425,20 +583,8 @@ namespace Syllabore
             return this;
         }
 
-
-        /*
         /// <summary>
-        /// Used to manage the probability of vowels/consonants turning into sequences, of leading
-        /// consonants starting a syllable, of trailing consonants ending a syllable, etc.
-        /// </summary>
-        public SyllableGenerator WithProbability(Func<SyllableProviderProbability, SyllableProviderProbability> configure)
-        {
-            this.Probability = configure(this.Probability);
-            return this;
-        }/**/
-
-        /// <summary>
-        /// Used to manage the probability of vowels/consonants turning into sequences, of leading
+        /// Sets the probability of vowels/consonants turning into sequences, of leading
         /// consonants starting a syllable, of trailing consonants ending a syllable, etc.
         /// </summary>
         public SyllableGenerator WithProbability(Func<GeneratorProbabilityBuilder, GeneratorProbabilityBuilder> configure)
@@ -561,17 +707,27 @@ namespace Syllabore
             }
         }
 
-
+        /// <summary>
+        /// Returns a random syllable suitable for starting a name.
+        /// </summary>
         public virtual string NextStartingSyllable()
         {
             return GenerateSyllable(SyllablePosition.Starting);
         }
 
+        /// <summary>
+        /// Returns a random syllable suitable for any position.
+        /// </summary>
+        /// <returns></returns>
         public virtual string NextSyllable()
         {
             return GenerateSyllable(SyllablePosition.Middle);
         }
 
+        /// <summary>
+        /// Returns a random suitable suitable for ending a name.
+        /// </summary>
+        /// <returns></returns>
         public virtual string NextEndingSyllable()
         {
             return GenerateSyllable(SyllablePosition.Ending);
@@ -583,10 +739,10 @@ namespace Syllabore
 
             if (position == SyllablePosition.Starting 
                 && this.LeadingVowelForStartingSyllableAllowed 
-                && this.Random.NextDouble() < this.Probability.ChanceStartingSyllableLeadingVowelExists)
+                && _random.NextDouble() < this.Probability.ChanceStartingSyllableLeadingVowelExists)
             {
 
-                if (this.VowelSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceStartingSyllableLeadingVowelIsSequence)
+                if (this.VowelSequencesAllowed && _random.NextDouble() < this.Probability.ChanceStartingSyllableLeadingVowelIsSequence)
                 {
                     output.Append(this.NextVowelSequence());
                 }
@@ -598,11 +754,11 @@ namespace Syllabore
             else
             {
                 // Determine if there is a leading consonant in this syllable
-                if (this.LeadingConsonantsAllowed && this.Random.NextDouble() < this.Probability.ChanceLeadingConsonantExists)
+                if (this.LeadingConsonantsAllowed && _random.NextDouble() < this.Probability.ChanceLeadingConsonantExists)
                 {
 
                     // If there is a leading consonant, determine if it is a sequence
-                    if (this.LeadingConsonantSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceLeadingConsonantIsSequence)
+                    if (this.LeadingConsonantSequencesAllowed && _random.NextDouble() < this.Probability.ChanceLeadingConsonantIsSequence)
                     {
                         output.Append(this.NextLeadingConsonantSequence());
                     }
@@ -613,11 +769,11 @@ namespace Syllabore
                 }
 
                 // Determine if there is a vowel in this syllable (by default, this probability is 100%)
-                if(this.VowelsAllowed && this.Random.NextDouble() < this.Probability.ChanceVowelExists)
+                if(this.VowelsAllowed && _random.NextDouble() < this.Probability.ChanceVowelExists)
                 {
 
                     // Then check if the vowel is a vowel sequence
-                    if (this.VowelSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceVowelIsSequence)
+                    if (this.VowelSequencesAllowed && _random.NextDouble() < this.Probability.ChanceVowelIsSequence)
                     {
                         output.Append(this.NextVowelSequence());
                     }
@@ -633,11 +789,11 @@ namespace Syllabore
             // (as opposed to a 'trailing' consonant)
             if(position == SyllablePosition.Ending
                 && this.FinalConsonantsAllowed
-                && this.Random.NextDouble() < this.Probability.ChanceFinalConsonantExists)
+                && _random.NextDouble() < this.Probability.ChanceFinalConsonantExists)
             {
                 // We need to append a final consonant,
                 // but we need to determine if the consonant is a sequence first
-                if (this.FinalConsonantSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceFinalConsonantIsSequence)
+                if (this.FinalConsonantSequencesAllowed && _random.NextDouble() < this.Probability.ChanceFinalConsonantIsSequence)
                 {
                     output.Append(this.NextFinalConsonantSequence());
                 }
@@ -647,11 +803,11 @@ namespace Syllabore
                 }
             }
             // Otherwise, roll for a trailing consonant
-            else if (this.TrailingConsonantsAllowed && this.Random.NextDouble() < this.Probability.ChanceTrailingConsonantExists)
+            else if (this.TrailingConsonantsAllowed && _random.NextDouble() < this.Probability.ChanceTrailingConsonantExists)
             {
                 // If we need to append a trailing consonant, check if
                 // we need a sequence instead
-                if (this.TrailingConsonantSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceTrailingConsonantIsSequence)
+                if (this.TrailingConsonantSequencesAllowed && _random.NextDouble() < this.Probability.ChanceTrailingConsonantIsSequence)
                 {
                     output.Append(this.NextTrailingConsonantSequence());
                 }
