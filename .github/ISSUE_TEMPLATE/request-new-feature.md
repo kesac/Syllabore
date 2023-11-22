@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **What is your idea?**
-Describe your feature request here. A description of the problem that is being solved would be helpful here as well. 
+_Describe your feature request here. A description of the problem that is being solved would be helpful here as well._
 
 **How will this benefit users of Syllabore?**
 - [ ] It addresses a bug
