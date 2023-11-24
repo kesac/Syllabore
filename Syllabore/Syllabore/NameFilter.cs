@@ -5,20 +5,54 @@ using System.Text.RegularExpressions;
 
 namespace Syllabore
 {
-
+    /// <summary>
+    /// The type of condition that a 
+    /// <see cref="FilterConstraint"/> uses.
+    /// </summary>
     public enum FilterCondition
     {
+        /// <summary>
+        /// Condition is met if the name contains a specific substring.
+        /// </summary>
         Contains,
+
+        /// <summary>
+        /// Condition is met if the name starts with a specific substring.
+        /// </summary>
         StartsWith,
+
+        /// <summary>
+        /// Condition is met if the name ends with a specific substring.
+        /// </summary>
         EndsWith,
+
+        /// <summary>
+        /// Condition is met if the name matches a specific regular expression.
+        /// </summary>
         MatchesPattern
     }
 
+    /// <summary>
+    /// A constraint used by a <see cref="NameFilter"/> when
+    /// testing names for validity.
+    /// </summary>
     public class FilterConstraint
     {
+        /// <summary>
+        /// The type of condition names will be tested against.
+        /// (eg. Contains, StartsWith, EndsWith, MatchesPattern)
+        /// </summary>
         public FilterCondition Type { get; set; }
+
+        /// <summary>
+        /// The value that names will be tested against (in conjunction
+        /// with <see cref="Type"/>).
+        /// </summary>
         public string Value { get; set; }
 
+        /// <summary>
+        /// Creates a new <see cref="FilterConstraint"/> with the specified condition and value.
+        /// </summary>
         public FilterConstraint(FilterCondition type, string value)
         {
             this.Type = type;
@@ -33,8 +67,14 @@ namespace Syllabore
     [Serializable]
     public class NameFilter : INameFilter
     {
+        /// <summary>
+        /// The list of constraints that names must pass to be considered valid.
+        /// </summary>
         public List<FilterConstraint> Constraints { get; set; }
 
+        /// <summary>
+        /// Instantiates a new <see cref="NameFilter"/> with no constraints.
+        /// </summary>
         public NameFilter()
         {
             this.Constraints = new List<FilterConstraint>();
@@ -83,7 +123,6 @@ namespace Syllabore
             foreach (string s in prefixes)
             {
                 this.Constraints.Add(new FilterConstraint(FilterCondition.StartsWith, s));
-                // this.Conditions.Add("^" + s.Trim());
             }
 
             return this;

@@ -155,7 +155,7 @@ namespace Syllabore
         /// <param name="index">The index can be a negative integer to traverse from the
         /// end of the name instead. (For example, an index -1 will be interpreted as the
         /// last syllable of a name.</param>
-        /// <param name="replacement">The string to insert.</param>
+        /// <param name="syllable">The string to insert.</param>
         /// <returns></returns>
         public Transform InsertSyllable(int index, string syllable)
         {

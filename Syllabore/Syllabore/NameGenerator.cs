@@ -172,7 +172,7 @@ namespace Syllabore
         /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="SyllableGenerator"/>.
         /// </para>
         /// <para>
-        /// When multiple calls to this method or <see cref="UsingCharacters(string, string)"></see> are made, the last call will take precedence.
+        /// When multiple calls to this method or are made, the last call will take precedence.
         /// </para>
         /// </summary>
         public NameGenerator UsingSyllables(Func<SyllableGenerator, SyllableGenerator> configure)
@@ -186,7 +186,7 @@ namespace Syllabore
         /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="ISyllableGenerator"/>.
         /// </para>
         /// <para>
-        /// When multiple calls to this method or <see cref="UsingCharacters(string, string)"></see> are made, the last call will take precedence.
+        /// When multiple calls to this method are made, the last call will take precedence.
         /// </para>
         /// </summary>
         public NameGenerator UsingSyllables(ISyllableGenerator provider)
@@ -388,10 +388,11 @@ namespace Syllabore
 
         /// <summary>
         /// <para>
-        /// Generates and returns a random name. The name will be consistent with this <see cref="NameGenerator"/>'s syllable provider, name transformer (if it is used), and name filter (if it is used).
+        /// Generates and returns a random name. The name will be consistent with this <see cref="NameGenerator"/>'s 
+        /// syllable provider, name transformer (if it is used), and name filter (if it is used).
         /// </para>
         /// <para>
-        /// If you need to access to individual syllables of a name, use <see cref="NextName"/> instead.
+        /// If you need to access to individual syllables of a name, use <see cref="NextName()"/> instead.
         /// </para>
         /// </summary>
         public string Next()
@@ -416,7 +417,7 @@ namespace Syllabore
         /// syllable provider, name transformer (if it is used), and name filter (if it is used).
         /// </para>
         /// <para>
-        /// If you need to access to individual syllables of a name, use <see cref="NextName"/> instead.
+        /// If you need to access to individual syllables of a name, use <see cref="NextName()"/> instead.
         /// </para>
         /// </summary>
         public string Next(int syllableLength)
