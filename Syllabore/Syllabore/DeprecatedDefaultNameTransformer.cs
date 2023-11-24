@@ -5,8 +5,10 @@ using System.Text;
 namespace Syllabore
 {
     /// <summary>
-    /// This transformer creates variations of names by replacing one syllable
-    /// with another syllable. Syllables are derived from <see cref="DefaultSyllableGenerator"/>.
+    /// <b>Deprecated</b>. This transformer was originally used to 
+    /// create variations of names by replacing one syllable
+    /// with another syllable. Syllables were derived from 
+    /// <see cref="DefaultSyllableGenerator"/>.
     /// </summary>
     [Obsolete("No longer used", false)]
     public class DefaultNameTransformer : NameTransformer

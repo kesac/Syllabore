@@ -4,13 +4,42 @@ using System.Text;
 
 namespace Syllabore
 {
+    /// <summary>
+    /// The type of action that a <see cref="TransformStep"/> 
+    /// will apply to a <see cref="Name"/>.
+    /// </summary>
     public enum TransformStepType
     {
+        /// <summary>
+        /// Adds a syllable to a <see cref="Name"/>, displacing other
+        /// syllables as needed.
+        /// </summary>
         InsertSyllable,
+
+        /// <summary>
+        /// Adds a syllable to the end of a <see cref="Name"/>.
+        /// </summary>
         AppendSyllable,
+
+        /// <summary>
+        /// Replaces a single syllable with a another syllable.
+        /// </summary>
         ReplaceSyllable,
+
+        /// <summary>
+        /// Deletes a syllable from a <see cref="Name"/>, displacing
+        /// other syllables as needed.
+        /// </summary>
         RemoveSyllable,
-        Lambda, // Note: this one cannot be serialized
+
+        /// <summary>
+        /// An action that is not serializable and expressed in a lambda.
+        /// </summary>
+        Lambda,
+
+        /// <summary>
+        /// Replaces all instances of a substring with another substring.
+        /// </summary>
         ReplaceAllSubstring
     }
 
@@ -19,25 +48,53 @@ namespace Syllabore
     /// </summary>
     public class TransformStep
     {
+        /// <summary>
+        /// The type of action this <see cref="TransformSet"/> represents.
+        /// </summary>
         public TransformStepType Type { get; set; }
-        public List<string> Arguments { get; set; }
-        private Action<Name> UnserializableAction { get; set; }
 
-        public TransformStep()
+        /// <summary>
+        /// The arguments that are passed to the action.
+        /// </summary>
+        public List<string> Arguments { get; set; }
+
+        /// <summary>
+        /// If this <see cref="TransformStep"/> is of type <see cref="TransformStepType.Lambda"/>,
+        /// this property will contain the action to be applied.
+        /// </summary>
+        private Action<Name> _unserializableAction { get; set; }
+
+        /// <summary>
+        /// Instantiates a new <see cref="TransformStep"/> with
+        /// no type or arguments.
+        /// </summary>
+        public TransformStep() // Needs to exist for serialization
         {
             this.Arguments = new List<string>();
         }
 
+        /// <summary>
+        /// Instantiates a new <see cref="TransformStep"/> with
+        /// the specified type and arguments.
+        /// </summary>
         public TransformStep(TransformStepType type, params string[] args)
         {
             this.Type = type;
             this.Arguments = new List<string>(args);
         }
 
+        /// <summary>
+        /// Instantiates a new <see cref="TransformStep"/> with
+        /// type <see cref="TransformStepType.Lambda"/> and the
+        /// specified <see cref="Action"/> to execute.
+        /// Note that this type of <see cref="TransformSet"/> is 
+        /// not serializable.
+        /// </summary>
+        /// <param name="unserializableAction"></param>
         public TransformStep(Action<Name> unserializableAction)
         {
             this.Type = TransformStepType.Lambda;
-            this.UnserializableAction = unserializableAction;
+            _unserializableAction = unserializableAction;
         }
 
         /// <summary>
@@ -104,7 +161,7 @@ namespace Syllabore
             }
             else if(this.Type == TransformStepType.Lambda)
             {
-                UnserializableAction(name);
+                _unserializableAction(name);
             }
             
 
