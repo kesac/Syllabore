@@ -6,18 +6,27 @@ namespace Syllabore
 {
     /// <summary>
     /// <para>
-    /// A <see cref="Grapheme"/> is the most basic indivisible unit
-    /// of a writing system. In Syllabore, they 
-    /// can represent a single vowel, consonant, or sequence.
-    /// </para>
-    /// <para>
-    /// <see cref="Grapheme"/>s are used by <see cref="SyllableGenerator"/>s
-    /// to construct syllables.
+    /// A <see cref="Grapheme"/> is an indivisible unit of a 
+    /// writing system. In Syllabore, <see cref="Grapheme">Graphemes</see> 
+    /// are used to represent vowels, consonants, or sequences.
+    /// <see cref="Grapheme">Graphemes</see> are used directly by 
+    /// <see cref="SyllableGenerator">SyllableGenerators</see>
+    /// when constructing syllables.
     /// </para>
     /// </summary>
     public class Grapheme : IWeighted
     {
+        /// <summary>
+        /// The vowel, consonant, or sequence that 
+        /// this <see cref="Grapheme"/> represents.
+        /// </summary>
         public string Value { get; set; }
+
+        /// <summary>
+        /// The weight of occurrence for this
+        /// <see cref="Grapheme"/>. By default the
+        /// value is 1.
+        /// </summary>
         public int Weight { get; set; }
 
         /// <summary>

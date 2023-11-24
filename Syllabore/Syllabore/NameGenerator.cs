@@ -19,10 +19,21 @@ namespace Syllabore
     /// </summary>
     public class NameGenerator : INameGenerator
     {
-        private const int DefaultMaximumRetries = 1000;
-        // private const double DefaultTransformChance = 1.0;
 
-        private Random Random { get; set; }
+        /// <summary>
+        /// <para>
+        /// The default maximum number of attempts a <see cref="NameGenerator"/> 
+        /// will make to satisfy its own <see cref="NameFilter"/>. If the maximum
+        /// number of attempts is exceeded, an <see cref="InvalidOperationException"/> will be thrown.
+        /// </para>
+        /// <para>
+        /// Hitting the limit is indicative of a <see cref="NameGenerator"/> that 
+        /// can never satisfy its own <see cref="NameFilter"/>.
+        /// </para>
+        /// </summary>
+        private const int DefaultMaximumRetries = 1000;
+
+        private Random _random;
 
         /// <summary>
         /// <para>
@@ -37,22 +48,22 @@ namespace Syllabore
         public ISyllableGenerator Provider { get; set; }
 
         /// <summary>
-        /// <para>
         /// The name transformer used during name generation.
         /// A vanilla <see cref="NameGenerator"/> will not use a 
         /// transformer by default.
-        /// </para>
         /// </summary>
         public INameTransformer Transformer { get; set; }
 
+        /// <summary>
+        /// The probability that a name will be transformed 
+        /// during the generation process.
+        /// </summary>
         public double TransformerChance { get; set; }
 
         /// <summary>
-        /// <para>
         /// The filter used to validate a <see cref="NameGenerator"/>'s output.
         /// A vanilla <see cref="NameGenerator"/> will not use a 
         /// filter by default.
-        /// </para>
         /// </summary>
         public INameFilter Filter { get; set; }
 
@@ -126,7 +137,7 @@ namespace Syllabore
                 this.UsingFilter(filter);
             }
 
-            this.Random = new Random();
+            _random = new Random();
         }
 
         #endregion
@@ -161,7 +172,7 @@ namespace Syllabore
         /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="SyllableGenerator"/>.
         /// </para>
         /// <para>
-        /// When multiple calls to this method or <see cref="UsingCharacters(string, string)"></see> are made, the last call will take precedence.
+        /// When multiple calls to this method or are made, the last call will take precedence.
         /// </para>
         /// </summary>
         public NameGenerator UsingSyllables(Func<SyllableGenerator, SyllableGenerator> configure)
@@ -175,7 +186,7 @@ namespace Syllabore
         /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="ISyllableGenerator"/>.
         /// </para>
         /// <para>
-        /// When multiple calls to this method or <see cref="UsingCharacters(string, string)"></see> are made, the last call will take precedence.
+        /// When multiple calls to this method are made, the last call will take precedence.
         /// </para>
         /// </summary>
         public NameGenerator UsingSyllables(ISyllableGenerator provider)
@@ -231,23 +242,6 @@ namespace Syllabore
         #endregion
 
         #region Transformations
-
-        /*
-        /// <summary>
-        /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="TransformSet"/>.
-        /// A vanilla <see cref="NameGenerator"/> does not use transformers by default.
-        /// <para>
-        /// The name transformer will be applied to every generated name.
-        /// </para>
-        /// <para>
-        /// When multiple calls to this method is made, the last call will take precedence.
-        /// </para>
-        /// </summary>
-        public NameGenerator UsingTransforms(Func<TransformSet, TransformSet> configure)
-        {
-            return this.UsingTransforms(1.0, configure);
-        }
-        */
 
         /// <summary>
         /// Sets the name transformer of this <see cref="NameGenerator"/> to the specified <see cref="INameTransformer"/>.
@@ -394,10 +388,11 @@ namespace Syllabore
 
         /// <summary>
         /// <para>
-        /// Generates and returns a random name. The name will be consistent with this <see cref="NameGenerator"/>'s syllable provider, name transformer (if it is used), and name filter (if it is used).
+        /// Generates and returns a random name. The name will be consistent with this <see cref="NameGenerator"/>'s 
+        /// syllable provider, name transformer (if it is used), and name filter (if it is used).
         /// </para>
         /// <para>
-        /// If you need to access to individual syllables of a name, use <see cref="NextName"/> instead.
+        /// If you need to access to individual syllables of a name, use <see cref="NextName()"/> instead.
         /// </para>
         /// </summary>
         public string Next()
@@ -410,7 +405,7 @@ namespace Syllabore
                 throw new InvalidOperationException("The value of property MinimumSyllables must be less than or equal to property MaximumSyllables. Both values must be postive integers.");
             }
 
-            var syllableLength = this.Random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
+            var syllableLength = _random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
             return this.Next(syllableLength);
         }
 
@@ -422,7 +417,7 @@ namespace Syllabore
         /// syllable provider, name transformer (if it is used), and name filter (if it is used).
         /// </para>
         /// <para>
-        /// If you need to access to individual syllables of a name, use <see cref="NextName"/> instead.
+        /// If you need to access to individual syllables of a name, use <see cref="NextName()"/> instead.
         /// </para>
         /// </summary>
         public string Next(int syllableLength)
@@ -441,7 +436,7 @@ namespace Syllabore
                 throw new InvalidOperationException("The value of property MinimumSyllables must be less than or equal to property MaximumSyllables. Both values must be postive integers.");
             }
 
-            var syllableLength = this.Random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
+            var syllableLength = _random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
             return this.NextName(syllableLength);
         }
 
@@ -469,7 +464,6 @@ namespace Syllabore
                 {
                     if (i == 0 && syllableLength > 1)
                     {
-                        //result.Syllables[i] = this.Provider.NextStartingSyllable();
                         result.Syllables.Add(this.Provider.NextStartingSyllable());
                     }
                     else if (i == syllableLength - 1 && syllableLength > 1)
@@ -482,11 +476,7 @@ namespace Syllabore
                     }
                 }
 
-                //if (this.Transformer != null 
-                //    && this.Transformer.TransformChance.HasValue 
-                //    && this.Random.NextDouble() < this.Transformer.TransformChance)
-                //if (this.Transformer != null)
-                if (this.Transformer != null && this.Random.NextDouble() < this.TransformerChance)
+                if (this.Transformer != null && _random.NextDouble() < this.TransformerChance)
                 {
                     result = this.Transformer.Apply(result);
                 }

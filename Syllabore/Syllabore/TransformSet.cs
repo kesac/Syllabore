@@ -9,23 +9,43 @@ namespace Syllabore
 
     /// <summary>
     /// <para>
-    /// A <see cref="TransformSet"/> receives
-    /// a source name, applies one or more <see cref="Transform"/>s, and creates a new name.
-    /// By default, all <see cref="Transform"/>s of the same set are applied to the source name
-    /// and in the order they were added.
+    /// A <see cref="TransformSet"/> takes a source name, 
+    /// applies one or more <see cref="Transform">Transforms</see>, 
+    /// then creates a new name. By default, all 
+    /// <see cref="Transform">Transforms</see> of the same set are 
+    /// applied to the source name and in the order they were added.
     /// </para>
     /// <para>
-    /// To randomize what transforms are applied, make sure to call <see cref="RandomlySelect(int)"/>
-    /// when configuring a <see cref="TransformSet"/>.
+    /// To randomize what transforms are applied, make sure to call 
+    /// <see cref="RandomlySelect(int)"/> when configuring a 
+    /// <see cref="TransformSet"/>.
     /// </para>
     /// </summary>
     [Serializable]
     public class TransformSet : INameTransformer
     {
-        private Random Random;
+        private Random _random;
+
+        /// <summary>
+        /// The <see cref="Transform">Transforms</see> that make up this
+        /// <see cref="TransformSet"/>.
+        /// </summary>
         public List<Transform> Transforms { get; set; }
 
+        /// <summary>
+        /// When true, <see cref="Transform">Transforms</see> are not
+        /// applied in the order they were added. Instead, a random
+        /// number of <see cref="Transform">Transforms</see> are selected
+        /// and applied. Property <see cref="RandomSelectionCount"/> is
+        /// used to determine how many random selections are made.
+        /// </summary>
         public bool UseRandomSelection { get; set; }
+
+        /// <summary>
+        /// When <see cref="UseRandomSelection"/> is true, this property
+        /// is used to determine how many random <see cref="Transform">Transforms</see>
+        /// are selected and applied.
+        /// </summary>
         public int RandomSelectionCount { get; set; }
 
         /// <summary>
@@ -36,7 +56,7 @@ namespace Syllabore
         /// </summary>
         public TransformSet()
         {
-            this.Random = new Random();
+            _random = new Random();
             this.Transforms = new List<Transform>();
             this.UseRandomSelection = false;
             this.RandomSelectionCount = 0;
@@ -108,7 +128,7 @@ namespace Syllabore
                 {
                     int index = transform.ConditionalIndex.Value;
 
-                    if (index < 0) // reverse index provided, so translate into forward index (eg. -1 is the last syllable)
+                    if (index < 0) // reverse index provided, so translate into a forward index (eg. -1 is the last syllable)
                     {
                         index = sourceName.Syllables.Count + index;
                     }
@@ -192,7 +212,6 @@ namespace Syllabore
             this.RandomSelectionCount = limit;
             return this;
         }
-
 
     }
 

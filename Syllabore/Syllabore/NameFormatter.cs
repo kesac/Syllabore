@@ -23,6 +23,11 @@ namespace Syllabore
         /// </para>
         /// </summary>
         public string Format { get; set; }
+
+        /// <summary>
+        /// The <see cref="INameGenerator">NameGenerators</see>
+        /// used by this <see cref="NameFormatter"/>.
+        /// </summary>
         public Dictionary<string, INameGenerator> BoundNameGenerators { get; set; }
 
         /// <summary>
