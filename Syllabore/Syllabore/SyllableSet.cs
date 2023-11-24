@@ -20,14 +20,38 @@ namespace Syllabore
     /// </summary>
     public class SyllableSet : ISyllableGenerator
     {
+        /// <summary>
+        /// The syllable set size for starting syllables.
+        /// </summary>
         public int StartingSyllableMax { get; set; }
+
+        /// <summary>
+        /// The syllable set size for syllables occurring
+        /// between the starting and ending syllable.
+        /// </summary>
         public int MiddleSyllableMax { get; set; }
+
+        /// <summary>
+        /// The syllable set size for ending syllables.
+        /// </summary>
         public int EndingSyllableMax { get; set; }
 
-        private ISyllableGenerator Provider { get; set; }
+        private ISyllableGenerator _generator { get; set; }
 
+        /// <summary>
+        /// The finite set of syllables to be used in the starting position of a name.
+        /// </summary>
         public HashSet<string> StartingSyllables { get; set; }
+
+        /// <summary>
+        /// The finite set of syllables to be used between the starting and ending
+        /// positions of a name.
+        /// </summary>
         public HashSet<string> MiddleSyllables { get; set; }
+
+        /// <summary>
+        /// The finite set of syllables to be used in the ending position of a name.
+        /// </summary>
         public HashSet<string> EndingSyllables { get; set; }
 
         /// <summary>
@@ -75,7 +99,7 @@ namespace Syllabore
         /// </summary>
         public SyllableSet WithGenerator(ISyllableGenerator provider)
         {
-            this.Provider = provider;
+            _generator = provider;
             return this;
         }
 
@@ -150,42 +174,50 @@ namespace Syllabore
             return this;
         }
 
-        // Inherited
+        /// <summary>
+        /// Returns a random syllable suitable for use in the starting position
+        /// of a name.
+        /// </summary>
         public string NextStartingSyllable()
         {
             if (this.StartingSyllables.Count < this.StartingSyllableMax)
             {
                 for (int i = this.StartingSyllables.Count; i < this.StartingSyllableMax; i++)
                 {
-                    this.StartingSyllables.Add(this.Provider.NextStartingSyllable());
+                    this.StartingSyllables.Add(_generator.NextStartingSyllable());
                 }
             }
 
             return this.StartingSyllables.RandomItem<string>();
         }
 
-        // Inherited
+        /// <summary>
+        /// Returns a random syllable suitable for use between the starting and ending
+        /// positions of a name.
+        /// </summary>
         public string NextSyllable()
         {
             if (this.MiddleSyllables.Count < this.MiddleSyllableMax)
             {
                 for (int i = this.MiddleSyllables.Count; i < this.MiddleSyllableMax; i++)
                 {
-                    this.MiddleSyllables.Add(this.Provider.NextSyllable());
+                    this.MiddleSyllables.Add(_generator.NextSyllable());
                 }
             }
 
             return this.MiddleSyllables.RandomItem<string>();
         }
 
-        // Inherited
+        /// <summary>
+        /// Returns a random syllable suitable for use in the ending position of a name.
+        /// </summary>
         public string NextEndingSyllable()
         {
             if (this.EndingSyllables.Count < this.EndingSyllableMax)
             {
                 for (int i = this.EndingSyllables.Count; i < this.EndingSyllableMax; i++)
                 {
-                    this.EndingSyllables.Add(this.Provider.NextEndingSyllable());
+                    this.EndingSyllables.Add(_generator.NextEndingSyllable());
                 }
             }
 

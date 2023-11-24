@@ -7,24 +7,39 @@ namespace Syllabore
 {
     /// <summary>
     /// <para>
-    /// A <see cref="Transform"/> changes a source name into a new name.
+    /// A <see cref="Transform"/> is a mechanism for changing a source name into 
+    /// a new, modified name. Transforming names is useful for adding some 
+    /// determinism in name generation or for creating iterations on an established name.
     /// </para>
     /// <para>
-    /// <see cref="Transform"/>s can have
-    /// an optional condition that must be fulfilled for a transformation to occur.
+    /// <see cref="Transform">Transforms</see> can have an optional condition that 
+    /// must be fulfilled for a transformation to occur.
     /// </para>
     /// </summary>
     public class Transform : IWeighted, INameTransformer
     {
+        /// <summary>
+        /// The <see cref="TransformStep">steps</see> that this transform will execute.
+        /// </summary>
         public List<TransformStep> Steps { get; set; }
 
         /// <summary>
-        /// A positive integer that influences the probability of this transform being used over others.
-        /// Given two transforms X and Y with a weight of 3 and 1 respectively, transform X will be applied 75% of the time.
-        /// All transforms default to a weight of 1.
+        /// A positive integer that influences the probability of this transform being 
+        /// used over others. Given two transforms X and Y with a weight of 3 and 1 
+        /// respectively, transform X will be applied 75% of the time. All transforms 
+        /// default to a weight of 1.
         /// </summary>
         public int Weight { get; set; }
+
+        /// <summary>
+        /// The index of the syllable that the condition operates on. A negative index 
+        /// can be provided to traverse right-to-left from the end of the name instead.
+        /// </summary>
         public int? ConditionalIndex { get; set; }
+
+        /// <summary>
+        /// A regular expression that must be satisfied for the transform to be applied.
+        /// </summary>
         public string ConditionalRegex { get; set; }
 
         /// <summary>
@@ -109,7 +124,7 @@ namespace Syllabore
 
 
         /// <summary>
-        /// Adds a transform step that replaces a syllable at the specified index with
+        /// Adds a step that replaces a syllable at the specified index with
         /// a desired string.
         /// </summary>
         /// <param name="index">The index can be a negative integer to traverse from the
@@ -124,7 +139,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Adds a transform step that replaces all instances of the specified substring in each syllable with
+        /// Adds a step that replaces all instances of the specified substring in each syllable with
         /// a desired string. Note that the substring must be completely contained in a syllable to be replaced.
         /// </summary>
         public Transform ReplaceAll(string substring, string replacement)
@@ -158,7 +173,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Adds a transform step that removes the syllable at the specified index.
+        /// Adds a step that removes the syllable at the specified index.
         /// </summary>
         /// <param name="index">The index can be a negative integer to traverse from the
         /// end of the name instead. (For example, an index -1 will be interpreted as the

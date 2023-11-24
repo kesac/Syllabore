@@ -22,10 +22,27 @@ namespace Syllabore.Json
         /// </summary>
         private static readonly char[] AllowedCharacters = { '\r', '\n', '\u0022' };
 
-        public Type ProviderType { get; set; }
+        /// <summary>
+        /// The class <see cref="Type"/> of a <see cref="NameGenerator"/>'s
+        /// <see cref="NameGenerator.Provider"/> property.
+        /// </summary>
+        public Type ProviderType { get; set; }    // TODO: Rename
+
+        /// <summary>
+        /// The class <see cref="Type"/> of a <see cref="NameGenerator"/>'s
+        /// <see cref="NameGenerator.Transformer"/> property.
+        /// </summary>
         public Type TransformerType { get; set; }
+
+        /// <summary>
+        /// The class <see cref="Type"/> of a <see cref="NameGenerator"/>'s
+        /// <see cref="NameGenerator.Filter"/> property.
+        /// </summary>
         public Type FilterType { get; set; }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="NameGeneratorSerializer"/>.
+        /// </summary>
         public NameGeneratorSerializer()
         {
             this.ProviderType = typeof(SyllableGenerator);

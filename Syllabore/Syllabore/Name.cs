@@ -65,8 +65,11 @@ namespace Syllabore
             return false;
         }
 
-        // Needs to exist for the Equals() override.
-        public override int GetHashCode()
+        
+        /// <summary>
+        /// Returns a hash code for this <see cref="Name"/>.
+        /// </summary>
+        public override int GetHashCode() // Needs to exist for the Equals() override.
         {
             return base.GetHashCode();
         }

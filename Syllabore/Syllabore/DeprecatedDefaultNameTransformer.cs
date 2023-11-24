@@ -17,6 +17,9 @@ namespace Syllabore
 
         private Random Random { get; set; }
 
+        /// <summary>
+        /// Deprecated. No longer used.
+        /// </summary>
         [Obsolete("No longer used", false)]
         public DefaultNameTransformer()
         {
