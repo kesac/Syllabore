@@ -9,13 +9,21 @@ namespace Syllabore.Tests
     [TestClass]
     public class NameFilterTests
     {
+        private readonly NameGenerator _sut;
+        public NameFilterTests()
+        {
+            _sut = new NameGenerator()
+                    .UsingSyllables(x => x
+                        .WithVowels("aei")
+                        .WithLeadingConsonants("str"));
+        }
 
         /* Create a unit test that calls methods that start with "DoNot" and verifies that the name is not valid. */
         [TestMethod, Timeout(10000)]
         public void NameValidation_WithoutInstantiatingNameFilterExplicitly_OutputReflectsConstraints()
         {
             // Purposely using depcreated method UsingProvider()
-            var g = new NameGenerator()
+            var sut = new NameGenerator()
                     .UsingProvider(x => x
                         .WithVowels("aei")
                         .WithLeadingConsonants("bcdf"))
@@ -26,94 +34,102 @@ namespace Syllabore.Tests
 
             for (int i = 0; i < 1000; i++)
             {
-                var name = g.Next().ToLower();
+                var name = sut.Next().ToLower();
                 Assert.IsFalse(name.ContainsAny("a", "e"));
                 Assert.IsFalse(name.StartsWith("b"));
                 Assert.IsFalse(name.EndsWith("c"));
             }
-
         }
 
-
-
-            [TestMethod, Timeout(10000)]
-        public void NameValidation_WhenPrefixConstraintSpecified_OutputReflectsConstraints()
+        [TestMethod, Timeout(10000)]
+        public void NameValidation_WhenPrefixConstraintNotSpecified_OutputReflectsConstraints()
         {
-            var p = new SyllableGenerator()
+            var syllableGenerator = new SyllableGenerator()
                         .WithVowels("aei")
                         .WithConsonants("str")
                         .WithProbability(x => x.OfLeadingVowelsInStartingSyllable(1));
 
-            var g = new NameGenerator().UsingSyllables(p);
-                    
+            var sut = new NameGenerator().UsingSyllables(syllableGenerator);
+
             for (int i = 0; i < 1000; i++)
             {
-                var name = g.Next();
-                Assert.IsTrue(name.StartsWith("A","E","I"));
+                var name = sut.Next();
+                Assert.IsTrue(name.StartsWith("A", "E", "I"));
             }
+        }
 
-            g.UsingFilter(x => x.DoNotAllowStart("a")); // this method should be case insensitive too
+        [TestMethod, Timeout(10000)]
+        public void NameValidation_WhenPrefixConstraintSpecified_OutputReflectsConstraints()
+        {
+            var syllableGenerator = new SyllableGenerator()
+                        .WithVowels("aei")
+                        .WithConsonants("str")
+                        .WithProbability(x => x.OfLeadingVowelsInStartingSyllable(1));
+
+            var sut = new NameGenerator().UsingSyllables(syllableGenerator);
+                    
+            sut.UsingFilter(x => x.DoNotAllowStart("a")); // this method should be case insensitive too
 
             for (int i = 0; i < 1000; i++)
             {
-                var name = g.Next();
+                var name = sut.Next();
                 Assert.IsTrue(name.StartsWith("E", "I"));
             }
 
         }
 
         [TestMethod, Timeout(10000)]
-        public void NameValidation_WhenSuffixConstraintSpecified_OutputReflectsConstraints()
+        public void NameValidation_WhenNoSuffixConstraintSpecified_OutputReflectsConstraints()
         {
-            var g = new NameGenerator()
-                    .UsingSyllables(x => x
-                        .WithVowels("aei")
-                        .WithLeadingConsonants("str"));
-
             for (int i = 0; i < 1000; i++)
             {
-                var name = g.Next();
+                var name = _sut.Next();
                 Assert.IsTrue(name.EndsWith("a", "e", "i"));
             }
-
-            g.UsingFilter(x => x.DoNotAllowEnding("I")); // this method should be case insensitive too
-
-            for (int i = 0; i < 1000; i++)
-            {
-                var name = g.Next();
-                Assert.IsTrue(name.EndsWith("a", "e"));
-            }
-
         }
 
         [TestMethod, Timeout(10000)]
-        public void NameValidation_WhenNonRegexConstraintSpecified_OutputReflectsConstraints()
+        public void NameValidation_WhenSuffixConstraintSpecified_OutputReflectsConstraints()
         {
-            var g = new NameGenerator()
-                    .UsingSyllables(x => x
-                        .WithVowels("aei")
-                        .WithLeadingConsonants("str"));
+            _sut.UsingFilter(x => x.DoNotAllowEnding("I")); // this method should be case insensitive too
 
             for (int i = 0; i < 1000; i++)
             {
-                var name = g.Next();
-                Assert.IsTrue(name.ContainsAny("a", "e", "i"));
+                var name = _sut.Next();
+                Assert.IsTrue(!name.EndsWith("I", "i"));
             }
+        }
 
-            g.UsingFilter(x => x.DoNotAllow("e")); // this method should be case insensitive too
-
+        [TestMethod, Timeout(10000)]
+        [DataRow(new string[] { "a", "e", "i" })]
+        public void NameValidation_WhenNonRegexConstraintSpecified_OutputReflectsConstraints(string[] characters)
+        {
             for (int i = 0; i < 1000; i++)
             {
-                var name = g.Next();
-                Assert.IsFalse(name.ContainsAny("E","e"));
+                var name = _sut.Next();
+                Assert.IsTrue(name.ContainsAny(characters));
             }
+        }
 
+        [TestMethod, Timeout(10000)]
+        [DataRow("e")]
+        [DataRow("a")]
+        [DataRow("q")]
+        public void NameValidation_WhenNonRegexConstraintSpecified_WithDisallowedCharacter_OutputReflectsConstraints(string character)
+        {
+            _sut.UsingFilter(x => x.DoNotAllow(character));
+            
+            for (int i = 0; i < 1000; i++)
+            {
+                var name = _sut.Next();
+                Assert.IsTrue(!name.ContainsAny(character.ToLower(), character.ToUpper()));
+            }
         }
 
         [TestMethod, Timeout(10000)]
         public void NameValidation_WhenRegexConstraintsSpecified_OutputReflectsConstraints()
         {
-            var generator = new NameGenerator()
+            var sut = new NameGenerator()
                             .UsingSyllables(x => x
                                 .WithVowels("a")
                                 .WithVowelSequences("ee")
@@ -122,12 +138,12 @@ namespace Syllabore.Tests
                                 .WithTrailingConsonants("d")
                                 .WithTrailingConsonantSequences("ff"))
                             .UsingFilter(x => x
-                                .DoNotAllowPattern(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
-                                .DoNotAllowPattern(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
+                                .DoNotAllow(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
+                                .DoNotAllow(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
 
             for (int i = 0; i < 1000; i++)
             {
-                Assert.IsFalse(Regex.IsMatch(generator.Next(), "(ee|cc|ff)"));
+                Assert.IsFalse(Regex.IsMatch(sut.Next(), "(ee|cc|ff)"));
             }
 
         }
@@ -135,46 +151,44 @@ namespace Syllabore.Tests
         [TestMethod, Timeout(10000)]
         public void NameValidation_WhenRegexConstraintsSpecified3_OutputReflectsConstraints()
         {
-            var g = new NameGenerator();
-            g.UsingSyllableCount(2, 3);
+            var sut = new NameGenerator();
+            sut.UsingSyllableCount(2, 3);
 
-            var f = new NameFilter();
-            f.DoNotAllowEnding("f", "g", "h", "j", "q", "v", "w", "z");
-            f.DoNotAllowPattern("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
+            var nameFilter = new NameFilter();
+            nameFilter.DoNotAllowEnding("f", "g", "h", "j", "q", "v", "w", "z");
+            nameFilter.DoNotAllow("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
+            nameFilter.DoNotAllow("(q[^u])"); // Q must always be followed by a u
+            nameFilter.DoNotAllow("([^tsao]w)"); // W must always be preceded with a t, s, a, or o
+            nameFilter.DoNotAllow("pn"); // Looks a little awkward
 
-            f.DoNotAllowPattern("(q[^u])"); // Q must always be followed by a u
-            f.DoNotAllowPattern("([^tsao]w)"); // W must always be preceded with a t, s, a, or o
-            f.DoNotAllow("pn"); // Looks a little awkward
+            Assert.IsFalse(nameFilter.IsValidName(new Name() { Syllables = new List<string>() { "qello" } }));
+            Assert.IsTrue(nameFilter.IsValidName(new Name() { Syllables = new List<string>() { "quello" } }));
 
-            Assert.IsFalse(f.IsValidName(new Name() { Syllables = new List<string>() { "qello" } }));
-            Assert.IsTrue(f.IsValidName(new Name() { Syllables = new List<string>() { "quello" } }));
+            Assert.IsFalse(nameFilter.IsValidName(new Name() { Syllables = new List<string>() { "lwas" } }));
+            Assert.IsTrue(nameFilter.IsValidName(new Name() { Syllables = new List<string>() { "twas" } }));
 
-            Assert.IsFalse(f.IsValidName(new Name() { Syllables = new List<string>() { "lwas" } }));
-            Assert.IsTrue(f.IsValidName(new Name() { Syllables = new List<string>() { "twas" } }));
-
-            g.UsingFilter(f);
+            sut.UsingFilter(nameFilter);
         }
 
         [TestMethod, Timeout(10000)]
         public void NameValidation_WhenRegexConstraintsSpecified2_OutputReflectsConstraints()
         {
-
             var provider = new DefaultSyllableGenerator();
             var filter = new NameFilter();
-            filter.DoNotAllowPattern(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
+            filter.DoNotAllow(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
 
             Assert.IsTrue(filter.IsValidName(new Name() { Syllables = new List<String>() { "bc" } }));
             Assert.IsFalse(filter.IsValidName(new Name() { Syllables = new List<String>() { "bcd" } }));
             Assert.IsFalse(filter.IsValidName(new Name() { Syllables = new List<String>() { "bcdf" } }));
 
-            var generator = new NameGenerator();
-            generator.UsingSyllables(provider);
-            generator.UsingFilter(filter);
+            var sut = new NameGenerator();
+            sut.UsingSyllables(provider);
+            sut.UsingFilter(filter);
 
             for (int i = 0; i < 1000; i++)
             {
-                var original = generator.Next();
-                var name = new StringBuilder(original.ToLower());
+                var original = sut.Next().ToLower();
+                var name = new StringBuilder(original);
 
                 name.Replace("a", " ");
                 name.Replace("e", " ");
@@ -192,12 +206,8 @@ namespace Syllabore.Tests
                         maxConsonantSequenceLength = sequence.Length;
                     }
                 }
-
                 Assert.IsTrue(maxConsonantSequenceLength < 3);
             }
-
-
         }
-
     }
 }
