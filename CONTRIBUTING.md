@@ -1,5 +1,5 @@
 # Contributor Guidelines 
-Thanks for your interest in this project. By contributing to this project, you agree that your contributions will be licensed under Syllabore's open source license.
+Thanks for your interest in this project. By contributing to this project, you agree that your contributions will be licensed under Syllabore's open source license. See [authors.md](https://github.com/kesac/Syllabore/blob/main/AUTHORS.md) for this project's current and past contributors.
 
 ## Can I submit pull requests?
 Yes, please create pull requests for:
