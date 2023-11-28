@@ -172,7 +172,7 @@ namespace Syllabore
         /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="SyllableGenerator"/>.
         /// </para>
         /// <para>
-        /// When multiple calls to this method or are made, the last call will take precedence.
+        /// Calling this method overwrites any existing syllable generator.
         /// </para>
         /// </summary>
         public NameGenerator UsingSyllables(Func<SyllableGenerator, SyllableGenerator> configure)
@@ -186,7 +186,7 @@ namespace Syllabore
         /// Sets the syllable generator of this <see cref="NameGenerator"/> to the specified <see cref="ISyllableGenerator"/>.
         /// </para>
         /// <para>
-        /// When multiple calls to this method are made, the last call will take precedence.
+        /// Calling this method overwrites any existing syllable generator.
         /// </para>
         /// </summary>
         public NameGenerator UsingSyllables(ISyllableGenerator provider)
@@ -202,6 +202,9 @@ namespace Syllabore
         /// <summary>
         /// Sets the name filter of this <see cref="NameGenerator"/> to the specified <see cref="NameFilter"/>.
         /// A vanilla <see cref="NameGenerator"/> does not use filters by default.
+        /// <para>
+        /// Calling this method overwrites any existing name filter.
+        /// </para>
         /// </summary>
         public NameGenerator UsingFilter(Func<NameFilter, NameFilter> configure)
         {
@@ -212,6 +215,9 @@ namespace Syllabore
         /// <summary>
         /// Sets the name filter of this <see cref="NameGenerator"/> to the specified <see cref="INameFilter"/>.
         /// A vanilla <see cref="NameGenerator"/> does not use filters by default.
+        /// <para>
+        /// Calling this method overwrites any existing name filter.
+        /// </para>
         /// </summary>
         public NameGenerator UsingFilter(INameFilter filter)
         {
@@ -250,7 +256,7 @@ namespace Syllabore
         /// The name transformer will be applied to every generated name.
         /// </para>
         /// <para>
-        /// When multiple calls to this method is made, the last call will take precedence.
+        /// Calling this method overwrites any existing name transform.
         /// </para>
         /// </summary>
         public NameGenerator UsingTransform(INameTransformer transformer)
@@ -262,7 +268,7 @@ namespace Syllabore
         /// Sets the name transformer of this <see cref="NameGenerator"/> to a new <see cref="TransformSet"/>
         /// containing the specified <see cref="Transform"/> as the only transform.
         /// <para>
-        /// When multiple calls to this method is made, the last call will take precedence.
+        /// Calling this method overwrites any existing name transform.
         /// </para>
         /// </summary>
         public NameGenerator UsingTransform(Func<Transform, Transform> configure)
@@ -279,7 +285,7 @@ namespace Syllabore
         /// The value determines the probability that a name will be transformed.
         /// </para>
         /// <para>
-        /// When multiple calls to this method is made, the last call will take precedence.
+        /// Calling this method overwrites any existing name transform.
         /// </para>
         /// </summary>
         public NameGenerator UsingTransform(double chance, INameTransformer transformer)
@@ -297,7 +303,7 @@ namespace Syllabore
         /// The value determines the probability that a name will be transformed.
         /// </para>
         /// <para>
-        /// When multiple calls to this method is made, the last call will take precedence.
+        /// Calling this method overwrites any existing name transform.
         /// </para>
         /// </summary>
         public NameGenerator UsingTransform(double chance, Func<Transform, Transform> configure)
@@ -315,6 +321,11 @@ namespace Syllabore
         /// <summary>
         /// Sets the minimum and maximum syllable count of generated names to the specified value.
         /// (Both minimum and maximum will be set to the same value.)
+        /// See <see cref="UsingSyllableCount(int, int)"/> if the minimum and maximum syllable count 
+        /// should be different.
+        /// <para>
+        /// Calling this method overwrites previous calls.
+        /// </para>
         /// </summary>
         public NameGenerator UsingSyllableCount(int length)
         {
@@ -323,6 +334,9 @@ namespace Syllabore
 
         /// <summary>
         /// Sets the minimum and maximum syllable length of generated names.
+        /// <para>
+        /// Calling this method overwrites previous calls.
+        /// </para>
         /// </summary>
         public NameGenerator UsingSyllableCount(int min, int max)
         {
@@ -347,7 +361,7 @@ namespace Syllabore
         /// <see cref="NameGenerator"/>.
         /// </para>
         /// <para>
-        /// When multiple calls to this method are made, each probability will reflect the last value they were given.
+        /// Calling this method overwrites any existing probabilities.
         /// </para>
         /// </summary>
         public NameGenerator UsingProbability(Func<GeneratorProbabilityBuilder, GeneratorProbabilityBuilder> configure)
