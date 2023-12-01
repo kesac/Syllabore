@@ -19,7 +19,7 @@
  1. [License](#license)
 
 ## Quick Start
-Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [a subset of consonants and vowels from the English language](https://github.com/kesac/Syllabore/wiki/DefaultSyllableGenerator) will be used. 
+Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [a subset of consonants and vowels from the English language](https://github.com/kesac/Syllabore/wiki/What-is-the-DefaultSyllableGenerator%3F) will be used. 
 
 ```csharp
 var g = new NameGenerator();
