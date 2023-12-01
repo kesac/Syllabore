@@ -1,132 +1,188 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Xml.Linq;
 
 namespace Syllabore.Tests
 {
     [TestClass]
     public class NameTransformerTests
     {
+        private Name _testName;
+
+        public NameTransformerTests()
+        {
+            _testName = new Name("syl", "la", "bore");
+        }
 
         [TestMethod]
-        public void NameGeneration_UseMutatorDirectly_MutationsAppear()
+        public void Transform_NoSteps_NoChanges()
         {
-            var name = new Name("syl", "la", "bore");
-            var mutator = new TransformSet()
-                            .WithTransform(x => x.AppendSyllable("test"))
-                            .Join(new TransformSet()
-                                .WithTransform(x => x.ReplaceSyllable(0, "test")));
+            var sut = new Transform();
+            Assert.IsTrue(_testName.ToString() == sut.Apply(_testName).ToString());
+        }
 
-            for (int i = 0; i < 20; i++)
-            {
-                Assert.IsTrue(name.ToString() != mutator.Apply(name).ToString());
-            }
+        [TestMethod]
+        public void Transform_MultipleSteps_AllStepsAppear()
+        {
+            var sut = new Transform()
+                .InsertSyllable(0, "prefix")
+                .AppendSyllable("suffix");
+
+            var result = sut.Apply(_testName).ToString().ToLower();
+            Assert.IsTrue(result.StartsWith("prefix") && result.EndsWith("suffix"));
+        }
+
+        [TestMethod]
+        public void TransformSet_NoTransforms_NoTransformationsAppear()
+        {
+            var sut = new TransformSet();
+            Assert.IsTrue(_testName.ToString() == sut.Apply(_testName).ToString());
+        }
+
+        [TestMethod]
+        public void TransformSet_OneTransform_AllTransformationsAppear()
+        {
+            var sut = new TransformSet()
+                        .WithTransform(x => x
+                            .InsertSyllable(0, "prefix")
+                            .AppendSyllable("suffix"));
+
+            var result = sut.Apply(_testName).ToString().ToLower();
+            Assert.IsTrue(result.StartsWith("prefix") && result.EndsWith("suffix"));
+        }
+
+        [TestMethod]
+        public void TransformSet_TwoTransforms_AllTransformationsAppear()
+        {
+            var sut = new TransformSet()
+                        .WithTransform(x => x.InsertSyllable(0, "prefix"))
+                        .WithTransform(x => x.AppendSyllable("suffix"));
+
+            var result = sut.Apply(_testName).ToString().ToLower();
+            Assert.IsTrue(result.StartsWith("prefix") && result.EndsWith("suffix"));
+            
+        }
+
+        [TestMethod]
+        public void TransformSet_TwoJoinedSets_TwoTransformationsAppear()
+        {
+
+            var set1 = new TransformSet().WithTransform(x => x.InsertSyllable(0, "prefix"));
+            var set2 = new TransformSet().WithTransform(x => x.AppendSyllable("suffix"));
+
+            var sut = set1.Join(set2);
+
+            var result = sut.Apply(_testName).ToString().ToLower();
+            Assert.IsTrue(result.StartsWith("prefix") && result.EndsWith("suffix"));
 
         }
 
         [TestMethod]
-        public void NameGeneration_UsingTransform_TransformAppears()
+        public void TransformSet_TwoProbabilisticTransforms_OneTransformationAppears()
+        {
+            var sut = new TransformSet()
+                        .WithTransform(x => x.InsertSyllable(0, "prefix"))
+                        .WithTransform(x => x.AppendSyllable("suffix"))
+                        .RandomlySelect(1);
+
+            for (int i = 0; i < 100; i++)
+            {
+                var result = sut.Apply(_testName).ToString().ToLower();
+                Assert.IsTrue(result.StartsWith("prefix") ^ result.EndsWith("suffix"));
+            }
+        }
+
+
+        [TestMethod]
+        public void NameGeneration_DeterministicTransform_TransformationAlwaysAppears()
         {
 
-            const string stringToTest = "test!";
-
-            var g = new NameGenerator()
+            var sut = new NameGenerator()
                     .UsingTransform(x => x
-                        .ReplaceSyllable(-1, stringToTest));
+                        .ReplaceSyllable(-1, "suffix"));
 
             for (int i = 0; i < 100; i++)
             {
-                var name = g.Next();
-                Assert.IsTrue(name.EndsWith(stringToTest));
+                var name = sut.Next();
+                Assert.IsTrue(name.EndsWith("suffix"));
             }
 
         }
 
         [TestMethod]
-        public void NameGeneration_UsingHalfChanceTransform_TransformAppears()
+        public void NameGeneration_ProbabilisticTransform_TransformSometimesAppears()
         {
-
-            const string stringToTest = "test!";
-
-            var g = new NameGenerator()
+            var sut = new NameGenerator()
                     .UsingTransform(0.5, new TransformSet()
-                        .WithTransform(x => x.ReplaceSyllable(-1, stringToTest)));
+                        .WithTransform(x => x.ReplaceSyllable(-1, "suffix")));
 
-            bool stringFound = false;
+            var appearances = 0;
+
             for (int i = 0; i < 100; i++)
             {
-                if(g.Next().EndsWith(stringToTest))
+                if(sut.Next().EndsWith("suffix"))
                 {
-                    stringFound = true; 
-                    break;
+                    appearances++;
                 };
             }
 
-            Assert.IsTrue(stringFound);
+            Assert.IsTrue(appearances > 0 && appearances < 100);
 
         }
 
         [TestMethod]
-        public void NameGeneration_UsingZeroChanceTransform_TransformAppears()
+        public void NameGeneration_ZeroChanceTransform_TransformNeverAppears()
         {
-
-            const string stringToTest = "test!";
-
-            var g = new NameGenerator()
+            var sut = new NameGenerator()
                     .UsingTransform(0.0, x => x
-                        .ReplaceSyllable(-1, stringToTest));
+                        .ReplaceSyllable(-1, "suffix"));
 
-            bool stringFound = false;
+            var transformFound = false;
+
             for (int i = 0; i < 100; i++)
             {
-                if (g.Next().EndsWith(stringToTest))
+                if (sut.Next().EndsWith("suffix"))
                 {
-                    stringFound = true;
+                    transformFound = true;
                     break;
                 };
             }
 
-            Assert.IsFalse(stringFound);
+            Assert.IsFalse(transformFound);
 
         }
 
         [TestMethod]
-        public void NameGeneration_MultipleTransformsAllowed_TheyAllAppear()
+        public void NameGeneration_MultipleDeterministicTransforms_AllTransformationsAppear()
         {
 
-            const string stringToTest1 = "hello!";
-            const string stringToTest2 = "world!";
-
-            var g = new NameGenerator()
+            var sut = new NameGenerator()
                     .UsingTransform(new TransformSet()
-                        .WithTransform(x => x.ReplaceSyllable(-1, stringToTest1))
-                        .WithTransform(x => x.AppendSyllable(stringToTest2)));
+                        .WithTransform(x => x.InsertSyllable(0, "prefix"))
+                        .WithTransform(x => x.AppendSyllable("suffix")));
 
             for (int i = 0; i < 100; i++)
             {
-                var name = g.Next();
-                Assert.IsTrue(name.EndsWith(stringToTest1 + stringToTest2));
+                var result = sut.Next().ToString().ToLower();
+                Assert.IsTrue(result.StartsWith("prefix") && result.EndsWith("suffix"));
             }
 
         }
 
         [TestMethod]
-        public void NameGeneration_MultipleTransformsButOnlyOneAllowed_OnlyOneAppears()
+        public void NameGeneration_MultipleProbabilisticTransforms_OnlyOneAppears()
         {
-            const string stringToTest1 = "hello!";
-            const string stringToTest2 = "world!";
-
-            var g = new NameGenerator()
+            var sut = new NameGenerator()
                     .UsingTransform(new TransformSet()
-                        .RandomlySelect(1)
-                        .WithTransform(x => x.ReplaceSyllable(0, stringToTest1))
-                        .WithTransform(x => x.AppendSyllable(stringToTest2)));
+                        .WithTransform(x => x.InsertSyllable(0, "prefix"))
+                        .WithTransform(x => x.AppendSyllable("suffix"))
+                        .RandomlySelect(1));
 
             for (int i = 0; i < 100; i++)
             {
-                var name = g.Next().ToLower();
-                Assert.IsTrue(name.StartsWith(stringToTest1) ^ name.EndsWith(stringToTest2));
+                var result = sut.Next().ToString().ToLower();
+                Assert.IsTrue(result.StartsWith("prefix") ^ result.EndsWith("suffix"));
             }
-
         }
 
     }
