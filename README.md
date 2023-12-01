@@ -43,7 +43,7 @@ Lena
 Salna
 Rasse
 ```
-See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.1%EA%9E%89-Tailoring-Characters) for more examples on how to control things like vowel sequences, consonant positioning, and more!
+See the [wiki](https://github.com/kesac/Syllabore/wiki) for more examples on how to control things like vowel sequences, consonant positioning, and more!
 
 ## Filtering Output
 Each ```NameGenerator``` can be configured to prevent specific substrings or patterns from showing up in names. Filtering is completely optional, but is useful in avoiding awkward sounding combinations of characters.
