@@ -12,14 +12,14 @@
 ## Table of Contents
  1. [Quick Start](#quick-start)
  1. [Tailoring Characters](#tailoring-characters)
- 1. [Filtering](#filtering-output)
  1. [Transformations](#transformations)
+ 1. [Filtering](#filtering-output)
  1. [Installation](#installation)
  1. [Compatibility](#compatibility)
  1. [License](#license)
 
 ## Quick Start
-Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [a subset of consonants and vowels from the English language](https://github.com/kesac/Syllabore/wiki/What-is-the-DefaultSyllableGenerator%3F) will be used. 
+Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [a subset of consonants and vowels from the English language](https://github.com/kesac/Syllabore/wiki/What-is-the-DefaultSyllableGenerator) will be used. 
 
 ```csharp
 var g = new NameGenerator();
@@ -45,18 +45,6 @@ Rasse
 ```
 See the [wiki](https://github.com/kesac/Syllabore/wiki) for more examples on how to control things like vowel sequences, consonant positioning, and more!
 
-## Filtering Output
-Each ```NameGenerator``` can be configured to prevent specific substrings or patterns from showing up in names. Filtering is completely optional, but is useful in avoiding awkward sounding combinations of characters.
-
-Here is a basic example of preventing substrings from appearing:
-```csharp
-var g = new NameGenerator()
-        .DoNotAllow("ist") // Will prevent names like "Misty"
-        .DoNotAllow("ck"); // Will prevent names like "Brock"
-```
-
-See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.2%EA%9E%89-Filtering-Output) for additional examples.
-
 ## Transformations
 A ```Transform``` is a mechanism for changing a source name into a new, modified name. Call ```UsingTransform()``` on a ```NameGenerator``` to specify one or more transformations:
 ```csharp
@@ -72,6 +60,19 @@ Zoshari
 Zojiri
 ```
 See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.3%EA%9E%89-Transformations) for additional examples.
+
+## Filtering Output
+Each ```NameGenerator``` can be configured to prevent specific substrings or patterns from showing up in names. Filtering is completely optional, but is useful in avoiding awkward sounding combinations of characters.
+
+Here is a basic example of preventing substrings from appearing:
+```csharp
+var g = new NameGenerator()
+        .DoNotAllow("ist") // Will prevent names like "Misty"
+        .DoNotAllow("ck"); // Will prevent names like "Brock"
+```
+
+See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.2%EA%9E%89-Filtering-Output) for additional examples.
+
 
 ## Installation
 ### .NET apps
