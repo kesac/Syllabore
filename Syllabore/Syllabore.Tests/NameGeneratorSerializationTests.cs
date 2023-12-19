@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Syllabore.Tests
@@ -11,38 +12,155 @@ namespace Syllabore.Tests
     [TestClass]
     public class NameGeneratorSerializationTests
     {
-        private NameGenerator InitializeNameGenerator()
+        private readonly NameGenerator _defaultNameGenerator;
+        private readonly string _syllableSetFile = "NameGenerator_WithSyllableSet.json";
+        private readonly string _defaultFile = "NameGenerator_Default.json";
+
+        public NameGeneratorSerializationTests()
         {
-            return new NameGenerator()
-                    .UsingSyllables(x => x
-                        .WithLeadingConsonants("bcd")
-                        .WithLeadingConsonantSequences("dr")
-                        .WithVowels("aieou")
-                        .WithVowelSequences("ey")
-                        .WithTrailingConsonants("trs")
-                        .WithTrailingConsonantSequences("mn"))
-                    .UsingFilter(x => x
-                        .DoNotAllowPattern(
-                            "zzzy",
-                            "abcd"))
-                    .LimitRetries(100)
-                    .UsingSyllableCount(4, 10);
+            _defaultNameGenerator = new NameGenerator()
+                .UsingSyllables(x => x
+                    .WithLeadingConsonants("bcd")
+                    .WithLeadingConsonantSequences("dr")
+                    .WithVowels("aieou")
+                    .WithVowelSequences("ey")
+                    .WithTrailingConsonants("trs")
+                    .WithTrailingConsonantSequences("mn"))
+                .DoNotAllow(
+                    "zzzy",
+                    "abcd")
+                .UsingTransform(0.5, new TransformSet()
+                    .RandomlySelect(2)
+                    .WithTransform(x => x.AppendSyllable("tar"))
+                    .WithTransform(x => x.InsertSyllable(0, "arc"))
+                    .WithTransform(x => x.ReplaceSyllable(0, "neo")))
+                .UsingSyllableCount(3)
+                .LimitRetries(100)
+                .UsingSyllableCount(4, 10);
         }
 
         [TestMethod]
-        public void ConfigurationFile_Serialization_Succeeds()
+        public void Serializer_DefaultType1_SerializationSucceeds()
         {
-            var g = InitializeNameGenerator();
-            var f = new NameGeneratorSerializer();
-            f.Serialize(g, "test.txt");
-            Assert.IsTrue(File.Exists("test.txt"));
+            var sut = new NameGeneratorSerializer();
+            sut.Serialize(_defaultNameGenerator, _defaultFile);
+            Assert.IsTrue(File.Exists(_defaultFile));
         }
 
         [TestMethod]
-        public void ConfigurationFile_CanSerializeNonDefaultTypes()
+        public void Serializer_DefaultType2_DeserializationPreservesValueTypeProperties()
         {
-            var output = "NameGenerator_WithSyllableSet.json";
+            var sut = new NameGeneratorSerializer();
+            var g2 = sut.Deserialize(_defaultFile);
 
+            Assert.IsNotNull(g2);
+
+            // Compare the deserialized instance with pre-deserialized instance
+            var nameGeneratorType = typeof(NameGenerator);
+            foreach(var property in nameGeneratorType.GetProperties().Where(x => x.PropertyType.IsValueType))
+            {
+                Assert.IsTrue(property.GetValue(_defaultNameGenerator).Equals(property.GetValue(g2)));
+            }
+
+        }
+
+        [TestMethod]
+        public void Serializer_DefaultType3_DeserializationPreservesTransformer()
+        {
+            var sut = new NameGeneratorSerializer();
+            var g2 = sut.Deserialize(_defaultFile);
+            var t1 = _defaultNameGenerator.Transformer as TransformSet; // The default type
+            var t2 = g2.Transformer as TransformSet;
+
+            Assert.AreEqual(t1.RandomSelectionCount, t2.RandomSelectionCount);
+
+        }
+
+        [TestMethod]
+        public void Serializer_DefaultType4_DeserializationPreservesSyllableGeneratorGraphemes()
+        {
+            var sut = new NameGeneratorSerializer();
+            var g2 = sut.Deserialize(_defaultFile);
+
+            var p1 = _defaultNameGenerator.Provider as SyllableGenerator;  // The default type
+            var p2 = g2.Provider as SyllableGenerator;
+
+            // Components of a syllable
+            var syllableGeneratorType = typeof(SyllableGenerator);
+            var syllableGeneratorProperties = syllableGeneratorType.GetProperties();
+
+            // Comparing grapheme lists like vowels, leading consonants, sequences, etc.
+            foreach (var property in syllableGeneratorProperties.Where(x => x.PropertyType == typeof(List<Grapheme>)))
+            {
+                var list1 = (List<Grapheme>)property.GetValue(p1);
+                var list2 = (List<Grapheme>)property.GetValue(p2);
+                Assert.IsTrue(list1.UnorderedListEquals(list2));
+            }
+
+        }
+
+        [TestMethod]
+        public void Serializer_DefaultType5_DeserializationPreservesSyllableGeneratorUsageFlags()
+        {
+            var sut = new NameGeneratorSerializer();
+            var g2 = sut.Deserialize(_defaultFile);
+
+            var p1 = _defaultNameGenerator.Provider as SyllableGenerator;  // The default type
+            var p2 = g2.Provider as SyllableGenerator;
+
+            var syllableGeneratorType = typeof(SyllableGenerator);
+            var syllableGeneratorProperties = syllableGeneratorType.GetProperties();
+
+            // Comparing usage flags like  LeadingConsonantsAllowed, VowelSequencesAllowed, etc.
+            foreach (var property in syllableGeneratorProperties.Where(x => x.PropertyType == typeof(bool)))
+            {
+                Assert.IsTrue(property.GetValue(p1).Equals(property.GetValue(p2)));
+            }
+
+        }
+
+        [TestMethod]
+        public void Serializer_DefaultType6_DeserializationPreservesSyllableGeneratorProbabilities()
+        {
+            var sut = new NameGeneratorSerializer();
+            var g2 = sut.Deserialize(_defaultFile);
+
+            var p1 = _defaultNameGenerator.Provider as SyllableGenerator;  // The default type
+            var p2 = g2.Provider as SyllableGenerator;
+
+            // Comparing probabilities like ChanceVowelExists, ChanceLeadingConsonantExists, etc.
+            var probabilityType = typeof(GeneratorProbability);
+            foreach (var property in probabilityType.GetProperties().Where(x => x.PropertyType == typeof(double?)))
+            {
+                var probability1 = (double?)property.GetValue(p1.Probability);
+                var probability2 = (double?)property.GetValue(p2.Probability);
+
+                if (probability1 == null)
+                {
+                    Assert.IsTrue(probability2 == null);
+                }
+                else
+                {
+                    Assert.IsTrue(property.GetValue(p1.Probability).Equals(property.GetValue(p2.Probability)));
+                }
+            }
+        }
+
+        [TestMethod]
+        public void Serializer_DefaultType7_DeserializationPreservesFilters()
+        {
+            var sut = new NameGeneratorSerializer();
+            var g2 = sut.Deserialize(_defaultFile);
+            var f = (NameFilter)_defaultNameGenerator.Filter;
+            var f2 = (NameFilter)g2.Filter;
+
+            Assert.IsTrue(f.Constraints.UnorderedListEquals(f2.Constraints));
+
+        }
+
+        [TestMethod]
+        public void Serializer_NonDefaultType1_SerializationSucceeds()
+        {
             var p = new SyllableSet(2, 16, 2)
                     .WithGenerator(x => x
                         .WithConsonants("str")
@@ -51,14 +169,23 @@ namespace Syllabore.Tests
                     .WithMiddleSyllable("ro")
                     .WithEndingSyllable("ri");
                         
-            var g = InitializeNameGenerator().UsingSyllables(p);
+            var g = new NameGenerator(p)
+                .UsingSyllableCount(3);
 
-            var n = new NameGeneratorSerializer().UsingProviderType(typeof(SyllableSet));
+            var n = new NameGeneratorSerializer()
+                .UsingProviderType(typeof(SyllableSet));
 
-            n.Serialize(g, output);
-            Assert.IsTrue(File.Exists(output));
+            n.Serialize(g, _syllableSetFile);
+            Assert.IsTrue(File.Exists(_syllableSetFile));
+        }
 
-            var g2 = n.Deserialize(output);
+        [TestMethod]
+        public void Serializer_NonDefaultType2_DeserializationSucceeds()
+        {
+            var n = new NameGeneratorSerializer()
+                .UsingProviderType(typeof(SyllableSet));
+
+            var g2 = n.Deserialize(_syllableSetFile);
 
             Assert.IsNotNull(g2.Provider);
             Assert.IsTrue(g2.Provider is SyllableSet);
@@ -73,76 +200,6 @@ namespace Syllabore.Tests
             Assert.IsTrue(s.StartingSyllables.Count == 2);
             Assert.IsTrue(s.MiddleSyllables.Count == 16);
             Assert.IsTrue(s.EndingSyllables.Count == 2);
-
-        }
-
-        [TestMethod]
-        public void ConfigurationFile_Deserialization_Succeeds()
-        {
-            var g = InitializeNameGenerator()
-                    .UsingTransform(0.5, new TransformSet()
-                        .RandomlySelect(2)
-                        .WithTransform(x => x.AppendSyllable("tar"))
-                        .WithTransform(x => x.InsertSyllable(0, "arc"))
-                        .WithTransform(x => x.ReplaceSyllable(0, "neo")));
-            var n = new NameGeneratorSerializer();
-
-            n.Serialize(g, "test.txt");
-
-            var g2 = n.Deserialize("test.txt");
-
-            Assert.IsNotNull(g2);
-            Assert.IsTrue(g != g2);
-
-            // Compare the deserialized instance with pre-deserialized instance
-            Assert.IsTrue(g.MaximumRetries == g2.MaximumRetries);
-            Assert.IsTrue(g.MaximumSyllables == g2.MaximumSyllables);
-            Assert.IsTrue(g.MinimumSyllables == g2.MinimumSyllables);
-            Assert.IsTrue(g.TransformerChance == g2.TransformerChance);
-
-            var t1 = (TransformSet)g.Transformer; // The default type
-            var t2 = (TransformSet)g2.Transformer;
-
-            Assert.AreEqual(t1.RandomSelectionCount, t2.RandomSelectionCount);
-
-            var p1 = (SyllableGenerator)g.Provider;  // The default type
-            var p2 = (SyllableGenerator)g2.Provider;
-
-            // Components of a syllable
-            Assert.IsTrue(p1.LeadingConsonants.UnorderedListEquals(p2.LeadingConsonants));
-            Assert.IsTrue(p1.LeadingConsonantSequences.UnorderedListEquals(p2.LeadingConsonantSequences));
-            Assert.IsTrue(p1.Vowels.UnorderedListEquals(p2.Vowels));
-            Assert.IsTrue(p1.VowelSequences.UnorderedListEquals(p2.VowelSequences));
-            Assert.IsTrue(p1.TrailingConsonants.UnorderedListEquals(p2.TrailingConsonants));
-            Assert.IsTrue(p1.TrailingConsonantSequences.UnorderedListEquals(p2.TrailingConsonantSequences));
-
-            // Usage flags
-            Assert.IsTrue(p1.LeadingConsonantsAllowed == p2.LeadingConsonantsAllowed);
-            Assert.IsTrue(p1.LeadingConsonantSequencesAllowed == p2.LeadingConsonantSequencesAllowed);
-            Assert.IsTrue(p1.LeadingVowelForStartingSyllableAllowed == p2.LeadingVowelForStartingSyllableAllowed);
-            Assert.IsTrue(p1.VowelSequencesAllowed == p2.VowelSequencesAllowed);
-            Assert.IsTrue(p1.TrailingConsonantsAllowed == p2.TrailingConsonantsAllowed);
-            Assert.IsTrue(p1.TrailingConsonantSequencesAllowed == p2.TrailingConsonantSequencesAllowed);
-
-            // Probability of a component showing up in a syllable
-            Assert.IsTrue(p1.Probability.ChanceLeadingConsonantExists == p2.Probability.ChanceLeadingConsonantExists);
-            Assert.IsTrue(p1.Probability.ChanceLeadingConsonantIsSequence == p2.Probability.ChanceLeadingConsonantIsSequence);
-            Assert.IsTrue(p1.Probability.ChanceVowelIsSequence == p2.Probability.ChanceVowelIsSequence);
-            Assert.IsTrue(p1.Probability.ChanceStartingSyllableLeadingVowelExists == p2.Probability.ChanceStartingSyllableLeadingVowelExists);
-            Assert.IsTrue(p1.Probability.ChanceStartingSyllableLeadingVowelIsSequence == p2.Probability.ChanceStartingSyllableLeadingVowelIsSequence);
-            Assert.IsTrue(p1.Probability.ChanceTrailingConsonantExists == p2.Probability.ChanceTrailingConsonantExists);
-            Assert.IsTrue(p1.Probability.ChanceTrailingConsonantIsSequence == p2.Probability.ChanceTrailingConsonantIsSequence);
-
-            // Invalid regular expressions
-
-            var f = (NameFilter)g.Filter;
-            var f2 = (NameFilter)g2.Filter;
-
-            Assert.IsNotNull(f);
-            Assert.IsNotNull(f.Constraints);
-            Assert.IsNotNull(f2);
-            Assert.IsNotNull(f2.Constraints);
-            Assert.IsTrue(f.Constraints.UnorderedListEquals(f2.Constraints));
 
         }
 
