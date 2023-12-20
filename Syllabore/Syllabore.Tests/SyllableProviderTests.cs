@@ -10,8 +10,6 @@ namespace Syllabore.Tests
     [TestClass]
     public class SyllableProviderTests
     {
-
-
         // This is just a helper method to provide a vanilla
         // provider with one instance of every vowel/consonant 
         // combination defined
@@ -24,6 +22,22 @@ namespace Syllabore.Tests
                 .WithProbability(x => x.OfLeadingConsonants(1.0));
         }
 
+        // This is just a helper method to provide a vanilla
+        // provider with one instance of every vowel/consonant 
+        // combination defined
+        private static SyllableGenerator GetConsonantOnlyGenerator()
+        {
+            return new SyllableGenerator()
+                    .WithLeadingConsonants("b")
+                    .WithLeadingConsonantSequences("bb", "bbb")
+                    .WithTrailingConsonants("b")
+                    .WithTrailingConsonantSequences("bbbb", "bbbbb");
+        }
+
+        /// <summary>
+        /// Helper method to check that the output of a provider never contains 
+        /// <strong>any</strong> of the specified substrings.
+        /// </summary>
         private bool EachOutputNeverContainsAnyOf(SyllableGenerator p, params string[] invalidSubstrings)
         {
             bool outputNeverAppears = true;
@@ -40,6 +54,10 @@ namespace Syllabore.Tests
             return outputNeverAppears;
         }
 
+        /// <summary>
+        /// Helper method to check that the output of a provider always contains at least one
+        /// instance of <strong>any</strong> of the specified substrings.
+        /// </summary>
         private bool EachOutputContainsAnyOf(SyllableGenerator p, params string[] validSubstrings)
         {
             bool outputAlwaysAppears = true;
@@ -56,6 +74,10 @@ namespace Syllabore.Tests
             return outputAlwaysAppears;
         }
 
+        /// <summary>
+        /// Helper method to check that the output of a provider always contains at least one
+        /// instance of <strong>all</strong> of the specified substrings.
+        /// </summary>
         private bool AllOutputContainsAtLeastOnce(SyllableGenerator p, params string[] validSubstrings)
         {
             bool[] substringAppeared = new bool[validSubstrings.Length];
@@ -78,151 +100,208 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Provider_WithNothingDefined_ThrowsException()
+        public void SyllableGenerator_NoGraphemes_StartingSyllableGenerationThrowsException()
         {
             // Instantiating a provider, but not defining any vowels, consonants, probabilities
             // will produce empty strings, which by default will cause an error to be thrown
-            var provider = new SyllableGenerator();
-            Assert.ThrowsException<InvalidOperationException>(() => provider.NextStartingSyllable());
-            Assert.ThrowsException<InvalidOperationException>(() => provider.NextSyllable());
-            Assert.ThrowsException<InvalidOperationException>(() => provider.NextEndingSyllable());
+            var sut = new SyllableGenerator();
+            Assert.ThrowsException<InvalidOperationException>(() => sut.NextStartingSyllable());
         }
 
         [TestMethod]
-        public void Provider_WithNothingDefinedButEmptyStringsEnabled_Allowed()
+        public void SyllableGenerator_NoGraphemes_NextSyllableGenerationThrowsException()
         {
-            // Instantiating a provider, but not defining any vowels, consonants, probabilities
-            // will produce empty strings, which by default will cause an error to be thrown
-            var provider = new SyllableGenerator().AllowEmptyStrings(true);
-            Assert.AreEqual(provider.NextStartingSyllable(), string.Empty);
-            Assert.AreEqual(provider.NextSyllable(), string.Empty);
-            Assert.AreEqual(provider.NextEndingSyllable(), string.Empty);
+            var sut = new SyllableGenerator();
+            Assert.ThrowsException<InvalidOperationException>(() => sut.NextSyllable());
         }
 
         [TestMethod]
-        public void Provider_WithOneVowelsDefinedThroughProvider_OnlyTheOneVowelAppearsInOutput()
+        public void SyllableGenerator_NoGraphemes_EndingSyllableGenerationThrowsException()
+        {
+            var sut = new SyllableGenerator();
+            Assert.ThrowsException<InvalidOperationException>(() => sut.NextEndingSyllable());
+        }
+
+        [TestMethod]
+        public void SyllableGenerator_NoGraphemesWithEmptyStringAllowed_StartingSyllableGenerationAllowed()
+        {
+            var sut = new SyllableGenerator().AllowEmptyStrings(true);
+            Assert.AreEqual(sut.NextStartingSyllable(), string.Empty);
+        }
+
+        [TestMethod]
+        public void SyllableGenerator_NoGraphemesWithEmptyStringAllowed_NextSyllableGenerationAllowed()
+        {
+            var sut = new SyllableGenerator().AllowEmptyStrings(true);
+            Assert.AreEqual(sut.NextSyllable(), string.Empty);
+        }
+
+        [TestMethod]
+        public void SyllableGenerator_NoGraphemesWithEmptyStringAllowed_EndingSyllableGenerationAllowed()
+        {
+            var sut = new SyllableGenerator().AllowEmptyStrings(true);
+            Assert.AreEqual(sut.NextEndingSyllable(), string.Empty);
+        }
+
+        [TestMethod]
+        public void SyllableGenerator_WithOneVowel_VowelAppearsInOutput()
         {
             // Define one and only one vowel then check name output
-            var provider = new SyllableGenerator()
-                    .WithVowels("a")
-                    .WithConsonants("bcdfg");
+            var sut = new SyllableGenerator("a", "bcdfg");
 
             for (int i = 0; i < 1000; i++)
             {
-                var startingSyllable = provider.NextStartingSyllable();
-                var syllable = provider.NextSyllable();
-                var endingSyllable = provider.NextEndingSyllable();
+                var startingSyllable = sut.NextStartingSyllable();
+                var syllable = sut.NextSyllable();
+                var endingSyllable = sut.NextEndingSyllable();
+
                 Assert.IsTrue(startingSyllable.Contains("a"));
                 Assert.IsTrue(syllable.Contains("a"));
                 Assert.IsTrue(endingSyllable.Contains("a"));
-                Assert.IsFalse(Regex.IsMatch(startingSyllable, "[e|i|o|u]"));
-                Assert.IsFalse(Regex.IsMatch(syllable, "[e|i|o|u]"));
-                Assert.IsFalse(Regex.IsMatch(endingSyllable, "[e|i|o|u]"));
             }
-
-            // Change the one and only vowel and check name output again
-            provider = new SyllableGenerator()
-                .WithVowels("y")
-                .WithConsonants("bcdfg");
-
-            for (int i = 0; i < 1000; i++)
-            {
-                var startingSyllable = provider.NextStartingSyllable();
-                var syllable = provider.NextSyllable();
-                var endingSyllable = provider.NextEndingSyllable();
-                Assert.IsTrue(startingSyllable.Contains("y"));
-                Assert.IsTrue(syllable.Contains("y"));
-                Assert.IsTrue(endingSyllable.Contains("y"));
-                Assert.IsFalse(Regex.IsMatch(startingSyllable, "[a|e|i|o|u]"));
-                Assert.IsFalse(Regex.IsMatch(syllable, "[a|e|i|o|u]"));
-                Assert.IsFalse(Regex.IsMatch(endingSyllable, "[a|e|i|o|u]"));
-            }
-
         }
 
 
         [TestMethod]
-        public void Provider_WithOnlyVowelsDefined_Allowed()
+        public void SyllableGenerator_OnlyVowelsWithNoConsonants_GenerationSuccessful()
         {
             // Define all vowels
-            var provider = new SyllableGenerator().WithVowels("aeiou");
+            var sut = new SyllableGenerator().WithVowels("aeiou");
 
             // Check that every syllable-generating method works and generates nothing but the vowels
             for (int i = 0; i < 1000; i++)
             {
-                var startingSyllable = provider.NextStartingSyllable();
-                var syllable = provider.NextStartingSyllable();
-                var endingSyllable = provider.NextEndingSyllable();
+                var startingSyllable = sut.NextStartingSyllable();
+                var syllable = sut.NextStartingSyllable();
+                var endingSyllable = sut.NextEndingSyllable();
 
-                Assert.IsTrue(!string.IsNullOrEmpty(startingSyllable) && Regex.IsMatch(startingSyllable, "^[aeiouAEIOU]+$"));
-                Assert.IsTrue(!string.IsNullOrEmpty(syllable) && Regex.IsMatch(syllable, "^[aeiouAEIOU]+$"));
-                Assert.IsTrue(!string.IsNullOrEmpty(endingSyllable) && Regex.IsMatch(endingSyllable, "^[aeiouAEIOU]+$"));
+                Assert.IsTrue(Regex.IsMatch(startingSyllable, "^[aeiouAEIOU]+$"));
+                Assert.IsTrue(Regex.IsMatch(syllable, "^[aeiouAEIOU]+$"));
+                Assert.IsTrue(Regex.IsMatch(endingSyllable, "^[aeiouAEIOU]+$"));
             }
         }
 
         [TestMethod]
-        public void Provider_WithOnlyVowelsDefined_NameGenerationWorks()
+        public void NameGenerator_OnlyVowelsWithNoConsonants_GenerationSuccessful()
         {
             // Define all vowels
-            var generator = new NameGenerator().UsingSyllables(x => x.WithVowels("aeiou"));
+            var sut = new NameGenerator().UsingSyllables(x => x.WithVowels("aeiou"));
 
             for (int i = 0; i < 1000; i++)
             {
                 // Check that the name generator generates nothing but the vowels
-                var name = generator.Next();
+                var name = sut.Next();
                 Assert.IsTrue(!string.IsNullOrEmpty(name) && Regex.IsMatch(name, "^[aeiouAEIOU]+$"));
             }
         }
 
-
         [TestMethod]
-        public void Provider_WithNoVowelsDefined_AllowedIfConfiguredCorrectly()
+        public void SyllableGenerator_NoVowelsDefinedWithoutGuaranteedConsonants1_NotAllowed()
         {
             // If only consonants are defined, but not configured to appear 100% of the time,
             // syllable generation should throw an error because empty strings are not permitted
             // by providers by default 
-
-            var provider = new SyllableGenerator()
-                    .WithLeadingConsonants("b")
-                    .WithLeadingConsonantSequences("bb", "bbb")
-                    .WithTrailingConsonants("b")
-                    .WithTrailingConsonantSequences("bbbb", "bbbbb")
-                    .WithProbability(x => x
-                        .OfLeadingConsonants(0.5)
-                        .OfLeadingConsonantIsSequence(0.5)
-                        .OfTrailingConsonants(0.5)
-                        .OfTrailingConsonantIsSequence(0.5));
+            var sut = GetConsonantOnlyGenerator()
+                .WithProbability(x => x
+                    .OfLeadingConsonants(0.5, 0.5)
+                    .OfTrailingConsonants(0.5, 0.5));
 
             Assert.ThrowsException<InvalidOperationException>(() =>
             {
                 for (int i = 0; i < 1000; i++)
                 {
-                    provider.NextStartingSyllable();
-                    provider.NextSyllable();
-                    provider.NextEndingSyllable();
+                        sut.NextStartingSyllable();
                 }
             });
+        }
 
-            // If only consonants are defined, but consonant probability is 100%,
-            // syllable generation will work normally and output will never be an empty string.
+        [TestMethod]
+        public void SyllableGenerator_NoVowelsDefinedWithoutGuaranteedConsonants2_NotAllowed()
+        {
+            var sut = GetConsonantOnlyGenerator()
+                .WithProbability(x => x
+                    .OfLeadingConsonants(0.5, 0.5)
+                    .OfTrailingConsonants(0.5, 0.5));
 
-            provider.WithProbability(x => x
-                    .OfLeadingConsonants(1)
-                    .OfLeadingConsonantIsSequence(0.5)
-                    .OfTrailingConsonants(1)
-                    .OfTrailingConsonantIsSequence(0.5));
+            Assert.ThrowsException<InvalidOperationException>(() =>
+            {
+                for (int i = 0; i < 1000; i++)
+                {
+                        sut.NextSyllable();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void SyllableGenerator_NoVowelsDefinedWithoutGuaranteedConsonants3_NotAllowed()
+        {
+            var sut = GetConsonantOnlyGenerator()
+                .WithProbability(x => x
+                    .OfLeadingConsonants(0.5, 0.5)
+                    .OfTrailingConsonants(0.5, 0.5));
+
+            Assert.ThrowsException<InvalidOperationException>(() =>
+            {
+                for (int i = 0; i < 1000; i++)
+                {
+                        sut.NextEndingSyllable();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void SyllableGenerator_NoVowelsDefinedWithGuaranteedConsonants1_Allowed()
+        {
+            // If only consonants are defined, but configured to appear 100% of the time,
+            // syllable generation should still work
+            var sut = GetConsonantOnlyGenerator()
+                .WithProbability(x => x
+                    .OfLeadingConsonants(1.0, 0.5)
+                    .OfTrailingConsonants(1.0, 0.5));
 
             for (int i = 0; i < 1000; i++)
             {
-                Assert.IsTrue(provider.NextStartingSyllable().Length > 0);
-                Assert.IsTrue(provider.NextSyllable().Length > 0);
-                Assert.IsTrue(provider.NextEndingSyllable().Length > 0);
+                Assert.IsTrue(sut.NextStartingSyllable().Length > 0);
+            }
+        }
+
+        [TestMethod]
+        public void SyllableGenerator_NoVowelsDefinedWithGuaranteedConsonants2_Allowed()
+        {
+            // If only consonants are defined, but configured to appear 100% of the time,
+            // syllable generation should still work
+            var sut = GetConsonantOnlyGenerator()
+                .WithProbability(x => x
+                    .OfLeadingConsonants(1.0, 0.5)
+                    .OfTrailingConsonants(1.0, 0.5));
+
+            for (int i = 0; i < 1000; i++)
+            {
+                Assert.IsTrue(sut.NextSyllable().Length > 0);
+            }
+        }
+
+        [TestMethod]
+        public void SyllableGenerator_NoVowelsDefinedWithGuaranteedConsonants3_Allowed()
+        {
+            // If only consonants are defined, but configured to appear 100% of the time,
+            // syllable generation should still work
+            var sut = GetConsonantOnlyGenerator()
+                .WithProbability(x => x
+                    .OfLeadingConsonants(1.0, 0.5)
+                    .OfTrailingConsonants(1.0, 0.5));
+
+            for (int i = 0; i < 1000; i++)
+            {
+                Assert.IsTrue(sut.NextEndingSyllable().Length > 0);
             }
         }
 
 
+        // TODO
+
         [TestMethod]
-        public void Provider_WithCustomVowelProbability_AffectsNameGenerationSuccess()
+        public void SyllableGenerator_WithCustomVowelProbability_AffectsNameGenerationSuccess()
         {
             // Defining at least one vowel sequence, but no individual vowels also shouldn't work if
             // the probability of vowel sequences is not set to 100%
@@ -265,7 +344,7 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Provider_WithCustomComponents_AllComponentsAppearInProviderOutput()
+        public void SyllableGenerator_WithCustomComponents_AllComponentsAppearInProviderOutput()
         {
             // In this test we define one instance of a vowel, vowel sequence
             // leading consonant, leading consonant sequence, trailing consonant
@@ -368,9 +447,9 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Provider_WithCustomComponents_AllComponentsAppearInNameGeneratorOutput()
+        public void SyllableGenerator_WithCustomComponents_AllComponentsAppearInNameGeneratorOutput()
         {
-            // Same as Provider_WithCustomComponents_AllComponentsAppearInProviderOutput
+            // Same as SyllableGenerator_WithCustomComponents_AllComponentsAppearInProviderOutput
             // but checking output of a NameGenerator
 
             var generator = new NameGenerator()
@@ -411,7 +490,7 @@ namespace Syllabore.Tests
         }
 
         [TestMethod, Timeout(10000)]
-        public void Provider_WithNoSequencesConfigured_NameGeneratorStillGeneratesNames()
+        public void SyllableGenerator_WithNoSequencesConfigured_NameGeneratorStillGeneratesNames()
         {
             // It is valid for a name generator to use a provider with no sequences defined
             var generator = new NameGenerator()
@@ -438,7 +517,7 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Provider_SettingLeadingVowelInStartingSyllable_AffectsOutput()
+        public void SyllableGenerator_SettingLeadingVowelInStartingSyllable_AffectsOutput()
         {
             // 1. By default, vowels do not have a probability of starting a name
             var provider = GetDefaultProviderWithAllComponentsDefined();
@@ -474,7 +553,7 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Provider_SettingLeadingVowelSequenceInStartingSyllable_AffectsOutput()
+        public void SyllableGenerator_SettingLeadingVowelSequenceInStartingSyllable_AffectsOutput()
         {
             // 1. By default, vowel sequences do not have a probability of starting a name
             var provider = GetDefaultProviderWithAllComponentsDefined();
@@ -514,7 +593,7 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Provider_WithTogglingOfLeadingConsonants_TurnsOnOrOffAsExpected()
+        public void SyllableGenerator_WithTogglingOfLeadingConsonants_TurnsOnOrOffAsExpected()
         {
             // By default, consonants can start a syllable
 
@@ -551,7 +630,7 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Provider_WithTogglingOfLeadingConsonantSequences_TurnsOnOrOffAsExpected()
+        public void SyllableGenerator_WithTogglingOfLeadingConsonantSequences_TurnsOnOrOffAsExpected()
         {
             // By default, consonant sequences can start a syllable
 
@@ -591,7 +670,7 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Provider_WithTogglingOfVowelSequences_TurnsOnOrOffAsExpected()
+        public void SyllableGenerator_WithTogglingOfVowelSequences_TurnsOnOrOffAsExpected()
         {
             // By default, consonant sequences can start a syllable
 
@@ -627,7 +706,7 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Provider_WithTogglingOfTrailingConsonants_TurnsOnOrOffAsExpected()
+        public void SyllableGenerator_WithTogglingOfTrailingConsonants_TurnsOnOrOffAsExpected()
         {
             // By default, consonants can start a syllable
 
@@ -662,7 +741,7 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Provider_WithTogglingOfLeadingConsonantSequenceSequences_TurnsOnOrOffAsExpected()
+        public void SyllableGenerator_WithTogglingOfLeadingConsonantSequenceSequences_TurnsOnOrOffAsExpected()
         {
             // By default, consonant sequences can start a syllable
 
@@ -701,7 +780,7 @@ namespace Syllabore.Tests
 
 
         [TestMethod]
-        public void Provider_CustomConsonantProbabilityDefined_AffectsSyllableGenerationCorrectly()
+        public void SyllableGenerator_CustomConsonantProbabilityDefined_AffectsSyllableGenerationCorrectly()
         {
 
             var provider = new SyllableGenerator()
