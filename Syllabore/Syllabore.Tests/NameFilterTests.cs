@@ -18,19 +18,14 @@ namespace Syllabore.Tests
                         .WithLeadingConsonants("str"));
         }
 
-        /* Create a unit test that calls methods that start with "DoNot" and verifies that the name is not valid. */
         [TestMethod, Timeout(10000)]
         public void NameValidation_WithoutInstantiatingNameFilterExplicitly_OutputReflectsConstraints()
         {
-            // Purposely using depcreated method UsingProvider()
             var sut = new NameGenerator()
-                    .UsingProvider(x => x
+                    .UsingSyllables(x => x
                         .WithVowels("aei")
                         .WithLeadingConsonants("bcdf"))
-                    .DoNotAllow("a")
-                    .DoNotAllow("^b")
-                    .DoNotAllow("c$")
-                    .DoNotAllow("e");
+                    .DoNotAllow("a", "^b", "c$", "e");
 
             for (int i = 0; i < 1000; i++)
             {
