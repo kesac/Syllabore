@@ -319,6 +319,18 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Instantiates a new <see cref="SyllableGenerator"/> with
+        /// an the specified vowels and consonants. Note that consonants
+        /// added this way are considered both leading and trailing consonants.
+        /// </summary>
+        public SyllableGenerator(string vowels, string consonants) : this() 
+        {
+            this.WithVowels(vowels);
+            this.WithConsonants(consonants);
+        }
+
+
+        /// <summary>
         /// Adds the specified consonants into the pool of leading and trailing
         /// consonants.  Within a syllable, leading consonants are consonants 
         /// that appear before a vowel and trailing consonants are consonants 
