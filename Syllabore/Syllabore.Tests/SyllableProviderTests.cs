@@ -13,13 +13,35 @@ namespace Syllabore.Tests
         // This is just a helper method to provide a vanilla
         // provider with one instance of every vowel/consonant 
         // combination defined
-        private static SyllableGenerator GetDefaultProviderWithAllComponentsDefined()
+        private static SyllableGenerator GetSyllableGeneratorWithAllComponentsDefined()
         {
             return new SyllableGenerator()
                 .WithLeadingConsonants("b").Sequences("cc")
                 .WithTrailingConsonants("d").Sequences("ff")
-                .WithVowels("o").Sequences("uu")
-                .WithProbability(x => x.OfLeadingConsonants(1.0));
+                .WithVowels("o").Sequences("uu");
+        }
+
+        private static SyllableGenerator GetSyllableGenerator(
+            string vowels,
+            string vowelSequences,
+            string leadingConsonants,
+            string leadingConsonantSequences,
+            string trailingConsonants,
+            string trailingConsonantSequences
+        )
+        {
+            return new SyllableGenerator()
+                .WithVowels(vowels)
+                .WithVowelSequences(vowelSequences)
+                .WithLeadingConsonants(leadingConsonants)
+                .WithLeadingConsonantSequences(leadingConsonantSequences)
+                .WithTrailingConsonants(trailingConsonants)
+                .WithTrailingConsonantSequences(trailingConsonantSequences)
+                .WithProbability(x => x
+                    .OfVowels(1, 0.50)
+                    .OfLeadingConsonants(0.50)
+                    .OfTrailingConsonants(0.50)
+                    .OfLeadingVowelsInStartingSyllable(0.25));
         }
 
         // This is just a helper method to provide a vanilla
@@ -184,13 +206,13 @@ namespace Syllabore.Tests
         [TestMethod]
         public void NameGenerator_OnlyVowelsWithNoConsonants_GenerationSuccessful()
         {
-            // Define all vowels
-            var sut = new NameGenerator().UsingSyllables(x => x.WithVowels("aeiou"));
+            var sut = new SyllableGenerator().WithVowels("aeiou");
+            var ng = new NameGenerator(sut);
 
             for (int i = 0; i < 1000; i++)
             {
                 // Check that the name generator generates nothing but the vowels
-                var name = sut.Next();
+                var name = ng.Next();
                 Assert.IsTrue(!string.IsNullOrEmpty(name) && Regex.IsMatch(name, "^[aeiouAEIOU]+$"));
             }
         }
@@ -268,8 +290,6 @@ namespace Syllabore.Tests
         [TestMethod]
         public void SyllableGenerator_NoVowelsDefinedWithGuaranteedConsonants2_Allowed()
         {
-            // If only consonants are defined, but configured to appear 100% of the time,
-            // syllable generation should still work
             var sut = GetConsonantOnlyGenerator()
                 .WithProbability(x => x
                     .OfLeadingConsonants(1.0, 0.5)
@@ -284,8 +304,6 @@ namespace Syllabore.Tests
         [TestMethod]
         public void SyllableGenerator_NoVowelsDefinedWithGuaranteedConsonants3_Allowed()
         {
-            // If only consonants are defined, but configured to appear 100% of the time,
-            // syllable generation should still work
             var sut = GetConsonantOnlyGenerator()
                 .WithProbability(x => x
                     .OfLeadingConsonants(1.0, 0.5)
@@ -297,230 +315,204 @@ namespace Syllabore.Tests
             }
         }
 
-
-        // TODO
-
         [TestMethod]
-        public void SyllableGenerator_WithCustomVowelProbability_AffectsNameGenerationSuccess()
+        public void SyllableGenerator_VowelSequenceWithZeroProbability_GenerationFailure()
         {
             // Defining at least one vowel sequence, but no individual vowels also shouldn't work if
-            // the probability of vowel sequences is not set to 100%
-            var provider = new SyllableGenerator()
+            // the probability of vowels turning into sequences is not set to 100%
+            var sut = new SyllableGenerator()
                 .WithVowelSequences("aa")
                 .WithProbability(x => x
                     .OfVowels(1.0, 0));
 
-            var generator = new NameGenerator().UsingSyllables(provider);
+            var names = new NameGenerator(sut);
 
-            
-            Assert.ThrowsException<InvalidOperationException>(() => // Some will succeed, but expecting some to fail
+            Assert.ThrowsException<InvalidOperationException>(() => // Expecting some to fail
             {
                 for (int i = 0; i < 1000; i++)
                 {
-                    generator.Next();
+                    names.Next();
                 }
             });
-            
-
-            // Defining at least one vowel sequence, set to 100% probability
-            // without any possibility of vowels starting name shoudl work
-            provider.WithProbability(x => x
-                .OfVowels(1.0, 1.0));
-
-            for (int i = 0; i < 1000; i++)
-            {
-                Assert.IsFalse(string.IsNullOrEmpty(generator.Next()));
-            }
-            
-            // The normal scenario where at least one individual vowel is defined
-            provider.WithVowels("a")
-                    .WithProbability(x => x.OfVowelIsSequence(0));
-
-            for (int i = 0; i < 1000; i++)
-            {
-                Assert.IsFalse(string.IsNullOrEmpty(generator.Next()));
-            }
             
         }
 
         [TestMethod]
-        public void SyllableGenerator_WithCustomComponents_AllComponentsAppearInProviderOutput()
+        public void SyllableGenerator_VowelSequenceWithGuaranteedProbability1_GuaranteedGenerationSuccess()
+        {
+            // Defining at least one vowel sequence, but no individual vowels also should work if
+            // the probability of vowels turning into sequences is 100%
+            var sut = new SyllableGenerator()
+                .WithVowelSequences("aa")
+                .WithProbability(x => x
+                    .OfVowels(1.0, 1.0));
+
+            var names = new NameGenerator(sut);
+
+            for (int i = 0; i < 1000; i++)
+            {
+                Assert.IsFalse(string.IsNullOrEmpty(names.Next()));
+            }
+        }
+
+        [TestMethod]
+        public void SyllableGenerator_WithCustomGraphemes1_AllGraphemesAppearInOutput()
         {
             // In this test we define one instance of a vowel, vowel sequence
             // leading consonant, leading consonant sequence, trailing consonant
             // and trailing consonant sequence, then check that each instance occurs
-            // at least once in the provider's syllable generation.
+            // at least once during generation.
 
-            var provider = new SyllableGenerator()
-                    .WithVowels("a")
-                    .WithVowelSequences("ee")
-                    .WithLeadingConsonants("b")
-                    .WithLeadingConsonantSequences("cc")
-                    .WithTrailingConsonants("d")
-                    .WithTrailingConsonantSequences("ff")
-                    .WithProbability(x => x
-                        .OfVowels(1, 0.50)
-                        .OfLeadingConsonants(0.50)
-                        .OfTrailingConsonants(0.50)
-                        .OfLeadingVowelsInStartingSyllable(0.25));
+            var sut = GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff");
 
-            bool foundVowel = false;
-            bool foundVowelSequence = false;
-            bool foundStartingConsonant = false;
-            bool foundStartingConsonantSequence = false;
-            bool foundEndingConsonant = false;
-            bool foundEndingConsonantSequence = false;
-
-            // Starting syllables only
-            for (int i = 0; i < 500; i++)
+            var discovered = new Dictionary<string, bool>()
             {
-                var syllable = provider.NextStartingSyllable();
-                if (syllable.Contains("a")) { foundVowel = true; }
-                if (syllable.Contains("ee")) { foundVowelSequence = true; }
-                if (syllable.Contains("b")) { foundStartingConsonant = true; }
-                if (syllable.Contains("cc")) { foundStartingConsonantSequence = true; }
-                if (syllable.Contains("d")) { foundEndingConsonant = true; }
-                if (syllable.Contains("ff")) { foundEndingConsonantSequence = true; }
-            }
-
-            Assert.IsTrue(foundVowel);
-            Assert.IsTrue(foundVowelSequence);
-            Assert.IsTrue(foundStartingConsonant);
-            Assert.IsTrue(foundStartingConsonantSequence);
-            Assert.IsTrue(foundEndingConsonant);
-            Assert.IsTrue(foundEndingConsonantSequence);
-
-            // Reset
-            foundVowel = false;
-            foundVowelSequence = false;
-            foundStartingConsonant = false;
-            foundStartingConsonantSequence = false;
-            foundEndingConsonant = false;
-            foundEndingConsonantSequence = false;
-
-            // All syllables
-            for (int i = 0; i < 500; i++)
-            {
-                var syllable = provider.NextSyllable();
-                if (syllable.Contains("a")) { foundVowel = true; }
-                if (syllable.Contains("ee")) { foundVowelSequence = true; }
-                if (syllable.Contains("b")) { foundStartingConsonant = true; }
-                if (syllable.Contains("cc")) { foundStartingConsonantSequence = true; }
-                if (syllable.Contains("d")) { foundEndingConsonant = true; }
-                if (syllable.Contains("ff")) { foundEndingConsonantSequence = true; }
-            }
-
-            Assert.IsTrue(foundVowel);
-            Assert.IsTrue(foundVowelSequence);
-            Assert.IsTrue(foundStartingConsonant);
-            Assert.IsTrue(foundStartingConsonantSequence);
-            Assert.IsTrue(foundEndingConsonant);
-            Assert.IsTrue(foundEndingConsonantSequence);
-
-            // Reset
-            foundVowel = false;
-            foundVowelSequence = false;
-            foundStartingConsonant = false;
-            foundStartingConsonantSequence = false;
-            foundEndingConsonant = false;
-            foundEndingConsonantSequence = false;
-
-            // Ending syllables only
-            for (int i = 0; i < 500; i++)
-            {
-                var syllable = provider.NextEndingSyllable();
-                if (syllable.Contains("a")) { foundVowel = true; }
-                if (syllable.Contains("ee")) { foundVowelSequence = true; }
-                if (syllable.Contains("b")) { foundStartingConsonant = true; }
-                if (syllable.Contains("cc")) { foundStartingConsonantSequence = true; }
-                if (syllable.Contains("d")) { foundEndingConsonant = true; }
-                if (syllable.Contains("ff")) { foundEndingConsonantSequence = true; }
-            }
-
-            Assert.IsTrue(foundVowel);
-            Assert.IsTrue(foundVowelSequence);
-            Assert.IsTrue(foundStartingConsonant);
-            Assert.IsTrue(foundStartingConsonantSequence);
-            Assert.IsTrue(foundEndingConsonant);
-            Assert.IsTrue(foundEndingConsonantSequence);
-
-        }
-
-        [TestMethod]
-        public void SyllableGenerator_WithCustomComponents_AllComponentsAppearInNameGeneratorOutput()
-        {
-            // Same as SyllableGenerator_WithCustomComponents_AllComponentsAppearInProviderOutput
-            // but checking output of a NameGenerator
-
-            var generator = new NameGenerator()
-                .UsingSyllables(x => x
-                    .WithVowels("a").Sequences("ee")
-                    .WithLeadingConsonants("b").Sequences("cc")
-                    .WithTrailingConsonants("d").Sequences("ff")
-                    .WithProbability(x => x
-                        .OfVowelIsSequence(0.50)
-                        .OfLeadingConsonants(0.50)
-                        .OfTrailingConsonants(0.50)));
-
-            bool foundVowel = false;
-            bool foundVowelSequence = false;
-            bool foundStartingConsonant = false;
-            bool foundStartingConsonantSequence = false;
-            bool foundEndingConsonant = false;
-            bool foundEndingConsonantSequence = false;
+                { "a",  false },
+                { "ee", false },
+                { "b",  false },
+                { "cc", false },
+                { "d",  false },
+                { "ff", false }
+            };
 
             for (int i = 0; i < 1000; i++)
             {
-                var name = generator.Next();
-                if (name.Contains("a")) { foundVowel = true; }
-                if (name.Contains("ee")) { foundVowelSequence = true; }
-                if (name.Contains("b")) { foundStartingConsonant = true; }
-                if (name.Contains("cc")) { foundStartingConsonantSequence = true; }
-                if (name.Contains("d")) { foundEndingConsonant = true; }
-                if (name.Contains("ff")) { foundEndingConsonantSequence = true; }
+                var syllable = sut.NextStartingSyllable();
+                discovered["a"]  |= syllable.Contains("a");
+                discovered["ee"] |= syllable.Contains("ee");
+                discovered["b"]  |= syllable.Contains("b");
+                discovered["cc"] |= syllable.Contains("cc");
+                discovered["d"]  |= syllable.Contains("d");
+                discovered["ff"] |= syllable.Contains("ff");
             }
 
-            Assert.IsTrue(foundVowel);
-            Assert.IsTrue(foundVowelSequence);
-            Assert.IsTrue(foundStartingConsonant);
-            Assert.IsTrue(foundStartingConsonantSequence);
-            Assert.IsTrue(foundEndingConsonant);
-            Assert.IsTrue(foundEndingConsonantSequence);
+            Assert.IsTrue(discovered.Values.All(x => x));
+        }
+
+        [TestMethod]
+        public void SyllableGenerator_WithCustomGraphemes2_AllGraphemesAppearInOutput()
+        {
+            var sut = GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff");
+
+            var discovered = new Dictionary<string, bool>()
+            {
+                { "a",  false },
+                { "ee", false },
+                { "b",  false },
+                { "cc", false },
+                { "d",  false },
+                { "ff", false }
+            };
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var syllable = sut.NextSyllable();
+                discovered["a"]  |= syllable.Contains("a");
+                discovered["ee"] |= syllable.Contains("ee");
+                discovered["b"]  |= syllable.Contains("b");
+                discovered["cc"] |= syllable.Contains("cc");
+                discovered["d"]  |= syllable.Contains("d");
+                discovered["ff"] |= syllable.Contains("ff");
+            }
+
+            Assert.IsTrue(discovered.Values.All(x => x));
+        }
+
+        [TestMethod]
+        public void SyllableGenerator_WithCustomGraphemes3_AllGraphemesAppearInOutput()
+        {
+            var sut = GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff");
+
+            var discovered = new Dictionary<string, bool>()
+            {
+                { "a",  false },
+                { "ee", false },
+                { "b",  false },
+                { "cc", false },
+                { "d",  false },
+                { "ff", false }
+            };
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var syllable = sut.NextEndingSyllable();
+                discovered["a"]  |= syllable.Contains("a");
+                discovered["ee"] |= syllable.Contains("ee");
+                discovered["b"]  |= syllable.Contains("b");
+                discovered["cc"] |= syllable.Contains("cc");
+                discovered["d"]  |= syllable.Contains("d");
+                discovered["ff"] |= syllable.Contains("ff");
+            }
+
+            Assert.IsTrue(discovered.Values.All(x => x));
+        }
+
+
+        [TestMethod]
+        public void NameGenerator_WithCustomComponents_AllComponentsAppearInNameGeneratorOutput()
+        {
+            // Same as SyllableGenerator_WithCustomGraphemesX_AllGraphemesAppearInOutput
+            // but checking output of a NameGenerator
+
+            var sut = new NameGenerator(GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff"));
+
+            var discovered = new Dictionary<string, bool>()
+            {
+                { "a",  false },
+                { "ee", false },
+                { "b",  false },
+                { "cc", false },
+                { "d",  false },
+                { "ff", false }
+            };
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var name = sut.Next();
+                discovered["a"]  |= name.Contains("a");
+                discovered["ee"] |= name.Contains("ee");
+                discovered["b"]  |= name.Contains("b");
+                discovered["cc"] |= name.Contains("cc");
+                discovered["d"]  |= name.Contains("d");
+                discovered["ff"] |= name.Contains("ff");
+            }
+
+            Assert.IsTrue(discovered.Values.All(x => x));
 
         }
 
         [TestMethod, Timeout(10000)]
-        public void SyllableGenerator_WithNoSequencesConfigured_NameGeneratorStillGeneratesNames()
+        public void SyllableGenerator_WithNoSequencesDefined_NameGeneratorStillGeneratesNames()
         {
             // It is valid for a name generator to use a provider with no sequences defined
-            var generator = new NameGenerator()
-                .UsingSyllables(x => x
+
+            var sut = new SyllableGenerator()
                     .WithLeadingConsonants("srt")
                     .WithVowels("ea")
                     .WithTrailingConsonants("tz")
-                    .WithProbability(x => x.OfLeadingConsonants(1.0)))
-                .UsingFilter(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 3 characters
+                    .WithProbability(x => x.OfLeadingConsonants(1.0));
 
-            try
+            var generator = new NameGenerator()
+                .UsingSyllables(sut)
+                .DoNotAllow("^.{,2}$");// Invalidate names with less than 3 characters
+
+            for (int i = 0; i < 10000; i++)
             {
-                for (int i = 0; i < 10000; i++)
-                {
-                    var name = generator.Next();
-                    Assert.IsTrue(name.Length > 2);
-                }
-            }
-            catch(Exception e)
-            {
-                Assert.Fail(e.Message);
+                var name = generator.Next();
+                Assert.IsTrue(name.Length > 2);
             }
 
         }
+
+        // TODO
 
         [TestMethod]
         public void SyllableGenerator_SettingLeadingVowelInStartingSyllable_AffectsOutput()
         {
             // 1. By default, vowels do not have a probability of starting a name
-            var provider = GetDefaultProviderWithAllComponentsDefined();
+            var provider = GetSyllableGeneratorWithAllComponentsDefined();
+            provider.WithProbability(x => x.OfLeadingConsonants(1.0));
+
             bool leadingVowelDetected = false; 
             for(int i = 0; i < 1000; i++)
             {
@@ -556,7 +548,9 @@ namespace Syllabore.Tests
         public void SyllableGenerator_SettingLeadingVowelSequenceInStartingSyllable_AffectsOutput()
         {
             // 1. By default, vowel sequences do not have a probability of starting a name
-            var provider = GetDefaultProviderWithAllComponentsDefined();
+            var provider = GetSyllableGeneratorWithAllComponentsDefined();
+            provider.WithProbability(x => x.OfLeadingConsonants(1.0));
+
             bool leadingVowelDetected = false;
             for (int i = 0; i < 1000; i++)
             {
@@ -597,7 +591,7 @@ namespace Syllabore.Tests
         {
             // By default, consonants can start a syllable
 
-            var provider = GetDefaultProviderWithAllComponentsDefined();
+            var provider = GetSyllableGeneratorWithAllComponentsDefined();
             bool leadingConsonantDetected = false;
             for (int i = 0; i < 1000; i++)
             {
@@ -634,7 +628,7 @@ namespace Syllabore.Tests
         {
             // By default, consonant sequences can start a syllable
 
-            var provider = GetDefaultProviderWithAllComponentsDefined();
+            var provider = GetSyllableGeneratorWithAllComponentsDefined();
             bool leadingConsonantSequenceDetected = false;
             for (int i = 0; i < 1000; i++)
             {
@@ -674,7 +668,7 @@ namespace Syllabore.Tests
         {
             // By default, consonant sequences can start a syllable
 
-            var provider = GetDefaultProviderWithAllComponentsDefined();
+            var provider = GetSyllableGeneratorWithAllComponentsDefined();
             bool vowelSequenceDetected = false;
             for (int i = 0; i < 1000; i++)
             {
@@ -710,7 +704,7 @@ namespace Syllabore.Tests
         {
             // By default, consonants can start a syllable
 
-            var provider = GetDefaultProviderWithAllComponentsDefined();
+            var provider = GetSyllableGeneratorWithAllComponentsDefined();
             bool trailingConsonantDetected = false;
             for (int i = 0; i < 1000; i++)
             {
@@ -745,7 +739,7 @@ namespace Syllabore.Tests
         {
             // By default, consonant sequences can start a syllable
 
-            var provider = GetDefaultProviderWithAllComponentsDefined();
+            var provider = GetSyllableGeneratorWithAllComponentsDefined();
             bool trailingConsonantSequenceDetected = false;
             for (int i = 0; i < 1000; i++)
             {
