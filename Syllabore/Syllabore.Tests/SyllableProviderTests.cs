@@ -10,9 +10,8 @@ namespace Syllabore.Tests
     [TestClass]
     public class SyllableProviderTests
     {
-        // This is just a helper method to provide a vanilla
-        // provider with one instance of every vowel/consonant 
-        // combination defined
+
+        // Looking to deprecate this helper method
         private static SyllableGenerator GetSyllableGeneratorWithAllComponentsDefined()
         {
             return new SyllableGenerator()
@@ -504,87 +503,65 @@ namespace Syllabore.Tests
 
         }
 
-        // TODO
-
         [TestMethod]
-        public void SyllableGenerator_SettingLeadingVowelInStartingSyllable_AffectsOutput()
+        [DataRow(0.0, false, true)]
+        [DataRow(0.5, true, true)]
+        [DataRow(1.0, true, false)]
+        public void SyllableGenerator_CustomLeadingVowelProbability_AffectsOutput(
+            double leadingVowelProbability, 
+            bool isLeadingVowelExpected, 
+            bool isLeadingConsonantExpected
+        )
         {
-            // 1. By default, vowels do not have a probability of starting a name
-            var provider = GetSyllableGeneratorWithAllComponentsDefined();
-            provider.WithProbability(x => x.OfLeadingConsonants(1.0));
+            var sut = GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff")
+                .WithProbability(x => x
+                    .OfLeadingConsonants(1.0)
+                    .OfLeadingVowelsInStartingSyllable(leadingVowelProbability));
 
-            bool leadingVowelDetected = false; 
+            var leadingVowelsDetected = false;
+            var leadingConsonantsDetected = false;
+
             for(int i = 0; i < 1000; i++)
             {
-                var s = provider.NextStartingSyllable();
-                if (s.StartsWith("o")) { leadingVowelDetected = true; break; }
+                var s = sut.NextStartingSyllable();
+                leadingVowelsDetected |= Regex.IsMatch(s, "^[aieou]");
+                leadingConsonantsDetected |= Regex.IsMatch(s, "^[^aieou]"); // note the negation in the regex
             }
-            Assert.IsFalse(leadingVowelDetected);
 
-            // 2. Leading vowels in the starting syllables can be enabled
-            // by increasing the probability to non-zero
-            provider.WithProbability(x => x.OfLeadingVowelsInStartingSyllable(0.5)); // You can turn this off explicitly without adjusting probability settings
-            leadingVowelDetected = false; // In which case we expect this variable to remain false
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextStartingSyllable();
-                if (s.StartsWith("o")) { leadingVowelDetected = true; break; }
-            }
-            Assert.IsTrue(leadingVowelDetected);
-
-            // 2. Leading vowels in the starting syllables can be disabled
-            // by setting the probability to zero
-            provider.WithProbability(x => x.OfLeadingVowelsInStartingSyllable(0));
-            leadingVowelDetected = false; // In which case we expect this variable to be true again
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextStartingSyllable();
-                if (s.StartsWith("o")) { leadingVowelDetected = true; break; }
-            }
-            Assert.IsFalse(leadingVowelDetected);
+            Assert.IsTrue(leadingVowelsDetected == isLeadingVowelExpected);
+            Assert.IsTrue(leadingConsonantsDetected == isLeadingConsonantExpected);
         }
 
         [TestMethod]
-        public void SyllableGenerator_SettingLeadingVowelSequenceInStartingSyllable_AffectsOutput()
+        [DataRow(0.0, false, true)]
+        [DataRow(0.5, true, true)]
+        [DataRow(1.0, true, false)]
+        public void SyllableGenerator_CustomLeadingVowelSequenceProbability_AffectsOutput(
+            double leadingVowelSequenceProbability,
+            bool outputWithLeadingVowelSequenceExpected,
+            bool outputWithoutLeadingVowelSequenceExpected
+        )
         {
-            // 1. By default, vowel sequences do not have a probability of starting a name
-            var provider = GetSyllableGeneratorWithAllComponentsDefined();
-            provider.WithProbability(x => x.OfLeadingConsonants(1.0));
+            var sut = GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff")
+                .WithProbability(x => x
+                    .OfLeadingConsonants(1.0)
+                    .OfLeadingVowelsInStartingSyllable(1.0, leadingVowelSequenceProbability));
 
-            bool leadingVowelDetected = false;
+            var leadingVowelSequenceDetected = false;
+            var otherLeadingGraphemeDetected = false;
+
             for (int i = 0; i < 1000; i++)
             {
-                var s = provider.NextStartingSyllable();
-                if (s.StartsWith("uu")) { leadingVowelDetected = true; break; }
+                var s = sut.NextStartingSyllable();
+                leadingVowelSequenceDetected |= Regex.IsMatch(s, "^ee");
+                otherLeadingGraphemeDetected |= !Regex.IsMatch(s, "^ee");
             }
-            Assert.IsFalse(leadingVowelDetected);
 
-            // 2. Leading vowel sequences in the starting syllables can be enabled
-            // by increasing the probability to non-zero
-            provider.WithProbability(x => x
-                .OfLeadingVowelsInStartingSyllable(0.5)
-                .OfLeadingVowelIsSequenceInStartingSyllable(0.5)); // You can turn this off explicitly without adjusting probability settings
-            leadingVowelDetected = false; // In which case we expect this variable to remain false
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextStartingSyllable();
-                if (s.StartsWith("uu")) { leadingVowelDetected = true; break; }
-            }
-            Assert.IsTrue(leadingVowelDetected);
-
-            // 2. Leading vowel sequences in the starting syllables can be disabled
-            // by setting the probability to zero
-            provider.WithProbability(x => x
-                .OfLeadingVowelsInStartingSyllable(0.5)
-                .OfLeadingVowelIsSequenceInStartingSyllable(0.0)); 
-            leadingVowelDetected = false; // In which case we expect this variable to be true again
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextStartingSyllable();
-                if (s.StartsWith("uu")) { leadingVowelDetected = true; break; }
-            }
-            Assert.IsFalse(leadingVowelDetected);
+            Assert.IsTrue(leadingVowelSequenceDetected == outputWithLeadingVowelSequenceExpected);
+            Assert.IsTrue(otherLeadingGraphemeDetected == outputWithoutLeadingVowelSequenceExpected);
         }
+
+        // TODO
 
         [TestMethod]
         public void SyllableGenerator_WithTogglingOfLeadingConsonants_TurnsOnOrOffAsExpected()
