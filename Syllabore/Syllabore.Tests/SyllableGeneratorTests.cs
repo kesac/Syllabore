@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Syllabore.Tests
@@ -221,6 +220,55 @@ namespace Syllabore.Tests
                 // Check that the name generator generates nothing but the vowels
                 var name = ng.Next();
                 Assert.IsTrue(!string.IsNullOrEmpty(name) && Regex.IsMatch(name, "^[aeiouAEIOU]+$"));
+            }
+        }
+
+        [TestMethod]
+        public void NameGenerator_ProbabilisticConsonants_GenerationSometimesNotSuccessful()
+        {
+            // The expectation here is that the name generator will sometimes generate valid names
+            // because the probability of a leading and final consonant is not zero. However, if by chance
+            // neither a leading or final consonant appears in the output, an exception will be thrown
+            // because the default behaviour of the generator is to not allow empty strings.
+
+            var sut = new SyllableGenerator()
+                .WithLeadingConsonants("str")
+                .WithFinalConsonants("lmn")
+                .WithProbability(x => x
+                    .OfLeadingConsonants(0.50)
+                    .OfFinalConsonants(0.50));
+
+            var ng = new NameGenerator(sut);
+
+            Assert.ThrowsException<InvalidOperationException>(() => { 
+                
+                for(int i = 0; i < 1000; i++)
+                {
+                    ng.Next();
+                }
+
+            });
+        }
+
+        [TestMethod]
+        public void NameGenerator_ProbabilisticConsonantsButEmptyStringsAllowed_GenerationAlwaysSuccessful()
+        {
+            // If neither a leading or final consonant appears in the output, no exception will be thrown
+            // because the generator has been instructed to allow empty strings.
+
+            var sut = new SyllableGenerator()
+                .WithLeadingConsonants("str")
+                .WithFinalConsonants("lmn")
+                .WithProbability(x => x
+                    .OfLeadingConsonants(0.50)
+                    .OfFinalConsonants(0.50))
+                .AllowEmptyStrings(true);
+
+            var ng = new NameGenerator(sut);
+
+            for (int i = 0; i < 1000; i++)
+            {
+                Assert.IsNotNull(ng.Next());
             }
         }
 
