@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 namespace Syllabore.Tests
 {
     [TestClass]
-    public class SyllableProviderTests
+    public class SyllableGeneratorTests
     {
 
         // Looking to deprecate this helper method
