@@ -561,269 +561,149 @@ namespace Syllabore.Tests
             Assert.IsTrue(otherLeadingGraphemeDetected == outputWithoutLeadingVowelSequenceExpected);
         }
 
-        // TODO
-
+       
         [TestMethod]
-        public void SyllableGenerator_WithTogglingOfLeadingConsonants_TurnsOnOrOffAsExpected()
+        [DataRow(0.0, false)]
+        [DataRow(0.5, true)]
+        [DataRow(1.0, true)]
+        public void SyllableGenerator_CustomLeadingConsonantProbability_AffectsOutput(
+            double leadingConsonantProbability,
+            bool isLeadingConsonantExpected
+        )
         {
-            // By default, consonants can start a syllable
+            var sut = GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff")
+                .WithProbability(x => x
+                    .OfLeadingConsonants(leadingConsonantProbability));
 
-            var provider = GetSyllableGeneratorWithAllComponentsDefined();
-            bool leadingConsonantDetected = false;
+            var leadingConsonantsDetected = false;
+
             for (int i = 0; i < 1000; i++)
             {
-                var s = provider.NextSyllable();
-                if (s.StartsWith("b", "c")) { leadingConsonantDetected = true; break; }
+                var s = sut.NextSyllable();
+                leadingConsonantsDetected |= Regex.IsMatch(s, "^b");
             }
-            Assert.IsTrue(leadingConsonantDetected);
 
-            // provider.WithLeadingConsonants().Chance(0); 
-            provider.WithProbability(x => x.OfLeadingConsonants(0)); // This also prevents sequences
-
-            leadingConsonantDetected = false; // In which case we expect this variable to remain false
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextSyllable();
-                if (s.StartsWith("b", "c")) { leadingConsonantDetected = true; break; }
-            }
-            Assert.IsFalse(leadingConsonantDetected);
-
-            // provider.AllowLeadingConsonants(); // You can also turn this on explicitly
-            // provider.WithLeadingConsonants().Chance(0.50);
-            provider.WithProbability(x => x.OfLeadingConsonants(0.5));
-            leadingConsonantDetected = false; // In which case we expect this variable to be true again
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextSyllable();
-                if (s.StartsWith("b", "c")) { leadingConsonantDetected = true; break; }
-            }
-            Assert.IsTrue(leadingConsonantDetected);
+            Assert.IsTrue(leadingConsonantsDetected == isLeadingConsonantExpected);
         }
 
         [TestMethod]
-        public void SyllableGenerator_WithTogglingOfLeadingConsonantSequences_TurnsOnOrOffAsExpected()
+        [DataRow(0.0, false)]
+        [DataRow(0.5, true)]
+        [DataRow(1.0, true)]
+        public void SyllableGenerator_CustomLeadingConsonantSequenceProbability_AffectsOutput(
+            double leadingConsonantSequenceProbability,
+            bool isLeadingConsonantSequenceExpected
+        )
         {
-            // By default, consonant sequences can start a syllable
+            var sut = GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff")
+                .WithProbability(x => x
+                    .OfLeadingConsonants(1.0, leadingConsonantSequenceProbability));
 
-            var provider = GetSyllableGeneratorWithAllComponentsDefined();
-            bool leadingConsonantSequenceDetected = false;
+            var leadingConsonantsDetected = false;
+
             for (int i = 0; i < 1000; i++)
             {
-                var s = provider.NextSyllable();
-                if (s.StartsWith("cc")) { leadingConsonantSequenceDetected = true; break; }
+                var s = sut.NextSyllable();
+                leadingConsonantsDetected |= Regex.IsMatch(s, "^cc");
             }
-            Assert.IsTrue(leadingConsonantSequenceDetected);
 
-            // provider.DisallowLeadingConsonantSequences();
-            // provider.WithLeadingConsonantSequences().Chance(0);
-            provider.WithProbability(x => x.OfLeadingConsonantIsSequence(0));
-            leadingConsonantSequenceDetected = false; // In which case we expect this variable to remain false
-            bool leadingConsonantDetected = false; // This should be true as the flag only affects sequences
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextSyllable();
-                if (s.StartsWith("cc")) { leadingConsonantSequenceDetected = true; }
-                else if (s.StartsWith("b")) { leadingConsonantDetected = true; }
-            }
-            Assert.IsFalse(leadingConsonantSequenceDetected);
-            Assert.IsTrue(leadingConsonantDetected);
-
-            // provider.LetLeadingConsonantSequences(0.5);
-            // provider.WithLeadingConsonantSequences().Chance(0.50);
-            provider.WithProbability(x => x.OfLeadingConsonantIsSequence(0.5));
-            leadingConsonantSequenceDetected = false; // In which case we expect this variable to be true again
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextSyllable();
-                if (s.StartsWith("cc")) { leadingConsonantSequenceDetected = true; break; }
-            }
-            Assert.IsTrue(leadingConsonantSequenceDetected);
+            Assert.IsTrue(leadingConsonantsDetected == isLeadingConsonantSequenceExpected);
         }
 
         [TestMethod]
-        public void SyllableGenerator_WithTogglingOfVowelSequences_TurnsOnOrOffAsExpected()
+        [DataRow(0.0, false)]
+        [DataRow(0.5, true)]
+        [DataRow(1.0, true)]
+        public void SyllableGenerator_CustomVowelProbability_AffectsOutput(
+            double vowelProbability,
+            bool isVowelExpected
+        )
         {
-            // By default, consonant sequences can start a syllable
+            var sut = GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff")
+                .AllowEmptyStrings(true)
+                .WithProbability(x => x.OfVowels(vowelProbability));
 
-            var provider = GetSyllableGeneratorWithAllComponentsDefined();
-            bool vowelSequenceDetected = false;
+            var vowelsDetected = false;
+
             for (int i = 0; i < 1000; i++)
             {
-                var s = provider.NextSyllable();
-                if (s.Contains("uu")) { vowelSequenceDetected = true; break; }
+                var s = sut.NextSyllable();
+                vowelsDetected |= Regex.IsMatch(s, "a");
             }
-            Assert.IsTrue(vowelSequenceDetected);
 
-            // provider.WithVowelSequences().Chance(0); // You can turn this off explicitly without adjusting probability settings
-            provider.WithProbability(x => x.OfVowelIsSequence(0));
-            vowelSequenceDetected = false; // In which case we expect this variable to remain false
-            
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextSyllable();
-                if (s.Contains("uu")) { vowelSequenceDetected = true; break; }
-            }
-            Assert.IsFalse(vowelSequenceDetected);
-
-            // provider.WithVowelSequences().Chance(0.50); // You can also turn this on explicitly
-            provider.WithProbability(x => x.OfVowelIsSequence(0.5));
-            vowelSequenceDetected = false; // In which case we expect this variable to be true again
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextSyllable();
-                if (s.Contains("uu")) { vowelSequenceDetected = true; break; }
-            }
-            Assert.IsTrue(vowelSequenceDetected);
+            Assert.IsTrue(vowelsDetected == isVowelExpected);
         }
 
         [TestMethod]
-        public void SyllableGenerator_WithTogglingOfTrailingConsonants_TurnsOnOrOffAsExpected()
+        [DataRow(0.0, false)]
+        [DataRow(0.5, true)]
+        [DataRow(1.0, true)]
+        public void SyllableGenerator_CustomVowelSequenceProbability_AffectsOutput(
+            double vowelSequenceProbability,
+            bool isVowelSequenceExpected
+        )
         {
-            // By default, consonants can start a syllable
+            var sut = GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff")
+                .WithProbability(x => x.OfVowels(1.0, vowelSequenceProbability));
 
-            var provider = GetSyllableGeneratorWithAllComponentsDefined();
-            bool trailingConsonantDetected = false;
+            var vowelSequenceDetected = false;
+
             for (int i = 0; i < 1000; i++)
             {
-                var s = provider.NextSyllable();
-                if (s.EndsWith("d", "f")) { trailingConsonantDetected = true; break; }
+                var s = sut.NextSyllable();
+                vowelSequenceDetected |= Regex.IsMatch(s, "ee");
             }
-            Assert.IsTrue(trailingConsonantDetected);
 
-            // provider.WithTrailingConsonants().Chance(0.0); // You can turn this off explicitly without adjusting probability settings, this should also affect sequences
-            provider.WithProbability(x => x.OfTrailingConsonants(0));
-            trailingConsonantDetected = false; // In which case we expect this variable to remain false
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextSyllable();
-                if (s.EndsWith("d", "f")) { trailingConsonantDetected = true; break; }
-            }
-            Assert.IsFalse(trailingConsonantDetected);
-
-            //provider.WithTrailingConsonants().Chance(0.50); // You can also turn this on explicitly
-            provider.WithProbability(x => x.OfTrailingConsonants(0.5));
-            trailingConsonantDetected = false; // In which case we expect this variable to be true again
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextSyllable();
-                if (s.EndsWith("d", "f")) { trailingConsonantDetected = true; break; }
-            }
-            Assert.IsTrue(trailingConsonantDetected);
-        }
-
-        [TestMethod]
-        public void SyllableGenerator_WithTogglingOfLeadingConsonantSequenceSequences_TurnsOnOrOffAsExpected()
-        {
-            // By default, consonant sequences can start a syllable
-
-            var provider = GetSyllableGeneratorWithAllComponentsDefined();
-            bool trailingConsonantSequenceDetected = false;
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextSyllable();
-                if (s.EndsWith("ff")) { trailingConsonantSequenceDetected = true; break; }
-            }
-            Assert.IsTrue(trailingConsonantSequenceDetected);
-
-            // provider.WithTrailingConsonantSequences().Chance(0); // You can turn this off explicitly without adjusting probability settings
-            provider.WithProbability(x => x.OfTrailingConsonantIsSequence(0));
-            trailingConsonantSequenceDetected = false; // In which case we expect this variable to remain false
-            bool trailingConsonantDetected = false; // This should be true as the flag only affects sequences
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextSyllable();
-                if (s.EndsWith("ff")) { trailingConsonantSequenceDetected = true; }
-                else if (s.EndsWith("d")) { trailingConsonantDetected = true; }
-            }
-            Assert.IsFalse(trailingConsonantSequenceDetected);
-            Assert.IsTrue(trailingConsonantDetected);
-
-            // provider.WithTrailingConsonantSequences().Chance(0.5); // You can also turn this on explicitly
-            provider.WithProbability(x => x.OfTrailingConsonantIsSequence(0.5));
-            trailingConsonantSequenceDetected = false; // In which case we expect this variable to be true again
-            for (int i = 0; i < 1000; i++)
-            {
-                var s = provider.NextSyllable();
-                if (s.StartsWith("cc")) { trailingConsonantSequenceDetected = true; break; }
-            }
-            Assert.IsTrue(trailingConsonantSequenceDetected);
+            Assert.IsTrue(vowelSequenceDetected == isVowelSequenceExpected);
         }
 
 
         [TestMethod]
-        public void SyllableGenerator_CustomConsonantProbabilityDefined_AffectsSyllableGenerationCorrectly()
+        [DataRow(0.0, false)]
+        [DataRow(0.5, true)]
+        [DataRow(1.0, true)]
+        public void SyllableGenerator_CustomTrailingConsonantProbability_AffectsOutput(
+            double trailingConsonantProbability,
+            bool isTrailingConsonantExpected
+        )
         {
+            var sut = GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff")
+                .WithProbability(x => x.OfTrailingConsonants(trailingConsonantProbability));
 
-            var provider = new SyllableGenerator()
-                    .WithVowels("a")
-                    .WithVowelSequences("ee")
-                    .WithLeadingConsonants("b")
-                    .WithLeadingConsonantSequences("cc")
-                    .WithTrailingConsonants("d")
-                    .WithTrailingConsonantSequences("ff");
+            var trailingConsonantsDetected = false;
 
-            // Disable all leading and trailing consonants 
-            Assert.IsTrue(EachOutputNeverContainsAnyOf(
-                provider.WithProbability(x => x
-                            .OfLeadingConsonants(0)
-                            .OfLeadingConsonantIsSequence(0)
-                            .OfTrailingConsonants(0)
-                            .OfTrailingConsonantIsSequence(0)),
-                    "b", "cc", "d", "ff"));
+            for (int i = 0; i < 1000; i++)
+            {
+                var s = sut.NextSyllable();
+                trailingConsonantsDetected |= Regex.IsMatch(s, "d$");
+            }
 
-            // Consonant sequence probability doesn't matter
-            // if the consonant probability is zero
-            Assert.IsTrue(EachOutputNeverContainsAnyOf(
-                provider.WithProbability(x => x
-                            .OfLeadingConsonants(0)
-                            .OfLeadingConsonantIsSequence(1)
-                            .OfTrailingConsonants(0)
-                            .OfTrailingConsonantIsSequence(1)),
-                    "b", "cc", "d", "ff"));
-
-            // Consonant sequence probability only matters
-            // if the consonant probability is not zero
-
-            provider.WithProbability(x => x
-                            .OfLeadingConsonants(1)
-                            .OfLeadingConsonantIsSequence(0)
-                            .OfTrailingConsonants(1)
-                            .OfTrailingConsonantIsSequence(0));
-
-            // There should be no consonant sequences
-            Assert.IsTrue(EachOutputContainsAnyOf(provider, "b", "d"));
-            Assert.IsTrue(EachOutputNeverContainsAnyOf(provider, "cc", "ff"));
-
-            provider.WithProbability(x => x
-                            .OfLeadingConsonants(1)
-                            .OfLeadingConsonantIsSequence(1)
-                            .OfTrailingConsonants(1)
-                            .OfTrailingConsonantIsSequence(1));
-
-            // There should always be consonant sequences
-            Assert.IsTrue(EachOutputNeverContainsAnyOf(provider, "b", "d"));
-            Assert.IsTrue(EachOutputContainsAnyOf(provider, "cc", "ff"));
-
-            // Test whether a value between 0 and 1 ouputs both consonants and consonant sequences
-            provider.WithProbability(x => x
-                            .OfLeadingConsonants(1)
-                            .OfLeadingConsonantIsSequence(0.5)
-                            .OfTrailingConsonants(1)
-                            .OfTrailingConsonantIsSequence(0.5));
-
-            Assert.IsTrue(AllOutputContainsAtLeastOnce(provider, "b", "d", "cc", "ff"));
-
-            // Not all output will have a consonant
-            provider.WithProbability(x => x
-                            .OfLeadingConsonants(0.5)
-                            .OfLeadingConsonantIsSequence(0.5)
-                            .OfTrailingConsonants(0.5)
-                            .OfTrailingConsonantIsSequence(0.5));
-
-            Assert.IsTrue(AllOutputContainsAtLeastOnce(provider, "b", "d", "cc", "ff"));
-
+            Assert.IsTrue(trailingConsonantsDetected == isTrailingConsonantExpected);
         }
 
+        [TestMethod]
+        [DataRow(0.0, false)]
+        [DataRow(0.5, true)]
+        [DataRow(1.0, true)]
+        public void SyllableGenerator_CustomTrailingConsonantSequenceProbability_AffectsOutput(
+            double trailingConsonantSequenceProbability,
+            bool isTrailingConsonantSequenceExpected
+        )
+        {
+            var sut = GetSyllableGenerator("a", "ee", "b", "cc", "d", "ff")
+                .WithProbability(x => x
+                    .OfTrailingConsonants(1.0, trailingConsonantSequenceProbability));
+
+            var trailingConsonantsDetected = false;
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var s = sut.NextSyllable();
+                trailingConsonantsDetected |= Regex.IsMatch(s, "ff$");
+            }
+
+            Assert.IsTrue(trailingConsonantsDetected == isTrailingConsonantSequenceExpected);
+        }
 
     }
 }
