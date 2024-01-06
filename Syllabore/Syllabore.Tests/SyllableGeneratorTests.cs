@@ -165,6 +165,14 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
+        public void NameGenerator_NoGraphemesWithEmptyStringAllowed_EmptyStringsGenerated()
+        {
+            var sg = new SyllableGenerator().AllowEmptyStrings(true);
+            var sut = new NameGenerator(sg);
+            Assert.AreEqual(sut.Next(), string.Empty);
+        }
+
+        [TestMethod]
         public void SyllableGenerator_WithOneVowel_VowelAppearsInOutput()
         {
             // Define one and only one vowel then check name output

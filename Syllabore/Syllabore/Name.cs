@@ -47,7 +47,16 @@ namespace Syllabore
         public override string ToString()
         {
             var result = string.Join(string.Empty, this.Syllables);
-            return result.Substring(0, 1).ToUpper() + result.Substring(1).ToLower();
+
+            if(result.Length > 0)
+            {
+                // Capitalize the first letter
+                return result.Substring(0, 1).ToUpper() + result.Substring(1).ToLower();
+            }
+            else
+            {
+                return result;
+            }
         }
 
         /// <summary>
