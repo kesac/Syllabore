@@ -219,7 +219,23 @@ namespace Syllabore.Tests
             {
                 // Check that the name generator generates nothing but the vowels
                 var name = ng.Next();
-                Assert.IsTrue(!string.IsNullOrEmpty(name) && Regex.IsMatch(name, "^[aeiouAEIOU]+$"));
+                Assert.IsTrue(Regex.IsMatch(name, "^[aeiouAEIOU]+$"));
+            }
+        }
+
+        [TestMethod]
+        public void NameGenerator_ZeroProbabilityVowelsButEmptyStringsEnabled_GenerationSuccessful()
+        {
+            var sut = new SyllableGenerator()
+                .WithVowels("aeiou")
+                .WithProbability(x => x.OfVowels(0.0))
+                .AllowEmptyStrings(true);
+
+            var ng = new NameGenerator(sut);
+
+            for (int i = 0; i < 1000; i++)
+            {
+                Assert.IsTrue(ng.Next() == string.Empty);
             }
         }
 
