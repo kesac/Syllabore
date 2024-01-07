@@ -501,6 +501,40 @@ namespace Syllabore.Tests
 
         }
 
+        /* // To be enabled in v3.x
+        [TestMethod]
+        public void SyllableGenerator_WithOnlySequencesDefined_SequencesAppearInOutput()
+        {
+            // In v2.x, the leading consonant and leading consonant sequence
+            // pools were separate. This caused an issue when consonant
+            // sequences were defined, but consonants (non-sequences) were not. The
+            // sequences never appeared in the output space.
+            
+            // Another related issue in v2.x was that the default consonant
+            // probabilities were not 100% and the consonant sequence probability was not
+            // used unless the consonant probability was non-zero.
+
+            var sut = new SyllableGenerator()
+                .WithLeadingConsonantSequences("th")
+                .WithTrailingConsonantSequences("ct");
+
+            var g = new NameGenerator(sut);
+
+            var leadingConsonantSequenceDetected = false;
+            var trailingConsonantSequenceDetected = false;
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var name = g.Next().ToLower();
+                leadingConsonantSequenceDetected |= name.Contains("th");
+                trailingConsonantSequenceDetected |= name.Contains("ct");
+            }
+
+            Assert.IsTrue(leadingConsonantSequenceDetected && trailingConsonantSequenceDetected);
+
+        }
+        /**/
+
         [TestMethod]
         [DataRow(0.0, false, true)]
         [DataRow(0.5, true, true)]
