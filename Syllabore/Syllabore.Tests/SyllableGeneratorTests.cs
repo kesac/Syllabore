@@ -10,15 +10,6 @@ namespace Syllabore.Tests
     public class SyllableGeneratorTests
     {
 
-        // Looking to deprecate this helper method
-        private static SyllableGenerator GetSyllableGeneratorWithAllComponentsDefined()
-        {
-            return new SyllableGenerator()
-                .WithLeadingConsonants("b").Sequences("cc")
-                .WithTrailingConsonants("d").Sequences("ff")
-                .WithVowels("o").Sequences("uu");
-        }
-
         private static SyllableGenerator GetSyllableGenerator(
             string vowels,
             string vowelSequences,
