@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Syllabore
 {
@@ -11,7 +10,6 @@ namespace Syllabore
     /// </summary>
     public static class ListExtensions
     {
-        private static Random Random = new Random();
 
         /// <summary>
         /// Clears the contents of the current list and replaces it
@@ -39,9 +37,10 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Returns a random item from an <see cref="IList{T}"/>.
+        /// Returns a random item from an <see cref="IList{T}"/> using the specified
+        /// instance of <see cref="System.Random"/>.
         /// </summary>
-        public static T RandomItem<T>(this IList<T> list)
+        public static T RandomItem<T>(this IList<T> list, Random random)
         {
 
             if(list.Count == 0)
@@ -50,7 +49,7 @@ namespace Syllabore
             }
             else
             {
-                int selection = Random.Next(list.Count);
+                int selection = random.Next(list.Count);
 
                 return list[selection];
             }
@@ -58,11 +57,12 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Returns a random item from an <see cref="ISet{T}"/>.
+        /// Returns a random item from an <see cref="ISet{T}"/>
+        /// using the specified instance of <see cref="System.Random"/>
         /// </summary>
-        public static T RandomItem<T>(this ISet<T> set)
+        public static T RandomItem<T>(this ISet<T> set, Random random)
         {
-            return set.ToList<T>().RandomItem<T>();
+            return set.ToList<T>().RandomItem<T>(random);
         }
 
         /// <summary>
@@ -70,11 +70,14 @@ namespace Syllabore
         /// where <c>T</c> implements <see cref="IWeighted"/>.
         /// Elements with a higher <c>Weight</c> value will have a higher probability
         /// of being selected over elements with lower <c>Weight</c> values.
+        /// <para>
+        /// Random selection is done using the specified instance of <see cref="System.Random"/>.
+        /// </para>
         /// </summary>
-        public static T RandomWeightedItem<T>(this IList<T> weightedItems) where T : IWeighted
+        public static T RandomWeightedItem<T>(this IList<T> weightedItems, Random random) where T : IWeighted
         {
             int totalWeight = weightedItems.TotalWeight();
-            int randomSelection = Random.Next(totalWeight);
+            int randomSelection = random.Next(totalWeight);
 
             int runningTotal = 0;
 
