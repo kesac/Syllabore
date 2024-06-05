@@ -158,5 +158,32 @@ namespace Syllabore.Tests
                 Assert.Fail(e.Message);
             }
         }
+
+
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(12345)]
+        public void NameGenerator_StaticRandomSeed_CreatesPredictableOutput(int seed)
+        {
+            var sutSyllables = new SyllableGenerator("aeiou", "strlmnp");
+            sutSyllables.Random = new Random(seed);
+
+            var sut = new NameGenerator();
+            sut.Random = new Random(seed);
+            sut.UsingSyllables(sutSyllables);
+
+            var comparisonSyllables = new SyllableGenerator("aeiou", "strlmnp");
+            comparisonSyllables.Random = new Random(seed);
+
+            var comparison = new NameGenerator();
+            comparison.Random = new Random(seed);
+            comparison.UsingSyllables(comparisonSyllables);
+
+            for (int i = 0; i < 1000; i++)
+            {
+                Assert.AreEqual(sut.Next(), comparison.Next());
+            }
+
+        }
     }
 }

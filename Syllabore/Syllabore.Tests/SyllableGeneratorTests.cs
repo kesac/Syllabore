@@ -737,5 +737,25 @@ namespace Syllabore.Tests
             Assert.IsTrue(trailingConsonantsDetected == isTrailingConsonantSequenceExpected);
         }
 
+        [TestMethod]
+        [DataRow(0)]
+        [DataRow(12345)]
+        public void SyllableGenerator_StaticRandomSeed_CreatesPredictableOutput(int seed)
+        {
+            var sut = new SyllableGenerator("aeiou", "strlmnp");
+            sut.Random = new Random(seed);
+
+            var comparison = new SyllableGenerator("aeiou", "strlmnp");
+            comparison.Random = new Random(seed);
+
+            for (int i = 0; i < 1000; i++)
+            {
+                Assert.AreEqual(sut.NextStartingSyllable(), comparison.NextStartingSyllable());
+                Assert.AreEqual(sut.NextSyllable(), comparison.NextSyllable());
+                Assert.AreEqual(sut.NextEndingSyllable(), comparison.NextEndingSyllable());
+            }
+
+        }
+
     }
 }
