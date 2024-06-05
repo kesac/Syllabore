@@ -374,6 +374,17 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Sets the instance of <see cref="System.Random"/>
+        /// this class will use to simulate randomness during
+        /// the name generation process.
+        /// </summary>
+        public NameGenerator UsingRandom(Random random)
+        {
+            this.Random = random;
+            return this;
+        }
+
+        /// <summary>
         /// <para>
         /// Sets the maximum number of generation retries before an exception is thrown.
         /// Retry limits are useful in detecting <see cref="NameGenerator"/>s that

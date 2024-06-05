@@ -609,6 +609,16 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Sets the instance of <see cref="System.Random"/> to use when
+        /// simulating randomness during the syllable generation process.
+        /// </summary>
+        public SyllableGenerator WithRandom(Random random)
+        {
+            this.Random = random;
+            return this;
+        }
+
+        /// <summary>
         /// Specifying a value of <c>true</c> will permit generation of empty strings
         /// as syllables. This is a scenario if there are no vowels/consonants to choose from or if the probability
         /// table does not guarantee that syllable output is never a zero-length string. By default, this is <c>false</c>

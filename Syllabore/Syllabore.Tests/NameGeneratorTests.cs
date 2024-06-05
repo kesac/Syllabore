@@ -161,23 +161,27 @@ namespace Syllabore.Tests
 
 
         [TestMethod]
-        [DataRow(0)]
-        [DataRow(12345)]
-        public void NameGenerator_StaticRandomSeed_CreatesPredictableOutput(int seed)
+        [DataRow("aeiou", "strlmnp", 0)]
+        [DataRow("aeiou", "strlmnp", 12345)]
+        public void NameGenerator_StaticRandomSeed_CreatesPredictableOutput(
+            string vowels,
+            string consonants,
+            int seed
+        )
         {
-            var sutSyllables = new SyllableGenerator("aeiou", "strlmnp");
-            sutSyllables.Random = new Random(seed);
-
-            var sut = new NameGenerator();
-            sut.Random = new Random(seed);
-            sut.UsingSyllables(sutSyllables);
-
-            var comparisonSyllables = new SyllableGenerator("aeiou", "strlmnp");
-            comparisonSyllables.Random = new Random(seed);
-
-            var comparison = new NameGenerator();
-            comparison.Random = new Random(seed);
-            comparison.UsingSyllables(comparisonSyllables);
+            var sut = new NameGenerator()
+                .UsingSyllables(x => x
+                    .WithVowels(vowels)
+                    .WithConsonants(consonants)
+                    .WithRandom(new Random(seed)))
+                .UsingRandom(new Random(seed));
+            
+            var comparison = new NameGenerator()
+                .UsingSyllables(x => x
+                    .WithVowels(vowels)
+                    .WithConsonants(consonants)
+                    .WithRandom(new Random(seed)))
+                .UsingRandom(new Random(seed));
 
             for (int i = 0; i < 1000; i++)
             {
