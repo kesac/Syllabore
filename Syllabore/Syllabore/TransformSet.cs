@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Syllabore
@@ -22,9 +20,12 @@ namespace Syllabore
     /// </para>
     /// </summary>
     [Serializable]
-    public class TransformSet : INameTransformer
+    public class TransformSet : INameTransformer, IRandomizable
     {
-        private Random _random;
+        /// <summary>
+        /// Used to simulate randomness when <see cref="UseRandomSelection"/> is true.
+        /// </summary>
+        public Random Random { get; set; }
 
         /// <summary>
         /// The <see cref="Transform">Transforms</see> that make up this
@@ -56,7 +57,7 @@ namespace Syllabore
         /// </summary>
         public TransformSet()
         {
-            _random = new Random();
+            this.Random = new Random();
             this.Transforms = new List<Transform>();
             this.UseRandomSelection = false;
             this.RandomSelectionCount = 0;
@@ -91,7 +92,7 @@ namespace Syllabore
 
             for (int i = 0; i < this.RandomSelectionCount && unusedTransforms.Count > 0; i++)
             {
-                var transform = unusedTransforms.RandomWeightedItem<Transform>();
+                var transform = unusedTransforms.RandomWeightedItem<Transform>(this.Random);
                 unusedTransforms.Remove(transform);
 
                 if (this.CanTransformBeApplied(transform, sourceName))

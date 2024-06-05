@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.Json.Serialization;
 
 namespace Syllabore
 {
@@ -18,8 +16,14 @@ namespace Syllabore
     /// culture, historical period, etc.
     /// </para>
     /// </summary>
-    public class SyllableSet : ISyllableGenerator
+    public class SyllableSet : ISyllableGenerator, IRandomizable
     {
+
+        /// <summary>
+        /// Used to simulate randomness during generation.
+        /// </summary>
+        public Random Random { get; set; }
+
         /// <summary>
         /// The syllable set size for starting syllables.
         /// </summary>
@@ -72,6 +76,7 @@ namespace Syllabore
         /// </summary>
         public SyllableSet(int startingSyllableCount, int middleSyllableCount, int endingSyllableCount)
         {
+            this.Random = new Random();
             this.StartingSyllables = new HashSet<string>();
             this.MiddleSyllables = new HashSet<string>();
             this.EndingSyllables = new HashSet<string>();
@@ -188,7 +193,7 @@ namespace Syllabore
                 }
             }
 
-            return this.StartingSyllables.RandomItem<string>();
+            return this.StartingSyllables.RandomItem<string>(this.Random);
         }
 
         /// <summary>
@@ -205,7 +210,7 @@ namespace Syllabore
                 }
             }
 
-            return this.MiddleSyllables.RandomItem<string>();
+            return this.MiddleSyllables.RandomItem<string>(this.Random);
         }
 
         /// <summary>
@@ -221,7 +226,7 @@ namespace Syllabore
                 }
             }
 
-            return this.EndingSyllables.RandomItem<string>();
+            return this.EndingSyllables.RandomItem<string>(this.Random);
         }
 
     }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
-using System.Text.Json.Serialization;
 
 namespace Syllabore
 {
@@ -102,7 +100,7 @@ namespace Syllabore
     /// a <see cref="NameGenerator"/>.
     /// </summary>
     [Serializable]
-    public class SyllableGenerator : ISyllableGenerator
+    public class SyllableGenerator : ISyllableGenerator, IRandomizable
     {
         // These probabilities are applied if custom values are not specified
         private const double DefaultChanceLeadingConsonantExists = 0.95;           // Only applies if consonants are supplied
@@ -115,9 +113,13 @@ namespace Syllabore
         private const double DefaultChanceFinalConsonantBecomesSequence = 0.25;    // Only if consonant final sequences are supplied
 
 
-        private Random _random { get; set; }
         private Context _context { get; set; } // For contextual command .Sequences()
         private List<Grapheme> _lastChanges { get; set; } // For contextual command .Weight()
+
+        /// <summary>
+        /// Used to simulate randomness during syllable generation.
+        /// </summary>
+        public Random Random { get; set; }
 
         /// <summary>
         /// Leading consonants are consonants that appear before 
@@ -302,7 +304,7 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator()
         {
-            _random = new Random();
+            this.Random = new Random();
             this.Probability = new GeneratorProbability();
             _context = Context.None;
             _lastChanges = new List<Grapheme>();
@@ -623,7 +625,7 @@ namespace Syllabore
             if(this.LeadingConsonants.Count > 0)
             {
                 //return this.LeadingConsonants[this.Random.Next(this.LeadingConsonants.Count)].Value;
-                return this.LeadingConsonants.RandomWeightedItem().Value;
+                return this.LeadingConsonants.RandomWeightedItem(this.Random).Value;
             }
             else
             {
@@ -636,7 +638,7 @@ namespace Syllabore
             if (this.LeadingConsonantSequences.Count > 0)
             {
                 //return this.LeadingConsonantSequences[this.Random.Next(this.LeadingConsonantSequences.Count)].Value;
-                return this.LeadingConsonantSequences.RandomWeightedItem().Value;
+                return this.LeadingConsonantSequences.RandomWeightedItem(this.Random).Value;
             }
             else
             {
@@ -649,7 +651,7 @@ namespace Syllabore
             if (this.Vowels.Count > 0)
             {
                 //return this.Vowels[this.Random.Next(this.Vowels.Count)].Value;
-                return this.Vowels.RandomWeightedItem().Value;
+                return this.Vowels.RandomWeightedItem(this.Random).Value;
             }
             else
             {
@@ -662,7 +664,7 @@ namespace Syllabore
             if (this.VowelSequences.Count > 0)
             {
                 // return this.VowelSequences[this.Random.Next(this.VowelSequences.Count)].Value;
-                return this.VowelSequences.RandomWeightedItem().Value;
+                return this.VowelSequences.RandomWeightedItem(this.Random).Value;
             }
             else
             {
@@ -674,7 +676,7 @@ namespace Syllabore
         {
             if (this.TrailingConsonants.Count > 0)
             {
-                return this.TrailingConsonants.RandomWeightedItem().Value;
+                return this.TrailingConsonants.RandomWeightedItem(this.Random).Value;
             }
             else
             {
@@ -686,7 +688,7 @@ namespace Syllabore
         {
             if (this.TrailingConsonantSequences.Count > 0)
             {
-                return this.TrailingConsonantSequences.RandomWeightedItem().Value;
+                return this.TrailingConsonantSequences.RandomWeightedItem(this.Random).Value;
             }
             else
             {
@@ -699,7 +701,7 @@ namespace Syllabore
         {
             if (this.FinalConsonants.Count > 0)
             {
-                return this.FinalConsonants.RandomWeightedItem().Value;
+                return this.FinalConsonants.RandomWeightedItem(this.Random).Value;
             }
             else
             {
@@ -711,7 +713,7 @@ namespace Syllabore
         {
             if (this.FinalConsonantSequences.Count > 0)
             {
-                return this.FinalConsonantSequences.RandomWeightedItem().Value;
+                return this.FinalConsonantSequences.RandomWeightedItem(this.Random).Value;
             }
             else
             {
@@ -751,10 +753,10 @@ namespace Syllabore
 
             if (position == SyllablePosition.Starting 
                 && this.LeadingVowelForStartingSyllableAllowed 
-                && _random.NextDouble() < this.Probability.ChanceStartingSyllableLeadingVowelExists)
+                && this.Random.NextDouble() < this.Probability.ChanceStartingSyllableLeadingVowelExists)
             {
 
-                if (this.VowelSequencesAllowed && _random.NextDouble() < this.Probability.ChanceStartingSyllableLeadingVowelIsSequence)
+                if (this.VowelSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceStartingSyllableLeadingVowelIsSequence)
                 {
                     output.Append(this.NextVowelSequence());
                 }
@@ -766,11 +768,11 @@ namespace Syllabore
             else
             {
                 // Determine if there is a leading consonant in this syllable
-                if (this.LeadingConsonantsAllowed && _random.NextDouble() < this.Probability.ChanceLeadingConsonantExists)
+                if (this.LeadingConsonantsAllowed && this.Random.NextDouble() < this.Probability.ChanceLeadingConsonantExists)
                 {
 
                     // If there is a leading consonant, determine if it is a sequence
-                    if (this.LeadingConsonantSequencesAllowed && _random.NextDouble() < this.Probability.ChanceLeadingConsonantIsSequence)
+                    if (this.LeadingConsonantSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceLeadingConsonantIsSequence)
                     {
                         output.Append(this.NextLeadingConsonantSequence());
                     }
@@ -781,11 +783,11 @@ namespace Syllabore
                 }
 
                 // Determine if there is a vowel in this syllable (by default, this probability is 100%)
-                if(this.VowelsAllowed && _random.NextDouble() < this.Probability.ChanceVowelExists)
+                if(this.VowelsAllowed && this.Random.NextDouble() < this.Probability.ChanceVowelExists)
                 {
 
                     // Then check if the vowel is a vowel sequence
-                    if (this.VowelSequencesAllowed && _random.NextDouble() < this.Probability.ChanceVowelIsSequence)
+                    if (this.VowelSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceVowelIsSequence)
                     {
                         output.Append(this.NextVowelSequence());
                     }
@@ -801,11 +803,11 @@ namespace Syllabore
             // (as opposed to a 'trailing' consonant)
             if(position == SyllablePosition.Ending
                 && this.FinalConsonantsAllowed
-                && _random.NextDouble() < this.Probability.ChanceFinalConsonantExists)
+                && this.Random.NextDouble() < this.Probability.ChanceFinalConsonantExists)
             {
                 // We need to append a final consonant,
                 // but we need to determine if the consonant is a sequence first
-                if (this.FinalConsonantSequencesAllowed && _random.NextDouble() < this.Probability.ChanceFinalConsonantIsSequence)
+                if (this.FinalConsonantSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceFinalConsonantIsSequence)
                 {
                     output.Append(this.NextFinalConsonantSequence());
                 }
@@ -815,11 +817,11 @@ namespace Syllabore
                 }
             }
             // Otherwise, roll for a trailing consonant
-            else if (this.TrailingConsonantsAllowed && _random.NextDouble() < this.Probability.ChanceTrailingConsonantExists)
+            else if (this.TrailingConsonantsAllowed && this.Random.NextDouble() < this.Probability.ChanceTrailingConsonantExists)
             {
                 // If we need to append a trailing consonant, check if
                 // we need a sequence instead
-                if (this.TrailingConsonantSequencesAllowed && _random.NextDouble() < this.Probability.ChanceTrailingConsonantIsSequence)
+                if (this.TrailingConsonantSequencesAllowed && this.Random.NextDouble() < this.Probability.ChanceTrailingConsonantIsSequence)
                 {
                     output.Append(this.NextTrailingConsonantSequence());
                 }

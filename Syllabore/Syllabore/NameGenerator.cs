@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
 
 namespace Syllabore
 {
@@ -17,7 +13,7 @@ namespace Syllabore
     /// individual syllables of the name.
     /// </para>
     /// </summary>
-    public class NameGenerator : INameGenerator
+    public class NameGenerator : INameGenerator, IRandomizable
     {
 
         /// <summary>
@@ -33,7 +29,10 @@ namespace Syllabore
         /// </summary>
         private const int DefaultMaximumRetries = 1000;
 
-        private Random _random;
+        /// <summary>
+        /// Used to simulate randomness during name generation.
+        /// </summary>
+        public Random Random { get; set; }
 
         /// <summary>
         /// <para>
@@ -137,7 +136,7 @@ namespace Syllabore
                 this.UsingFilter(filter);
             }
 
-            _random = new Random();
+            this.Random = new Random();
         }
 
         #endregion
@@ -419,7 +418,7 @@ namespace Syllabore
                 throw new InvalidOperationException("The value of property MinimumSyllables must be less than or equal to property MaximumSyllables. Both values must be postive integers.");
             }
 
-            var syllableLength = _random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
+            var syllableLength = this.Random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
             return this.Next(syllableLength);
         }
 
@@ -450,7 +449,7 @@ namespace Syllabore
                 throw new InvalidOperationException("The value of property MinimumSyllables must be less than or equal to property MaximumSyllables. Both values must be postive integers.");
             }
 
-            var syllableLength = _random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
+            var syllableLength = this.Random.Next(this.MinimumSyllables, this.MaximumSyllables + 1);
             return this.NextName(syllableLength);
         }
 
@@ -490,7 +489,7 @@ namespace Syllabore
                     }
                 }
 
-                if (this.Transformer != null && _random.NextDouble() < this.TransformerChance)
+                if (this.Transformer != null && this.Random.NextDouble() < this.TransformerChance)
                 {
                     result = this.Transformer.Apply(result);
                 }
