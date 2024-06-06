@@ -108,6 +108,17 @@ namespace Syllabore
             return this;
         }
 
+
+        /// <summary>
+        /// Sets the instance of <see cref="System.Random"/>
+        /// used to simulate randomness during syllable generation.
+        /// </summary>
+        public SyllableSet WithRandom(Random random)
+        {
+            this.Random = random;
+            return this;
+        }
+
         /// <summary>
         /// Adds a syllable to this <see cref="SyllableSet"/>'s pool of starting syllables.
         /// </summary>

@@ -168,6 +168,16 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Sets the instance of <see cref="System.Random"/>
+        /// used to simulate randomness when <see cref="UseRandomSelection"/> is true.
+        /// </summary>
+        public TransformSet WithRandom(Random random)
+        {
+            this.Random = random;
+            return this;
+        }
+
+        /// <summary>
         /// <para>
         /// Applies a weight to the last added transform that influences the probability of being used over others. 
         /// </para>
