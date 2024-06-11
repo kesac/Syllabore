@@ -2,7 +2,7 @@
 
 ![](https://i.imgur.com/Y98oNli.png) 
 #### What is this?
- * **Syllabore** is a procedural name generator that does not use a pre-made lists of names
+ * **Syllabore** is a procedural name generator that does not use pre-made lists of names
  * It can be embedded into a .NET program and used 100% offline
 
 #### How are names generated?
