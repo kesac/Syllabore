@@ -1,3 +1,17 @@
-[gd_scene format=3 uid="uid://dvet30uohxhwh"]
+[gd_scene load_steps=2 format=3 uid="uid://dvet30uohxhwh"]
+
+[ext_resource type="Script" path="res://MainVisualizer.cs" id="1_42c8l"]
 
 [node name="MainVisualizer" type="Node2D"]
+script = ExtResource("1_42c8l")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 1159.0
+offset_bottom = 651.0
+color = Color(0, 0, 0, 1)
+
+[node name="GenerateNamesTimer" type="Timer" parent="."]
+wait_time = 0.5
+autostart = true
+
+[connection signal="timeout" from="GenerateNamesTimer" to="." method="GenerateName"]

@@ -12,8 +12,12 @@ config_version=5
 
 config/name="Syllabore.Visualizer"
 run/main_scene="res://MainVisualizer.tscn"
-config/features=PackedStringArray("4.2", "GL Compatibility")
+config/features=PackedStringArray("4.2", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[display]
+
+window/stretch/mode="canvas_items"
 
 [dotnet]
 
