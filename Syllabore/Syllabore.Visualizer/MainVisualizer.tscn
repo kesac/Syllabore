@@ -1,17 +1,97 @@
-[gd_scene load_steps=2 format=3 uid="uid://dvet30uohxhwh"]
+[gd_scene load_steps=4 format=3 uid="uid://dvet30uohxhwh"]
 
 [ext_resource type="Script" path="res://MainVisualizer.cs" id="1_42c8l"]
+[ext_resource type="PackedScene" uid="uid://cr4njnftd3faq" path="res://ShiftingLabel.tscn" id="2_dyjlh"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_sy3ib"]
+font_size = 35
 
 [node name="MainVisualizer" type="Node2D"]
 script = ExtResource("1_42c8l")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-offset_right = 1159.0
-offset_bottom = 651.0
+[node name="BlackBackground" type="ColorRect" parent="."]
+show_behind_parent = true
+offset_right = 1200.0
+offset_bottom = 800.0
 color = Color(0, 0, 0, 1)
 
 [node name="GenerateNamesTimer" type="Timer" parent="."]
 wait_time = 0.5
 autostart = true
 
+[node name="Editor" type="Panel" parent="."]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 13.0
+offset_top = 17.0
+offset_right = 282.0
+offset_bottom = 770.0
+grow_vertical = 2
+
+[node name="SyllaboreLabel" type="Label" parent="Editor"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 261.0
+offset_bottom = 66.0
+text = "Syllabore"
+label_settings = SubResource("LabelSettings_sy3ib")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VowelLabel" parent="Editor" instance=ExtResource("2_dyjlh")]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 76.0
+offset_right = 169.0
+offset_bottom = 136.0
+text = "A"
+
+[node name="LeadingConsonantLabel" parent="Editor" instance=ExtResource("2_dyjlh")]
+layout_mode = 0
+offset_left = 29.0
+offset_top = 72.0
+offset_right = 88.0
+offset_bottom = 135.0
+text = "C"
+
+[node name="TrailingConsonantLabel" parent="Editor" instance=ExtResource("2_dyjlh")]
+layout_mode = 0
+offset_left = 189.0
+offset_top = 78.0
+offset_right = 247.0
+offset_bottom = 134.0
+text = "T"
+
+[node name="Vowels" type="TextEdit" parent="Editor"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 0
+offset_left = 99.0
+offset_top = 139.0
+offset_right = 174.0
+offset_bottom = 175.0
+placeholder_text = "Vowels"
+
+[node name="LeadingConsonants" type="TextEdit" parent="Editor"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 0
+offset_left = 19.0
+offset_top = 139.0
+offset_right = 94.0
+offset_bottom = 176.0
+placeholder_text = "Leading"
+
+[node name="TrailingConsonants" type="TextEdit" parent="Editor"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 0
+offset_left = 179.0
+offset_top = 139.0
+offset_right = 254.0
+offset_bottom = 174.0
+placeholder_text = "Trailing"
+
 [connection signal="timeout" from="GenerateNamesTimer" to="." method="GenerateName"]
+[connection signal="text_changed" from="Editor/Vowels" to="." method="RefreshSyllableGenerator"]
+[connection signal="text_changed" from="Editor/LeadingConsonants" to="." method="RefreshSyllableGenerator"]
+[connection signal="text_changed" from="Editor/TrailingConsonants" to="." method="RefreshSyllableGenerator"]

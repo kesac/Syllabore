@@ -9,7 +9,10 @@ font_size = 26
 script = ExtResource("1_qwpa5")
 
 [node name="NameLabel" type="Label" parent="."]
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 75.0
+offset_bottom = 36.0
 text = "Name"
 label_settings = SubResource("LabelSettings_6ep6f")
+
+[connection signal="mouse_entered" from="NameLabel" to="." method="HighlightText"]
+[connection signal="mouse_exited" from="NameLabel" to="." method="NormalizeText"]
