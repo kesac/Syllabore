@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://cr4njnftd3faq"]
+
+[ext_resource type="Script" path="res://ShiftingLabel.cs" id="1_53b72"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_0r5f7"]
+font_size = 35
+
+[node name="ShiftingLabel" type="Label"]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "X"
+label_settings = SubResource("LabelSettings_0r5f7")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("1_53b72")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.2
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="Shift"]
