@@ -1,0 +1,73 @@
+[gd_scene load_steps=3 format=3 uid="uid://dfh0hshtdjms1"]
+
+[ext_resource type="Script" path="res://GraphemeEditor.cs" id="1_7by6n"]
+[ext_resource type="LabelSettings" uid="uid://bk6ghtaibqhya" path="res://EditorLabelGray.tres" id="1_886yt"]
+
+[node name="GraphemeEditor" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -940.0
+offset_bottom = -700.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7by6n")
+
+[node name="LeftPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 170.0
+offset_bottom = 75.0
+
+[node name="Label" type="Label" parent="LeftPanel"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 2.0
+offset_right = 166.0
+offset_bottom = 25.0
+text = "Grapheme Label"
+label_settings = ExtResource("1_886yt")
+vertical_alignment = 1
+
+[node name="TextEdit" type="TextEdit" parent="LeftPanel"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 25.0
+offset_right = 165.0
+offset_bottom = 69.0
+
+[node name="RightPanel" type="Panel" parent="."]
+offset_left = 177.0
+offset_right = 252.0
+offset_bottom = 75.0
+
+[node name="VSlider" type="VSlider" parent="RightPanel"]
+layout_mode = 0
+offset_left = 47.0
+offset_top = 28.0
+offset_right = 73.0
+offset_bottom = 64.0
+value = 100.0
+
+[node name="PercentageLabel" type="Label" parent="RightPanel"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 28.0
+offset_right = 49.0
+offset_bottom = 64.0
+text = "100%"
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="RightPanel"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 2.0
+offset_right = 74.0
+offset_bottom = 25.0
+text = "Probability"
+label_settings = ExtResource("1_886yt")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="text_changed" from="LeftPanel/TextEdit" to="." method="OnGraphemeEditorChanged"]
+[connection signal="value_changed" from="RightPanel/VSlider" to="." method="OnVSliderChanged"]
