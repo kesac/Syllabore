@@ -15,7 +15,7 @@ vertical_alignment = 1
 script = ExtResource("1_53b72")
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 0.2
+wait_time = 0.1
 autostart = true
 
 [connection signal="timeout" from="Timer" to="." method="Shift"]
