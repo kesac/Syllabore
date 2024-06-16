@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://NameFloater.cs" id="1_qwpa5"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6ep6f"]
-font_size = 26
+font_size = 40
 
 [node name="NameFloater" type="Node2D"]
 script = ExtResource("1_qwpa5")
