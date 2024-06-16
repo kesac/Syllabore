@@ -55,34 +55,52 @@ public partial class MainVisualizer : Node2D, ITemporalController
         leadingConsonantPanel.LabelText = "Leading Consonants";
         leadingConsonantPanel.Text = leadingConsonants;
         leadingConsonantPanel.Probability = _syllableGenerator.Probability.ChanceLeadingConsonantExists.Value;
+        leadingConsonantPanel.Enabled = true;
 
         var vowelPanel = this.GetNode<GraphemeEditor>("Editor/VowelsPanel");
         vowelPanel.LabelText = "Vowels";
         vowelPanel.Text = vowels;
         vowelPanel.Probability = _syllableGenerator.Probability.ChanceVowelExists.Value;
+        vowelPanel.Enabled = true;
 
         var trailingConsonantPanel = this.GetNode<GraphemeEditor>("Editor/TrailingConsonantsPanel");
         trailingConsonantPanel.LabelText = "Trailing Consonants";
         trailingConsonantPanel.Text = trailingConsonants;
         trailingConsonantPanel.Probability = _syllableGenerator.Probability.ChanceTrailingConsonantExists.Value;
+        trailingConsonantPanel.Enabled = true;
 
     }
 
     public void RefreshSyllableGenerator()
     {
-        var vowels = this.GetNode<GraphemeEditor>("Editor/VowelsPanel").Text;
-        var leadingConsonants = this.GetNode<GraphemeEditor>("Editor/LeadingConsonantsPanel").Text;
-        var trailingConsonants = this.GetNode<GraphemeEditor>("Editor/TrailingConsonantsPanel").Text;
+        var vowels = this.GetNode<GraphemeEditor>("Editor/VowelsPanel");
+        var leadingConsonants = this.GetNode<GraphemeEditor>("Editor/LeadingConsonantsPanel");
+        var trailingConsonants = this.GetNode<GraphemeEditor>("Editor/TrailingConsonantsPanel");
 
         _syllableGenerator = new SyllableGenerator()
-            .WithVowels(vowels)
-            .WithLeadingConsonants(leadingConsonants)
-            .WithTrailingConsonants(trailingConsonants)
             .AllowEmptyStrings(true);
 
-        _syllableGenerator.Probability.ChanceLeadingConsonantExists = this.GetNode<GraphemeEditor>("Editor/LeadingConsonantsPanel").Probability;
-        _syllableGenerator.Probability.ChanceVowelExists = this.GetNode<GraphemeEditor>("Editor/VowelsPanel").Probability;
-        _syllableGenerator.Probability.ChanceTrailingConsonantExists = this.GetNode<GraphemeEditor>("Editor/TrailingConsonantsPanel").Probability;
+        if (vowels.Enabled)
+        {
+            _syllableGenerator.WithVowels(vowels.Text);
+            _syllableGenerator.Probability.ChanceVowelExists = this.GetNode<GraphemeEditor>("Editor/VowelsPanel").Probability;
+        }
+        else
+        {
+            _syllableGenerator.WithVowels(string.Empty);
+        }
+
+        if (leadingConsonants.Enabled)
+        {
+            _syllableGenerator.WithLeadingConsonants(leadingConsonants.Text);
+            _syllableGenerator.Probability.ChanceLeadingConsonantExists = this.GetNode<GraphemeEditor>("Editor/LeadingConsonantsPanel").Probability;
+        }
+
+        if (trailingConsonants.Enabled)
+        {
+            _syllableGenerator.WithTrailingConsonants(trailingConsonants.Text);
+            _syllableGenerator.Probability.ChanceTrailingConsonantExists = this.GetNode<GraphemeEditor>("Editor/TrailingConsonantsPanel").Probability;
+        }
 
         _nameGenerator = new NameGenerator(_syllableGenerator)
             .UsingSyllableCount(2, 3);
