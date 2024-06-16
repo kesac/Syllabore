@@ -16,6 +16,13 @@ public partial class GraphemeEditor : Control
         GraphemeEditorChanged?.Invoke();
     }
 
+    protected virtual void OnCheckBoxToggled(bool buttonPressed)
+    {
+        this.UpdateEnabledStatus();
+        this.GetNode<CheckBox>("LeftPanel/CheckBox").ReleaseFocus();
+        GraphemeEditorChanged?.Invoke();
+    }
+
     public string LabelText
     {
         get
@@ -41,6 +48,19 @@ public partial class GraphemeEditor : Control
         }
     }
 
+    public bool Enabled
+    {         
+        get
+        {
+            return this.GetNode<CheckBox>("LeftPanel/CheckBox").ButtonPressed;
+        }
+        set
+        {
+            this.GetNode<CheckBox>("LeftPanel/CheckBox").ButtonPressed = value;
+            this.UpdateEnabledStatus();
+        }
+    }
+
     public double Probability
     {
         get
@@ -54,6 +74,12 @@ public partial class GraphemeEditor : Control
             this.GetNode<VSlider>("RightPanel/VSlider").Value = value * vSlider.MaxValue; // Normalize to [0,100]
             this.UpdatePercentageLabel(value * vSlider.MaxValue);
         }
+    }
+
+    public void UpdateEnabledStatus()
+    {
+        this.GetNode<TextEdit>("LeftPanel/TextEdit").Editable = this.Enabled;
+        this.GetNode<VSlider>("RightPanel/VSlider").Editable = this.Enabled;
     }
 
     private void UpdatePercentageLabel(double value)
