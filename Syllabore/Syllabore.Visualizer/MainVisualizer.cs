@@ -22,11 +22,15 @@ public partial class MainVisualizer : Node2D, ITemporalController
     private int _xLeftPadding = 300; // Make room for the menu stuff
     private int _xRightPadding = 100; // Ensure names fit
 
+    private Node2D _fallingNamesVisualization;
+
     public bool IsSlowed { get; set; }
     public bool IsPaused { get; set; }
 
     public override void _Ready()
     {
+        _fallingNamesVisualization = this.GetNode<Node2D>("FallingNamesVisualization");
+
         _syllableGenerator = new SyllableGenerator()
             .WithVowels(DefaultVowels)
             .WithLeadingConsonants(DefaultLeadingConsonants)
@@ -130,6 +134,18 @@ public partial class MainVisualizer : Node2D, ITemporalController
         this.IsPaused = false;
     }
 
+    public void OnVisualizationSelectionChanged(int index)
+    {
+        if (index == 0)
+        {
+            _fallingNamesVisualization.Visible = true;
+        }
+        else
+        {
+            _fallingNamesVisualization.Visible = false;
+        }
+    }
+
     public void GenerateName()
     {
         if (!this.IsPaused && !this.IsSlowed && _syllableGenerator.Vowels.Count > 0)
@@ -160,7 +176,8 @@ public partial class MainVisualizer : Node2D, ITemporalController
             nameLabel.MouseEntered += this.SlowDownFloaters;
             nameLabel.MouseExited += this.ResumeFloaters;
 
-            this.GetTree().CurrentScene.AddChild(instance);
+            // this.GetTree().CurrentScene.AddChild(instance);
+            _fallingNamesVisualization.AddChild(instance);
         }
     }
 

@@ -21,23 +21,78 @@ color = Color(0, 0, 0, 1)
 wait_time = 0.5
 autostart = true
 
+[node name="FallingNamesVisualization" type="Node2D" parent="."]
+
+[node name="VisualizationSelectionPanel" type="Panel" parent="."]
+offset_left = 20.0
+offset_top = 24.0
+offset_right = 289.0
+offset_bottom = 124.0
+
+[node name="Label" type="Label" parent="VisualizationSelectionPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.00743494
+anchor_top = 0.0159011
+anchor_right = -0.00743494
+anchor_bottom = 0.0159011
+offset_left = 10.0
+offset_top = -5.0
+offset_right = 242.0
+offset_bottom = 43.0
+text = "Visualization"
+label_settings = SubResource("LabelSettings_sy3ib")
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="OptionButton" type="OptionButton" parent="VisualizationSelectionPanel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 53.0
+offset_right = 250.0
+offset_bottom = 88.0
+theme_override_fonts/font = ExtResource("3_kgymp")
+theme_override_font_sizes/font_size = 30
+item_count = 2
+selected = 0
+popup/item_0/text = "Infinite Names"
+popup/item_0/id = 0
+popup/item_1/text = "Grid of Names"
+popup/item_1/id = 1
+
 [node name="Editor" type="Panel" parent="."]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 13.0
-offset_top = 17.0
-offset_right = 282.0
-offset_bottom = 770.0
+offset_left = 19.0
+offset_top = 131.0
+offset_right = 288.0
+offset_bottom = 697.0
 grow_vertical = 2
+
+[node name="Label" type="Label" parent="Editor"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.00743494
+anchor_top = 0.0159011
+anchor_right = -0.00743494
+anchor_bottom = 0.0159011
+offset_left = 10.0
+offset_top = -5.0
+offset_right = 242.0
+offset_bottom = 43.0
+text = "Graphemes"
+label_settings = SubResource("LabelSettings_sy3ib")
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="TrailingConsonantsPanel" parent="Editor" instance=ExtResource("2_kt3in")]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = -0.00371747
-anchor_top = -0.0305445
+anchor_top = -0.0340778
 anchor_right = 0.996283
-anchor_bottom = 0.969456
+anchor_bottom = 1.14967
 offset_left = 9.0
 offset_top = 243.0
 offset_right = 9.0
@@ -48,9 +103,9 @@ metadata/_edit_use_anchors_ = true
 layout_mode = 1
 anchors_preset = -1
 anchor_left = -0.00371747
-anchor_top = -0.0146082
+anchor_top = -0.023442
 anchor_right = 0.996283
-anchor_bottom = 0.985392
+anchor_bottom = 1.1709
 offset_left = 9.0
 offset_top = 155.0
 offset_right = 3.0
@@ -61,27 +116,14 @@ metadata/_edit_use_anchors_ = true
 layout_mode = 1
 anchors_preset = -1
 anchor_left = -0.00371747
+anchor_top = -0.00795053
 anchor_right = 0.996283
+anchor_bottom = 1.18463
 offset_left = 9.0
 offset_top = 67.0
 offset_right = 9.0
 offset_bottom = -608.0
 metadata/_edit_use_anchors_ = true
 
-[node name="GraphemeSectionLabel" type="Label" parent="Editor"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = -0.0111524
-anchor_top = 0.0172643
-anchor_right = -0.0111524
-anchor_bottom = 0.0172643
-offset_left = 10.0
-offset_top = -5.0
-offset_right = 242.0
-offset_bottom = 43.0
-text = "Graphemes"
-label_settings = SubResource("LabelSettings_sy3ib")
-vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
-
 [connection signal="timeout" from="GenerateNamesTimer" to="." method="GenerateName"]
+[connection signal="item_selected" from="VisualizationSelectionPanel/OptionButton" to="." method="OnVisualizationSelectionChanged"]
