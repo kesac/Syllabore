@@ -23,12 +23,7 @@
 /Syllabore/Syllabore.Example/bin/Release/net5.0/Data
 /Syllabore/Syllabore.Example/bin/Release/net5.0
 /Syllabore/Syllabore.Tests/bin/Release/net5.0
-/Syllabore/Syllabore.Tests/bin/Debug/net5.0
-/Syllabore/.vs/Syllabore/v17/TestStore/0
-/Syllabore/.vs/Syllabore/v17
-/Syllabore/.vs/Syllabore/FileContentIndex
-/Syllabore/.vs/ProjectEvaluation
-/Syllabore/Syllabore.Example/bin/Debug/net7.0
+/Syllabore/Syllabore.Tests/bin/Debug/net5.0/Syllabore/Syllabore.Example/bin/Debug/net7.0
 /Syllabore/Syllabore.Example/bin/Debug/net8.0
 /Syllabore/Syllabore.Tests/bin/Debug/net8.0
 /Syllabore/Syllabore.Example/bin/Release/net8.0
@@ -36,3 +31,6 @@
 /Syllabore/Syllabore.Visualizer/.godot
 /Syllabore/Syllabore.Visualizer/.vs/SYLLABORE.VISUALIZER
 /Syllabore/Syllabore.Visualizer/.vs/ProjectEvaluation
+/Syllabore/.vs/
+/Syllabore/Syllabore.Example/bin/Debug/net7.0
+/Syllabore/Syllabore.Tests/bin/Debug/net5.0
