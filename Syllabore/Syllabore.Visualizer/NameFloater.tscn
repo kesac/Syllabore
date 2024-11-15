@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://b8sdde54fk5v8"]
+
+[ext_resource type="Script" path="res://NameFloater.cs" id="1_qwpa5"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_6ep6f"]
+font_size = 40
+
+[node name="NameFloater" type="Node2D"]
+script = ExtResource("1_qwpa5")
+
+[node name="NameLabel" type="Label" parent="."]
+offset_right = 75.0
+offset_bottom = 36.0
+text = "Name"
+label_settings = SubResource("LabelSettings_6ep6f")
+
+[connection signal="mouse_entered" from="NameLabel" to="." method="HighlightText"]
+[connection signal="mouse_exited" from="NameLabel" to="." method="NormalizeText"]
