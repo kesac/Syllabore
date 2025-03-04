@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <PackageReference Include="Archigen" Version="1.3.0" />
-    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+    <PackageReference Include="System.Text.Json" Version="9.0.2" />
   </ItemGroup>
 
 </Project>
