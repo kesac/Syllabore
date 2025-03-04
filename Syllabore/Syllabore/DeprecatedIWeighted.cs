@@ -6,6 +6,9 @@ namespace Syllabore
 {
     /// <summary>
     /// <para>
+    /// Deprecated. Use <see cref="Archigen.IWeighted"/> instead.
+    /// </para>
+    /// <para>
     /// Represents a choice or entity that can
     /// be randomly selected from a list, and has 
     /// a weight value that affects how frequently it
@@ -18,7 +21,8 @@ namespace Syllabore
     /// y will be selected four times as likely as x.
     /// </para>
     /// </summary>
-    public interface IWeighted
+
+    public interface DeprecatedIWeighted
     {
         /// <summary>
         /// <para>
@@ -34,4 +38,5 @@ namespace Syllabore
         /// </summary>
         int Weight { get; set; }
     }
+    
 }
