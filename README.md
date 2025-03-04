@@ -9,15 +9,6 @@
  * **Syllabore** first constructs syllables out of characters (_graphemes_)
  * Then it sequences syllables into names
 
-## Table of Contents
- 1. [Quick Start](#quick-start)
- 1. [Tailoring Characters](#tailoring-characters)
- 1. [Transformations](#transformations)
- 1. [Filtering](#filtering-output)
- 1. [Installation](#installation)
- 1. [Compatibility](#compatibility)
- 1. [License](#license)
-
 ## Quick Start
 Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [a subset of consonants and vowels from the English language](https://github.com/kesac/Syllabore/wiki/What-is-the-DefaultSyllableGenerator) will be used. 
 
