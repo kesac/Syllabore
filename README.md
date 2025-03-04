@@ -32,7 +32,7 @@ Domar
 Teso
 ```
 
-## Tailoring Characters
+## Choosing Characters
 For simple generators, you can supply the vowels and consonants to use through the constructor:
 ```csharp
 var g = new NameGenerator("ae", "srnl");   
@@ -43,15 +43,44 @@ Lena
 Salna
 Rasse
 ```
-See the [wiki](https://github.com/kesac/Syllabore/wiki) for more examples on how to control things like vowel sequences, consonant positioning, and more!
+
+## Controlling Characters
+For better control of characters, supply a ```SyllableGenerator``` to your ```NameGenerator```. The following example builds a ```NameGenerator``` that is identical in the previous example.
+```csharp
+var s = new SyllableGenerator()
+        .WithVowels("ae")          // Future syllables will only use these vowels
+        .WithConsonants("strmnl"); // Future syllables will only use these consonants
+
+var g = new NameGenerator(s);     
+```
+Doing it this way will let you control the positioning of vowels and consonants in a syllable. 
+For example, you can specify which consonants should appear before or after a vowel:
+```csharp
+var s = new SyllableGenerator()
+        .WithVowels("ae")
+        .WithLeadingConsonants("str")    // Onsets
+        .WithTrailingConsonants("mnl"); // Codas
+
+var g = new NameGenerator(s);
+```
+In this example, the characters `s` `t` `r` can start a syllable while the characters `m` `n` `l` can end a syllable. 
+
+Calling ```Next()``` on this generator will produce names like:
+```
+Sara
+Taen
+Ralte
+```
+See the [wiki](https://github.com/kesac/Syllabore/wiki) for more examples on how to control more things!
 
 ## Transformations
 A ```Transform``` is a mechanism for changing a source name into a new, modified name. Call ```UsingTransform()``` on a ```NameGenerator``` to specify one or more transformations:
 ```csharp
-var g = new NameGenerator()
-        .UsingTransform(x => x
-            .ReplaceSyllable(0, "zo") // Replace the first syllable with string "zo"
-            .AppendSyllable("ri"));   // Adds a new syllable to end of name
+var t = new Transform()
+        .ReplaceSyllable(0, "zo") // Replace the first syllable with string "zo"
+        .AppendSyllable("ri");   // Adds a new syllable to end of name
+
+var g = new NameGenerator().UsingTransform(t);
 ```
 Calling ```Next()``` produces names like:
 ```
@@ -107,7 +136,7 @@ Syllabore should also work in the following game engines, but I have not done ad
 ```
 MIT License
 
-Copyright (c) 2019-2024 Kevin Sacro
+Copyright (c) 2019-2025 Kevin Sacro
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
