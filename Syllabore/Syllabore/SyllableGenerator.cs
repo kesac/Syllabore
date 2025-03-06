@@ -17,52 +17,52 @@ namespace Syllabore
         None,
 
         /// <summary>
-        /// The last added <see cref="Grapheme">grapheme(s)</see> are leading consonants.
+        /// The last added <see cref="Symbol">grapheme(s)</see> are leading consonants.
         /// </summary>
         LeadingConsonant,
 
         /// <summary>
-        /// The last added <see cref="Grapheme">grapheme(s)</see> are leading consonant sequences.
+        /// The last added <see cref="Symbol">grapheme(s)</see> are leading consonant sequences.
         /// </summary>
         LeadingConsonantSequence,
 
         /// <summary>
-        /// The last added <see cref="Grapheme">grapheme(s)</see> are vowels.
+        /// The last added <see cref="Symbol">grapheme(s)</see> are vowels.
         /// </summary>
         Vowel,
 
         /// <summary>
-        /// The last added <see cref="Grapheme">grapheme(s)</see> are vowel sequences.
+        /// The last added <see cref="Symbol">grapheme(s)</see> are vowel sequences.
         /// </summary>
         VowelSequence,
 
         /// <summary>
-        /// The last added <see cref="Grapheme">grapheme(s)</see> are trailing consonants.
+        /// The last added <see cref="Symbol">grapheme(s)</see> are trailing consonants.
         /// </summary>
         TrailingConsonant,
 
         /// <summary>
-        /// The last added <see cref="Grapheme">grapheme(s)</see> are trailing consonant sequences.
+        /// The last added <see cref="Symbol">grapheme(s)</see> are trailing consonant sequences.
         /// </summary>
         TrailingConsonantSequence,
 
         /// <summary>
-        /// The last added <see cref="Grapheme">grapheme(s)</see> are final consonants.
+        /// The last added <see cref="Symbol">grapheme(s)</see> are final consonants.
         /// </summary>
         LeadingVowelInStartingSyllable,
 
         /// <summary>
-        /// The last added <see cref="Grapheme">grapheme(s)</see> are final consonant sequences.
+        /// The last added <see cref="Symbol">grapheme(s)</see> are final consonant sequences.
         /// </summary>
         LeadingVowelSequenceInStartingSyllable,
 
         /// <summary>
-        /// The last added <see cref="Grapheme">grapheme(s)</see> are final consonants.
+        /// The last added <see cref="Symbol">grapheme(s)</see> are final consonants.
         /// </summary>
         FinalConsonant, 
 
         /// <summary>
-        /// The last added <see cref="Grapheme">grapheme(s)</see> are final consonant sequences.
+        /// The last added <see cref="Symbol">grapheme(s)</see> are final consonant sequences.
         /// </summary>
         FinalConsonantSequence
     }
@@ -114,7 +114,7 @@ namespace Syllabore
 
 
         private Context _context { get; set; } // For contextual command .Sequences()
-        private List<Grapheme> _lastChanges { get; set; } // For contextual command .Weight()
+        private List<Symbol> _lastChanges { get; set; } // For contextual command .Weight()
 
         /// <summary>
         /// Used to simulate randomness during syllable generation.
@@ -125,53 +125,53 @@ namespace Syllabore
         /// Leading consonants are consonants that appear before 
         /// the vowel within a syllable.
         /// </summary>
-        public List<Grapheme> LeadingConsonants { get; set; }
+        public List<Symbol> LeadingConsonants { get; set; }
 
         /// <summary>
         /// Leading consonants sequences are sequences that appear 
         /// before the vowel within a syllable. Consonant sequences are made
-        /// up of more than one <see cref="Grapheme"/>, but are treated
+        /// up of more than one <see cref="Symbol"/>, but are treated
         /// like a single consonant during syllable generation.
         /// </summary>
-        public List<Grapheme> LeadingConsonantSequences { get; set; }
+        public List<Symbol> LeadingConsonantSequences { get; set; }
 
         /// <summary>
         /// The vowels that can appear within a syllable.
         /// </summary>
-        public List<Grapheme> Vowels { get; set; }
+        public List<Symbol> Vowels { get; set; }
 
         /// <summary>
         /// The vowel sequences that can appear within a syllable.
         /// Sequences are made up of more than one 
-        /// <see cref="Grapheme"/>, but treated as a single vowel.
+        /// <see cref="Symbol"/>, but treated as a single vowel.
         /// </summary>
-        public List<Grapheme> VowelSequences { get; set; }
+        public List<Symbol> VowelSequences { get; set; }
 
         /// <summary>
         /// Trailing consonants are consonants that appear after
         /// the vowel within a syllable.
         /// </summary>
-        public List<Grapheme> TrailingConsonants { get; set; }
+        public List<Symbol> TrailingConsonants { get; set; }
 
         /// <summary>
         /// Trailing consonant sequences are sequences that appear
         /// after the vowel within a syllable. Consonant sequences are made
-        /// up of more than one <see cref="Grapheme"/>, but are treated
+        /// up of more than one <see cref="Symbol"/>, but are treated
         /// like a single consonant during syllable generation.
         /// </summary>
-        public List<Grapheme> TrailingConsonantSequences { get; set; }
+        public List<Symbol> TrailingConsonantSequences { get; set; }
 
         /// <summary>
         /// Final consonants are identical to trailing consonants, except
         /// they only appear in the final syllable of a name.
         /// </summary>
-        public List<Grapheme> FinalConsonants { get; set; }
+        public List<Symbol> FinalConsonants { get; set; }
 
         /// <summary>
         /// Final consonant sequences are identical to trailing consonant sequences, 
         /// except they only appear in the final syllable of a name.
         /// </summary>
-        public List<Grapheme> FinalConsonantSequences { get; set; }
+        public List<Symbol> FinalConsonantSequences { get; set; }
 
         /// <summary>
         /// The probability settings for this <see cref="SyllableGenerator"/>.
@@ -307,17 +307,17 @@ namespace Syllabore
             this.Random = new Random();
             this.Probability = new GeneratorProbability();
             _context = Context.None;
-            _lastChanges = new List<Grapheme>();
+            _lastChanges = new List<Symbol>();
             this.AllowEmptyStringGeneration = false;
 
-            this.LeadingConsonants = new List<Grapheme>();
-            this.LeadingConsonantSequences = new List<Grapheme>();
-            this.Vowels = new List<Grapheme>();
-            this.VowelSequences = new List<Grapheme>();
-            this.TrailingConsonants = new List<Grapheme>();
-            this.TrailingConsonantSequences = new List<Grapheme>();
-            this.FinalConsonants = new List<Grapheme>();
-            this.FinalConsonantSequences = new List<Grapheme>();
+            this.LeadingConsonants = new List<Symbol>();
+            this.LeadingConsonantSequences = new List<Symbol>();
+            this.Vowels = new List<Symbol>();
+            this.VowelSequences = new List<Symbol>();
+            this.TrailingConsonants = new List<Symbol>();
+            this.TrailingConsonantSequences = new List<Symbol>();
+            this.FinalConsonants = new List<Symbol>();
+            this.FinalConsonantSequences = new List<Symbol>();
         }
 
         /// <summary>
@@ -340,11 +340,11 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator WithConsonants(params string[] consonants)
         {
-            var changes = new List<Grapheme>();
+            var changes = new List<Symbol>();
 
             foreach (var c in consonants)
             {
-                changes.AddRange(c.Atomize().Select(x => new Grapheme(x)));
+                changes.AddRange(c.Atomize().Select(x => new Symbol(x)));
             }
 
             this.LeadingConsonants.AddRange(changes);
@@ -373,11 +373,11 @@ namespace Syllabore
         public SyllableGenerator WithLeadingConsonants(params string[] consonants)
         {
 
-            var changes = new List<Grapheme>();
+            var changes = new List<Symbol>();
 
             foreach (var c in consonants)
             {
-                changes.AddRange(c.Atomize().Select(x => new Grapheme(x)));
+                changes.AddRange(c.Atomize().Select(x => new Symbol(x)));
             }
 
             this.LeadingConsonants.AddRange(changes);
@@ -399,7 +399,7 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator WithLeadingConsonantSequences(params string[] consonantSequences)
         {
-            var changes = consonantSequences.Select(x => new Grapheme(x)).ToList();
+            var changes = consonantSequences.Select(x => new Symbol(x)).ToList();
 
             this.LeadingConsonantSequences.AddRange(changes);
             _lastChanges.ReplaceWith(changes);
@@ -420,11 +420,11 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator WithVowels(params string[] vowels)
         {
-            var changes = new List<Grapheme>();
+            var changes = new List<Symbol>();
 
             foreach (var v in vowels)
             {
-                changes.AddRange(v.Atomize().Select(x => new Grapheme(x)));
+                changes.AddRange(v.Atomize().Select(x => new Symbol(x)));
             }
 
             this.Vowels.AddRange(changes);
@@ -446,7 +446,7 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator WithVowelSequences(params string[] vowelSequences)
         {
-            var changes = vowelSequences.Select(x => new Grapheme(x)).ToList();
+            var changes = vowelSequences.Select(x => new Symbol(x)).ToList();
 
             this.VowelSequences.AddRange(changes);
             _lastChanges.ReplaceWith(changes);
@@ -468,11 +468,11 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator WithTrailingConsonants(params string[] consonants)
         {
-            var changes = new List<Grapheme>();
+            var changes = new List<Symbol>();
 
             foreach (var c in consonants)
             {
-                changes.AddRange(c.Atomize().Select(x => new Grapheme(x)));
+                changes.AddRange(c.Atomize().Select(x => new Symbol(x)));
             }
 
             this.TrailingConsonants.AddRange(changes);
@@ -494,7 +494,7 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator WithTrailingConsonantSequences(params string[] consonantSequences)
         {
-            var changes = consonantSequences.Select(x => new Grapheme(x)).ToList();
+            var changes = consonantSequences.Select(x => new Symbol(x)).ToList();
             this.TrailingConsonantSequences.AddRange(changes);
             _lastChanges.ReplaceWith(changes);
 
@@ -514,11 +514,11 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator WithFinalConsonants(params string[] consonants)
         {
-            var changes = new List<Grapheme>();
+            var changes = new List<Symbol>();
 
             foreach (var c in consonants)
             {
-                changes.AddRange(c.Atomize().Select(x => new Grapheme(x)));
+                changes.AddRange(c.Atomize().Select(x => new Symbol(x)));
             }
 
             this.FinalConsonants.AddRange(changes);
@@ -540,7 +540,7 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator WithFinalConsonantSequences(params string[] consonantSequences)
         {
-            var changes = consonantSequences.Select(x => new Grapheme(x)).ToList();
+            var changes = consonantSequences.Select(x => new Symbol(x)).ToList();
             this.FinalConsonantSequences.AddRange(changes);
             _lastChanges.ReplaceWith(changes);
 
@@ -584,7 +584,7 @@ namespace Syllabore
 
         /// <summary>
         /// <em>Contextual on the last call.</em> Sets the weight of the last 
-        /// added <see cref="Grapheme">graphemes</see>.
+        /// added <see cref="Symbol">graphemes</see>.
         /// </summary>
         public SyllableGenerator Weight(int weight)
         {

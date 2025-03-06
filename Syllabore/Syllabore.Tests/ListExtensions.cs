@@ -15,7 +15,7 @@ namespace Syllabore
             return first.Select(x => (x.Type, x.Value)).ToHashSet().SetEquals(second.Select(x => (x.Type, x.Value)).ToHashSet());
         }
 
-        public static bool UnorderedListEquals(this List<Grapheme> first, List<Grapheme> second)
+        public static bool UnorderedListEquals(this List<Symbol> first, List<Symbol> second)
         {
             return first.Select(x => x.Value).ToHashSet<string>().SetEquals(second.Select(x => x.Value).ToHashSet<string>());
         }

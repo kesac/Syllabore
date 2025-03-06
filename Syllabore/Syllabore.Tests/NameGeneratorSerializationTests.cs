@@ -90,10 +90,10 @@ namespace Syllabore.Tests
             var syllableGeneratorProperties = syllableGeneratorType.GetProperties();
 
             // Comparing grapheme lists like vowels, leading consonants, sequences, etc.
-            foreach (var property in syllableGeneratorProperties.Where(x => x.PropertyType == typeof(List<Grapheme>)))
+            foreach (var property in syllableGeneratorProperties.Where(x => x.PropertyType == typeof(List<Symbol>)))
             {
-                var list1 = (List<Grapheme>)property.GetValue(p1);
-                var list2 = (List<Grapheme>)property.GetValue(p2);
+                var list1 = (List<Symbol>)property.GetValue(p1);
+                var list2 = (List<Symbol>)property.GetValue(p2);
                 Assert.IsTrue(list1.UnorderedListEquals(list2));
             }
 
