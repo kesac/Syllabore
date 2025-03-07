@@ -42,6 +42,41 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Initializes a new <see cref="NameGeneratorV3">NameGenerator</see> 
+        /// with specified symbol pools for the first and middle symbol positions of a syllable.
+        /// Each character in the provided strings is considered a separate symbol.
+        /// The generated syllables will be used for all positions of a name.
+        /// </summary>
+        public NameGeneratorV3(string firstSymbols, string middleSymbols) : this()
+        {
+            var syllableGenerator = new SyllableGeneratorV3()
+                .Add(Position.First, firstSymbols)
+                .Add(Position.Middle, middleSymbols);
+
+            this.Add(Position.First, syllableGenerator)
+                .Add(Position.Middle, syllableGenerator)
+                .Add(Position.Last, syllableGenerator);
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="NameGeneratorV3">NameGenerator</see> 
+        /// with specified symbol pools for the first, middle, and last symbol positions of a syllable.
+        /// Each character in the provided strings is considered a separate symbol.
+        /// The generated syllables will be used for all positions of a name.
+        /// </summary>
+        public NameGeneratorV3(string firstSymbols, string middleSymbols, string lastSymbols) : this()
+        {
+            var syllableGenerator = new SyllableGeneratorV3()
+                .Add(Position.First, firstSymbols)
+                .Add(Position.Middle, middleSymbols)
+                .Add(Position.Last, lastSymbols);
+
+            this.Add(Position.First, syllableGenerator)
+                .Add(Position.Middle, syllableGenerator)
+                .Add(Position.Last, syllableGenerator);
+        }
+
+        /// <summary>
         /// Adds a <see cref="SyllableGeneratorV3"/> for the specified position.
         /// </summary>
         /// <param name="position">The position for the syllable generator.</param>
