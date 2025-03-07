@@ -57,6 +57,7 @@ namespace Syllabore.Tests
 
             Assert.IsTrue(counts[0] > counts[1]);
             Assert.IsTrue(counts[1] > counts[2]);
+            Assert.IsTrue(counts[2] > 0);
 
         }
 
