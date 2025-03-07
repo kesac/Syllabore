@@ -16,17 +16,23 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Configuration_AddGeneratorForFirstPosition_GeneratesName()
+        [DataRow(Position.First)]
+        [DataRow(Position.Middle)]
+        [DataRow(Position.Last)]
+        public void Configuration_AddGeneratorForFirstPosition_GeneratesName(Position symbolPosition)
         {
             var symbols = new SymbolGenerator().Add("a");
-            var syllables = new SyllableGeneratorV3().Add(Position.First, symbols);
+            var syllables = new SyllableGeneratorV3().Add(symbolPosition, symbols);
 
             var sut = new NameGeneratorV3()
-                .Add(Position.First, syllables)
+                .Add(Position.Any, syllables)
                 .Size(1);
 
-            var name = sut.Next();
-            Assert.IsTrue(name.Equals("A"));
+            for(int i = 0; i < 100; i++)
+            {
+                var name = sut.Next();
+                Assert.IsTrue(name.Equals("A"));
+            }
         }
 
         [TestMethod]

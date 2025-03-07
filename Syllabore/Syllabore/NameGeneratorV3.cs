@@ -84,7 +84,17 @@ namespace Syllabore
         /// <returns>The current instance of <see cref="NameGeneratorV3"/>.</returns>
         public NameGeneratorV3 Add(Position position, SyllableGeneratorV3 generator)
         {
-            SyllableGenerators[position] = generator;
+            if(position == Position.Any)
+            {
+                Add(Position.First, generator);
+                Add(Position.Middle, generator);
+                Add(Position.Last, generator);
+            }
+            else
+            {
+                SyllableGenerators[position] = generator;
+            }
+
             return this;
         }
 
