@@ -70,7 +70,7 @@ namespace Syllabore
     /// <summary>
     /// Descriptors for the position of a syllable within a name.
     /// </summary>
-    public enum SyllablePosition
+    public enum SyllablePositionV2
     {
         /// <summary>
         /// An indeterminate position.
@@ -736,7 +736,7 @@ namespace Syllabore
         /// </summary>
         public virtual string NextStartingSyllable()
         {
-            return GenerateSyllable(SyllablePosition.Starting);
+            return GenerateSyllable(SyllablePositionV2.Starting);
         }
 
         /// <summary>
@@ -745,7 +745,7 @@ namespace Syllabore
         /// <returns></returns>
         public virtual string NextSyllable()
         {
-            return GenerateSyllable(SyllablePosition.Middle);
+            return GenerateSyllable(SyllablePositionV2.Middle);
         }
 
         /// <summary>
@@ -754,14 +754,14 @@ namespace Syllabore
         /// <returns></returns>
         public virtual string NextEndingSyllable()
         {
-            return GenerateSyllable(SyllablePosition.Ending);
+            return GenerateSyllable(SyllablePositionV2.Ending);
         }
 
-        private string GenerateSyllable(SyllablePosition position)
+        private string GenerateSyllable(SyllablePositionV2 position)
         {
             var output = new StringBuilder();
 
-            if (position == SyllablePosition.Starting 
+            if (position == SyllablePositionV2.Starting 
                 && this.LeadingVowelForStartingSyllableAllowed 
                 && this.Random.NextDouble() < this.Probability.ChanceStartingSyllableLeadingVowelExists)
             {
@@ -811,7 +811,7 @@ namespace Syllabore
 
             // If we're generating the final syllable, check if we need to use a 'final' consonant
             // (as opposed to a 'trailing' consonant)
-            if(position == SyllablePosition.Ending
+            if(position == SyllablePositionV2.Ending
                 && this.FinalConsonantsAllowed
                 && this.Random.NextDouble() < this.Probability.ChanceFinalConsonantExists)
             {
