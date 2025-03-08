@@ -15,10 +15,10 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        [DataRow(Position.First)]
-        [DataRow(Position.Middle)]
-        [DataRow(Position.Last)]
-        public void Configuration_AddGeneratorForEachPosition_GeneratesSyllables(Position position)
+        [DataRow(SymbolPosition.First)]
+        [DataRow(SymbolPosition.Middle)]
+        [DataRow(SymbolPosition.Last)]
+        public void Configuration_AddGeneratorForEachPosition_GeneratesSyllables(SymbolPosition position)
         {
             var symbols = new SymbolGenerator()
                 .Add("a").Weight(8)
@@ -47,9 +47,9 @@ namespace Syllabore.Tests
         public void Configuration_AddGeneratorAllPositions_GeneratesFullSyllables()
         {
             var sut = new SyllableGeneratorV3();
-            sut.Add(Position.First, new SymbolGenerator().Add("a"));
-            sut.Add(Position.Middle, new SymbolGenerator().Add("b"));
-            sut.Add(Position.Last, new SymbolGenerator().Add("c"));
+            sut.Add(SymbolPosition.First, new SymbolGenerator().Add("a"));
+            sut.Add(SymbolPosition.Middle, new SymbolGenerator().Add("b"));
+            sut.Add(SymbolPosition.Last, new SymbolGenerator().Add("c"));
             Assert.IsTrue(sut.Next().Equals("abc"));
         }
 
@@ -57,9 +57,9 @@ namespace Syllabore.Tests
         public void Configuration_AddGeneratorUsingShortform_GeneratesFullSyllables()
         {
             var sut = new SyllableGeneratorV3();
-            sut.Add(Position.First, "a");
-            sut.Add(Position.Middle, "b");
-            sut.Add(Position.Last, "c");
+            sut.Add(SymbolPosition.First, "a");
+            sut.Add(SymbolPosition.Middle, "b");
+            sut.Add(SymbolPosition.Last, "c");
             Assert.IsTrue(sut.Next().Equals("abc"));
         }
 
@@ -68,11 +68,11 @@ namespace Syllabore.Tests
         public void Configuration_ChangePositionProbability_ProbabilityAffectsGeneration(int attempts)
         {
             var sut = new SyllableGeneratorV3()
-                .Add(Position.First, new SymbolGenerator().Add("a"))
-                .Add(Position.Middle, new SymbolGenerator().Add("b"))
-                .Add(Position.Last, new SymbolGenerator().Add("c"))
-                .Chance(Position.First, 0.5)
-                .Chance(Position.Last, 0.5);
+                .Add(SymbolPosition.First, new SymbolGenerator().Add("a"))
+                .Add(SymbolPosition.Middle, new SymbolGenerator().Add("b"))
+                .Add(SymbolPosition.Last, new SymbolGenerator().Add("c"))
+                .Chance(SymbolPosition.First, 0.5)
+                .Chance(SymbolPosition.Last, 0.5);
 
             // The first and last symbols don't always appear
             // That makes four theoretical combinations

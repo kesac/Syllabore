@@ -16,16 +16,16 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        [DataRow(Position.First)]
-        [DataRow(Position.Middle)]
-        [DataRow(Position.Last)]
-        public void Configuration_AddGeneratorForFirstPosition_GeneratesName(Position symbolPosition)
+        [DataRow(SymbolPosition.First)]
+        [DataRow(SymbolPosition.Middle)]
+        [DataRow(SymbolPosition.Last)]
+        public void Configuration_AddGeneratorForFirstPosition_GeneratesName(SymbolPosition symbolPosition)
         {
             var symbols = new SymbolGenerator().Add("a");
             var syllables = new SyllableGeneratorV3().Add(symbolPosition, symbols);
 
             var sut = new NameGeneratorV3()
-                .Add(Position.Any, syllables)
+                .Set(SyllablePosition.Any, syllables)
                 .Size(1);
 
             for(int i = 0; i < 100; i++)
@@ -42,12 +42,12 @@ namespace Syllabore.Tests
             var lastSymbols = new SymbolGenerator().Add("d");
 
             var syllables = new SyllableGeneratorV3()
-                .Add(Position.First, firstSymbols)
-                .Add(Position.Last, lastSymbols);
+                .Add(SymbolPosition.First, firstSymbols)
+                .Add(SymbolPosition.Last, lastSymbols);
 
             var sut = new NameGeneratorV3()
-                .Add(Position.First, syllables)
-                .Add(Position.Last, syllables)
+                .Set(SyllablePosition.Leading, syllables)
+                .Set(SyllablePosition.Trailing, syllables)
                 .Size(1, 2);
 
             HashSet<string> detected = new HashSet<string>();
@@ -69,14 +69,14 @@ namespace Syllabore.Tests
             var lastSymbols = new SymbolGenerator().Add("k");
 
             var syllables = new SyllableGeneratorV3()
-                .Add(Position.First, firstSymbols)
-                .Add(Position.Middle, middleSymbols)
-                .Add(Position.Last, lastSymbols);
+                .Add(SymbolPosition.First, firstSymbols)
+                .Add(SymbolPosition.Middle, middleSymbols)
+                .Add(SymbolPosition.Last, lastSymbols);
 
             var sut = new NameGeneratorV3()
-                .Add(Position.First, syllables)
-                .Add(Position.Middle, syllables)
-                .Add(Position.Last, syllables)
+                .Set(SyllablePosition.Leading, syllables)
+                .Set(SyllablePosition.Inner, syllables)
+                .Set(SyllablePosition.Trailing, syllables)
                 .Size(1, 3);
 
             HashSet<string> detected = new HashSet<string>();
@@ -102,9 +102,9 @@ namespace Syllabore.Tests
             var lastSymbols = new SymbolGenerator().Add("c");
 
             var sut = new NameGeneratorV3()
-                .Add(Position.First, new SyllableGeneratorV3().Add(Position.First, firstSymbols))
-                .Add(Position.Middle, new SyllableGeneratorV3().Add(Position.Middle, middleSymbols))
-                .Add(Position.Last, new SyllableGeneratorV3().Add(Position.Last, lastSymbols))
+                .Set(SyllablePosition.Leading, new SyllableGeneratorV3().Add(SymbolPosition.First, firstSymbols))
+                .Set(SyllablePosition.Inner, new SyllableGeneratorV3().Add(SymbolPosition.Middle, middleSymbols))
+                .Set(SyllablePosition.Trailing, new SyllableGeneratorV3().Add(SymbolPosition.Last, lastSymbols))
                 .Size(min, max);
 
             // Test name generation multiple times to ensure correctness

@@ -18,7 +18,7 @@ namespace Syllabore
         /// <summary>
         /// The <see cref="SyllableGeneratorV3">SyllableGenerators</see> used by this <see cref="NameGeneratorV3"/>.
         /// </summary>
-        public Dictionary<Position, SyllableGeneratorV3> SyllableGenerators { get; set; }
+        public Dictionary<SyllablePosition, SyllableGeneratorV3> SyllableGenerators { get; set; }
 
         /// <summary>
         /// The minimum number of syllables in generated names.
@@ -35,7 +35,7 @@ namespace Syllabore
         /// </summary>
         public NameGeneratorV3()
         {
-            SyllableGenerators = new Dictionary<Position, SyllableGeneratorV3>();
+            SyllableGenerators = new Dictionary<SyllablePosition, SyllableGeneratorV3>();
             Random = new Random();
             MinimumSize = 2;
             MaximumSize = 3;
@@ -50,12 +50,10 @@ namespace Syllabore
         public NameGeneratorV3(string firstSymbols, string middleSymbols) : this()
         {
             var syllableGenerator = new SyllableGeneratorV3()
-                .Add(Position.First, firstSymbols)
-                .Add(Position.Middle, middleSymbols);
+                .Add(SymbolPosition.First, firstSymbols)
+                .Add(SymbolPosition.Middle, middleSymbols);
 
-            this.Add(Position.First, syllableGenerator)
-                .Add(Position.Middle, syllableGenerator)
-                .Add(Position.Last, syllableGenerator);
+            this.Set(SyllablePosition.Any, syllableGenerator);
         }
 
         /// <summary>
@@ -67,28 +65,26 @@ namespace Syllabore
         public NameGeneratorV3(string firstSymbols, string middleSymbols, string lastSymbols) : this()
         {
             var syllableGenerator = new SyllableGeneratorV3()
-                .Add(Position.First, firstSymbols)
-                .Add(Position.Middle, middleSymbols)
-                .Add(Position.Last, lastSymbols);
+                .Add(SymbolPosition.First, firstSymbols)
+                .Add(SymbolPosition.Middle, middleSymbols)
+                .Add(SymbolPosition.Last, lastSymbols);
 
-            this.Add(Position.First, syllableGenerator)
-                .Add(Position.Middle, syllableGenerator)
-                .Add(Position.Last, syllableGenerator);
+            this.Set(SyllablePosition.Any, syllableGenerator);
         }
 
         /// <summary>
-        /// Adds a <see cref="SyllableGeneratorV3"/> for the specified position.
+        /// Sets the <see cref="SyllableGeneratorV3"/> for the specified position.
         /// </summary>
         /// <param name="position">The position for the syllable generator.</param>
         /// <param name="generator">The syllable generator to add.</param>
         /// <returns>The current instance of <see cref="NameGeneratorV3"/>.</returns>
-        public NameGeneratorV3 Add(Position position, SyllableGeneratorV3 generator)
+        public NameGeneratorV3 Set(SyllablePosition position, SyllableGeneratorV3 generator)
         {
-            if(position == Position.Any)
+            if(position == SyllablePosition.Any)
             {
-                Add(Position.First, generator);
-                Add(Position.Middle, generator);
-                Add(Position.Last, generator);
+                Set(SyllablePosition.Leading, generator);
+                Set(SyllablePosition.Inner, generator);
+                Set(SyllablePosition.Trailing, generator);
             }
             else
             {
@@ -139,9 +135,9 @@ namespace Syllabore
 
             if (size == 1)
             {
-                if (SyllableGenerators.ContainsKey(Position.First))
+                if (SyllableGenerators.ContainsKey(SyllablePosition.Leading))
                 {
-                    name.Append(SyllableGenerators[Position.First].Next());
+                    name.Append(SyllableGenerators[SyllablePosition.Leading].Next());
                 }
                 else
                 {
@@ -150,10 +146,10 @@ namespace Syllabore
             }
             else if (size == 2)
             {
-                if (SyllableGenerators.ContainsKey(Position.First) && SyllableGenerators.ContainsKey(Position.Last))
+                if (SyllableGenerators.ContainsKey(SyllablePosition.Leading) && SyllableGenerators.ContainsKey(SyllablePosition.Trailing))
                 {
-                    name.Append(SyllableGenerators[Position.First].Next());
-                    name.Append(SyllableGenerators[Position.Last].Next());
+                    name.Append(SyllableGenerators[SyllablePosition.Leading].Next());
+                    name.Append(SyllableGenerators[SyllablePosition.Trailing].Next());
                 }
                 else
                 {
@@ -162,16 +158,16 @@ namespace Syllabore
             }
             else
             {
-                if (SyllableGenerators.ContainsKey(Position.First) && SyllableGenerators.ContainsKey(Position.Last) && SyllableGenerators.ContainsKey(Position.Middle))
+                if (SyllableGenerators.ContainsKey(SyllablePosition.Leading) && SyllableGenerators.ContainsKey(SyllablePosition.Inner) && SyllableGenerators.ContainsKey(SyllablePosition.Trailing))
                 {
-                    name.Append(SyllableGenerators[Position.First].Next());
+                    name.Append(SyllableGenerators[SyllablePosition.Leading].Next());
 
                     for (int i = 1; i < size - 1; i++)
                     {
-                        name.Append(SyllableGenerators[Position.Middle].Next());
+                        name.Append(SyllableGenerators[SyllablePosition.Inner].Next());
                     }
 
-                    name.Append(SyllableGenerators[Position.Last].Next());
+                    name.Append(SyllableGenerators[SyllablePosition.Trailing].Next());
                 }
                 else
                 {
