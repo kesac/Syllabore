@@ -13,7 +13,7 @@ namespace Syllabore
     {
 
         private SymbolGenerator _lastAddedGenerator;
-        private Position _lastPositionAdded;
+        private SymbolPosition _lastPositionAdded;
 
         /// <summary>
         /// The instance of <see cref="System.Random"/> used to simulate randomness.
@@ -23,13 +23,13 @@ namespace Syllabore
         /// <summary>
         /// The symbol generators used to create new syllables.
         /// </summary>
-        public Dictionary<Position, List<SymbolGenerator>> SymbolGenerators { get; set; }
+        public Dictionary<SymbolPosition, List<SymbolGenerator>> SymbolGenerators { get; set; }
 
         /// <summary>
         /// The probability of generating a symbol for a given position.
         /// The default value is 1.0 (100%) for each position as long as there are symbols available.
         /// </summary>
-        public Dictionary<Position, double> PositionChance { get; set; }
+        public Dictionary<SymbolPosition, double> PositionChance { get; set; }
 
         /// <summary>
         /// Instantiates a new <see cref="SyllableGeneratorV3"/> with no symbol generators.
@@ -37,21 +37,21 @@ namespace Syllabore
         public SyllableGeneratorV3()
         {
             Random = new Random();
-            SymbolGenerators = new Dictionary<Position, List<SymbolGenerator>>();
-            PositionChance = new Dictionary<Position, double>();
+            SymbolGenerators = new Dictionary<SymbolPosition, List<SymbolGenerator>>();
+            PositionChance = new Dictionary<SymbolPosition, double>();
 
         }
 
         /// <summary>
         /// Adds symbols to the specified position. Each character in the string is considered a separate symbol.
         /// </summary>
-        public SyllableGeneratorV3 Add(Position position, string symbols) => Add(position, new SymbolGenerator().Add(symbols));
+        public SyllableGeneratorV3 Add(SymbolPosition position, string symbols) => Add(position, new SymbolGenerator().Add(symbols));
 
         /// <summary>
         /// Adds a <see cref="SymbolGenerator"/>. The generator's symbols will only
         /// be used for the specified position.
         /// </summary>
-        public SyllableGeneratorV3 Add(Position position, SymbolGenerator generator)
+        public SyllableGeneratorV3 Add(SymbolPosition position, SymbolGenerator generator)
         {
             if (!SymbolGenerators.ContainsKey(position))
             {
@@ -74,14 +74,14 @@ namespace Syllabore
         /// Sets the probability of generating a symbol for the specified position.
         /// The default value is 1.0 (100% probability) unless changed by calling this method.
         /// </summary>
-        public SyllableGeneratorV3 Chance(Position position, double chance)
+        public SyllableGeneratorV3 Chance(SymbolPosition position, double chance)
         {
             PositionChance[position] = chance;
 
             return this;
         }
 
-        private string GenerateSymbol(Position position)
+        private string GenerateSymbol(SymbolPosition position)
         {
             if (SymbolGenerators.ContainsKey(position) && SymbolGenerators[position].Count > 0)
             {
@@ -99,19 +99,19 @@ namespace Syllabore
             var syllable = new StringBuilder();
 
             // Generate symbols for each position based on their probabilities
-            if (PositionChance.ContainsKey(Position.First) && Random.NextDouble() < PositionChance[Position.First])
+            if (PositionChance.ContainsKey(SymbolPosition.First) && Random.NextDouble() < PositionChance[SymbolPosition.First])
             {
-                syllable.Append(GenerateSymbol(Position.First));
+                syllable.Append(GenerateSymbol(SymbolPosition.First));
             }
 
-            if (PositionChance.ContainsKey(Position.Middle) && Random.NextDouble() < PositionChance[Position.Middle])
+            if (PositionChance.ContainsKey(SymbolPosition.Middle) && Random.NextDouble() < PositionChance[SymbolPosition.Middle])
             {
-                syllable.Append(GenerateSymbol(Position.Middle));
+                syllable.Append(GenerateSymbol(SymbolPosition.Middle));
             }
 
-            if (PositionChance.ContainsKey(Position.Last) && Random.NextDouble() < PositionChance[Position.Last])
+            if (PositionChance.ContainsKey(SymbolPosition.Last) && Random.NextDouble() < PositionChance[SymbolPosition.Last])
             {
-                syllable.Append(GenerateSymbol(Position.Last));
+                syllable.Append(GenerateSymbol(SymbolPosition.Last));
             }
 
             if(syllable.Length == 0)
@@ -120,6 +120,30 @@ namespace Syllabore
             }
 
             return syllable.ToString();
+        }
+
+        /// <summary>
+        /// Creates a deep copy of this <see cref="SyllableGeneratorV3"/>
+        /// excluding internal instances of <see cref="System.Random"/>.
+        /// </summary>
+        public SyllableGeneratorV3 Copy()
+        {
+            var newGenerator = new SyllableGeneratorV3();
+            
+            foreach (var position in SymbolGenerators.Keys)
+            {
+                foreach (var symbols in SymbolGenerators[position])
+                {
+                    newGenerator.Add(position, symbols.Copy());
+                }
+            }
+
+            foreach (var position in PositionChance.Keys)
+            {
+                newGenerator.Chance(position, PositionChance[position]);
+            }
+
+            return newGenerator;
         }
     }
 }

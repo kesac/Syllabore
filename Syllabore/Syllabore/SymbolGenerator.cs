@@ -106,5 +106,21 @@ namespace Syllabore
             throw new InvalidOperationException("A random symbol could not be selected because "
                 + "there are none to choose from or there are elements with non-positive weights.");
         }
+
+        /// <summary>
+        /// Creates a deep copy of this <see cref="SymbolGenerator"/>
+        /// excluding the <see cref="SymbolGenerator.Random"/> property.
+        /// </summary>
+        public SymbolGenerator Copy()
+        {
+            var newGenerator = new SymbolGenerator();
+
+            foreach (var symbol in Symbols)
+            {
+                newGenerator.Symbols.Add(symbol.Copy());
+            }
+
+            return newGenerator;
+        }
     }
 }

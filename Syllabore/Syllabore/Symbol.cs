@@ -43,5 +43,13 @@ namespace Syllabore
             return this.Value;
         }
 
+        /// <summary>
+        /// Creates a deep copy of this <see cref="Symbol"/>.
+        /// </summary>
+        public Symbol Copy()
+        {
+            return new Symbol(this.Value) { Weight = this.Weight };
+        }
+
     }
 }
