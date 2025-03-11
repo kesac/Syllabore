@@ -7,6 +7,7 @@ using Syllabore.Example.Spaceship;
 using Syllabore.Example.Planets;
 using Syllabore.Example.RandomString;
 using System.Diagnostics;
+using Syllabore.Fluent;
 
 namespace Syllabore.Example
 {
@@ -14,9 +15,10 @@ namespace Syllabore.Example
     {
         public static void Main(string[] args)
         {
+            RunFluentExample();
+            PrintSeparator();
             RunConstructorExample();
             PrintSeparator();
-
             RunV2V3Comparison(300000);
         }
 
@@ -37,6 +39,31 @@ namespace Syllabore.Example
             for (int i = 0; i < 10; i++)
             {
                 Console.WriteLine(n2.Next());
+            }
+
+        }
+
+        private static void RunFluentExample()
+        {
+            var names = new NameGeneratorV3()
+                .Lead(x => x
+                    .First("s")
+                    .Middle("a")
+                    .Last(x => x
+                        .Add("n").Weight(4)
+                        .Add("m").Weight(1)))
+                .Inner(x => x
+                    .First("t")
+                    .Middle("e")
+                    .Last("l"))
+                .Trail(x => x
+                    .CopyLead()
+                    .First("t").Chance(0.5))
+                .Size(3);
+
+            for (int i = 0; i < 10; i++)
+            {
+                Console.WriteLine(names.Next());
             }
 
         }
