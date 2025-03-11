@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using Syllabore.Fluent;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace Syllabore.Tests
 {
@@ -130,6 +131,29 @@ namespace Syllabore.Tests
 
             Assert.IsTrue(result == "Abcabcabc");
             Assert.IsTrue(result == reference);
+        }
+
+        [TestMethod]
+        public void Fluent_UseWeightMethod_WeightAffectSymbols()
+        {
+            var sut = new NameGeneratorV3()
+                .Lead(x => x
+                    .First("a").Chance(0.5)
+                    .Middle("b")
+                    .Last("c"))
+                .Inner(x => x.CopyLead())
+                .Trail(x => x.CopyInner())
+                .Size(3);
+
+            var results = new HashSet<string>();
+
+            for(int i = 0; i < 100; i++)
+            {
+                results.Add(sut.Next());
+            }
+
+            Assert.IsTrue(results.Contains("Abcabcabc"));
+            Assert.IsTrue(results.Contains("Bcbcbc"));
         }
 
     }
