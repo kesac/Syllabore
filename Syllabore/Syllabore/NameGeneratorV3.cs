@@ -120,6 +120,12 @@ namespace Syllabore
         /// <returns>The generated name as a capitalized string.</returns>
         public string Next()
         {
+            var result = GenerateName();
+            return result;
+        }
+
+        private string GenerateName()
+        {
             if (SyllableGenerators.Count == 0)
             {
                 throw new InvalidOperationException("No syllable generators available to generate a name.");
