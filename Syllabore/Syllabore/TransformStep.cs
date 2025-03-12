@@ -5,45 +5,6 @@ using System.Text;
 namespace Syllabore
 {
     /// <summary>
-    /// The type of action that a <see cref="TransformStep"/> 
-    /// will apply to a <see cref="Name"/>.
-    /// </summary>
-    public enum TransformStepType
-    {
-        /// <summary>
-        /// Adds a syllable to a <see cref="Name"/>, displacing other
-        /// syllables as needed.
-        /// </summary>
-        InsertSyllable,
-
-        /// <summary>
-        /// Adds a syllable to the end of a <see cref="Name"/>.
-        /// </summary>
-        AppendSyllable,
-
-        /// <summary>
-        /// Replaces a single syllable with a another syllable.
-        /// </summary>
-        ReplaceSyllable,
-
-        /// <summary>
-        /// Deletes a syllable from a <see cref="Name"/>, displacing
-        /// other syllables as needed.
-        /// </summary>
-        RemoveSyllable,
-
-        /// <summary>
-        /// An action that is not serializable and expressed in a lambda.
-        /// </summary>
-        Lambda,
-
-        /// <summary>
-        /// Replaces all instances of a substring with another substring.
-        /// </summary>
-        ReplaceAllSubstring
-    }
-
-    /// <summary>
     /// Represents one action or step in a <see cref="Transform"/>.
     /// </summary>
     public class TransformStep
@@ -62,7 +23,7 @@ namespace Syllabore
         /// If this <see cref="TransformStep"/> is of type <see cref="TransformStepType.Lambda"/>,
         /// this property will contain the action to be applied.
         /// </summary>
-        private Action<Name> _unserializableAction { get; set; }
+        private Action<Name> _unserializableAction;
 
         /// <summary>
         /// Instantiates a new <see cref="TransformStep"/> with
