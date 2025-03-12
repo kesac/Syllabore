@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Syllabore.Fluent;
 
 namespace Syllabore.Example.Spaceship
 {
@@ -26,7 +27,7 @@ namespace Syllabore.Example.Spaceship
                         .OfLeadingConsonants(1.0)
                         .OfTrailingConsonants(0.0)))
                 .UsingFilter(x => x
-                    .DoNotAllow(@"(\w)\1\1"))
+                    .DoNotAllowRegex(@"(\w)\1\1"))
                 .UsingSyllableCount(3);
 
             _shipGenerator = new NameGenerator()
@@ -36,7 +37,7 @@ namespace Syllabore.Example.Spaceship
                     .WithLeadingConsonants("rstlmn").Weight(4) // Weights are relative to each other
                     .WithLeadingConsonants("cdgp").Weight(2)) // So this line says "2 out of 6" or 33% of the time
                 .UsingFilter(x => x
-                    .DoNotAllow(@"(\w)\1")) // Regex again, for two of the same letters consecutively
+                    .DoNotAllowRegex(@"(\w)\1")) // Regex again, for two of the same letters consecutively
                 .UsingSyllableCount(3);
         }
 

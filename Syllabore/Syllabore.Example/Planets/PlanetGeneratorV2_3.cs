@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Syllabore.Fluent;
 
 namespace Syllabore.Example.Planets
 {
@@ -21,15 +22,15 @@ namespace Syllabore.Example.Planets
 
             var f = new NameFilter();
             f.DoNotAllowEnding("f", "g", "j", "v");
-            f.DoNotAllow("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
+            f.DoNotAllowRegex("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
 
-            f.DoNotAllow("(q[^u])"); // Q must always be followed by a u
-            f.DoNotAllow("([^tsao]w)"); // W must always be preceded with a t, s, a, or o
+            f.DoNotAllowRegex("(q[^u])"); // Q must always be followed by a u
+            f.DoNotAllowRegex("([^tsao]w)"); // W must always be preceded with a t, s, a, or o
 
             // Some awkward looking combinations
             f.DoNotAllowSubstring("pn", "zz", "yy", "xx");
-            f.DoNotAllow("(y[^aeiou])"); // Avoids things like yt, yw, yz, etc.
-            f.DoNotAllow("(p[^aeioustrlh])"); // Avoids things like pb, pq, pz, etc.
+            f.DoNotAllowRegex("(y[^aeiou])"); // Avoids things like yt, yw, yz, etc.
+            f.DoNotAllowRegex("(p[^aeioustrlh])"); // Avoids things like pb, pq, pz, etc.
 
             this.UsingFilter(f);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Syllabore.Fluent;
 
 namespace Syllabore.Example.Planets
 {
@@ -21,12 +22,12 @@ namespace Syllabore.Example.Planets
 
             this.UsingFilter(x => x
                 .DoNotAllowEnding("f", "g", "j", "v")
-                .DoNotAllow("([^aieou]{3})")
-                .DoNotAllow("(q[^u])")
-                .DoNotAllow("([^tsao]w)")
+                .DoNotAllowRegex("([^aieou]{3})")
+                .DoNotAllowRegex("(q[^u])")
+                .DoNotAllowRegex("([^tsao]w)")
                 .DoNotAllowSubstring("pn", "zz", "yy", "xx")
-                .DoNotAllow("(y[^aeiou])")
-                .DoNotAllow("(p[^aeioustrlh])"));
+                .DoNotAllowRegex("(y[^aeiou])")
+                .DoNotAllowRegex("(p[^aeioustrlh])"));
         }
 
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Syllabore.Fluent;
 
 namespace Syllabore.Example.Spaceship
 {
@@ -26,7 +27,7 @@ namespace Syllabore.Example.Spaceship
                         .OfLeadingConsonants(1.0)
                         .OfTrailingConsonants(0.0)))
                 .UsingFilter(x => x
-                    .DoNotAllow(@"(\w)\1\1"))
+                    .DoNotAllowRegex(@"(\w)\1\1"))
                 .UsingSyllableCount(3);
 
             _shipGenerator = new NameGenerator()
@@ -41,7 +42,7 @@ namespace Syllabore.Example.Spaceship
                     .WithTransform(x => x.ReplaceSyllable(-1, "rus"))
                     .WithTransform(x => x.ReplaceSyllable(-1, "vium")))
                 .UsingFilter(x => x
-                    .DoNotAllow(@"(\w)\1"))
+                    .DoNotAllowRegex(@"(\w)\1"))
                 .UsingSyllableCount(3);
         }
 

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Syllabore.Example.Spaceship;
 using Syllabore.Example.Planets;
 using Syllabore.Example.RandomString;
+using Syllabore.Fluent;
 
 namespace Syllabore.Example
 {
@@ -168,7 +169,7 @@ namespace Syllabore.Example
                         .DoNotAllowStart("thr")               // Prevents "Thrond", but not "Athrun"
                         .DoNotAllowSubstring("quo", "tse")    // Prevents "Tsen", "Betsey", "Quon"
                         .DoNotAllowEnding("j", "p", "q", "w") // Prevents "Kaj", but not "Javal"
-                        .DoNotAllow(@"(\w)\1\1");             // Prevents "Mareeen", but not "Mareen"
+                        .DoNotAllowRegex(@"(\w)\1\1");             // Prevents "Mareeen", but not "Mareen"
                 
                 var g = new NameGenerator()
                         .UsingFilter(f);
@@ -278,8 +279,8 @@ namespace Syllabore.Example
                             .WithTransform(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
                             .WithTransform(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis")))
                         .UsingFilter(v => v
-                            .DoNotAllow("yv", "yt", "zs")
-                            .DoNotAllow(
+                            .DoNotAllowRegex("yv", "yt", "zs")
+                            .DoNotAllowRegex(
                                 @".{12,}",
                                 @"(\w)\1\1",              // Prevents any letter from occuring three times in a row
                                 @".*([y|Y]).*([y|Y]).*",  // Prevents double y
@@ -355,12 +356,12 @@ namespace Syllabore.Example
                 var shifter = new VowelShifter("a", "e", "o", "y");
 
                 var filter = new NameFilter();
-                filter.DoNotAllow(@"(\w)\1\1");
-                filter.DoNotAllow(@"([^aeoyAEOY])\1");
-                filter.DoNotAllow(@".*([y|Y]).*([y|Y]).*");
-                filter.DoNotAllow(@".*([z|Z]).*([z|Z]).*");
-                filter.DoNotAllow(@"(zs)");
-                filter.DoNotAllow(@"(y[v|t])");
+                filter.DoNotAllowRegex(@"(\w)\1\1");
+                filter.DoNotAllowRegex(@"([^aeoyAEOY])\1");
+                filter.DoNotAllowRegex(@".*([y|Y]).*([y|Y]).*");
+                filter.DoNotAllowRegex(@".*([z|Z]).*([z|Z]).*");
+                filter.DoNotAllowRegex(@"(zs)");
+                filter.DoNotAllowRegex(@"(y[v|t])");
 
                 var g = new NameGenerator(syllables, shifter, filter);
                 g.UsingSyllableCount(2, 3);

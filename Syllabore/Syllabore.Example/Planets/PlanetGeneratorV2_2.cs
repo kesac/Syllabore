@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Syllabore.Fluent;
 
 namespace Syllabore.Example.Planets
 {
@@ -21,7 +22,7 @@ namespace Syllabore.Example.Planets
 
             var f = new NameFilter();
             f.DoNotAllowEnding("f", "g", "j", "v");
-            f.DoNotAllowPattern("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
+            f.DoNotAllowRegex("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
 
             this.UsingFilter(f);
         }

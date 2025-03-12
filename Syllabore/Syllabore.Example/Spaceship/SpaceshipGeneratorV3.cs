@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Syllabore.Fluent;
 
 namespace Syllabore.Example.Spaceship
 {
@@ -26,7 +27,7 @@ namespace Syllabore.Example.Spaceship
                         .OfLeadingConsonants(1.0)
                         .OfTrailingConsonants(0.0)))
                 .UsingFilter(x => x
-                    .DoNotAllow(@"(\w)\1\1")) // Regex for three consecutive same letters
+                    .DoNotAllowRegex(@"(\w)\1\1")) // Regex for three consecutive same letters
                 .UsingSyllableCount(3); // In our case, this changes prefix length, not syllable count
 
             _shipGenerator = new NameGenerator();

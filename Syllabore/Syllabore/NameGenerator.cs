@@ -234,11 +234,11 @@ namespace Syllabore
         {
             if (this.Filter == null)
             {
-                this.Filter = new NameFilter().DoNotAllow(regex);
+                this.Filter = new NameFilter().Add(regex);
             }
             else
             {
-                (this.Filter as NameFilter)?.DoNotAllow(regex);
+                (this.Filter as NameFilter)?.Add(regex);
             }
 
             return this;
