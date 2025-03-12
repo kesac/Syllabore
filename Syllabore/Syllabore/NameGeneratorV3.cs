@@ -21,6 +21,11 @@ namespace Syllabore
         public Dictionary<SyllablePosition, SyllableGeneratorV3> SyllableGenerators { get; set; }
 
         /// <summary>
+        /// The transformer used to modify generated names.
+        /// </summary>
+        public INameTransformer NameTransformer { get; set; }
+
+        /// <summary>
         /// The filter used to control generated names.
         /// </summary>
         public NameFilter NameFilter { get; set; }
@@ -55,6 +60,7 @@ namespace Syllabore
             MaximumRetries = 1000;
 
             // The NameFilter property is intentionally left null
+            // The INameTransformer property is intentionally left null
         }
 
         /// <summary>
@@ -131,6 +137,15 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Sets the name transformer to use when generating names.
+        /// </summary>
+        public NameGeneratorV3 Transform(INameTransformer transformer)
+        {
+            NameTransformer = transformer;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the name filter to use when generating names.
         /// </summary>
         public NameGeneratorV3 Filter(NameFilter filter)
@@ -146,14 +161,16 @@ namespace Syllabore
         {
             var validNameGenerated = false;
             var totalAttempts = 0;
-            var result = string.Empty;
-
-            var attempts = new List<string>(); // debug
+            Name result = null;
 
             while (!validNameGenerated)
             {
                 result = GenerateName();
-                attempts.Add(result); // debug
+                
+                if (NameTransformer != null)
+                {
+                    result = NameTransformer.Apply(result);
+                }
 
                 if (NameFilter == null)
                 {
@@ -161,19 +178,19 @@ namespace Syllabore
                 }
                 else
                 {
-                    validNameGenerated = NameFilter.IsValid(result);
+                    validNameGenerated = NameFilter.IsValid(result.ToString());
                 }
 
-                if(!validNameGenerated && ++totalAttempts >= MaximumRetries)
+                if (!validNameGenerated && ++totalAttempts >= MaximumRetries)
                 {
                     throw new InvalidOperationException("Could not generate a valid name after " + MaximumRetries + " attempts.");
                 }
             }
 
-            return result;
+            return result.ToString();
         }
 
-        private string GenerateName()
+        private Name GenerateName()
         {
             if (SyllableGenerators.Count == 0)
             {
@@ -186,13 +203,13 @@ namespace Syllabore
             }
 
             int size = Random.Next(MinimumSize, MaximumSize + 1);
-            var name = new StringBuilder();
+            var result = new Name();
 
             if (size == 1)
             {
                 if (SyllableGenerators.ContainsKey(SyllablePosition.Leading))
                 {
-                    name.Append(SyllableGenerators[SyllablePosition.Leading].Next());
+                    result.Append(SyllableGenerators[SyllablePosition.Leading].Next());
                 }
                 else
                 {
@@ -203,8 +220,8 @@ namespace Syllabore
             {
                 if (SyllableGenerators.ContainsKey(SyllablePosition.Leading) && SyllableGenerators.ContainsKey(SyllablePosition.Trailing))
                 {
-                    name.Append(SyllableGenerators[SyllablePosition.Leading].Next());
-                    name.Append(SyllableGenerators[SyllablePosition.Trailing].Next());
+                    result.Append(SyllableGenerators[SyllablePosition.Leading].Next());
+                    result.Append(SyllableGenerators[SyllablePosition.Trailing].Next());
                 }
                 else
                 {
@@ -215,14 +232,14 @@ namespace Syllabore
             {
                 if (SyllableGenerators.ContainsKey(SyllablePosition.Leading) && SyllableGenerators.ContainsKey(SyllablePosition.Inner) && SyllableGenerators.ContainsKey(SyllablePosition.Trailing))
                 {
-                    name.Append(SyllableGenerators[SyllablePosition.Leading].Next());
+                    result.Append(SyllableGenerators[SyllablePosition.Leading].Next());
 
                     for (int i = 1; i < size - 1; i++)
                     {
-                        name.Append(SyllableGenerators[SyllablePosition.Inner].Next());
+                        result.Append(SyllableGenerators[SyllablePosition.Inner].Next());
                     }
 
-                    name.Append(SyllableGenerators[SyllablePosition.Trailing].Next());
+                    result.Append(SyllableGenerators[SyllablePosition.Trailing].Next());
                 }
                 else
                 {
@@ -231,7 +248,7 @@ namespace Syllabore
             }
 
             // Capitalize the first character of the generated name
-            return name[0].ToString().ToUpper() + name.ToString(1, name.Length - 1);
+            return result;
         }
     }
 }
