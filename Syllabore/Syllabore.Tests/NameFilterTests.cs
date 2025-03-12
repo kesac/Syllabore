@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Syllabore.Fluent;
 
 namespace Syllabore.Tests
 {
@@ -112,7 +113,7 @@ namespace Syllabore.Tests
         [DataRow("q")]
         public void NameValidation_WhenNonRegexConstraintSpecified_WithDisallowedCharacter_OutputReflectsConstraints(string character)
         {
-            _sut.UsingFilter(x => x.DoNotAllow(character));
+            _sut.UsingFilter(x => x.Add(character));
             
             for (int i = 0; i < 1000; i++)
             {
@@ -133,8 +134,8 @@ namespace Syllabore.Tests
                                 .WithTrailingConsonants("d")
                                 .WithTrailingConsonantSequences("ff"))
                             .UsingFilter(x => x
-                                .DoNotAllow(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
-                                .DoNotAllow(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
+                                .DoNotAllowRegex(@"[aeiouAEIOU]{2}") // This rule rejects names with vowel sequences
+                                .DoNotAllowRegex(@"[^aeiouAEIOU]{2}")); // This rule rejects names with consonant sequences
 
             for (int i = 0; i < 1000; i++)
             {
@@ -151,10 +152,10 @@ namespace Syllabore.Tests
 
             var nameFilter = new NameFilter();
             nameFilter.DoNotAllowEnding("f", "g", "h", "j", "q", "v", "w", "z");
-            nameFilter.DoNotAllow("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
-            nameFilter.DoNotAllow("(q[^u])"); // Q must always be followed by a u
-            nameFilter.DoNotAllow("([^tsao]w)"); // W must always be preceded with a t, s, a, or o
-            nameFilter.DoNotAllow("pn"); // Looks a little awkward
+            nameFilter.DoNotAllowRegex("([^aieou]{3})"); // Regex reads: non-vowels, three times in a row
+            nameFilter.DoNotAllowRegex("(q[^u])"); // Q must always be followed by a u
+            nameFilter.DoNotAllowRegex("([^tsao]w)"); // W must always be preceded with a t, s, a, or o
+            nameFilter.DoNotAllowRegex("pn"); // Looks a little awkward
 
             Assert.IsFalse(nameFilter.IsValidName(new Name() { Syllables = new List<string>() { "qello" } }));
             Assert.IsTrue(nameFilter.IsValidName(new Name() { Syllables = new List<string>() { "quello" } }));
@@ -170,7 +171,7 @@ namespace Syllabore.Tests
         {
             var provider = new DefaultSyllableGenerator();
             var filter = new NameFilter();
-            filter.DoNotAllow(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
+            filter.DoNotAllowRegex(@"[^aeiouAEIOU]{3,}"); // Rejects 3 or more consecutive consonants
 
             Assert.IsTrue(filter.IsValidName(new Name() { Syllables = new List<String>() { "bc" } }));
             Assert.IsFalse(filter.IsValidName(new Name() { Syllables = new List<String>() { "bcd" } }));

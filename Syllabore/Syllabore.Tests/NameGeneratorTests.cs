@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Syllabore.Fluent;
 
 namespace Syllabore.Tests
 {
@@ -102,7 +103,7 @@ namespace Syllabore.Tests
         {
             var sut = new NameGenerator()
                 .UsingFilter(x => x
-                    .DoNotAllowPattern(".")) // Set filter to reject names with at least 1 character
+                    .DoNotAllowRegex(".")) // Set filter to reject names with at least 1 character
                     .UsingSyllableCount(10)  // Ensure the generator only produces names with at least 1 character
                     .LimitRetries(1000);  // All futile attempts
 
@@ -143,7 +144,7 @@ namespace Syllabore.Tests
                 //.WithProbability(vowelBecomesVowelSequence: 1.0)
                 //.DisallowStartingSyllableLeadingVowels()
                 //.DisallowLeadingVowelsInStartingSyllables())
-                .UsingFilter(x => x.DoNotAllowPattern("^.{,2}$"));// Invalidate names with less than 2 characters
+                .UsingFilter(x => x.DoNotAllowRegex("^.{,2}$"));// Invalidate names with less than 2 characters
 
             try
             {
