@@ -3,8 +3,7 @@
 namespace Syllabore
 {
     /// <summary>
-    /// Represents a name. Can be returned by a <see cref="INameGenerator"/> for callers
-    /// to access individual syllables of a name.
+    /// Represents a name that consists of a sequence of syllables.
     /// </summary>
     public class Name
     {
@@ -37,6 +36,15 @@ namespace Syllabore
         /// <param name="copy"></param>
         public Name(Name copy) {
             this.Syllables = new List<string>(copy.Syllables);
+        }
+
+        /// <summary>
+        /// Adds a new syllable to this name.
+        /// </summary>
+        public Name Append(string syllable)
+        {
+            this.Syllables.Add(syllable);
+            return this;
         }
 
         /// <summary>
