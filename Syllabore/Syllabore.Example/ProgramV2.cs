@@ -194,8 +194,8 @@ namespace Syllabore.Example
                 // to a name during the generation process:
                 var g = new NameGenerator()
                         .UsingTransform(new TransformSet()
-                            .WithTransform(x => x.ReplaceSyllable(0, "te")).Weight(7)
-                            .WithTransform(x => x.AppendSyllable("re")).Weight(3)
+                            .Add(x => x.ReplaceSyllable(0, "te")).Weight(7)
+                            .Add(x => x.AppendSyllable("re")).Weight(3)
                             .RandomlySelect(1));
 
 
@@ -224,8 +224,8 @@ namespace Syllabore.Example
                             .WithVowels("ae")
                             .WithLeadingConsonants("str"))
                         .UsingTransform(0.5, new TransformSet()
-                            .WithTransform(x => x.AppendSyllable("gard")).Weight(2)
-                            .WithTransform(x => x.AppendSyllable("dar"))
+                            .Add(x => x.AppendSyllable("gard")).Weight(2)
+                            .Add(x => x.AppendSyllable("dar"))
                             .RandomlySelect(1))
                         .UsingSyllableCount(3);
 
@@ -273,11 +273,11 @@ namespace Syllabore.Example
                             .WithVowelSequences("ey", "ay", "oy"))
                         .UsingTransform(new TransformSet()
                             .RandomlySelect(1)
-                            .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
-                            .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
-                            .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
-                            .WithTransform(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
-                            .WithTransform(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis")))
+                            .Add(x => x.ReplaceSyllable(0, "Gran"))
+                            .Add(x => x.ReplaceSyllable(0, "Bri"))
+                            .Add(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
+                            .Add(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
+                            .Add(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis")))
                         .UsingFilter(v => v
                             .DoNotAllowRegex("yv", "yt", "zs")
                             .DoNotAllowRegex(
@@ -314,11 +314,11 @@ namespace Syllabore.Example
                             .WithVowelSequences("ey", "ay", "oy"))
                         .UsingTransform(0.99, new TransformSet()
                             .RandomlySelect(1)
-                            .WithTransform(x => x.ReplaceSyllable(0, "Gran"))
-                            .WithTransform(x => x.ReplaceSyllable(0, "Bri"))
-                            .WithTransform(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
-                            .WithTransform(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
-                            .WithTransform(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis")))
+                            .Add(x => x.ReplaceSyllable(0, "Gran"))
+                            .Add(x => x.ReplaceSyllable(0, "Bri"))
+                            .Add(x => x.InsertSyllable(0, "Deu").AppendSyllable("gard")).Weight(2)
+                            .Add(x => x.When(-2, "[aeoyAEOY]$").ReplaceSyllable(-1, "opolis"))
+                            .Add(x => x.When(-2, "[^aeoyAEOY]$").ReplaceSyllable(-1, "polis")))
                         .DoNotAllow(
                             @"(\w)\1\1",             // Prevents any letter from occuring three times in a row
                             @".*([y|Y]).*([y|Y]).*", // Prevents double y
@@ -375,7 +375,7 @@ namespace Syllabore.Example
                 var name = new Name("syl", "la", "bore");
                 var mutator = new TransformSet()
                                 .Join(new TransformSet()
-                                    .WithTransform(x => x.ReplaceSyllable(0, "test"))
+                                    .Add(x => x.ReplaceSyllable(0, "test"))
                                 .Join(new VowelShifter()));
 
                 for(int i = 0; i < 5; i++)

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Syllabore.Fluent;
 
 namespace Syllabore.Tests
 {
@@ -31,9 +32,9 @@ namespace Syllabore.Tests
                     "abcd")
                 .UsingTransform(0.5, new TransformSet()
                     .RandomlySelect(2)
-                    .WithTransform(x => x.AppendSyllable("tar"))
-                    .WithTransform(x => x.InsertSyllable(0, "arc"))
-                    .WithTransform(x => x.ReplaceSyllable(0, "neo")))
+                    .Add(x => x.AppendSyllable("tar"))
+                    .Add(x => x.InsertSyllable(0, "arc"))
+                    .Add(x => x.ReplaceSyllable(0, "neo")))
                 .UsingSyllableCount(3)
                 .LimitRetries(100)
                 .UsingSyllableCount(4, 10);

@@ -59,6 +59,9 @@ namespace Syllabore.Example
                 .Trail(x => x
                     .CopyLead()
                     .First("t").Chance(0.5))
+                .Transform(x => x
+                    .AppendSyllable("gard")
+                    .InsertSyllable(0, "star"))
                 .Size(3);
 
             for (int i = 0; i < 10; i++)
@@ -70,7 +73,6 @@ namespace Syllabore.Example
 
         private static void RunV2V3Comparison(int attempts)
         {
-
             var stopwatch = Stopwatch.StartNew();
             var v2 = new NameGenerator("ae", "srnl");
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Syllabore.Fluent;
 
 namespace Syllabore
 {
@@ -26,7 +27,7 @@ namespace Syllabore
                 this.VowelPool.AddRange(v.Atomize());
             }
 
-            this.WithTransform(x => x
+            this.Add(x => x
                 .ExecuteUnserializableAction(name => 
                 {
                     int index = this.Random.Next(name.Syllables.Count);

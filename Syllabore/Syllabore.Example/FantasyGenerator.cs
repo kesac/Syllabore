@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Syllabore.Fluent;
 
 namespace Syllabore.Example
 {
@@ -20,10 +21,10 @@ namespace Syllabore.Example
                     .WithLeadingConsonants("yz").Weight(1))
                 .UsingTransform(new TransformSet() // Note: only one mutation gets chosen out of these four per call to Next()
                     .RandomlySelect(1)
-                    .WithTransform(y => y.AppendSyllable("tia"))
-                    .WithTransform(y => y.AppendSyllable("ria"))
-                    .WithTransform(y => y.AppendSyllable("lis"))
-                    .WithTransform(y => y.AppendSyllable("gar")))
+                    .Add(y => y.AppendSyllable("tia"))
+                    .Add(y => y.AppendSyllable("ria"))
+                    .Add(y => y.AppendSyllable("lis"))
+                    .Add(y => y.AppendSyllable("gar")))
                 .UsingSyllableCount(2, 2);
 
             // Example output:

@@ -38,9 +38,9 @@ namespace Syllabore.Example.Spaceship
                     .WithLeadingConsonants("cdgp").Weight(2))
                 .UsingTransform(0.5, new TransformSet() // Only allow transform to be used 50% of the time
                     .RandomlySelect(1) // Only apply one transform
-                    .WithTransform(x => x.ReplaceSyllable(-1, "des")) // Index -1 is the last position
-                    .WithTransform(x => x.ReplaceSyllable(-1, "rus"))
-                    .WithTransform(x => x.ReplaceSyllable(-1, "vium")))
+                    .Add(x => x.ReplaceSyllable(-1, "des")) // Index -1 is the last position
+                    .Add(x => x.ReplaceSyllable(-1, "rus"))
+                    .Add(x => x.ReplaceSyllable(-1, "vium")))
                 .UsingFilter(x => x
                     .DoNotAllowRegex(@"(\w)\1"))
                 .UsingSyllableCount(3);
