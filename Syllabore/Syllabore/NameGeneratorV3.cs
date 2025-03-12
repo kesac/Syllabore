@@ -21,6 +21,11 @@ namespace Syllabore
         public Dictionary<SyllablePosition, SyllableGeneratorV3> SyllableGenerators { get; set; }
 
         /// <summary>
+        /// The filter used to control generated names.
+        /// </summary>
+        public NameFilter NameFilter { get; set; }
+
+        /// <summary>
         /// The minimum number of syllables in generated names.
         /// </summary>
         public int MinimumSize { get; set; }
@@ -31,7 +36,15 @@ namespace Syllabore
         public int MaximumSize { get; set; }
 
         /// <summary>
+        /// If this generator has a filter, this is the maximum attempts that will be
+        /// made to satisfy the filter before an InvalidOperationException is thrown.
+        /// The default value is 1000.
+        /// </summary>
+        public int MaximumRetries { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="NameGeneratorV3"/> class.
+        /// The default size range is 2 to 3 syllables.
         /// </summary>
         public NameGeneratorV3()
         {
@@ -39,6 +52,9 @@ namespace Syllabore
             Random = new Random();
             MinimumSize = 2;
             MaximumSize = 3;
+            MaximumRetries = 1000;
+
+            // The NameFilter property is intentionally left null
         }
 
         /// <summary>
@@ -115,12 +131,45 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Sets the name filter to use when generating names.
+        /// </summary>
+        public NameGeneratorV3 Filter(NameFilter filter)
+        {
+            NameFilter = filter;
+            return this;
+        }
+
+        /// <summary>
         /// Generates a name by concatenating syllables from different positions based on the specified size.
         /// </summary>
-        /// <returns>The generated name as a capitalized string.</returns>
         public string Next()
         {
-            var result = GenerateName();
+            var validNameGenerated = false;
+            var totalAttempts = 0;
+            var result = string.Empty;
+
+            var attempts = new List<string>(); // debug
+
+            while (!validNameGenerated)
+            {
+                result = GenerateName();
+                attempts.Add(result); // debug
+
+                if (NameFilter == null)
+                {
+                    validNameGenerated = true;
+                }
+                else
+                {
+                    validNameGenerated = NameFilter.IsValid(result);
+                }
+
+                if(!validNameGenerated && ++totalAttempts >= MaximumRetries)
+                {
+                    throw new InvalidOperationException("Could not generate a valid name after " + MaximumRetries + " attempts.");
+                }
+            }
+
             return result;
         }
 

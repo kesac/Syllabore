@@ -45,6 +45,31 @@ namespace Syllabore.Fluent
             return names.Define(SyllablePosition.Any, configuration);
         }
 
+        /// <summary>
+        /// Sets the filter for a <see cref="NameGeneratorV3"/>.
+        /// </summary>
+        public static NameGeneratorV3 Filter(this NameGeneratorV3 names, params string[] regexPatterns)
+        {
+            names.NameFilter = new NameFilter();
+
+            foreach (var pattern in regexPatterns)
+            {
+                names.NameFilter.DoNotAllowRegex(pattern);
+            }
+
+            return names;
+        }
+
+        /// <summary>
+        /// Sets the filter for a <see cref="NameGeneratorV3"/>.
+        /// </summary>
+        public static NameGeneratorV3 Filter(this NameGeneratorV3 names,
+            Func<NameFilter, NameFilter> configuration)
+        {
+            names.NameFilter = configuration(new NameFilter());
+            return names;
+        }
+
         private static NameGeneratorV3 Define(this NameGeneratorV3 names, SyllablePosition syllablePosition, 
             Func<SyllableGeneratorFluentWrapper, SyllableGeneratorFluentWrapper> configuration)
         {
