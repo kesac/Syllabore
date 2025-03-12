@@ -152,28 +152,9 @@ namespace Syllabore
         /// <summary>
         /// Adds a new <see cref="Transform"/> to this <see cref="TransformSet"/>.
         /// </summary>
-        public TransformSet WithTransform(Transform transform)
+        public TransformSet Add(Transform transform)
         {
             this.Transforms.Add(transform);
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a new <see cref="Transform"/> to this <see cref="TransformSet"/>.
-        /// </summary>
-        public TransformSet WithTransform(Func<Transform, Transform> config)
-        {
-            this.Transforms.Add(config(new Transform()));
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the instance of <see cref="System.Random"/>
-        /// used to simulate randomness when <see cref="UseRandomSelection"/> is true.
-        /// </summary>
-        public TransformSet WithRandom(Random random)
-        {
-            this.Random = random;
             return this;
         }
 

@@ -308,7 +308,7 @@ namespace Syllabore
         public NameGenerator UsingTransform(double chance, Func<Transform, Transform> configure)
         {
             var transform = configure(new Transform());
-            this.Transformer = new TransformSet().WithTransform(transform);
+            this.Transformer = new TransformSet().Add(transform);
             this.TransformerChance = chance;
             return this;
         }

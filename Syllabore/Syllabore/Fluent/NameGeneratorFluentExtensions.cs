@@ -48,6 +48,16 @@ namespace Syllabore.Fluent
         /// <summary>
         /// Sets the filter for a <see cref="NameGeneratorV3"/>.
         /// </summary>
+        public static NameGeneratorV3 Transform(this NameGeneratorV3 names, 
+            Func<Transform, Transform> configuration)
+        {
+            names.Transform(configuration(new Transform()));
+            return names;
+        }
+
+        /// <summary>
+        /// Sets the filter for a <see cref="NameGeneratorV3"/>.
+        /// </summary>
         public static NameGeneratorV3 Filter(this NameGeneratorV3 names, params string[] regexPatterns)
         {
             names.NameFilter = new NameFilter();
