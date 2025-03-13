@@ -5,60 +5,70 @@ using System.Text;
 namespace Syllabore.Fluent
 {
     /// <summary>
-    /// Provides additional fluent extension methods for configuring a <see cref="NameGeneratorV3"/>.
+    /// Provides additional fluent extension methods for configuring a <see cref="NameGenerator"/>.
     /// </summary>
     public static class NameGeneratorFluentExtensions
     {
         /// <summary>
-        /// Configures the leading <see cref="SyllableGeneratorV3"/> of a <see cref="NameGeneratorV3"/>.
+        /// Configures the leading <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGeneratorV3 Lead(this NameGeneratorV3 names,
+        public static NameGenerator Lead(this NameGenerator names,
             Func<SyllableGeneratorFluentWrapper, SyllableGeneratorFluentWrapper> configuration)
         {
             return names.Define(SyllablePosition.Leading, configuration);
         }
 
         /// <summary>
-        /// Configures the inner <see cref="SyllableGeneratorV3"/> of a <see cref="NameGeneratorV3"/>.
+        /// Configures the inner <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGeneratorV3 Inner(this NameGeneratorV3 names,
+        public static NameGenerator Inner(this NameGenerator names,
             Func<SyllableGeneratorFluentWrapper, SyllableGeneratorFluentWrapper> configuration)
         {
             return names.Define(SyllablePosition.Inner, configuration);
         }
 
         /// <summary>
-        /// Configures the trailing <see cref="SyllableGeneratorV3"/> of a <see cref="NameGeneratorV3"/>.
+        /// Configures the trailing <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGeneratorV3 Trail(this NameGeneratorV3 names,
+        public static NameGenerator Trail(this NameGenerator names,
             Func<SyllableGeneratorFluentWrapper, SyllableGeneratorFluentWrapper> configuration)
         {
             return names.Define(SyllablePosition.Trailing, configuration);
         }
 
         /// <summary>
-        /// Configures the leading <see cref="SyllableGeneratorV3"/> of a <see cref="NameGeneratorV3"/>.
+        /// Configures the leading <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGeneratorV3 Any(this NameGeneratorV3 names,
+        public static NameGenerator Any(this NameGenerator names,
             Func<SyllableGeneratorFluentWrapper, SyllableGeneratorFluentWrapper> configuration)
         {
             return names.Define(SyllablePosition.Any, configuration);
         }
 
         /// <summary>
-        /// Sets the filter for a <see cref="NameGeneratorV3"/>.
+        /// Sets the filter for a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGeneratorV3 Transform(this NameGeneratorV3 names, 
+        public static NameGenerator Transform(this NameGenerator names, 
             Func<Transform, Transform> configuration)
         {
-            names.Transform(configuration(new Transform()));
+            names.Transform(1.0, configuration(new Transform()));
             return names;
         }
 
         /// <summary>
-        /// Sets the filter for a <see cref="NameGeneratorV3"/>.
+        /// Sets the filter for a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGeneratorV3 Filter(this NameGeneratorV3 names, params string[] regexPatterns)
+        public static NameGenerator Transform(this NameGenerator names, double chance,
+            Func<Transform, Transform> configuration)
+        {
+            names.Transform(chance, configuration(new Transform()));
+            return names;
+        }
+
+        /// <summary>
+        /// Sets the filter for a <see cref="NameGenerator"/>.
+        /// </summary>
+        public static NameGenerator Filter(this NameGenerator names, params string[] regexPatterns)
         {
             names.NameFilter = new NameFilter();
 
@@ -71,19 +81,19 @@ namespace Syllabore.Fluent
         }
 
         /// <summary>
-        /// Sets the filter for a <see cref="NameGeneratorV3"/>.
+        /// Sets the filter for a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGeneratorV3 Filter(this NameGeneratorV3 names,
+        public static NameGenerator Filter(this NameGenerator names,
             Func<NameFilter, NameFilter> configuration)
         {
             names.NameFilter = configuration(new NameFilter());
             return names;
         }
 
-        private static NameGeneratorV3 Define(this NameGeneratorV3 names, SyllablePosition syllablePosition, 
+        private static NameGenerator Define(this NameGenerator names, SyllablePosition syllablePosition, 
             Func<SyllableGeneratorFluentWrapper, SyllableGeneratorFluentWrapper> configuration)
         {
-            var wrapper = configuration(new SyllableGeneratorFluentWrapper(names, syllablePosition, new SyllableGeneratorV3()));
+            var wrapper = configuration(new SyllableGeneratorFluentWrapper(names, syllablePosition, new SyllableGenerator()));
             names.Set(syllablePosition, wrapper.Result);
             return names;
         }

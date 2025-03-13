@@ -7,24 +7,24 @@ using System.Text;
 namespace Syllabore
 {
     /// <summary>
-    /// A convenience wrapper for <see cref="SyllableGeneratorV3"/> that
+    /// A convenience wrapper for <see cref="SyllableGenerator"/> that
     /// is used by NameGenerator's fluent extension methods.
     /// </summary>
     public class SyllableGeneratorFluentWrapper
     {
-        private NameGeneratorV3 _parent;
+        private NameGenerator _parent;
         private SyllablePosition _currentSyllablePosition;
         private SymbolPosition _lastSymbolPositionModified;
 
         /// <summary>
-        /// The resulting <see cref="SyllableGeneratorV3"/> after applying the fluent configuration.
+        /// The resulting <see cref="SyllableGenerator"/> after applying the fluent configuration.
         /// </summary>
-        public SyllableGeneratorV3 Result { get; set; }
+        public SyllableGenerator Result { get; set; }
 
         /// <summary>
-        /// Used by <see cref="NameGeneratorV3"/> to instantiate a new <see cref="SyllableGeneratorFluentWrapper"/>.
+        /// Used by <see cref="NameGenerator"/> to instantiate a new <see cref="SyllableGeneratorFluentWrapper"/>.
         /// </summary>
-        public SyllableGeneratorFluentWrapper(NameGeneratorV3 parent, SyllablePosition syllablePosition, SyllableGeneratorV3 syllables)
+        public SyllableGeneratorFluentWrapper(NameGenerator parent, SyllablePosition syllablePosition, SyllableGenerator syllables)
         {
             _parent = parent;
             _currentSyllablePosition = syllablePosition;
