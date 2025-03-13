@@ -10,12 +10,12 @@ namespace Syllabore.Tests
     [TestClass]
     public class NameFilterTests
     {
-        private readonly NameGeneratorV3 _testNames;
+        private readonly NameGenerator _testNames;
 
         public NameFilterTests()
         {
             // Example names: Sata, Resati, Tisara
-            _testNames = new NameGeneratorV3("str", "aei");
+            _testNames = new NameGenerator("str", "aei");
         }
 
         [TestMethod]
@@ -89,7 +89,7 @@ namespace Syllabore.Tests
         [TestMethod]
         public void NameFilter_PreventSpecificPattern_FilterAffectsGeneration()
         {
-            var names = new NameGeneratorV3()
+            var names = new NameGenerator()
                 .Any(x => x
                     .First(x => x.Add("b").Cluster("cc"))
                     .Middle(x => x.Add("ae").Cluster("ee"))
@@ -112,7 +112,7 @@ namespace Syllabore.Tests
         [TestMethod]
         public void NameFilter_UsingFluentMethod_FilterAffectsGeneration()
         {
-            var sut = new NameGeneratorV3()
+            var sut = new NameGenerator()
                     .Any(x => x
                         .First("bcdf").Chance(0.95)
                         .Middle("aei"))
@@ -130,11 +130,11 @@ namespace Syllabore.Tests
         [TestMethod]
         public void NameValidation_WhenPrefixConstraintNotSpecified_OutputReflectsConstraints()
         {
-            var leading = new SyllableGeneratorV3().Add(SymbolPosition.Middle, "aei");
+            var leading = new SyllableGenerator().Add(SymbolPosition.Middle, "aei");
             var inner = leading.Copy().Add(SymbolPosition.First, "str");
             var trailing = inner.Copy();
 
-            var sut = new NameGeneratorV3()
+            var sut = new NameGenerator()
                 .Set(SyllablePosition.Leading, leading)
                 .Set(SyllablePosition.Inner, inner)
                 .Set(SyllablePosition.Trailing, trailing);

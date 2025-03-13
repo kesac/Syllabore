@@ -1,194 +1,162 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Syllabore.Fluent;
+using System.Collections.Generic;
 
 namespace Syllabore.Tests
 {
     [TestClass]
     public class NameGeneratorTests
     {
-        private readonly NameGenerator _sut = new();
-
         [TestMethod]
-        public void Constructor_WhenNoParameter_SuccessfulNameGeneration()
+        public void Constructor_NoSyllableGenerators_ThrowsExceptionWhenGenerating()
         {
-            for (int i = 0; i < 100; i++)
-            {
-                Assert.IsFalse(string.IsNullOrEmpty(_sut.Next()));
-            }
-        }
-
-        [TestMethod]
-        public void Constructor_WhenBasicConstructorUsed_SuccessfulNameGeneration()
-        {
-            var sut = new NameGenerator("a", "strl");
-            for (int i = 0; i < 100; i++)
-            {
-                Assert.IsTrue(sut.Next().Contains("a"));
-            }
-        }
-
-
-        [TestMethod]
-        public void Constructor_WhenAnyParameterNull_ArgumentNullExceptionThrown()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, null, null));
-            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new TransformSet(), null));
-            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, null, new NameFilter()));
-            Assert.ThrowsException<ArgumentNullException>(() => new NameGenerator(null, new TransformSet(), new NameFilter()));
-
-            Assert.IsNotNull(new NameGenerator(new DefaultSyllableGenerator(), null, null).Next());
-            Assert.IsNotNull(new NameGenerator(new DefaultSyllableGenerator(), new TransformSet(), null).Next());
-            Assert.IsNotNull(new NameGenerator(new DefaultSyllableGenerator(), new TransformSet(), new NameFilter()).Next());
-        }
-
-        [TestMethod]
-        [DataRow(-1)]
-        [DataRow(0)]
-        [DataRow(int.MinValue)]
-        public void NameGeneration_WhenSyllableLengthPropertyValuesInvalid_SingleArguments_InvalidOperationExceptionThrown(int length)
-        {
-            Assert.ThrowsException<ArgumentException>(() => _sut.UsingSyllableCount(length).Next());
-        }
-
-        [TestMethod]
-        [DataRow(1)]
-        [DataRow(2)]
-        [DataRow(byte.MaxValue)]
-        public void NameGeneration_WhenSyllableLengthPropertyValuesValid_SingleArguments_NotNull(int length)
-        {
-            Assert.IsNotNull(_sut.UsingSyllableCount(length).Next());
-        }
-
-        [TestMethod]
-        [DataRow(-1, 1)]
-        [DataRow(0, 1)]
-        [DataRow(1, -1)]
-        [DataRow(1, 0)]
-        [DataRow(6, 5)]
-        public void NameGeneration_WhenSyllableLengthPropertyValuesInvalid_DoubleArguments_InvalidOperationExceptionThrown(int min, int max)
-        {
-            Assert.ThrowsException<ArgumentException>(() => _sut.UsingSyllableCount(min, max).Next());
-        }
-
-        [TestMethod]
-        [DataRow(1, 1)]
-        [DataRow(4, 5)]
-        [DataRow(5, 5)]
-        public void NameGeneration_WhenSyllableLengthPropertyValuesValid_DoubleArguments_NotNull(int min, int max)
-        {
-            Assert.IsNotNull(_sut.UsingSyllableCount(min, max).Next());
-        }
-
-        [TestMethod]
-        [DataRow(0)]
-        [DataRow(-1)]
-        [DataRow(int.MinValue)]
-        public void NameGeneration_WhenNonPositiveSyllableLengthProvided_ArgumentExceptionThrown(int syllableLength)
-        {
-            Assert.ThrowsException<ArgumentException>(() => _sut.Next(syllableLength));
-        }
-
-        [TestMethod]
-        [DataRow(1)]
-        [DataRow(2)]
-        [DataRow(byte.MaxValue)]
-        public void NameGeneration_WhenPositiveSyllableLengthProvided_NotNull(int syllableLength)
-        {
-            Assert.IsNotNull(_sut.Next(syllableLength));
-        }
-
-        [TestMethod]
-        public void NameGeneration_WhenInfiniteGeneration_ExceptionThrown()
-        {
-            var sut = new NameGenerator()
-                .UsingFilter(x => x
-                    .DoNotAllowRegex(".")) // Set filter to reject names with at least 1 character
-                    .UsingSyllableCount(10)  // Ensure the generator only produces names with at least 1 character
-                    .LimitRetries(1000);  // All futile attempts
-
+            var sut = new NameGenerator();
             Assert.ThrowsException<InvalidOperationException>(() => sut.Next());
-
         }
 
         [TestMethod]
-        [DataRow(-1)]
-        [DataRow(0)]
-        public void NameGeneration_WhenMaximumRetriesLessThanOne_ExceptionThrown(int retryLimit)
+        [DataRow(SymbolPosition.First)]
+        [DataRow(SymbolPosition.Middle)]
+        [DataRow(SymbolPosition.Last)]
+        public void Configuration_AddGeneratorForFirstPosition_GeneratesName(SymbolPosition symbolPosition)
         {
-            Assert.ThrowsException<ArgumentException>(() => _sut.LimitRetries(retryLimit).Next());
-        }
+            var symbols = new SymbolGenerator().Add("a");
+            var syllables = new SyllableGenerator().Add(symbolPosition, symbols);
 
-        [TestMethod]
-        [DataRow(1)]
-        [DataRow(2)]
-        [DataRow(byte.MaxValue)]
-        public void NameGeneration_WhenMaximumRetriesOneOrMore_NotNull(int retryLimit)
-        {
-            Assert.IsNotNull(_sut.LimitRetries(retryLimit).Next());
-        }
-
-        [TestMethod]
-        public void NameGeneration_WithSequencesOnly_Allowed()
-        {
-            // It is valid for a name generator to use a provider that only uses sequences
             var sut = new NameGenerator()
-                .UsingSyllables(x => x
-                    .WithLeadingConsonantSequences("sr")
-                    .WithVowelSequences("ea")
-                    .WithTrailingConsonantSequences("bz")
-                    .WithProbability(x => x
-                        .OfVowels(1.0)
-                        .OfVowelIsSequence(1.0)
-                        .OfLeadingVowelsInStartingSyllable(0.0)))
-                //.WithProbability(vowelBecomesVowelSequence: 1.0)
-                //.DisallowStartingSyllableLeadingVowels()
-                //.DisallowLeadingVowelsInStartingSyllables())
-                .UsingFilter(x => x.DoNotAllowRegex("^.{,2}$"));// Invalidate names with less than 2 characters
+                .Set(SyllablePosition.Any, syllables)
+                .Size(1);
 
-            try
+            for (int i = 0; i < 100; i++)
             {
-                for (int i = 0; i < 10000; i++)
+                var name = sut.Next();
+                Assert.IsTrue(name.Equals("A"));
+            }
+        }
+
+        [TestMethod]
+        public void Configuration_AddGeneratorsForFirstAndLastPositions_GeneratesName()
+        {
+            var firstSymbols = new SymbolGenerator().Add("c");
+            var lastSymbols = new SymbolGenerator().Add("d");
+
+            var syllables = new SyllableGenerator()
+                .Add(SymbolPosition.First, firstSymbols)
+                .Add(SymbolPosition.Last, lastSymbols);
+
+            var sut = new NameGenerator()
+                .Set(SyllablePosition.Leading, syllables)
+                .Set(SyllablePosition.Trailing, syllables)
+                .Size(1, 2);
+
+            HashSet<string> detected = new HashSet<string>();
+            for (int i = 0; i < 100; i++)
+            {
+                var name = sut.Next();
+                detected.Add(name);
+            }
+
+            Assert.IsTrue(detected.Contains("Cd"));
+            Assert.IsTrue(detected.Contains("Cdcd"));
+        }
+
+        [TestMethod]
+        public void Configuration_AddGeneratorsForAllPositions_GeneratesName()
+        {
+            var firstSymbols = new SymbolGenerator().Add("t");
+            var middleSymbols = new SymbolGenerator().Add("u");
+            var lastSymbols = new SymbolGenerator().Add("k");
+
+            var syllables = new SyllableGenerator()
+                .Add(SymbolPosition.First, firstSymbols)
+                .Add(SymbolPosition.Middle, middleSymbols)
+                .Add(SymbolPosition.Last, lastSymbols);
+
+            var sut = new NameGenerator()
+                .Set(SyllablePosition.Leading, syllables)
+                .Set(SyllablePosition.Inner, syllables)
+                .Set(SyllablePosition.Trailing, syllables)
+                .Size(1, 3);
+
+            HashSet<string> detected = new HashSet<string>();
+            for (int i = 0; i < 100; i++)
+            {
+                var name = sut.Next();
+                detected.Add(name);
+            }
+
+            Assert.IsTrue(detected.Contains("Tuk"));
+            Assert.IsTrue(detected.Contains("Tuktuk"));
+            Assert.IsTrue(detected.Contains("Tuktuktuk"));
+        }
+
+        [DataTestMethod]
+        [DataRow(1, 2)]
+        [DataRow(2, 4)]
+        [DataRow(3, 10)]
+        public void Configuration_SetMinimumAndMaximumSize_GeneratesNameWithinSizeRange(int min, int max)
+        {
+            var firstSymbols = new SymbolGenerator().Add("a");
+            var middleSymbols = new SymbolGenerator().Add("b");
+            var lastSymbols = new SymbolGenerator().Add("c");
+
+            var sut = new NameGenerator()
+                .Set(SyllablePosition.Leading, new SyllableGenerator().Add(SymbolPosition.First, firstSymbols))
+                .Set(SyllablePosition.Inner, new SyllableGenerator().Add(SymbolPosition.Middle, middleSymbols))
+                .Set(SyllablePosition.Trailing, new SyllableGenerator().Add(SymbolPosition.Last, lastSymbols))
+                .Size(min, max);
+
+            // Test name generation multiple times to ensure correctness
+            for (int i = 0; i < 100; i++)
+            {
+                var name = sut.Next();
+                Assert.IsTrue(name.Length >= min && name.Length <= max);
+            }
+        }
+
+        [DataTestMethod]
+        [DataRow("a", "b")]
+        [DataRow("ab", "cd")]
+        [DataRow("abc", "def")]
+        public void Constructor_TwoStringParameters_GeneratesName(string firstSymbols, string middleSymbols)
+        {
+            var sut = new NameGenerator(firstSymbols, middleSymbols).Size(1);
+
+            // Build a list of expected combinations
+            var expected = new List<string>();
+            foreach (char f in firstSymbols)
+            {
+                foreach (char m in middleSymbols)
                 {
-                    var name = sut.Next();
-                    Assert.IsTrue(name.Length > 2);
+                    string combo = char.ToUpper(f).ToString() + m;
+                    expected.Add(combo);
                 }
             }
-            catch (Exception e)
+
+            // Generate 100 names
+            var detected = new Dictionary<string, bool>();
+            for (int i = 0; i < 100; i++)
             {
-                Assert.Fail(e.Message);
+                string name = sut.Next();
+                detected[name] = true;
             }
+
+            // Verify that every expected combination appeared at least once.
+            foreach (var e in expected)
+            {
+                Assert.IsTrue(detected.ContainsKey(e), "Not every combination detected");
+            }
+
+            Assert.IsTrue(detected.Count <= expected.Count, "More combinations detected than was expected");
         }
 
-
         [TestMethod]
-        [DataRow("aeiou", "strlmnp", 0)]
-        [DataRow("aeiou", "strlmnp", 12345)]
-        public void NameGenerator_StaticRandomSeed_CreatesPredictableOutput(
-            string vowels,
-            string consonants,
-            int seed
-        )
+        public void Constructor_ThreeStringParameters_GeneratesName()
         {
-            var sut = new NameGenerator()
-                .UsingSyllables(x => x
-                    .WithVowels(vowels)
-                    .WithConsonants(consonants)
-                    .WithRandom(new Random(seed)))
-                .UsingRandom(new Random(seed));
-            
-            var comparison = new NameGenerator()
-                .UsingSyllables(x => x
-                    .WithVowels(vowels)
-                    .WithConsonants(consonants)
-                    .WithRandom(new Random(seed)))
-                .UsingRandom(new Random(seed));
-
-            for (int i = 0; i < 1000; i++)
-            {
-                Assert.AreEqual(sut.Next(), comparison.Next());
-            }
-
+            var sut = new NameGenerator("a", "b", "c").Size(1);
+            var name = sut.Next();
+            Assert.AreEqual("Abc", name);
         }
     }
 }

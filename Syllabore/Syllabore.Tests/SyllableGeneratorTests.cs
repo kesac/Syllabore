@@ -10,7 +10,7 @@ namespace Syllabore.Tests
         [TestMethod]
         public void Constructor_NoSymbolGenerators_ThrowsExceptionWhenGenerating()
         {
-            var sut = new SyllableGeneratorV3();
+            var sut = new SyllableGenerator();
             Assert.ThrowsException<InvalidOperationException>(() => sut.Next());
         }
 
@@ -25,7 +25,7 @@ namespace Syllabore.Tests
                 .Add("b").Weight(4)
                 .Cluster("c");
 
-            var sut = new SyllableGeneratorV3()
+            var sut = new SyllableGenerator()
                 .Add(position, symbols);
 
             var counts = new int[3];
@@ -46,7 +46,7 @@ namespace Syllabore.Tests
         [TestMethod]
         public void Configuration_AddGeneratorAllPositions_GeneratesFullSyllables()
         {
-            var sut = new SyllableGeneratorV3();
+            var sut = new SyllableGenerator();
             sut.Add(SymbolPosition.First, new SymbolGenerator().Add("a"));
             sut.Add(SymbolPosition.Middle, new SymbolGenerator().Add("b"));
             sut.Add(SymbolPosition.Last, new SymbolGenerator().Add("c"));
@@ -56,7 +56,7 @@ namespace Syllabore.Tests
         [TestMethod]
         public void Configuration_AddGeneratorUsingShortform_GeneratesFullSyllables()
         {
-            var sut = new SyllableGeneratorV3();
+            var sut = new SyllableGenerator();
             sut.Add(SymbolPosition.First, "a");
             sut.Add(SymbolPosition.Middle, "b");
             sut.Add(SymbolPosition.Last, "c");
@@ -67,7 +67,7 @@ namespace Syllabore.Tests
         [DataRow(1000)]
         public void Configuration_ChangePositionProbability_ProbabilityAffectsGeneration(int attempts)
         {
-            var sut = new SyllableGeneratorV3()
+            var sut = new SyllableGenerator()
                 .Add(SymbolPosition.First, new SymbolGenerator().Add("a"))
                 .Add(SymbolPosition.Middle, new SymbolGenerator().Add("b"))
                 .Add(SymbolPosition.Last, new SymbolGenerator().Add("c"))
@@ -116,10 +116,10 @@ namespace Syllabore.Tests
             var vowelSymbols2 = vowelSymbols.Copy();
             vowelSymbols2.Random = new Random(seed);
 
-            var sut = new SyllableGeneratorV3() { Random = new Random(seed) };
+            var sut = new SyllableGenerator() { Random = new Random(seed) };
             sut.Add(SymbolPosition.First, consonantSymbols).Add(SymbolPosition.Middle, vowelSymbols);
 
-            var comparison = new SyllableGeneratorV3() { Random = new Random(seed) };
+            var comparison = new SyllableGenerator() { Random = new Random(seed) };
             comparison.Add(SymbolPosition.First, consonantSymbols2).Add(SymbolPosition.Middle, vowelSymbols2);
 
             for (int i = 0; i < 1000; i++)

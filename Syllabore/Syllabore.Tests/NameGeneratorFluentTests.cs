@@ -8,11 +8,11 @@ using System.Collections.Generic;
 namespace Syllabore.Tests
 {
     [TestClass]
-    public class NameGeneratorV3FluentTests
+    public class NameGeneratorFluentTests
     {
-        private SyllableGeneratorV3 GetSyllableGenerator(string first, string middle, string last)
+        private SyllableGenerator GetSyllableGenerator(string first, string middle, string last)
         {
-            return new SyllableGeneratorV3()
+            return new SyllableGenerator()
                 .Add(SymbolPosition.First, first)
                 .Add(SymbolPosition.Middle, middle)
                 .Add(SymbolPosition.Last, last);
@@ -30,7 +30,7 @@ namespace Syllabore.Tests
             string[] symbols = targetName.Atomize().ToArray();
 
             // Build a name generator using fluent methods that accept strings
-            var sut = new NameGeneratorV3()
+            var sut = new NameGenerator()
                 .Lead(x => x
                     .First(symbols[0])
                     .Middle(symbols[1])
@@ -47,7 +47,7 @@ namespace Syllabore.Tests
 
             // Then build a reference name generator using non-fluent methods
 
-            var referenceNameGenerator = new NameGeneratorV3()
+            var referenceNameGenerator = new NameGenerator()
                 .Set(SyllablePosition.Leading, GetSyllableGenerator(symbols[0], symbols[1], symbols[2]))
                 .Set(SyllablePosition.Inner, GetSyllableGenerator(symbols[3], symbols[4], symbols[5]))
                 .Set(SyllablePosition.Trailing, GetSyllableGenerator(symbols[6], symbols[7], symbols[8]))
@@ -74,7 +74,7 @@ namespace Syllabore.Tests
 
             // Build a name generator using fluent methods
             // that accept SymbolGenerators
-            var sut = new NameGeneratorV3()
+            var sut = new NameGenerator()
                 .Lead(x => x
                     .First(x => x.Add(symbols[0]))
                     .Middle(x => x.Add(symbols[1]))
@@ -91,7 +91,7 @@ namespace Syllabore.Tests
 
 
             // Then build a reference name generator using non-fluent methods
-            var referenceNameGenerator = new NameGeneratorV3()
+            var referenceNameGenerator = new NameGenerator()
                 .Set(SyllablePosition.Leading, GetSyllableGenerator(symbols[0], symbols[1], symbols[2]))
                 .Set(SyllablePosition.Inner, GetSyllableGenerator(symbols[3], symbols[4], symbols[5]))
                 .Set(SyllablePosition.Trailing, GetSyllableGenerator(symbols[6], symbols[7], symbols[8]))
@@ -108,7 +108,7 @@ namespace Syllabore.Tests
         [TestMethod]
         public void Fluent_UseCopyMethods_GeneratesNames()
         {
-            var sut = new NameGeneratorV3()
+            var sut = new NameGenerator()
                 .Lead(x => x
                     .First("a")
                     .Middle("b")
@@ -120,7 +120,7 @@ namespace Syllabore.Tests
 
             var abcSymbols = GetSyllableGenerator("a", "b", "c");
 
-            var referenceNameGenerator = new NameGeneratorV3()
+            var referenceNameGenerator = new NameGenerator()
                 .Set(SyllablePosition.Leading, abcSymbols)
                 .Set(SyllablePosition.Inner, abcSymbols)
                 .Set(SyllablePosition.Trailing, abcSymbols)
@@ -136,7 +136,7 @@ namespace Syllabore.Tests
         [TestMethod]
         public void Fluent_UseWeightMethod_WeightAffectSymbols()
         {
-            var sut = new NameGeneratorV3()
+            var sut = new NameGenerator()
                 .Lead(x => x
                     .First("a").Chance(0.5)
                     .Middle("b")

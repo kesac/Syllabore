@@ -25,10 +25,10 @@ namespace Syllabore
         public string Format { get; set; }
 
         /// <summary>
-        /// The <see cref="INameGenerator">NameGenerators</see>
+        /// The <see cref="NameGenerator">NameGenerators</see>
         /// used by this <see cref="NameFormatter"/>.
         /// </summary>
-        public Dictionary<string, INameGenerator> BoundNameGenerators { get; set; }
+        public Dictionary<string, NameGenerator> BoundNameGenerators { get; set; }
 
         /// <summary>
         /// <para>
@@ -43,13 +43,13 @@ namespace Syllabore
         public NameFormatter(string format)
         {
             this.Format = format ?? throw new ArgumentNullException("format", "The desired format cannot be null");
-            this.BoundNameGenerators = new Dictionary<string, INameGenerator>();
+            this.BoundNameGenerators = new Dictionary<string, NameGenerator>();
         }
 
         /// <summary>
-        /// Specifies a <see cref="INameGenerator"/> for the specified property.
+        /// Specifies a <see cref="NameGenerator"/> for the specified property.
         /// </summary>
-        public NameFormatter UsingGenerator(string property, INameGenerator generator)
+        public NameFormatter UsingGenerator(string property, NameGenerator generator)
         {
             this.BoundNameGenerators[property] = generator ?? throw new ArgumentNullException("generator", "The specified generator cannot be null");
             return this;
@@ -82,7 +82,7 @@ namespace Syllabore
         {
             var matches = Regex.Matches(format, "\\{.+?\\}");
             var result = new string[matches.Count];
-            
+
             for (int i = 0; i < matches.Count; i++)
             {
                 // Remove the leading and trailing curly bracket

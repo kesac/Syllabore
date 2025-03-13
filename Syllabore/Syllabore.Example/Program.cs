@@ -3,9 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Syllabore.Example.Spaceship;
-using Syllabore.Example.Planets;
-using Syllabore.Example.RandomString;
+
 using System.Diagnostics;
 using Syllabore.Fluent;
 
@@ -19,13 +17,13 @@ namespace Syllabore.Example
             PrintSeparator();
             RunConstructorExample();
             PrintSeparator();
-            RunV2V3Comparison(300000);
+            ExecutionTime(300000);
         }
 
         private static void RunConstructorExample()
         {
             
-            var n1 = new NameGeneratorV3("srnl", "ae");
+            var n1 = new NameGenerator("srnl", "ae");
                 
             for(int i = 0; i < 10; i++)
             {
@@ -34,7 +32,7 @@ namespace Syllabore.Example
 
             PrintSeparator();
 
-            var n2 = new NameGeneratorV3("srnl", "ae", "lmt");
+            var n2 = new NameGenerator("srnl", "ae", "lmt");
 
             for (int i = 0; i < 10; i++)
             {
@@ -45,7 +43,7 @@ namespace Syllabore.Example
 
         private static void RunFluentExample()
         {
-            var names = new NameGeneratorV3()
+            var names = new NameGenerator()
                 .Lead(x => x
                     .First("s")
                     .Middle("a")
@@ -59,9 +57,12 @@ namespace Syllabore.Example
                 .Trail(x => x
                     .CopyLead()
                     .First("t").Chance(0.5))
-                .Transform(x => x
-                    .AppendSyllable("gard")
-                    .InsertSyllable(0, "star"))
+                .Transform(new TransformSet()
+                    .Add(x => x.AppendSyllable("gard"))
+                    .Add(x => x.InsertSyllable(0, "star"))
+                    .RandomlySelect(1))
+                .Filter(x => x
+                    .DoNotAllowStart("qi"))
                 .Size(3);
 
             for (int i = 0; i < 10; i++)
@@ -71,7 +72,7 @@ namespace Syllabore.Example
 
         }
 
-        private static void RunV2V3Comparison(int attempts)
+        private static void ExecutionTime(int attempts)
         {
             var stopwatch = Stopwatch.StartNew();
             var v2 = new NameGenerator("ae", "srnl");
@@ -84,20 +85,8 @@ namespace Syllabore.Example
             stopwatch.Stop();
             var v2time = stopwatch.ElapsedMilliseconds;
 
-            stopwatch.Restart();
-            var v3 = new NameGeneratorV3("srnl", "ae");
-
-            for (int i = 0; i < attempts; i++)
-            {
-                v3.Next();
-            }
-
-            stopwatch.Stop();
-            var v3time = stopwatch.ElapsedMilliseconds;
-
-            Console.WriteLine($"Comparison of {attempts} name generations:");
-            Console.WriteLine($"V2: {v2time}ms");
-            Console.WriteLine($"V3: {v3time}ms");
+            Console.WriteLine($"Time for {attempts} name generations:");
+            Console.WriteLine($"{v2time}ms");
 
         }
 

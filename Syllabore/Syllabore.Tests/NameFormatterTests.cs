@@ -25,12 +25,16 @@ namespace Syllabore.Tests
         [TestMethod]
         public void Constructor_WithFormattedParameter_SuccessfulNameGeneration()
         {
-            var sut = new NameFormatter("John {name} Smith")
-                    .UsingGenerator("name", new NameGenerator());
+            var sut = new NameFormatter("John {name} Smith {number}")
+                    .UsingGenerator("name", new NameGenerator("str", "ae"))
+                    .UsingGenerator("number", new NameGenerator("123","456"));
 
             for (int i = 0; i < 100; i++)
             {
-                Assert.IsTrue(sut.Next() != String.Empty);
+                var result = sut.Next();
+                Assert.IsTrue(result != String.Empty);
+                Assert.IsFalse(result.Contains("{name}"));
+                Assert.IsFalse(result.Contains("{number}"));
             }
         }
 
@@ -38,11 +42,13 @@ namespace Syllabore.Tests
         public void Constructor_WhenMismatchedGeneratorGiven_SuccessfulNameGeneration()
         {
             var sut = new NameFormatter("John {name} Smith")
-                    .UsingGenerator("another-property", new NameGenerator());
+                    .UsingGenerator("another-property", new NameGenerator("str", "ae"));
 
             for (int i = 0; i < 100; i++)
             {
-                Assert.IsTrue(sut.Next() != String.Empty);
+                var result = sut.Next();
+                Assert.IsTrue(result != String.Empty);
+                Assert.IsTrue(result.Contains("{name}"));
             }
         }
 
