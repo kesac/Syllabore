@@ -31,6 +31,11 @@ namespace Syllabore
         public Dictionary<string, NameGenerator> BoundNameGenerators { get; set; }
 
         /// <summary>
+        /// Provides hints on whether a name should be upper case, lower case, capitalized, etc.
+        /// </summary>
+        public Dictionary<string, NameFormat> StringCaseTypes { get; set; }
+
+        /// <summary>
         /// <para>
         /// Instantiates a new <see cref="NameFormatter"/> with the specified format. Substrings 
         /// that need to be replaced with a generated name should be surrounded with curly brackets.
@@ -44,14 +49,16 @@ namespace Syllabore
         {
             this.Format = format ?? throw new ArgumentNullException("format", "The desired format cannot be null");
             this.BoundNameGenerators = new Dictionary<string, NameGenerator>();
+            this.StringCaseTypes = new Dictionary<string, NameFormat>();
         }
 
         /// <summary>
         /// Specifies a <see cref="NameGenerator"/> for the specified property.
         /// </summary>
-        public NameFormatter UsingGenerator(string property, NameGenerator generator)
+        public NameFormatter Define(string property, NameGenerator generator, NameFormat stringCase = NameFormat.Capitalized)
         {
             this.BoundNameGenerators[property] = generator ?? throw new ArgumentNullException("generator", "The specified generator cannot be null");
+            this.StringCaseTypes[property] = stringCase;
             return this;
         }
 
@@ -67,7 +74,25 @@ namespace Syllabore
             {
                 if (this.BoundNameGenerators.ContainsKey(property))
                 {
-                    result.Replace("{" + property + "}", this.BoundNameGenerators[property].Next());
+                    var name = this.BoundNameGenerators[property].Next();
+
+                    if (this.StringCaseTypes.ContainsKey(property))
+                    {
+                        if (this.StringCaseTypes[property] == NameFormat.UpperCase)
+                        {
+                            name = name.ToUpper();
+                        }
+                        else if (this.StringCaseTypes[property] == NameFormat.LowerCase)
+                        {
+                            name = name.ToLower();
+                        }
+                        else if (this.StringCaseTypes[property] == NameFormat.Capitalized)
+                        {
+                            // Name should already be capitalized by default
+                        }
+                    }
+
+                    result.Replace("{" + property + "}", name);
                 }
             }
 
