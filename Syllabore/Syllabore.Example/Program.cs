@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 
 using System.Diagnostics;
 using Syllabore.Fluent;
+using Archigen;
 
 namespace Syllabore.Example
 {
@@ -13,14 +14,27 @@ namespace Syllabore.Example
     {
         public static void Main(string[] args)
         {
-            RunFluentExample();
+            RunCustomGenerator(new HighFantasyNames().GetGenerator());
             PrintSeparator();
-            RunConstructorExample();
+
+            RunCustomGenerator(new SpaceshipNames().GetGenerator());
             PrintSeparator();
-            ExecutionTime(300000);
+
+            RunSimpleConstructorExample();
+            PrintSeparator();
+
+            PrintExecutionTime(300000);
         }
 
-        private static void RunConstructorExample()
+        private static void RunCustomGenerator(IGenerator<string> generator)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Console.WriteLine(generator.Next());
+            }
+        }
+
+        private static void RunSimpleConstructorExample()
         {
             
             var n1 = new NameGenerator("srnl", "ae");
@@ -41,38 +55,7 @@ namespace Syllabore.Example
 
         }
 
-        private static void RunFluentExample()
-        {
-            var names = new NameGenerator()
-                .Lead(x => x
-                    .First("s")
-                    .Middle("a")
-                    .Last(x => x
-                        .Add("n").Weight(4)
-                        .Add("m").Weight(1)))
-                .Inner(x => x
-                    .First("t")
-                    .Middle("e")
-                    .Last("l"))
-                .Trail(x => x
-                    .CopyLead()
-                    .First("t").Chance(0.5))
-                .Transform(new TransformSet()
-                    .Add(x => x.AppendSyllable("gard"))
-                    .Add(x => x.InsertSyllable(0, "star"))
-                    .RandomlySelect(1))
-                .Filter(x => x
-                    .DoNotAllowStart("qi"))
-                .Size(3);
-
-            for (int i = 0; i < 10; i++)
-            {
-                Console.WriteLine(names.Next());
-            }
-
-        }
-
-        private static void ExecutionTime(int attempts)
+        private static void PrintExecutionTime(int attempts)
         {
             var stopwatch = Stopwatch.StartNew();
             var v2 = new NameGenerator("ae", "srnl");
