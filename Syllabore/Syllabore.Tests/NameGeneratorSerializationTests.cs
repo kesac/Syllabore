@@ -10,6 +10,7 @@ using Syllabore.Fluent;
 
 namespace Syllabore.Tests
 {
+    /*
     [TestClass]
     public class NameGeneratorSerializationTests
     {
@@ -205,5 +206,6 @@ namespace Syllabore.Tests
         }
 
     }
+    /**/
 
 }

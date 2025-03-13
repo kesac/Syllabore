@@ -22,7 +22,7 @@ namespace Syllabore.Tests
         public void NameFilter_UsingNullFilter_GeneratesNames()
         {
             NameFilter sut = null;
-            _testNames.Filter(sut);
+            _testNames.SetFilter(sut);
 
             for (int i = 0; i < 1000; i++)
             {
@@ -35,7 +35,7 @@ namespace Syllabore.Tests
         public void NameFilter_UsingEmptyFilter_GeneratesNames()
         {
             var sut = new NameFilter();
-            _testNames.Filter(sut);
+            _testNames.SetFilter(sut);
 
             for (int i = 0; i < 1000; i++)
             {
@@ -48,7 +48,7 @@ namespace Syllabore.Tests
         public void NameFilter_PreventSpecificPrefix_FilterAffectsGeneration()
         {
             var sut = new NameFilter().DoNotAllowStart("s");
-            _testNames.Filter(sut);
+            _testNames.SetFilter(sut);
 
             for (int i = 0; i < 1000; i++)
             {
@@ -61,7 +61,7 @@ namespace Syllabore.Tests
         public void NameFilter_PreventSpecificSuffix_FilterAffectsGeneration()
         {
             var sut = new NameFilter().DoNotAllowEnding("I");
-            _testNames.Filter(sut);
+            _testNames.SetFilter(sut);
 
             for (int i = 0; i < 1000; i++)
             {
@@ -77,7 +77,7 @@ namespace Syllabore.Tests
         public void NameFilter_PreventSpecificSubstring_FilterAffectsGeneration(string substring)
         {
             var sut = new NameFilter().DoNotAllowSubstring(substring);
-            _testNames.Filter(sut);
+            _testNames.SetFilter(sut);
 
             for (int i = 0; i < 1000; i++)
             {
@@ -100,7 +100,7 @@ namespace Syllabore.Tests
                 .DoNotAllowRegex(@"[eE]{2}")
                 .DoNotAllowRegex(@"[cfCF]{2}");
 
-            names.Filter(sut);
+            names.SetFilter(sut);
 
             for (int i = 0; i < 1000; i++)
             {
@@ -135,9 +135,9 @@ namespace Syllabore.Tests
             var trailing = inner.Copy();
 
             var sut = new NameGenerator()
-                .Set(SyllablePosition.Leading, leading)
-                .Set(SyllablePosition.Inner, inner)
-                .Set(SyllablePosition.Trailing, trailing);
+                .SetSyllables(SyllablePosition.Leading, leading)
+                .SetSyllables(SyllablePosition.Inner, inner)
+                .SetSyllables(SyllablePosition.Trailing, trailing);
 
             for (int i = 0; i < 1000; i++)
             {

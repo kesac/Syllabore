@@ -26,8 +26,8 @@ namespace Syllabore.Tests
         public void Constructor_WithFormattedParameter_SuccessfulNameGeneration()
         {
             var sut = new NameFormatter("John {name} Smith {number}")
-                    .UsingGenerator("name", new NameGenerator("str", "ae"))
-                    .UsingGenerator("number", new NameGenerator("123","456"));
+                    .Define("name", new NameGenerator("str", "ae"))
+                    .Define("number", new NameGenerator("123","456"));
 
             for (int i = 0; i < 100; i++)
             {
@@ -42,7 +42,7 @@ namespace Syllabore.Tests
         public void Constructor_WhenMismatchedGeneratorGiven_SuccessfulNameGeneration()
         {
             var sut = new NameFormatter("John {name} Smith")
-                    .UsingGenerator("another-property", new NameGenerator("str", "ae"));
+                    .Define("another-property", new NameGenerator("str", "ae"));
 
             for (int i = 0; i < 100; i++)
             {
@@ -56,7 +56,7 @@ namespace Syllabore.Tests
         public void Constructor_WhenPropertyBoundToNull_ExceptionThrown()
         {
             var sut = new NameFormatter("John {name} Smith");
-            Assert.ThrowsException<ArgumentNullException>(() => sut.UsingGenerator("name", null));
+            Assert.ThrowsException<ArgumentNullException>(() => sut.Define("name", null));
         }
 
     }

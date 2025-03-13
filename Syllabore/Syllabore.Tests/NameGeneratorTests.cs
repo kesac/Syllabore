@@ -25,8 +25,8 @@ namespace Syllabore.Tests
             var syllables = new SyllableGenerator().Add(symbolPosition, symbols);
 
             var sut = new NameGenerator()
-                .Set(SyllablePosition.Any, syllables)
-                .Size(1);
+                .SetSyllables(SyllablePosition.Any, syllables)
+                .SetSize(1);
 
             for (int i = 0; i < 100; i++)
             {
@@ -46,9 +46,9 @@ namespace Syllabore.Tests
                 .Add(SymbolPosition.Last, lastSymbols);
 
             var sut = new NameGenerator()
-                .Set(SyllablePosition.Leading, syllables)
-                .Set(SyllablePosition.Trailing, syllables)
-                .Size(1, 2);
+                .SetSyllables(SyllablePosition.Leading, syllables)
+                .SetSyllables(SyllablePosition.Trailing, syllables)
+                .SetSize(1, 2);
 
             HashSet<string> detected = new HashSet<string>();
             for (int i = 0; i < 100; i++)
@@ -74,10 +74,10 @@ namespace Syllabore.Tests
                 .Add(SymbolPosition.Last, lastSymbols);
 
             var sut = new NameGenerator()
-                .Set(SyllablePosition.Leading, syllables)
-                .Set(SyllablePosition.Inner, syllables)
-                .Set(SyllablePosition.Trailing, syllables)
-                .Size(1, 3);
+                .SetSyllables(SyllablePosition.Leading, syllables)
+                .SetSyllables(SyllablePosition.Inner, syllables)
+                .SetSyllables(SyllablePosition.Trailing, syllables)
+                .SetSize(1, 3);
 
             HashSet<string> detected = new HashSet<string>();
             for (int i = 0; i < 100; i++)
@@ -102,10 +102,10 @@ namespace Syllabore.Tests
             var lastSymbols = new SymbolGenerator().Add("c");
 
             var sut = new NameGenerator()
-                .Set(SyllablePosition.Leading, new SyllableGenerator().Add(SymbolPosition.First, firstSymbols))
-                .Set(SyllablePosition.Inner, new SyllableGenerator().Add(SymbolPosition.Middle, middleSymbols))
-                .Set(SyllablePosition.Trailing, new SyllableGenerator().Add(SymbolPosition.Last, lastSymbols))
-                .Size(min, max);
+                .SetSyllables(SyllablePosition.Leading, new SyllableGenerator().Add(SymbolPosition.First, firstSymbols))
+                .SetSyllables(SyllablePosition.Inner, new SyllableGenerator().Add(SymbolPosition.Middle, middleSymbols))
+                .SetSyllables(SyllablePosition.Trailing, new SyllableGenerator().Add(SymbolPosition.Last, lastSymbols))
+                .SetSize(min, max);
 
             // Test name generation multiple times to ensure correctness
             for (int i = 0; i < 100; i++)
@@ -121,7 +121,7 @@ namespace Syllabore.Tests
         [DataRow("abc", "def")]
         public void Constructor_TwoStringParameters_GeneratesName(string firstSymbols, string middleSymbols)
         {
-            var sut = new NameGenerator(firstSymbols, middleSymbols).Size(1);
+            var sut = new NameGenerator(firstSymbols, middleSymbols).SetSize(1);
 
             // Build a list of expected combinations
             var expected = new List<string>();
@@ -154,7 +154,7 @@ namespace Syllabore.Tests
         [TestMethod]
         public void Constructor_ThreeStringParameters_GeneratesName()
         {
-            var sut = new NameGenerator("a", "b", "c").Size(1);
+            var sut = new NameGenerator("a", "b", "c").SetSize(1);
             var name = sut.Next();
             Assert.AreEqual("Abc", name);
         }

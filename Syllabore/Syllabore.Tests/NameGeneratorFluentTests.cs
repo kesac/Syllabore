@@ -43,15 +43,15 @@ namespace Syllabore.Tests
                     .First(symbols[6])
                     .Middle(symbols[7])
                     .Last(symbols[8]))
-                .Size(3);
+                .SetSize(3);
 
             // Then build a reference name generator using non-fluent methods
 
             var referenceNameGenerator = new NameGenerator()
-                .Set(SyllablePosition.Leading, GetSyllableGenerator(symbols[0], symbols[1], symbols[2]))
-                .Set(SyllablePosition.Inner, GetSyllableGenerator(symbols[3], symbols[4], symbols[5]))
-                .Set(SyllablePosition.Trailing, GetSyllableGenerator(symbols[6], symbols[7], symbols[8]))
-                .Size(3);
+                .SetSyllables(SyllablePosition.Leading, GetSyllableGenerator(symbols[0], symbols[1], symbols[2]))
+                .SetSyllables(SyllablePosition.Inner, GetSyllableGenerator(symbols[3], symbols[4], symbols[5]))
+                .SetSyllables(SyllablePosition.Trailing, GetSyllableGenerator(symbols[6], symbols[7], symbols[8]))
+                .SetSize(3);
 
             // And compare the output of both generators
             var reference = referenceNameGenerator.Next();
@@ -87,15 +87,15 @@ namespace Syllabore.Tests
                     .First(x => x.Add(symbols[6]))
                     .Middle(x => x.Add(symbols[7]))
                     .Last(x => x.Add(symbols[8])))
-                .Size(3);
+                .SetSize(3);
 
 
             // Then build a reference name generator using non-fluent methods
             var referenceNameGenerator = new NameGenerator()
-                .Set(SyllablePosition.Leading, GetSyllableGenerator(symbols[0], symbols[1], symbols[2]))
-                .Set(SyllablePosition.Inner, GetSyllableGenerator(symbols[3], symbols[4], symbols[5]))
-                .Set(SyllablePosition.Trailing, GetSyllableGenerator(symbols[6], symbols[7], symbols[8]))
-                .Size(3);
+                .SetSyllables(SyllablePosition.Leading, GetSyllableGenerator(symbols[0], symbols[1], symbols[2]))
+                .SetSyllables(SyllablePosition.Inner, GetSyllableGenerator(symbols[3], symbols[4], symbols[5]))
+                .SetSyllables(SyllablePosition.Trailing, GetSyllableGenerator(symbols[6], symbols[7], symbols[8]))
+                .SetSize(3);
 
             // And compare the output of both generators
             var reference = referenceNameGenerator.Next();
@@ -116,15 +116,15 @@ namespace Syllabore.Tests
                 .Inner(x => x.CopyLead())
                 .Trail(x => x.CopyInner())
                 .Lead(x => x.CopyTrail())
-                .Size(3);
+                .SetSize(3);
 
             var abcSymbols = GetSyllableGenerator("a", "b", "c");
 
             var referenceNameGenerator = new NameGenerator()
-                .Set(SyllablePosition.Leading, abcSymbols)
-                .Set(SyllablePosition.Inner, abcSymbols)
-                .Set(SyllablePosition.Trailing, abcSymbols)
-                .Size(3);
+                .SetSyllables(SyllablePosition.Leading, abcSymbols)
+                .SetSyllables(SyllablePosition.Inner, abcSymbols)
+                .SetSyllables(SyllablePosition.Trailing, abcSymbols)
+                .SetSize(3);
 
             var reference = referenceNameGenerator.Next();
             var result = sut.Next();
@@ -143,7 +143,7 @@ namespace Syllabore.Tests
                     .Last("c"))
                 .Inner(x => x.CopyLead())
                 .Trail(x => x.CopyInner())
-                .Size(3);
+                .SetSize(3);
 
             var results = new HashSet<string>();
 

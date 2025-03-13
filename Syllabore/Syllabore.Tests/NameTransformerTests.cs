@@ -26,8 +26,8 @@ namespace Syllabore.Tests
         public void Transform_MultipleSteps_AllStepsAppear()
         {
             var sut = new Transform()
-                .InsertSyllable(0, "prefix")
-                .AppendSyllable("suffix");
+                .Insert(0, "prefix")
+                .Append("suffix");
 
             var result = sut.Apply(_testName).ToString().ToLower();
             Assert.IsTrue(result.StartsWith("prefix") && result.EndsWith("suffix"));
@@ -45,8 +45,8 @@ namespace Syllabore.Tests
         {
             var sut = new TransformSet()
                         .Add(x => x
-                            .InsertSyllable(0, "prefix")
-                            .AppendSyllable("suffix"));
+                            .Insert(0, "prefix")
+                            .Append("suffix"));
 
             var result = sut.Apply(_testName).ToString().ToLower();
             Assert.IsTrue(result.StartsWith("prefix") && result.EndsWith("suffix"));
@@ -56,8 +56,8 @@ namespace Syllabore.Tests
         public void TransformSet_TwoTransforms_AllTransformationsAppear()
         {
             var sut = new TransformSet()
-                        .Add(x => x.InsertSyllable(0, "prefix"))
-                        .Add(x => x.AppendSyllable("suffix"));
+                        .Add(x => x.Insert(0, "prefix"))
+                        .Add(x => x.Append("suffix"));
 
             var result = sut.Apply(_testName).ToString().ToLower();
             Assert.IsTrue(result.StartsWith("prefix") && result.EndsWith("suffix"));
@@ -68,8 +68,8 @@ namespace Syllabore.Tests
         public void TransformSet_TwoJoinedSets_TwoTransformationsAppear()
         {
 
-            var set1 = new TransformSet().Add(x => x.InsertSyllable(0, "prefix"));
-            var set2 = new TransformSet().Add(x => x.AppendSyllable("suffix"));
+            var set1 = new TransformSet().Add(x => x.Insert(0, "prefix"));
+            var set2 = new TransformSet().Add(x => x.Append("suffix"));
 
             var sut = set1.Join(set2);
 
@@ -82,8 +82,8 @@ namespace Syllabore.Tests
         public void TransformSet_TwoProbabilisticTransforms_OneTransformationAppears()
         {
             var sut = new TransformSet()
-                        .Add(x => x.InsertSyllable(0, "prefix"))
-                        .Add(x => x.AppendSyllable("suffix"))
+                        .Add(x => x.Insert(0, "prefix"))
+                        .Add(x => x.Append("suffix"))
                         .RandomlySelect(1);
 
             for (int i = 0; i < 100; i++)
@@ -99,7 +99,7 @@ namespace Syllabore.Tests
         {
 
             var sut = new NameGenerator("str", "ae")
-                    .Transform(x => x.ReplaceSyllable(-1, "suffix"));
+                    .Transform(x => x.Replace(-1, "suffix"));
 
             for (int i = 0; i < 100; i++)
             {
@@ -113,8 +113,8 @@ namespace Syllabore.Tests
         public void NameGeneration_ProbabilisticTransform_TransformSometimesAppears()
         {
             var sut = new NameGenerator("str", "ae")
-                    .Transform(0.5, new TransformSet()
-                        .Add(x => x.ReplaceSyllable(-1, "suffix")));
+                    .SetTransform(0.5, new TransformSet()
+                        .Add(x => x.Replace(-1, "suffix")));
 
             var appearances = 0;
 
@@ -135,7 +135,7 @@ namespace Syllabore.Tests
         {
             var sut = new NameGenerator("str", "ae")
                     .Transform(0.0, x => x
-                        .ReplaceSyllable(-1, "suffix"));
+                        .Replace(-1, "suffix"));
 
             var transformFound = false;
 
@@ -157,9 +157,9 @@ namespace Syllabore.Tests
         {
 
             var sut = new NameGenerator("str", "ae")
-                    .Transform(new TransformSet()
-                        .Add(x => x.InsertSyllable(0, "prefix"))
-                        .Add(x => x.AppendSyllable("suffix")));
+                    .SetTransform(new TransformSet()
+                        .Add(x => x.Insert(0, "prefix"))
+                        .Add(x => x.Append("suffix")));
 
             for (int i = 0; i < 100; i++)
             {
@@ -173,9 +173,9 @@ namespace Syllabore.Tests
         public void NameGeneration_MultipleProbabilisticTransforms_OnlyOneAppears()
         {
             var sut = new NameGenerator("str", "ae")
-                    .Transform(new TransformSet()
-                        .Add(x => x.InsertSyllable(0, "prefix"))
-                        .Add(x => x.AppendSyllable("suffix"))
+                    .SetTransform(new TransformSet()
+                        .Add(x => x.Insert(0, "prefix"))
+                        .Add(x => x.Append("suffix"))
                         .RandomlySelect(1));
 
             for (int i = 0; i < 100; i++)
