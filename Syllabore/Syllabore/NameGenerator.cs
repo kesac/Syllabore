@@ -82,7 +82,7 @@ namespace Syllabore
                 .Add(SymbolPosition.First, firstSymbols)
                 .Add(SymbolPosition.Middle, middleSymbols);
 
-            this.Set(SyllablePosition.Any, syllableGenerator);
+            this.SetSyllables(SyllablePosition.Any, syllableGenerator);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Syllabore
                 .Add(SymbolPosition.Middle, middleSymbols)
                 .Add(SymbolPosition.Last, lastSymbols);
 
-            this.Set(SyllablePosition.Any, syllableGenerator);
+            this.SetSyllables(SyllablePosition.Any, syllableGenerator);
         }
 
         /// <summary>
@@ -107,13 +107,13 @@ namespace Syllabore
         /// <param name="position">The position for the syllable generator.</param>
         /// <param name="generator">The syllable generator to add.</param>
         /// <returns>The current instance of <see cref="NameGenerator"/>.</returns>
-        public NameGenerator Set(SyllablePosition position, SyllableGenerator generator)
+        public NameGenerator SetSyllables(SyllablePosition position, SyllableGenerator generator)
         {
             if(position == SyllablePosition.Any)
             {
-                Set(SyllablePosition.Leading, generator);
-                Set(SyllablePosition.Inner, generator);
-                Set(SyllablePosition.Trailing, generator);
+                SetSyllables(SyllablePosition.Leading, generator);
+                SetSyllables(SyllablePosition.Inner, generator);
+                SetSyllables(SyllablePosition.Trailing, generator);
             }
             else
             {
@@ -124,29 +124,9 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Sets both the minimum and maximum number of syllables to use per name.
-        /// </summary>
-        public NameGenerator Size(int size)
-        {
-            MinimumSize = size;
-            MaximumSize = size;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the minimum and maximum number of syllables to use per name.
-        /// </summary>
-        public NameGenerator Size(int minSize, int maxSize)
-        {
-            MinimumSize = minSize;
-            MaximumSize = maxSize;
-            return this;
-        }
-
-        /// <summary>
         /// Sets the name transformer to use when generating names.
         /// </summary>
-        public NameGenerator Transform(INameTransformer transformer)
+        public NameGenerator SetTransform(INameTransformer transformer)
         {
             NameTransformer = transformer;
             NameTransformerChance = 1.0;
@@ -156,7 +136,7 @@ namespace Syllabore
         /// <summary>
         /// Sets the name transformer to use when generating names.
         /// </summary>
-        public NameGenerator Transform(double chance, INameTransformer transformer)
+        public NameGenerator SetTransform(double chance, INameTransformer transformer)
         {
             NameTransformer = transformer;
             NameTransformerChance = chance;
@@ -166,9 +146,29 @@ namespace Syllabore
         /// <summary>
         /// Sets the name filter to use when generating names.
         /// </summary>
-        public NameGenerator Filter(NameFilter filter)
+        public NameGenerator SetFilter(NameFilter filter)
         {
             NameFilter = filter;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets both the minimum and maximum number of syllables to use per name.
+        /// </summary>
+        public NameGenerator SetSize(int size)
+        {
+            MinimumSize = size;
+            MaximumSize = size;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the minimum and maximum number of syllables to use per name.
+        /// </summary>
+        public NameGenerator SetSize(int minSize, int maxSize)
+        {
+            MinimumSize = minSize;
+            MaximumSize = maxSize;
             return this;
         }
 

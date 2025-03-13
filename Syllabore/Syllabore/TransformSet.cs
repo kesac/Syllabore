@@ -64,12 +64,31 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Adds a new <see cref="Transform"/> to this <see cref="TransformSet"/>.
+        /// </summary>
+        public TransformSet Add(Transform transform)
+        {
+            this.Transforms.Add(transform);
+            return this;
+        }
+
+        /// <summary>
+        /// <para>
+        /// Applies a weight to the last added transform. If random selection is
+        /// enabled, a higher weight leads to a higher frequency of being selected. 
+        /// </para>
+        /// </summary>
+        public TransformSet Weight(int weight)
+        {
+            this.Transforms[this.Transforms.Count - 1].Weight = weight;
+            return this;
+        }
+
+        /// <summary>
         /// Returns a new <see cref="Name"/> that
         /// is the result of one or more <see cref="Transform"/>s
         /// applied to the specified source <see cref="Name"/>.
-        /// <para>
         /// This method leaves the source <see cref="Name"/> untouched.
-        /// </para>
         /// </summary>
         public Name Apply(Name sourceName)
         {
@@ -82,6 +101,37 @@ namespace Syllabore
                 return this.ApplyAllTransforms(sourceName);
             }
         }
+
+
+
+        /// <summary>
+        /// Combines this <see cref="TransformSet"/> with the specified <see cref="TransformSet"/>.
+        /// A new <see cref="TransformSet"/> that is the combination of the two is returned.
+        /// </summary>
+        public TransformSet Join(TransformSet set)
+        {
+            TransformSet result = new TransformSet() { RandomSelectionCount = this.RandomSelectionCount };
+
+            result.Transforms.AddRange(this.Transforms);
+            result.Transforms.AddRange(set.Transforms);
+            return result;
+        }
+
+        /// <summary>
+        /// <para>
+        /// Sets this <see cref="TransformSet"/> to randomly select transforms to apply to the source name.
+        /// </para>
+        /// <para>
+        /// The <paramref name="limit"/> parameter specifies the maximum number of unique transforms that will be applied.
+        /// </para>
+        /// </summary>
+        public TransformSet RandomlySelect(int limit)
+        {
+            this.UseRandomSelection = true;
+            this.RandomSelectionCount = limit;
+            return this;
+        }
+
 
         private Name ApplyRandomTransforms(Name sourceName)
         {
@@ -108,7 +158,7 @@ namespace Syllabore
         {
             var result = new Name(sourceName);
 
-            foreach(var transform in this.Transforms)
+            foreach (var transform in this.Transforms)
             {
                 if (this.CanTransformBeApplied(transform, sourceName))
                 {
@@ -147,62 +197,6 @@ namespace Syllabore
 
             return canApplyTransform;
 
-        }
-
-        /// <summary>
-        /// Adds a new <see cref="Transform"/> to this <see cref="TransformSet"/>.
-        /// </summary>
-        public TransformSet Add(Transform transform)
-        {
-            this.Transforms.Add(transform);
-            return this;
-        }
-
-        /// <summary>
-        /// <para>
-        /// Applies a weight to the last added transform that influences the probability of being used over others. 
-        /// </para>
-        /// <para>
-        /// For example, given two transform X and Y with a weight of 3 and 1 respectively, transform X will be applied 75% of the time.
-        /// All transforms have default weight of 1.
-        /// </para>
-        /// <para>
-        /// Weights are only used if this <see cref="TransformSet"/> has been configured to use random selection 
-        /// through a call to <see cref="RandomlySelect(int)"/>.
-        /// </para>
-        /// </summary>
-        public TransformSet Weight(int weight)
-        {
-            this.Transforms[this.Transforms.Count - 1].Weight = weight;
-            return this;
-        }
-
-        /// <summary>
-        /// Combines this <see cref="TransformSet"/> with the specified <see cref="TransformSet"/>.
-        /// A new <see cref="TransformSet"/> that is the combination of the two is returned.
-        /// </summary>
-        public TransformSet Join(TransformSet set)
-        {
-            TransformSet result = new TransformSet() { RandomSelectionCount = this.RandomSelectionCount };
-
-            result.Transforms.AddRange(this.Transforms);
-            result.Transforms.AddRange(set.Transforms);
-            return result;
-        }
-
-        /// <summary>
-        /// <para>
-        /// Sets this <see cref="TransformSet"/> to randomly select transforms to apply to the source name.
-        /// </para>
-        /// <para>
-        /// The <paramref name="limit"/> parameter specifies the maximum number of unique transforms that will be applied.
-        /// </para>
-        /// </summary>
-        public TransformSet RandomlySelect(int limit)
-        {
-            this.UseRandomSelection = true;
-            this.RandomSelectionCount = limit;
-            return this;
         }
 
     }

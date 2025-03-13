@@ -95,7 +95,6 @@ namespace Syllabore
             return result;
         }
 
-
         /// <summary>
         /// <para>
         /// Adds a condition to this <see cref="Transform"/>. The condition is a regular expression applied
@@ -123,17 +122,16 @@ namespace Syllabore
             return this;
         }
 
-
         /// <summary>
         /// Adds a step that replaces a syllable at the specified index with
         /// a desired string.
+        /// <para>
+        /// The index can be a negative integer to traverse from the
+        /// end of the name instead. For example, an index -1 will be interpreted as the
+        /// last syllable of a name.
+        /// </para>
         /// </summary>
-        /// <param name="index">The index can be a negative integer to traverse from the
-        /// end of the name instead. (For example, an index -1 will be interpreted as the
-        /// last syllable of a name.</param>
-        /// <param name="replacement">The string to substitute in.</param>
-        /// <returns></returns>
-        public Transform ReplaceSyllable(int index, string replacement)
+        public Transform Replace(int index, string replacement)
         {
             this.Steps.Add(new TransformStep(TransformStepType.ReplaceSyllable, index.ToString(), replacement));
             return this;
@@ -143,7 +141,7 @@ namespace Syllabore
         /// Adds a step that replaces all instances of the specified substring in each syllable with
         /// a desired string. Note that the substring must be completely contained in a syllable to be replaced.
         /// </summary>
-        public Transform ReplaceAll(string substring, string replacement)
+        public Transform ReplaceSubstring(string substring, string replacement)
         {
             this.Steps.Add(new TransformStep(TransformStepType.ReplaceAllSubstring, substring, replacement));
             return this;
@@ -158,7 +156,7 @@ namespace Syllabore
         /// last syllable of a name.</param>
         /// <param name="syllable">The string to insert.</param>
         /// <returns></returns>
-        public Transform InsertSyllable(int index, string syllable)
+        public Transform Insert(int index, string syllable)
         {
             this.Steps.Add(new TransformStep(TransformStepType.InsertSyllable, index.ToString(), syllable));
             return this;
@@ -167,7 +165,7 @@ namespace Syllabore
         /// <summary>
         /// Adds a transform step that appends a new syllable to the end of a name.
         /// </summary>
-        public Transform AppendSyllable(string syllable)
+        public Transform Append(string syllable)
         {
             this.Steps.Add(new TransformStep(TransformStepType.AppendSyllable, syllable));
             return this;
@@ -179,7 +177,7 @@ namespace Syllabore
         /// <param name="index">The index can be a negative integer to traverse from the
         /// end of the name instead. (For example, an index -1 will be interpreted as the
         /// last syllable of a name.</param>
-        public Transform RemoveSyllable(int index)
+        public Transform Remove(int index)
         {
             this.Steps.Add(new TransformStep(TransformStepType.RemoveSyllable, index.ToString()));
             return this;
