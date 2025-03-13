@@ -7,7 +7,7 @@ namespace Syllabore
 {
 
     /// <summary>
-    /// Validates names produced by a <see cref="INameGenerator"/> against a set of configurable constraints.
+    /// Validates names produced by a name generator against a set of configurable constraints.
     /// </summary>
     [Serializable]
     public class NameFilter : INameFilter
@@ -41,11 +41,10 @@ namespace Syllabore
             return this;
         }
 
-        // TODO: Do we still need Name objects?
         /// <summary>
         /// Returns true if the specified name does not match any of this filter's contraints, else returns false.
         /// </summary>
-        public bool IsValidName(Name name)
+        public bool IsValid(Name name)
         {
             return IsValid(name.ToString());
         }
