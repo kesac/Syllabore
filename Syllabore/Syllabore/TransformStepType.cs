@@ -6,6 +6,8 @@
     /// </summary>
     public enum TransformStepType
     {
+        Unknown,
+
         /// <summary>
         /// Adds a syllable to a <see cref="Name"/>, displacing other
         /// syllables as needed.

@@ -7,12 +7,18 @@ namespace Syllabore
     /// <summary>
     /// Represents one action or step in a <see cref="Transform"/>.
     /// </summary>
-    public class TransformStep
+    public class TransformStep : IPotentialAction
     {
         /// <summary>
         /// The type of action this <see cref="TransformSet"/> represents.
         /// </summary>
         public TransformStepType Type { get; set; }
+
+        /// <summary>
+        /// The probability this <see cref="TransformStep"/> will make changes
+        /// when <see cref="Modify(Name)"/> is called.
+        /// </summary>
+        public double Chance { get; set; }
 
         /// <summary>
         /// The arguments that are passed to the action.
@@ -32,16 +38,17 @@ namespace Syllabore
         public TransformStep() // Needs to exist for serialization
         {
             this.Arguments = new List<string>();
+            this.Chance = 1;
         }
 
         /// <summary>
         /// Instantiates a new <see cref="TransformStep"/> with
         /// the specified type and arguments.
         /// </summary>
-        public TransformStep(TransformStepType type, params string[] args)
+        public TransformStep(TransformStepType type, params string[] args) : this()
         {
             this.Type = type;
-            this.Arguments = new List<string>(args);
+            this.Arguments.AddRange(args);
         }
 
         /// <summary>
@@ -52,7 +59,7 @@ namespace Syllabore
         /// not serializable.
         /// </summary>
         /// <param name="unserializableAction"></param>
-        public TransformStep(Action<Name> unserializableAction)
+        public TransformStep(Action<Name> unserializableAction) : this()
         {
             this.Type = TransformStepType.Lambda;
             _unserializableAction = unserializableAction;

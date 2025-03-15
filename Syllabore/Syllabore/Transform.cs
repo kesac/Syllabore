@@ -17,8 +17,13 @@ namespace Syllabore
     /// must be fulfilled for a transformation to occur.
     /// </para>
     /// </summary>
-    public class Transform : IWeighted, INameTransformer
+    public class Transform : IPotentialAction, IWeighted, INameTransformer, IRandomizable
     {
+        /// <summary>
+        /// Used to simulate randomness.
+        /// </summary>
+        public Random Random { get; set; }
+
         /// <summary>
         /// The <see cref="TransformStep">steps</see> that this transform will execute.
         /// </summary>
@@ -31,6 +36,15 @@ namespace Syllabore
         /// default to a weight of 1.
         /// </summary>
         public int Weight { get; set; }
+
+        /// <summary>
+        /// The probability this <see cref="Transform"/> will attempt to change a 
+        /// name when <see cref="Apply(Name)"/> is called. The value must be a double between 0 and 1 inclusive.
+        /// <para>
+        /// Note that each <see cref="TransformStep"/> in this <see cref="Transform"/> can also have its own chance value.
+        /// </para>
+        /// </summary>
+        public double Chance { get; set; }
 
         /// <summary>
         /// The index of the syllable that the condition operates on. A negative index 
@@ -53,8 +67,10 @@ namespace Syllabore
         /// </summary>
         public Transform()
         {
+            this.Random = new Random();
             this.Steps = new List<TransformStep>();
             this.Weight = 1;
+            this.Chance = 1;
             this.ConditionalIndex = null;
             this.ConditionalRegex = null;
         }
@@ -79,7 +95,12 @@ namespace Syllabore
         /// <summary>
         /// <para>
         /// Applies this <see cref="Transform"/> on the specified <see cref="Name"/>
-        /// and returns a new <see cref="Name"/> as a result.
+        /// and returns a new <see cref="Name"/> as a result. 
+        /// </para>
+        /// <para>
+        /// The transform may result in no changes if a condition 
+        /// was added and is not met, or if the <see href="Chance"/>
+        /// property is between 0 and 1 exclusive (less than 100%).
         /// </para>
         /// <para>
         /// This method leaves the source <see cref="Name"/> unchanged.
@@ -88,111 +109,29 @@ namespace Syllabore
         public Name Apply(Name name)
         {
             var result = new Name(name);
-            foreach (var step in this.Steps)
+
+            if (this.Random.NextDouble() < this.Chance)
             {
-                step.Modify(result);
+                foreach (var step in this.Steps)
+                {
+                    if (this.Random.NextDouble() < step.Chance)
+                    {
+                        step.Modify(result);
+                    }
+                }
             }
+
             return result;
         }
 
         /// <summary>
-        /// <para>
-        /// Adds a condition to this <see cref="Transform"/>. The condition is a regular expression applied
-        /// to a syllable at the specified <paramref name="index"/>. It must be satisfied for the <see cref="Transform"/>
-        /// to be applied successfully.
-        /// </para>
-        /// <para>The specified <paramref name="index"/> determines the location of the syllable 
-        /// that the condition operates on. A negative <paramref name="index"/> can be provided to traverse from the end of the name
-        /// instead. (For example, an index -1 will be interpreted as the last syllable of a name.)
-        /// </para>
+        /// Adds a new step to this transform.
         /// </summary>
-        public Transform When(int index, string regex)
+        public Transform AddStep(TransformStep step)
         {
-            if (index == int.MaxValue)
-            {
-                this.ConditionalIndex = null;
-            }
-            else
-            {
-                this.ConditionalIndex = index;
-            }
-
-            this.ConditionalRegex = regex;
-
+            this.Steps.Add(step);
             return this;
         }
-
-        /// <summary>
-        /// Adds a step that replaces a syllable at the specified index with
-        /// a desired string.
-        /// <para>
-        /// The index can be a negative integer to traverse from the
-        /// end of the name instead. For example, an index -1 will be interpreted as the
-        /// last syllable of a name.
-        /// </para>
-        /// </summary>
-        public Transform Replace(int index, string replacement)
-        {
-            this.Steps.Add(new TransformStep(TransformStepType.ReplaceSyllable, index.ToString(), replacement));
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a step that replaces all instances of the specified substring in each syllable with
-        /// a desired string. Note that the substring must be completely contained in a syllable to be replaced.
-        /// </summary>
-        public Transform ReplaceSubstring(string substring, string replacement)
-        {
-            this.Steps.Add(new TransformStep(TransformStepType.ReplaceAllSubstring, substring, replacement));
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a transform step that inserts a new syllable at the specified index. The
-        /// syllable at that index and the others after it will be pushed one index to the right.
-        /// </summary>
-        /// <param name="index">The index can be a negative integer to traverse from the
-        /// end of the name instead. (For example, an index -1 will be interpreted as the
-        /// last syllable of a name.</param>
-        /// <param name="syllable">The string to insert.</param>
-        /// <returns></returns>
-        public Transform Insert(int index, string syllable)
-        {
-            this.Steps.Add(new TransformStep(TransformStepType.InsertSyllable, index.ToString(), syllable));
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a transform step that appends a new syllable to the end of a name.
-        /// </summary>
-        public Transform Append(string syllable)
-        {
-            this.Steps.Add(new TransformStep(TransformStepType.AppendSyllable, syllable));
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a step that removes the syllable at the specified index.
-        /// </summary>
-        /// <param name="index">The index can be a negative integer to traverse from the
-        /// end of the name instead. (For example, an index -1 will be interpreted as the
-        /// last syllable of a name.</param>
-        public Transform Remove(int index)
-        {
-            this.Steps.Add(new TransformStep(TransformStepType.RemoveSyllable, index.ToString()));
-            return this;
-        }
-
-        /// <summary>
-        /// Executes the specified action on a name. Note that this transform step cannot
-        /// be serialized.
-        /// </summary>
-        public Transform ExecuteUnserializableAction(Action<Name> unserializableAction)
-        {
-            this.Steps.Add(new TransformStep(unserializableAction));
-            return this;
-        }
-
 
     }
 }

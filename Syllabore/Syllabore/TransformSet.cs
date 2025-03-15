@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 
 namespace Syllabore
 {
-
     /// <summary>
     /// <para>
     /// A <see cref="TransformSet"/> takes a source name, 
@@ -14,18 +13,28 @@ namespace Syllabore
     /// applied to the source name and in the order they were added.
     /// </para>
     /// <para>
-    /// To randomize what transforms are applied, make sure to call 
+    /// To randomize what transforms are applied, call 
     /// <see cref="RandomlySelect(int)"/> when configuring a 
     /// <see cref="TransformSet"/>.
     /// </para>
     /// </summary>
     [Serializable]
-    public class TransformSet : INameTransformer, IRandomizable
+    public class TransformSet : IPotentialAction, INameTransformer, IRandomizable
     {
         /// <summary>
         /// Used to simulate randomness when <see cref="UseRandomSelection"/> is true.
         /// </summary>
         public Random Random { get; set; }
+
+        /// <summary>
+        /// The probability this transform set will make changes to a name. 
+        /// This value must be between 0 and 1 inclusive.
+        /// <para>
+        /// Note that each <see cref="Transform">Transform</see> in the set can also have its own chance value
+        /// which is rolled separately.
+        /// </para>
+        /// </summary>
+        public double Chance { get; set; }
 
         /// <summary>
         /// The <see cref="Transform">Transforms</see> that make up this
@@ -49,6 +58,7 @@ namespace Syllabore
         /// </summary>
         public int RandomSelectionCount { get; set; }
 
+
         /// <summary>
         /// Instantiates a new <see cref="TransformSet"/>.
         /// By default, all future <see cref="Transform"/>s that are added
@@ -58,6 +68,7 @@ namespace Syllabore
         public TransformSet()
         {
             this.Random = new Random();
+            this.Chance = 1.0;
             this.Transforms = new List<Transform>();
             this.UseRandomSelection = false;
             this.RandomSelectionCount = 0;
@@ -69,18 +80,6 @@ namespace Syllabore
         public TransformSet Add(Transform transform)
         {
             this.Transforms.Add(transform);
-            return this;
-        }
-
-        /// <summary>
-        /// <para>
-        /// Applies a weight to the last added transform. If random selection is
-        /// enabled, a higher weight leads to a higher frequency of being selected. 
-        /// </para>
-        /// </summary>
-        public TransformSet Weight(int weight)
-        {
-            this.Transforms[this.Transforms.Count - 1].Weight = weight;
             return this;
         }
 
@@ -101,8 +100,6 @@ namespace Syllabore
                 return this.ApplyAllTransforms(sourceName);
             }
         }
-
-
 
         /// <summary>
         /// Combines this <see cref="TransformSet"/> with the specified <see cref="TransformSet"/>.
@@ -131,7 +128,6 @@ namespace Syllabore
             this.RandomSelectionCount = limit;
             return this;
         }
-
 
         private Name ApplyRandomTransforms(Name sourceName)
         {
@@ -171,26 +167,36 @@ namespace Syllabore
 
         private bool CanTransformBeApplied(Transform transform, Name sourceName)
         {
-            var canApplyTransform = (transform.ConditionalRegex == null);
+            var canApplyTransform = false;
 
-            if (transform.ConditionalRegex != null)
+            if (this.Random.NextDouble() <= this.Chance)
             {
-                if (transform.ConditionalIndex.HasValue)
+                if (transform.ConditionalRegex != null)
                 {
-                    int index = transform.ConditionalIndex.Value;
-
-                    if (index < 0) // reverse index provided, so translate into a forward index (eg. -1 is the last syllable)
+                    if (transform.ConditionalIndex.HasValue)
                     {
-                        index = sourceName.Syllables.Count + index;
+                        int index = transform.ConditionalIndex.Value;
+
+                        if (index < 0) // reverse index provided, so translate into a forward index (eg. -1 is the last syllable)
+                        {
+                            index = sourceName.Syllables.Count + index;
+                        }
+
+                        if (Regex.IsMatch(sourceName.Syllables[index], transform.ConditionalRegex))
+                        {
+                            // The target syllable passes the condition
+                            canApplyTransform = true;
+                        }
                     }
-
-                    if (Regex.IsMatch(sourceName.Syllables[index], transform.ConditionalRegex))
+                    else if (Regex.IsMatch(sourceName.ToString(), transform.ConditionalRegex))
                     {
+                        // Entire name passes the condition
                         canApplyTransform = true;
                     }
                 }
-                else if (Regex.IsMatch(sourceName.ToString(), transform.ConditionalRegex))
+                else
                 {
+                    // No conditions, automatic pass
                     canApplyTransform = true;
                 }
             }
@@ -198,6 +204,7 @@ namespace Syllabore
             return canApplyTransform;
 
         }
+
 
     }
 
