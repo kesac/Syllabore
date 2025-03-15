@@ -71,8 +71,8 @@ namespace Syllabore.Tests
                 .Add(SymbolPosition.First, new SymbolGenerator().Add("a"))
                 .Add(SymbolPosition.Middle, new SymbolGenerator().Add("b"))
                 .Add(SymbolPosition.Last, new SymbolGenerator().Add("c"))
-                .Chance(SymbolPosition.First, 0.5)
-                .Chance(SymbolPosition.Last, 0.5);
+                .SetChance(SymbolPosition.First, 0.5)
+                .SetChance(SymbolPosition.Last, 0.5);
 
             // The first and last symbols don't always appear
             // That makes four theoretical combinations
