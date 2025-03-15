@@ -6,6 +6,8 @@
     /// </summary>
     public enum FilterCondition
     {
+        Unknown,
+
         /// <summary>
         /// Condition is met if the name contains a specific substring.
         /// </summary>
