@@ -76,7 +76,7 @@ namespace Syllabore
         /// </summary>
         public SyllableGeneratorFluentWrapper Chance(double chance)
         {
-            Result.Chance(_lastSymbolPositionModified, chance);
+            Result.SetChance(_lastSymbolPositionModified, chance);
             return this;
         }
 
@@ -97,7 +97,7 @@ namespace Syllabore
 
                 foreach (var chance in syllableGenerator.PositionChance)
                 {
-                    Result.Chance(chance.Key, chance.Value);
+                    Result.SetChance(chance.Key, chance.Value);
                 }
             }
 

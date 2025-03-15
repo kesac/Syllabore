@@ -10,6 +10,10 @@ namespace Syllabore
     /// </summary>
     public class SymbolGenerator : IGenerator<string>, IRandomizable
     {
+        // Note: this class does not implement IPotentialAction on purpose
+        // It always returns a string. It's up to SyllableGenerator when to use
+        // it or not.
+
         private List<Symbol> _recentlyAddedSymbols;
 
         /// <summary>

@@ -26,16 +26,9 @@ namespace Syllabore
         public INameTransformer NameTransformer { get; set; }
 
         /// <summary>
-        /// The chance that the name transformer will be applied to a generated name.
-        /// This value should be between 0.0 and 1.0 and only has an effect if the 
-        /// NameTransformer property is set.
-        /// </summary>
-        public double NameTransformerChance { get; set; }
-
-        /// <summary>
         /// The filter used to control generated names.
         /// </summary>
-        public NameFilter NameFilter { get; set; }
+        public INameFilter NameFilter { get; set; }
 
         /// <summary>
         /// The minimum number of syllables in generated names.
@@ -129,24 +122,13 @@ namespace Syllabore
         public NameGenerator SetTransform(INameTransformer transformer)
         {
             NameTransformer = transformer;
-            NameTransformerChance = 1.0;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the name transformer to use when generating names.
-        /// </summary>
-        public NameGenerator SetTransform(double chance, INameTransformer transformer)
-        {
-            NameTransformer = transformer;
-            NameTransformerChance = chance;
             return this;
         }
 
         /// <summary>
         /// Sets the name filter to use when generating names.
         /// </summary>
-        public NameGenerator SetFilter(NameFilter filter)
+        public NameGenerator SetFilter(INameFilter filter)
         {
             NameFilter = filter;
             return this;
@@ -184,8 +166,11 @@ namespace Syllabore
             while (!validNameGenerated)
             {
                 result = GenerateName();
-                
-                if (NameTransformer != null && Random.NextDouble() < NameTransformerChance)
+
+                // Note that a transform is a potential action
+                // and if its Chance property is below 100%, nothing
+                // may change
+                if (NameTransformer != null)
                 {
                     result = NameTransformer.Apply(result);
                 }
@@ -196,7 +181,7 @@ namespace Syllabore
                 }
                 else
                 {
-                    validNameGenerated = NameFilter.IsValid(result.ToString());
+                    validNameGenerated = NameFilter.IsValid(result);
                 }
 
                 if (!validNameGenerated && ++totalAttempts >= MaximumRetries)

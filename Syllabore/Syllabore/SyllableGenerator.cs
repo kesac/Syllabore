@@ -74,7 +74,7 @@ namespace Syllabore
         /// Sets the probability of generating a symbol for the specified position.
         /// The default value is 1.0 (100% probability) unless changed by calling this method.
         /// </summary>
-        public SyllableGenerator Chance(SymbolPosition position, double chance)
+        public SyllableGenerator SetChance(SymbolPosition position, double chance)
         {
             PositionChance[position] = chance;
 
@@ -140,7 +140,7 @@ namespace Syllabore
 
             foreach (var position in PositionChance.Keys)
             {
-                newGenerator.Chance(position, PositionChance[position]);
+                newGenerator.SetChance(position, PositionChance[position]);
             }
 
             return newGenerator;
