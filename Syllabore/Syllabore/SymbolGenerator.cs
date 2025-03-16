@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Archigen;
 
 namespace Syllabore
@@ -19,6 +20,7 @@ namespace Syllabore
         /// <summary>
         /// The instance of <see cref="System.Random"/> used to simulate randomness.
         /// </summary>
+        [JsonIgnore]
         public Random Random { get; set; }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Syllabore
 {
@@ -18,6 +19,7 @@ namespace Syllabore
         /// <summary>
         /// The instance of <see cref="System.Random"/> used to simulate randomness.
         /// </summary>
+        [JsonIgnore]
         public Random Random { get; set; }
 
         /// <summary>
