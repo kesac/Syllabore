@@ -20,6 +20,9 @@ namespace Syllabore.Example
             RunCustomGenerator(new SpaceshipNames().GetGenerator());
             PrintSeparator();
 
+            RunCustomGenerator(new SimilarSoundingNames().GetNonFluentGenerator());
+            PrintSeparator();
+
             RunSimpleConstructorExample();
             PrintSeparator();
 

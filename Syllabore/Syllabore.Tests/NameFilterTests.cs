@@ -131,7 +131,7 @@ namespace Syllabore.Tests
         public void NameValidation_WhenPrefixConstraintNotSpecified_OutputReflectsConstraints()
         {
             var leading = new SyllableGenerator().Add(SymbolPosition.Middle, "aei");
-            var inner = leading.Copy().Add(SymbolPosition.First, "str");
+            var inner = ((SyllableGenerator)leading.Copy()).Add(SymbolPosition.First, "str");
             var trailing = inner.Copy();
 
             var sut = new NameGenerator()
