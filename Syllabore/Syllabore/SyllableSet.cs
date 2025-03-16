@@ -1,6 +1,7 @@
 ﻿using Archigen;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Syllabore
 {
@@ -18,37 +19,49 @@ namespace Syllabore
     /// </summary>
     public class SyllableSet : ISyllableGenerator, IRandomizable
     {
-        private SyllableGenerator _syllableGenerator;
-        private int _maxSyllableCount;
-        private List<string> _possibleSyllables;
-        private bool _forceUnique; // Should only be set via constructor
+        public SyllableGenerator SyllableGenerator { get; set; }
+        public List<string> PossibleSyllables { get; set; }
+
+        /// <summary>
+        /// The maximum number of syllables for the <see cref="SyllableSet.SyllableGenerator"/>
+        /// to generate. This value has no effect if there is no <see cref="SyllableGenerator"/>.
+        /// </summary>
+        public int MaximumGeneratedSyllables { get; set; }
+        public bool ForceUnique { get; set; }
 
         /// <summary>
         /// The instance used to simulate randomness.
         /// </summary>
+        [JsonIgnore]
         public Random Random { get; set; }
         
+        /// <summary>
+        /// Initializes an empty set.
+        /// </summary>
+        public SyllableSet()
+        {
+            this.Random = new Random();
+            this.PossibleSyllables = new List<string>();
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SyllableSet"/> class with the specified syllables.
         /// </summary>
         /// <param name="syllables">The syllables to include in this set.</param>
-        public SyllableSet(params string[] syllables)
+        public SyllableSet(params string[] syllables) : this()
         {
-            this.Random = new Random();
-            _possibleSyllables = new List<string>(syllables);
+            PossibleSyllables.AddRange(syllables);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SyllableSet"/> class with the specified syllable generator.
         /// </summary>
-        public SyllableSet(SyllableGenerator syllableGenerator, int maxSyllableCount, bool forceUnique = false)
+        public SyllableSet(SyllableGenerator syllableGenerator, int maxSyllableCount, bool forceUnique = false) : this()
         {
-            this.Random = new Random();
-            _possibleSyllables = new List<string>();
-            _forceUnique = forceUnique;
+            ForceUnique = forceUnique;
 
-            _syllableGenerator = syllableGenerator;
-            _maxSyllableCount = maxSyllableCount;
+            SyllableGenerator = syllableGenerator;
+            MaximumGeneratedSyllables = maxSyllableCount;
         }
 
         /// <summary>
@@ -59,9 +72,9 @@ namespace Syllabore
         {
             foreach(var syllable in syllables)
             {
-                if(!_forceUnique || !_possibleSyllables.Contains(syllable))
+                if(!ForceUnique || !PossibleSyllables.Contains(syllable))
                 {
-                    _possibleSyllables.Add(syllable);
+                    PossibleSyllables.Add(syllable);
                 }
             }
 
@@ -73,18 +86,18 @@ namespace Syllabore
         /// </summary>
         public string Next()
         {
-            if (_possibleSyllables.Count < _maxSyllableCount && _syllableGenerator != null)
+            if (PossibleSyllables.Count < MaximumGeneratedSyllables && SyllableGenerator != null)
             {
                 int attempts = 0;
-                int maxAttempts = _maxSyllableCount * 2;
+                int maxAttempts = MaximumGeneratedSyllables * 2;
 
-                while(_possibleSyllables.Count < _maxSyllableCount)
+                while(PossibleSyllables.Count < MaximumGeneratedSyllables)
                 {
-                    var result = _syllableGenerator.Next();
+                    var result = SyllableGenerator.Next();
 
-                    if(!_forceUnique || !_possibleSyllables.Contains(result))
+                    if(!ForceUnique || !PossibleSyllables.Contains(result))
                     {
-                        _possibleSyllables.Add(result);
+                        PossibleSyllables.Add(result);
                     }
 
                     attempts++;
@@ -97,12 +110,12 @@ namespace Syllabore
                 }
             }
 
-            if(_possibleSyllables.Count == 0)
+            if(PossibleSyllables.Count == 0)
             {
                 throw new InvalidOperationException("No syllables have been added to this set.");
             }
 
-            return _possibleSyllables[this.Random.Next(_possibleSyllables.Count)];
+            return PossibleSyllables[this.Random.Next(PossibleSyllables.Count)];
         }
 
         /// <summary>
@@ -111,12 +124,12 @@ namespace Syllabore
         public ISyllableGenerator Copy()
         {
             var copy = new SyllableSet();
-            copy._possibleSyllables.AddRange(_possibleSyllables);
+            copy.PossibleSyllables.AddRange(PossibleSyllables);
             
-            if(this._syllableGenerator != null)
+            if(this.SyllableGenerator != null)
             {
-                copy._syllableGenerator = this._syllableGenerator?.Copy() as SyllableGenerator;
-                copy._maxSyllableCount = this._maxSyllableCount;
+                copy.SyllableGenerator = this.SyllableGenerator?.Copy() as SyllableGenerator;
+                copy.MaximumGeneratedSyllables = this.MaximumGeneratedSyllables;
             }
 
             return copy;
