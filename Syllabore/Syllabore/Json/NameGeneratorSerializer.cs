@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -9,7 +8,6 @@ using System.Text.Unicode;
 
 namespace Syllabore.Json
 {
-
     /// <summary>
     /// A convenience class for reading and writing 
     /// a <see cref="NameGenerator"/> to disk and back.
@@ -23,140 +21,178 @@ namespace Syllabore.Json
         private static readonly char[] AllowedCharacters = { '\r', '\n', '\u0022' };
 
         /// <summary>
-        /// The class <see cref="Type"/> of a <see cref="NameGenerator"/>'s
-        /// <see cref="NameGenerator.Provider"/> property.
+        /// Allows characters and unicode ranges.
         /// </summary>
-        public Type ProviderType { get; set; }    // TODO: Rename
+        public TextEncoderSettings EncoderSettings { get; set; }
 
         /// <summary>
-        /// The class <see cref="Type"/> of a <see cref="NameGenerator"/>'s
-        /// <see cref="NameGenerator.Transformer"/> property.
+        /// If true, json output will be indented and easier to read.
         /// </summary>
-        public Type TransformerType { get; set; }
+        public bool WriteIndented { get; set; }
 
         /// <summary>
-        /// The class <see cref="Type"/> of a <see cref="NameGenerator"/>'s
-        /// <see cref="NameGenerator.Filter"/> property.
-        /// </summary>
-        public Type FilterType { get; set; }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="NameGeneratorSerializer"/>.
+        /// Initializes a new <see cref="NameGeneratorSerializer"/> with
+        /// basic encoder settings.
         /// </summary>
         public NameGeneratorSerializer()
         {
-            this.ProviderType = typeof(SyllableGenerator);
-            this.TransformerType = typeof(TransformSet);
-            this.FilterType = typeof(NameFilter);
+            EncoderSettings = new TextEncoderSettings();
+            EncoderSettings.AllowRanges(UnicodeRanges.BasicLatin);
+            EncoderSettings.AllowCharacters(AllowedCharacters);
+            WriteIndented = true;
         }
 
         /// <summary>
-        /// Uses the specified type when serializing or deserializing 
-        /// <see cref="ISyllableGenerator"/> property <c>Provider</c> of
-        /// <see cref="NameGenerator"/>. By default, the type 
-        /// used is <see cref="SyllableGenerator"/>.
-        /// </summary>
-        public NameGeneratorSerializer UsingProviderType(Type type)
-        {
-            this.ProviderType = type;
-            return this;
-        }
-
-        /// <summary>
-        /// Uses the specified type when serializing or deserializing 
-        /// <see cref="INameTransformer"/> property <c>Transformer</c> of
-        /// <see cref="NameGenerator"/>. By default, the type 
-        /// used is <see cref="TransformSet"/>.
-        /// </summary>
-        public NameGeneratorSerializer UsingTransformerType(Type type)
-        {
-            this.TransformerType = type;
-            return this;
-        }
-
-        /// <summary>
-        /// Uses the specified type when serializing or deserializing 
-        /// <see cref="INameFilter"/> property <c>Filter</c> of
-        /// <see cref="NameGenerator"/>. By default, the type 
-        /// used is <see cref="NameFilter"/>.
-        /// </summary>
-        public NameGeneratorSerializer UsingFilterType(Type type)
-        {
-            this.FilterType = type;
-            return this;
-        }
-
-        private JsonSerializerOptions GetSerializerOptions()
-        {
-            var encoding = new TextEncoderSettings();
-            encoding.AllowRanges(UnicodeRanges.BasicLatin);
-            encoding.AllowCharacters(AllowedCharacters);
-
-            var options = new JsonSerializerOptions() { 
-                WriteIndented = true,
-                Encoder = JavaScriptEncoder.Create(encoding)
-            };
-
-            return options;
-        }
-
-        /// <summary>
-        /// Writes the specified NameGenerator to disk as a JSON file to the specified file path.
+        /// Writes the specified <see cref="NameGenerator"/> to a json file.
         /// </summary>
         public void Serialize(NameGenerator generator, string filepath)
-        {    
-            Save(generator, filepath, this.ProviderType, this.TransformerType, this.FilterType);
-        }
-
-        /// <summary>
-        /// Writes the specified NameGenerator to disk as a JSON file to the specified file path.
-        /// The NameGenerator's provider, transformer, and filter will be saved as the specified types.
-        /// </summary>
-        private void Save(NameGenerator generator, string path, Type provider, Type transformer, Type filter)
         {
-            var options = GetSerializerOptions();
-            options.Converters.Add(new JsonPropertyCast<ISyllableGenerator>(provider));
-            options.Converters.Add(new JsonPropertyCast<INameTransformer>(transformer));
-            options.Converters.Add(new JsonPropertyCast<INameFilter>(filter));
+            var options = new JsonSerializerOptions()
+            {
+                WriteIndented = this.WriteIndented,
+                Encoder = JavaScriptEncoder.Create(EncoderSettings)
+            };
 
-            string result = JsonSerializer.Serialize<NameGenerator>(generator, options);
-            File.WriteAllText(path, result);
+            // Some of NameGenerator's properties are an interface type.
+            // These converters ensure they are serialized as their concrete type instead.
+            options.Converters.Add(new InterfaceConverter<ISyllableGenerator>());
+            options.Converters.Add(new InterfaceConverter<INameTransformer>());
+            options.Converters.Add(new InterfaceConverter<INameFilter>());
+
+            var meta = new SerializedNameGenerator()
+            {
+                Types = GetTypeInformation(generator),
+                Value = generator
+            };
+
+            string json = JsonSerializer.Serialize<SerializedNameGenerator>(meta, options);
+            File.WriteAllText(filepath, json);
         }
 
+        // NameGenerator has properties with interfaces as their types.
+        // Normal deserialization won't work. This class's Serialize() method
+        // writes the concrete types into the json file so we look for those concrete
+        // types when deserializing.
         /// <summary>
-        /// Reads a JSON file at the specified path and returns a <see cref="NameGenerator"/> based on that file.
+        /// Reads a json file and turns it into a <see cref="NameGenerator"/>.
+        /// This method expects the json file to have been written by
+        /// the <see cref="Serialize"/> method of this class.
         /// </summary>
         public NameGenerator Deserialize(string filepath)
         {
-            return Load(filepath, this.ProviderType, this.TransformerType, this.FilterType);
+            var json = File.ReadAllText(filepath);
+            var result = new NameGenerator();
+
+            using (var doc = JsonDocument.Parse(json))
+            {
+                var root = doc.RootElement;
+
+                // Each json file has two major sections:
+                // - Value, which contains the actual name generator JSON
+                // - Types, which contains the class names needed to deserialize the name generator JSON properly
+                //          we need class names because some name generator properties are interface types
+                var extractedTypes = root.TryGetProperty(nameof(SerializedNameGenerator.Types), out JsonElement typesElement);
+                var extractedValue = root.TryGetProperty(nameof(SerializedNameGenerator.Value), out JsonElement valueElement);
+                var extractedSyllableGenerators = valueElement.TryGetProperty(nameof(SerializedNameGenerator.Value.SyllableGenerators), out JsonElement syllableGeneratorsElement);
+
+                if (!extractedTypes || !extractedValue || !extractedSyllableGenerators)
+                {
+                    throw new JsonException("The json file is not in the expected format.");
+                }
+
+                var types = JsonSerializer.Deserialize<NameGeneratorTypeInformation>(typesElement.GetRawText());
+
+                // For syllable generators, we must:
+                // - Extract class names from 'Types' and resolve the names into actual C# Type objects
+                // - Deserialize portions of the NameGenerator JSON using the Type objects
+                // - Assign the deserialized objects to the appropriate properties of NameGenerator
+                foreach (var syllableGeneratorTypeName in types.SyllableGeneratorTypeNames)
+                {
+                    var syllableGeneratorType = Type.GetType(syllableGeneratorTypeName.Value);
+                    var syllablePositionName = syllableGeneratorTypeName.Key.ToString();
+
+                    if (syllableGeneratorsElement.TryGetProperty(syllablePositionName, out JsonElement generatorElement)
+                        && generatorElement.ValueKind != JsonValueKind.Null)
+                    {
+                        var generator = (ISyllableGenerator)JsonSerializer.Deserialize(generatorElement.GetRawText(), syllableGeneratorType);
+                        result.SyllableGenerators[syllableGeneratorTypeName.Key] = generator;
+                    }
+                }
+
+                // Transformers and filters are handled the same way as syllable generators:
+                // - Extract class names from 'Types' and resolve the names into actual C# Type objects
+                // - Deserialize portions of the NameGenerator JSON using the Type objects
+                // - Assign the deserialized objects to the transformer and filter properties of NameGenerator
+                if (types.NameTransformerTypeName != null)
+                {
+                    if(valueElement.TryGetProperty(nameof(result.NameTransformer), out JsonElement transformerElement) 
+                        && transformerElement.ValueKind != JsonValueKind.Null)
+                    {
+                        var transformerType = Type.GetType(types.NameTransformerTypeName);
+                        result.NameTransformer = (INameTransformer)JsonSerializer.Deserialize(transformerElement.GetRawText(), transformerType);
+                    }
+                }
+
+                if (types.NameFilterType != null)
+                {
+                    if (valueElement.TryGetProperty(nameof(result.NameFilter), out JsonElement filterElement)
+                        && filterElement.ValueKind != JsonValueKind.Null)
+                    {
+                        var filterType = Type.GetType(types.NameFilterType);
+                        result.NameFilter = (INameFilter)JsonSerializer.Deserialize(filterElement.GetRawText(), filterType);
+                    }
+                }
+
+                // The remaining properties of NameGenerator don't use interface types
+                // so we can deserialize them normally
+                if (valueElement.TryGetProperty(nameof(result.MinimumSize), out JsonElement minSizeElement))
+                {
+                    result.MinimumSize = minSizeElement.GetInt32();
+                }
+
+                if (valueElement.TryGetProperty(nameof(result.MaximumSize), out JsonElement maxSizeElement))
+                {
+                    result.MaximumSize = maxSizeElement.GetInt32();
+                }
+
+                if (valueElement.TryGetProperty(nameof(result.MaximumRetries), out JsonElement maxRetriesElement))
+                {
+                    result.MaximumRetries = maxRetriesElement.GetInt32();
+                }
+
+            }
+            
+            return result;
         }
 
         /// <summary>
-        /// Reads a JSON file at the specified path and returns a <see cref="NameGenerator"/> based on that file.
-        /// The NameGenerator's provider, transformer, and filter will be instantiated as the specified types.
+        /// Collects type information of <see cref="NameGenerator"/> properties"/> to be
+        /// included in serialized json. This information is important when deserializing 
+        /// the json back into a <see cref="NameGenerator"/> object.
         /// </summary>
-        private NameGenerator Load(string path, Type provider, Type transformer, Type filter)
+        private NameGeneratorTypeInformation GetTypeInformation(NameGenerator generator)
         {
-            var options = GetSerializerOptions();
-            options.Converters.Add(new JsonPropertyCast<ISyllableGenerator>(provider));
-            options.Converters.Add(new JsonPropertyCast<INameTransformer>(transformer));
-            options.Converters.Add(new JsonPropertyCast<INameFilter>(filter));
+            var types = new NameGeneratorTypeInformation();
+            types.SyllableGeneratorTypeNames = new Dictionary<SyllablePosition, string>();
 
-            string result = File.ReadAllText(path);
-            var g = JsonSerializer.Deserialize<NameGenerator>(result, options);
-
-            /*
-            // The parent property is not serialized because it would create a cycle
-            // and so needs to be set again.
-            
-            if(g.Provider is SyllableGenerator)
+            foreach (var pair in generator.SyllableGenerators)
             {
-                var p = (SyllableGenerator)g.Provider;
-                p.Probability.StartingSyllable.Parent = p.Probability
+                var position = pair.Key;
+                var syllableGenerator = pair.Value;
+                types.SyllableGeneratorTypeNames[position] = syllableGenerator.GetType().FullName;
             }
-            */
 
-            return g;
+            if (generator.NameTransformer != null)
+            {
+                types.NameTransformerTypeName = generator.NameTransformer.GetType().FullName;
+            }
+
+            if (generator.NameFilter != null)
+            {
+                types.NameFilterType = generator.NameFilter.GetType().FullName;
+            }
+
+            return types;
         }
 
     }
