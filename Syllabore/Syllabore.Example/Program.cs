@@ -27,6 +27,8 @@ namespace Syllabore.Example
             PrintSeparator();
 
             PrintExecutionTime(300000);
+
+            RunSerializationExample();
         }
 
         private static void RunCustomGenerator(IGenerator<string> generator)
@@ -73,6 +75,20 @@ namespace Syllabore.Example
 
             Console.WriteLine($"Time for {attempts} name generations:");
             Console.WriteLine($"{v2time}ms");
+
+        }
+
+        private static void RunSerializationExample()
+        {
+            var generator = new NameGenerator("ae", "srnl")
+                .Transform(x => x.Insert(0, "a"))
+                .Filter("z");
+
+            generator.SetSyllables(SyllablePosition.Inner, new SyllableSet("ko"));
+
+            var serializer = new NameGeneratorSerializer();
+            serializer.Serialize(generator, "name-generator.json");
+            // var back = serializer.Deserialize("name-generator.json");
 
         }
 
