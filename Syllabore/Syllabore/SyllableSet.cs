@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Archigen;
+using System;
 using System.Collections.Generic;
 
 namespace Syllabore
 {
+
     /// <summary>
     /// <para>
     /// A special kind of syllable generator that constructs a finite
     /// set of syllables and only returns syllables from that set.
-    /// A <see cref="SyllableSet"/> can be used as the syllable generator for
-    /// a <see cref="NameGenerator"/>.
     /// </para>
     /// <para>
     /// Names constructed from a <see cref="SyllableSet"/> can give the appearance
@@ -18,149 +18,50 @@ namespace Syllabore
     /// </summary>
     public class SyllableSet : ISyllableGenerator, IRandomizable
     {
+        private SyllableGenerator _syllableGenerator;
+        private int _maxSyllableCount;
+        private List<string> _possibleSyllables;
+        private bool _forceUnique; // Should only be set via constructor
 
         /// <summary>
-        /// Used to simulate randomness during generation.
+        /// The instance used to simulate randomness.
         /// </summary>
         public Random Random { get; set; }
-
+        
         /// <summary>
-        /// The syllable set size for starting syllables.
+        /// Initializes a new instance of the <see cref="SyllableSet"/> class with the specified syllables.
         /// </summary>
-        public int StartingSyllableMax { get; set; }
-
-        /// <summary>
-        /// The syllable set size for syllables occurring
-        /// between the starting and ending syllable.
-        /// </summary>
-        public int MiddleSyllableMax { get; set; }
-
-        /// <summary>
-        /// The syllable set size for ending syllables.
-        /// </summary>
-        public int EndingSyllableMax { get; set; }
-
-        private ISyllableGenerator _generator { get; set; }
-
-        /// <summary>
-        /// The finite set of syllables to be used in the starting position of a name.
-        /// </summary>
-        public HashSet<string> StartingSyllables { get; set; }
-
-        /// <summary>
-        /// The finite set of syllables to be used between the starting and ending
-        /// positions of a name.
-        /// </summary>
-        public HashSet<string> MiddleSyllables { get; set; }
-
-        /// <summary>
-        /// The finite set of syllables to be used in the ending position of a name.
-        /// </summary>
-        public HashSet<string> EndingSyllables { get; set; }
-
-        /// <summary>
-        /// Instantiates a new syllable set with a default size of
-        /// 8 starting syllables, 8 middle syllables, and 8 ending syllables.
-        /// The <see cref="DefaultSyllableGenerator"/> is used to construct the
-        /// syllables.
-        /// </summary>
-        public SyllableSet() : this(8, 8, 8) 
-        {
-            // Purposely empty
-        }
-
-        /// <summary>
-        /// Instantiates a new syllable set with the specified sizes.
-        /// A <see cref="DefaultSyllableGenerator"/> is used to construct the
-        /// syllables unless replaced with a call to <see cref="WithGenerator(ISyllableGenerator)"/>.
-        /// </summary>
-        public SyllableSet(int startingSyllableCount, int middleSyllableCount, int endingSyllableCount)
+        /// <param name="syllables">The syllables to include in this set.</param>
+        public SyllableSet(params string[] syllables)
         {
             this.Random = new Random();
-            this.StartingSyllables = new HashSet<string>();
-            this.MiddleSyllables = new HashSet<string>();
-            this.EndingSyllables = new HashSet<string>();
-
-            this.StartingSyllableMax = startingSyllableCount;
-            this.MiddleSyllableMax = middleSyllableCount;
-            this.EndingSyllableMax = endingSyllableCount;
-
-            this.WithGenerator(new DefaultSyllableGenerator());
+            _possibleSyllables = new List<string>(syllables);
         }
 
         /// <summary>
-        /// Uses the specified <see cref="SyllableGenerator"/> to create this
-        /// syllable set's finite pool of syllables.
+        /// Initializes a new instance of the <see cref="SyllableSet"/> class with the specified syllable generator.
         /// </summary>
-        public SyllableSet WithGenerator(Func<SyllableGenerator, SyllableGenerator> config)
+        public SyllableSet(SyllableGenerator syllableGenerator, int maxSyllableCount, bool forceUnique = false)
         {
-            this.WithGenerator(config(new SyllableGenerator()));
-            return this;
+            this.Random = new Random();
+            _possibleSyllables = new List<string>();
+            _forceUnique = forceUnique;
+
+            _syllableGenerator = syllableGenerator;
+            _maxSyllableCount = maxSyllableCount;
         }
 
         /// <summary>
-        /// Uses the specified <see cref="ISyllableGenerator"/> to create this
-        /// syllable set's finite pool of syllables.
+        /// Adds the specified syllables to the set.
         /// </summary>
-        public SyllableSet WithGenerator(ISyllableGenerator provider)
+        /// <param name="syllables">The syllables to add to the set.</param>
+        public SyllableSet Add(params string[] syllables)
         {
-            _generator = provider;
-            return this;
-        }
-
-
-        /// <summary>
-        /// Sets the instance of <see cref="System.Random"/>
-        /// used to simulate randomness during syllable generation.
-        /// </summary>
-        public SyllableSet WithRandom(Random random)
-        {
-            this.Random = random;
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a syllable to this <see cref="SyllableSet"/>'s pool of starting syllables.
-        /// </summary>
-        /// <param name="syllables">One or more starting syllables to add this syllable set</param>
-        /// <exception cref="InvalidOperationException">
-        ///     Thrown if adding the specified starting syllables exceeds the maximum size of this
-        ///     syllable set.
-        /// </exception>
-        public SyllableSet WithStartingSyllable(params string[] syllables)
-        {
-            foreach (var syllable in syllables)
+            foreach(var syllable in syllables)
             {
-                this.StartingSyllables.Add(syllable);
-
-                if (this.StartingSyllables.Count > this.StartingSyllableMax)
+                if(!_forceUnique || !_possibleSyllables.Contains(syllable))
                 {
-                    throw new InvalidOperationException("Exceeded limit for number of starting syllables");
-                }
-
-            }
-
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a syllable to this <see cref="SyllableSet"/>'s pool of "middle" (neither
-        /// starting nor ending) syllables.
-        /// </summary>
-        /// <param name="syllables">One or more middle syllables to add this syllable set</param>
-        /// <exception cref="InvalidOperationException">
-        ///     Thrown if adding the specified middle syllables exceeds the maximum size of this
-        ///     syllable set.
-        /// </exception>
-        public SyllableSet WithMiddleSyllable(params string[] syllables)
-        {
-            foreach (var syllable in syllables)
-            {
-                this.MiddleSyllables.Add(syllable);
-
-                if (this.MiddleSyllables.Count > this.MiddleSyllableMax)
-                {
-                    throw new InvalidOperationException("Exceeded limit for number of middle syllables");
+                    _possibleSyllables.Add(syllable);
                 }
             }
 
@@ -168,77 +69,57 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Adds a syllable to this <see cref="SyllableSet"/>'s pool of ending syllables.
+        /// Generates a new syllable from the set.
         /// </summary>
-        /// <param name="syllables">One or more ending syllables to add this syllable set</param>
-        /// <exception cref="InvalidOperationException">
-        ///     Thrown if adding the specified ending syllables exceeds the maximum size of this
-        ///     syllable set.
-        /// </exception>
-        public SyllableSet WithEndingSyllable(params string[] syllables)
+        public string Next()
         {
-            foreach (var syllable in syllables)
+            if (_possibleSyllables.Count < _maxSyllableCount && _syllableGenerator != null)
             {
-                this.EndingSyllables.Add(syllable);
+                int attempts = 0;
+                int maxAttempts = _maxSyllableCount * 2;
 
-                if (this.EndingSyllables.Count > this.EndingSyllableMax)
+                while(_possibleSyllables.Count < _maxSyllableCount)
                 {
-                    throw new InvalidOperationException("Exceeded limit for number of ending syllables");
+                    var result = _syllableGenerator.Next();
+
+                    if(!_forceUnique || !_possibleSyllables.Contains(result))
+                    {
+                        _possibleSyllables.Add(result);
+                    }
+
+                    attempts++;
+
+                    if(attempts >= maxAttempts)
+                    {
+                        throw new InvalidOperationException("Could not generate enough unique syllables.");
+                    }
+
                 }
             }
 
-            return this;
+            if(_possibleSyllables.Count == 0)
+            {
+                throw new InvalidOperationException("No syllables have been added to this set.");
+            }
+
+            return _possibleSyllables[this.Random.Next(_possibleSyllables.Count)];
         }
 
         /// <summary>
-        /// Returns a random syllable suitable for use in the starting position
-        /// of a name.
+        /// Creates a deep copy of this <see cref="SyllableSet"/>.
         /// </summary>
-        public string NextStartingSyllable()
+        public ISyllableGenerator Copy()
         {
-            if (this.StartingSyllables.Count < this.StartingSyllableMax)
+            var copy = new SyllableSet();
+            copy._possibleSyllables.AddRange(_possibleSyllables);
+            
+            if(this._syllableGenerator != null)
             {
-                for (int i = this.StartingSyllables.Count; i < this.StartingSyllableMax; i++)
-                {
-                    this.StartingSyllables.Add(_generator.NextStartingSyllable());
-                }
+                copy._syllableGenerator = this._syllableGenerator?.Copy() as SyllableGenerator;
+                copy._maxSyllableCount = this._maxSyllableCount;
             }
 
-            return this.StartingSyllables.RandomItem<string>(this.Random);
+            return copy;
         }
-
-        /// <summary>
-        /// Returns a random syllable suitable for use between the starting and ending
-        /// positions of a name.
-        /// </summary>
-        public string NextSyllable()
-        {
-            if (this.MiddleSyllables.Count < this.MiddleSyllableMax)
-            {
-                for (int i = this.MiddleSyllables.Count; i < this.MiddleSyllableMax; i++)
-                {
-                    this.MiddleSyllables.Add(_generator.NextSyllable());
-                }
-            }
-
-            return this.MiddleSyllables.RandomItem<string>(this.Random);
-        }
-
-        /// <summary>
-        /// Returns a random syllable suitable for use in the ending position of a name.
-        /// </summary>
-        public string NextEndingSyllable()
-        {
-            if (this.EndingSyllables.Count < this.EndingSyllableMax)
-            {
-                for (int i = this.EndingSyllables.Count; i < this.EndingSyllableMax; i++)
-                {
-                    this.EndingSyllables.Add(_generator.NextEndingSyllable());
-                }
-            }
-
-            return this.EndingSyllables.RandomItem<string>(this.Random);
-        }
-
     }
 }
