@@ -9,7 +9,7 @@ namespace Syllabore
     /// <summary>
     /// Generates syllables that can be sequenced into names.
     /// </summary>
-    public class SyllableGenerator : IGenerator<string>, IRandomizable
+    public class SyllableGenerator : ISyllableGenerator, IRandomizable
     {
 
         private SymbolGenerator _lastAddedGenerator;
@@ -126,7 +126,7 @@ namespace Syllabore
         /// Creates a deep copy of this <see cref="SyllableGenerator"/>
         /// excluding internal instances of <see cref="System.Random"/>.
         /// </summary>
-        public SyllableGenerator Copy()
+        public ISyllableGenerator Copy()
         {
             var newGenerator = new SyllableGenerator();
             

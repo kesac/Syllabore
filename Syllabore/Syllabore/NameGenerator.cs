@@ -18,7 +18,7 @@ namespace Syllabore
         /// <summary>
         /// The <see cref="SyllableGenerator">SyllableGenerators</see> used by this <see cref="NameGenerator"/>.
         /// </summary>
-        public Dictionary<SyllablePosition, SyllableGenerator> SyllableGenerators { get; set; }
+        public Dictionary<SyllablePosition, ISyllableGenerator> SyllableGenerators { get; set; }
 
         /// <summary>
         /// The transformer used to modify generated names.
@@ -53,7 +53,7 @@ namespace Syllabore
         /// </summary>
         public NameGenerator()
         {
-            SyllableGenerators = new Dictionary<SyllablePosition, SyllableGenerator>();
+            SyllableGenerators = new Dictionary<SyllablePosition, ISyllableGenerator>();
             Random = new Random();
             MinimumSize = 2;
             MaximumSize = 3;
@@ -100,7 +100,7 @@ namespace Syllabore
         /// <param name="position">The position for the syllable generator.</param>
         /// <param name="generator">The syllable generator to add.</param>
         /// <returns>The current instance of <see cref="NameGenerator"/>.</returns>
-        public NameGenerator SetSyllables(SyllablePosition position, SyllableGenerator generator)
+        public NameGenerator SetSyllables(SyllablePosition position, ISyllableGenerator generator)
         {
             if(position == SyllablePosition.Any)
             {

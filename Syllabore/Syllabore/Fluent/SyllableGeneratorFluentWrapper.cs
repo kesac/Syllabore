@@ -59,17 +59,20 @@ namespace Syllabore
         public SyllableGeneratorFluentWrapper Last(Func<SymbolGenerator, SymbolGenerator> configuration) => Add(SymbolPosition.Last, configuration(new SymbolGenerator()));
 
         /// <summary>
-        /// Copies the SyllableGenerator from the leading SyllableGenerator to the current syllable position.
+        /// Copies the SyllableGenerator from the leading position to the current syllable position.
+        /// This method only works if the leading position is of type <see cref="SyllableGenerator"/>.
         /// </summary>
-        public SyllableGeneratorFluentWrapper CopyLead() => Use(SyllablePosition.Leading);
+        public SyllableGeneratorFluentWrapper CopyLead() => CopyFrom(SyllablePosition.Leading);
         /// <summary>
-        /// Copies the SyllableGenerator from the leading SyllableGenerator to the current syllable position.
+        /// Copies the SyllableGenerator from the leading position to the current syllable position.
+        /// This method only works if the leading position is of type <see cref="SyllableGenerator"/>.
         /// </summary>
-        public SyllableGeneratorFluentWrapper CopyInner() => Use(SyllablePosition.Inner);
+        public SyllableGeneratorFluentWrapper CopyInner() => CopyFrom(SyllablePosition.Inner);
         /// <summary>
-        /// Copies the SyllableGenerator from the leading SyllableGenerator to the current syllable position.
+        /// Copies the SyllableGenerator from the leading position to the current syllable position.
+        /// This method only works if the leading position is of type <see cref="SyllableGenerator"/>.
         /// </summary>
-        public SyllableGeneratorFluentWrapper CopyTrail() => Use(SyllablePosition.Trailing);
+        public SyllableGeneratorFluentWrapper CopyTrail() => CopyFrom(SyllablePosition.Trailing);
 
         /// <summary>
         /// Sets the chance of generating a symbol for the current syllable position.
@@ -80,24 +83,27 @@ namespace Syllabore
             return this;
         }
 
-        private SyllableGeneratorFluentWrapper Use(SyllablePosition position)
+        private SyllableGeneratorFluentWrapper CopyFrom(SyllablePosition position)
         {
             if (_parent.SyllableGenerators.ContainsKey(position)
                 && position != _currentSyllablePosition)
             {
-                var syllableGenerator = _parent.SyllableGenerators[position];
+                var syllableGenerator = _parent.SyllableGenerators[position] as SyllableGenerator;
 
-                foreach (var pair in syllableGenerator.SymbolGenerators)
+                if (syllableGenerator != null)
                 {
-                    foreach (var symbols in pair.Value)
+                    foreach (var pair in syllableGenerator.SymbolGenerators)
                     {
-                        Result.Add(pair.Key, symbols.Copy());
+                        foreach (var symbols in pair.Value)
+                        {
+                            Result.Add(pair.Key, symbols.Copy());
+                        }
                     }
-                }
 
-                foreach (var chance in syllableGenerator.PositionChance)
-                {
-                    Result.SetChance(chance.Key, chance.Value);
+                    foreach (var chance in syllableGenerator.PositionChance)
+                    {
+                        Result.SetChance(chance.Key, chance.Value);
+                    }
                 }
             }
 
