@@ -94,23 +94,7 @@ namespace Syllabore
         /// </summary>
         public string Next()
         {
-            int totalWeight = Symbols.Sum(x => x.Weight);
-            int randomSelection = Random.Next(totalWeight);
-
-            int runningTotal = 0;
-
-            for (int i = 0; i < Symbols.Count; i++)
-            {
-                runningTotal += Symbols[i].Weight;
-
-                if (randomSelection < runningTotal)
-                {
-                    return Symbols[i].Value;
-                }
-            }
-
-            throw new InvalidOperationException("A random symbol could not be selected because "
-                + "there are none to choose from or there are elements with non-positive weights.");
+            return Symbols.RandomWeightedItem(Random).Value;
         }
 
         /// <summary>
