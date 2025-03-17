@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 using Archigen;
 
 namespace Syllabore
@@ -29,10 +30,16 @@ namespace Syllabore
         /// <summary>
         /// Instantiates a new <see cref="Symbol"/> with the specified value.
         /// </summary>
-        public Symbol(string value)
+        [JsonConstructor]
+        public Symbol(string value) : this(value, 1) { }
+
+        /// <summary>
+        /// Instantiates a new <see cref="Symbol"/> with the specified value and weight.
+        /// </summary>
+        public Symbol(string value, int weight)
         {
             this.Value = value;
-            this.Weight = 1;
+            this.Weight = weight;
         }
 
         /// <summary>
