@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 
@@ -98,6 +98,7 @@ namespace Syllabore.Tests
         [TestMethod]
         [DataRow("aeiou", "strlmnp", 0)]
         [DataRow("aeiou", "strlmnp", 12345)]
+        [DataRow("ÀßçƢʯ🜧🙂🂅ヅ", "ÀßçƢʯ🜧🙂🂅ヅ", 98765)]
         public void SyllableGenerator_StaticRandomSeed_CreatesPredictableOutput(
             string consonants,
             string vowels,

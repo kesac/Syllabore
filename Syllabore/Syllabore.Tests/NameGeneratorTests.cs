@@ -1,7 +1,8 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Syllabore.Fluent;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Syllabore.Tests
 {
@@ -117,35 +118,41 @@ namespace Syllabore.Tests
 
         [DataTestMethod]
         [DataRow("a", "b")]
+        [DataRow("À", "Ƣ")]
+        [DataRow("🙂", "🂅ヅ")]
         [DataRow("ab", "cd")]
         [DataRow("abc", "def")]
+        [DataRow("Àßç", "Ƣʯ🜧")]
         public void Constructor_TwoStringParameters_GeneratesName(string firstSymbols, string middleSymbols)
         {
             var sut = new NameGenerator(firstSymbols, middleSymbols).SetSize(1);
 
             // Build a list of expected combinations
             var expected = new List<string>();
-            foreach (char f in firstSymbols)
+            foreach (string f in firstSymbols.Atomize())
             {
-                foreach (char m in middleSymbols)
+                foreach (string m in middleSymbols.Atomize())
                 {
-                    string combo = char.ToUpper(f).ToString() + m;
-                    expected.Add(combo);
+                    var combo = new StringBuilder();
+                    combo.Append(f.ToUpper());
+                    combo.Append(m.ToLower());
+                    
+                    expected.Add(combo.ToString());
                 }
             }
 
             // Generate 100 names
-            var detected = new Dictionary<string, bool>();
+            var detected = new HashSet<string>();
             for (int i = 0; i < 100; i++)
             {
                 string name = sut.Next();
-                detected[name] = true;
+                detected.Add(name);
             }
 
             // Verify that every expected combination appeared at least once.
             foreach (var e in expected)
             {
-                Assert.IsTrue(detected.ContainsKey(e), "Not every combination detected");
+                Assert.IsTrue(detected.Contains(e), "Not every combination detected: could not find '" + e + "'");
             }
 
             Assert.IsTrue(detected.Count <= expected.Count, "More combinations detected than was expected");

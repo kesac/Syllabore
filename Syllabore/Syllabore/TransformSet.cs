@@ -138,7 +138,7 @@ namespace Syllabore
 
             for (int i = 0; i < this.RandomSelectionCount && unusedTransforms.Count > 0; i++)
             {
-                var transform = unusedTransforms.RandomWeightedItem<Transform>(this.Random);
+                var transform = unusedTransforms.RandomWeightedItem(this.Random);
                 unusedTransforms.Remove(transform);
 
                 if (this.CanTransformBeApplied(transform, sourceName))

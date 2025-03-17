@@ -20,15 +20,19 @@ namespace Syllabore.Tests
 
         [TestMethod]
         [DataRow("Abcdefghi")]
+        [DataRow("ÀßçƢʯ🜧🙂🂅ヅ")]
         public void Fluent_ConfigureBasicNameGenerator_GeneratesNames(string targetName)
         {
             if (new StringInfo(targetName).LengthInTextElements != 9)
             {
                 throw new ArgumentException("In this test, the target name must be 9 characters long.");
             }
-
-            string[] symbols = targetName.Atomize().ToArray();
-
+           
+            // Capitalize the first letter of the target name and make the rest lowercase
+            targetName = targetName.Substring(0, 1).ToUpper() + targetName.Substring(1).ToLower();
+            
+            List<string> symbols = targetName.Atomize();
+            
             // Build a name generator using fluent methods that accept strings
             var sut = new NameGenerator()
                 .Lead(x => x
@@ -46,7 +50,6 @@ namespace Syllabore.Tests
                 .SetSize(3);
 
             // Then build a reference name generator using non-fluent methods
-
             var referenceNameGenerator = new NameGenerator()
                 .SetSyllables(SyllablePosition.Leading, GetSyllableGenerator(symbols[0], symbols[1], symbols[2]))
                 .SetSyllables(SyllablePosition.Inner, GetSyllableGenerator(symbols[3], symbols[4], symbols[5]))

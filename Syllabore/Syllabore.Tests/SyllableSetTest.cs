@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -27,7 +27,8 @@ public class SyllableSetTest
 
     [TestMethod]
     [DataRow("a")]
-    [DataRow("a", "b", "c")]
+    [DataRow("a", "b", "ç")]
+    [DataRow("🂅", "🙂", "ヅ")]
     public void SyllableSet_ConstructorWithStringArguments_GeneratesSameArguments(params string[] syllables)
     {
         var sut = new SyllableSet(syllables);

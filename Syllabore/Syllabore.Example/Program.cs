@@ -7,6 +7,9 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using Syllabore.Fluent;
 using Archigen;
+using System.Text.Unicode;
+using System.Text;
+using System.Globalization;
 
 namespace Syllabore.Example
 {
@@ -26,10 +29,11 @@ namespace Syllabore.Example
             RunSimpleConstructorExample();
             PrintSeparator();
 
-            PrintExecutionTime(300000);
-
             RunSerializationExample();
+            RunExecutionTimeCheck(300000);
+
         }
+
 
         private static void RunCustomGenerator(IGenerator<string> generator)
         {
@@ -60,7 +64,7 @@ namespace Syllabore.Example
 
         }
 
-        private static void PrintExecutionTime(int attempts)
+        private static void RunExecutionTimeCheck(int attempts)
         {
             var stopwatch = Stopwatch.StartNew();
             var v2 = new NameGenerator("ae", "srnl");
@@ -80,7 +84,7 @@ namespace Syllabore.Example
 
         private static void RunSerializationExample()
         {
-            var generator = new NameGenerator("ae", "srnl")
+            var generator = new NameGenerator("Àe", "🜧🙂🂅ヅ")
                 .Transform(x => x.Insert(0, "a"))
                 .Filter("z");
 
@@ -88,7 +92,7 @@ namespace Syllabore.Example
 
             var serializer = new NameGeneratorSerializer();
             serializer.Serialize(generator, "name-generator.json");
-            // var back = serializer.Deserialize("name-generator.json");
+            var back = serializer.Deserialize("name-generator.json");
 
         }
 

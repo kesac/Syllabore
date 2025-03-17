@@ -23,9 +23,9 @@ namespace Syllabore.Tests
         {
             _defaultNameGenerator = new NameGenerator()
                 .Any(x => x
-                    .First(x => x.Add("bcd").Cluster("dr"))
+                    .First(x => x.Add("bçƢ").Cluster("dr"))
                     .Middle(x => x.Add("aieou").Cluster("ey"))
-                    .Last(x => x.Add("trs").Cluster("mn")))
+                    .Last(x => x.Add("ヅ🂅🙂").Cluster("mn")))
                 .Filter("zzzy", "abcd")
                 .Transform(new TransformSet()
                     .Chance(0.5)

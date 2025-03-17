@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -15,9 +16,18 @@ namespace Syllabore
         /// Splits the specified string into an array of strings. Each
         /// string in the array represents one character of the original string.
         /// </summary>
-        public static string[] Atomize(this string s)
+        public static List<string> Atomize(this string s)
         {
-            return s.Select(x => x.ToString()).ToArray();
+            var stringInfo = new StringInfo(s);
+            var trueLength = stringInfo.LengthInTextElements;
+
+            var result = new List<string>();
+            for(int i = 0; i < trueLength; i++)
+            {
+                result.Add(stringInfo.SubstringByTextElements(i, 1));
+            }
+
+            return result;
         }
 
     }

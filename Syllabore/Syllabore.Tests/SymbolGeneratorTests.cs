@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace Syllabore.Tests
@@ -14,17 +14,43 @@ namespace Syllabore.Tests
         }
 
         [TestMethod]
-        public void Constructor_AddSymbols_CanGenerateSymbols()
+        [DataRow("a")]
+        [DataRow("Ƣ")]
+        [DataRow("🙂")]
+        public void SymbolGenerator_AddOneSymbol_CanGenerateSymbol(string symbol)
+        {
+            var sut = new SymbolGenerator();
+            sut.Add(symbol);
+
+            var result = sut.Next();
+            Assert.AreEqual(result, symbol);
+        }
+
+        [TestMethod]
+        [DataRow("ae")]
+        [DataRow("Ƣʯ🜧")]
+        [DataRow("🙂🙂")]
+        public void SymbolGenerator_AddOneCluster_CanGenerateCluster(string cluster)
+        {
+            var sut = new SymbolGenerator();
+            sut.Cluster(cluster);
+
+            var result = sut.Next();
+            Assert.AreEqual(result, cluster);
+        }
+
+        [TestMethod]
+        public void Constructor_AddMultipleSymbols_CanGenerateSymbols()
         {
             var sut = new SymbolGenerator();
 
             sut.Add("a");
             Assert.IsTrue(sut.Symbols.Count == 1);
 
-            sut.Add("bcd").Add("ef");
+            sut.Add("Ƣcd").Add("🜧f");
             Assert.IsTrue(sut.Symbols.Count == 6);
 
-            sut.Cluster("gh", "ij").Cluster("kl");
+            sut.Cluster("gh", "🙂🙂").Cluster("kl");
             Assert.IsTrue(sut.Symbols.Count == 9);
 
             for (int i = 0; i < 100; i++)
