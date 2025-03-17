@@ -28,7 +28,7 @@ namespace Syllabore
         /// The <see cref="NameGenerator">NameGenerators</see>
         /// used by this <see cref="NameFormatter"/>.
         /// </summary>
-        public Dictionary<string, NameGenerator> BoundNameGenerators { get; set; }
+        public Dictionary<string, IGenerator<string>> BoundNameGenerators { get; set; }
 
         /// <summary>
         /// Provides hints on whether a name should be upper case, lower case, capitalized, etc.
@@ -48,16 +48,16 @@ namespace Syllabore
         public NameFormatter(string format)
         {
             this.Format = format ?? throw new ArgumentNullException("format", "The desired format cannot be null");
-            this.BoundNameGenerators = new Dictionary<string, NameGenerator>();
+            this.BoundNameGenerators = new Dictionary<string, IGenerator<string>>();
             this.StringCaseTypes = new Dictionary<string, NameFormat>();
         }
 
         /// <summary>
-        /// Specifies a <see cref="NameGenerator"/> for the specified property.
+        /// Specifies a generator for the specified property.
         /// </summary>
-        public NameFormatter Define(string property, NameGenerator generator, NameFormat stringCase = NameFormat.Capitalized)
+        public NameFormatter Define(string property, IGenerator<string> nameGenerator, NameFormat stringCase = NameFormat.Capitalized)
         {
-            this.BoundNameGenerators[property] = generator ?? throw new ArgumentNullException("generator", "The specified generator cannot be null");
+            this.BoundNameGenerators[property] = nameGenerator ?? throw new ArgumentNullException("generator", "The specified generator cannot be null");
             this.StringCaseTypes[property] = stringCase;
             return this;
         }
