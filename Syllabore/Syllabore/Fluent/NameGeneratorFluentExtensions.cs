@@ -21,7 +21,7 @@ namespace Syllabore.Fluent
         /// <summary>
         /// Sets the leading <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGenerator Lead(this NameGenerator names, SyllableGenerator syllables)
+        public static NameGenerator Lead(this NameGenerator names, ISyllableGenerator syllables)
         {
             return names.SetSyllables(SyllablePosition.Leading, syllables);
         }
@@ -38,7 +38,7 @@ namespace Syllabore.Fluent
         /// <summary>
         /// Sets the inner <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGenerator Inner(this NameGenerator names, SyllableGenerator syllables)
+        public static NameGenerator Inner(this NameGenerator names, ISyllableGenerator syllables)
         {
             return names.SetSyllables(SyllablePosition.Inner, syllables);
         }
@@ -55,7 +55,7 @@ namespace Syllabore.Fluent
         /// <summary>
         /// Sets the trailing <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGenerator Trail(this NameGenerator names, SyllableGenerator syllables)
+        public static NameGenerator Trail(this NameGenerator names, ISyllableGenerator syllables)
         {
             return names.SetSyllables(SyllablePosition.Trailing, syllables);
         }
@@ -72,7 +72,7 @@ namespace Syllabore.Fluent
         /// <summary>
         /// Sets the <see cref="SyllableGenerator"/> for all syllable positions. 
         /// </summary>
-        public static NameGenerator Any(this NameGenerator names, SyllableGenerator syllables)
+        public static NameGenerator Any(this NameGenerator names, ISyllableGenerator syllables)
         {
             return names.SetSyllables(SyllablePosition.Any, syllables);
         }
