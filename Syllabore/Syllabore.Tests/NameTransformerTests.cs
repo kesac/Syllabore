@@ -71,7 +71,7 @@ namespace Syllabore.Tests
                 .Insert(0, "prefix");
 
             result = sut.Apply(_testName).ToString().ToLower();
-            Assert.IsTrue(result.StartsWith("prefix"));
+            Assert.IsFalse(result.StartsWith("prefix"));
         }
 
         [TestMethod]
@@ -190,10 +190,12 @@ namespace Syllabore.Tests
         [TestMethod]
         public void NameGeneration_ProbabilisticTransform_TransformSometimesAppears()
         {
-            var sut = new NameGenerator("str", "ae")
-                    .SetTransform(new TransformSet()
+            var transform = new TransformSet()
                         .Add(x => x.Replace(-1, "suffix"))
-                        .Chance(0.5));
+                        .Chance(0.5);
+
+            var sut = new NameGenerator("str", "ae")
+                    .SetTransform(transform);
 
             var appearances = 0;
 
