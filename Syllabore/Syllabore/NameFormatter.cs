@@ -13,6 +13,23 @@ namespace Syllabore
     public class NameFormatter : IGenerator<string>
     {
         /// <summary>
+        /// Options for controlling output of a formatted name.
+        /// </summary>
+        public class NameFormatterGeneratorOptions
+        {
+            /// <summary>
+            /// The desired format for names
+            /// </summary>
+            public NameFormat Format { get; set; }
+
+
+            /// <summary>
+            /// Whether the name should have a leading space at its beginning.
+            /// </summary>
+            public bool UseLeadingSpace { get; set; }
+        }
+
+        /// <summary>
         /// <para>
         /// The desired format for names. Surround substrings that need to be replaced with 
         /// a generated name with curly brackets.
@@ -33,7 +50,8 @@ namespace Syllabore
         /// <summary>
         /// Provides hints on whether a name should be upper case, lower case, capitalized, etc.
         /// </summary>
-        public Dictionary<string, NameFormat> StringCaseTypes { get; set; }
+        public Dictionary<string, NameFormatterGeneratorOptions> Options { get; set; }
+
 
         /// <summary>
         /// <para>
@@ -49,18 +67,24 @@ namespace Syllabore
         {
             this.Format = format ?? throw new ArgumentNullException("format", "The desired format cannot be null");
             this.BoundNameGenerators = new Dictionary<string, IGenerator<string>>();
-            this.StringCaseTypes = new Dictionary<string, NameFormat>();
+            this.Options = new Dictionary<string, NameFormatterGeneratorOptions>();
         }
 
         /// <summary>
         /// Specifies a generator for the specified property.
         /// </summary>
-        public NameFormatter Define(string property, IGenerator<string> nameGenerator, NameFormat stringCase = NameFormat.Capitalized)
+        public NameFormatter Define(string propertyName, IGenerator<string> nameGenerator, NameFormat stringCase = NameFormat.Capitalized, bool useLeadingSpace = false)
         {
-            this.BoundNameGenerators[property] = nameGenerator ?? throw new ArgumentNullException("generator", "The specified generator cannot be null");
-            this.StringCaseTypes[property] = stringCase;
+            this.BoundNameGenerators[propertyName] = nameGenerator ?? throw new ArgumentNullException("generator", "The specified generator cannot be null");
+
+            this.Options[propertyName] = new NameFormatterGeneratorOptions
+            {
+                Format = stringCase,
+                UseLeadingSpace = useLeadingSpace
+            };
+
             return this;
-        }
+        } 
 
         /// <summary>
         /// Returns a new generated name based on the previously specified format.
@@ -68,31 +92,36 @@ namespace Syllabore
         public string Next()
         {
             var result = new StringBuilder(this.Format);
-            var properties = this.GetProperties(this.Format);
+            var placeholders = this.GetPlaceholders(this.Format);
 
-            foreach (var property in properties)
+            foreach (var placeholder in placeholders)
             {
-                if (this.BoundNameGenerators.ContainsKey(property))
+                if (this.BoundNameGenerators.ContainsKey(placeholder))
                 {
-                    var name = this.BoundNameGenerators[property].Next();
+                    var name = this.BoundNameGenerators[placeholder].Next();
 
-                    if (this.StringCaseTypes.ContainsKey(property))
+                    if (this.Options.ContainsKey(placeholder))
                     {
-                        if (this.StringCaseTypes[property] == NameFormat.UpperCase)
+                        if (this.Options[placeholder].Format == NameFormat.UpperCase)
                         {
                             name = name.ToUpper();
                         }
-                        else if (this.StringCaseTypes[property] == NameFormat.LowerCase)
+                        else if (this.Options[placeholder].Format == NameFormat.LowerCase)
                         {
                             name = name.ToLower();
                         }
-                        else if (this.StringCaseTypes[property] == NameFormat.Capitalized)
+                        else if (this.Options[placeholder].Format == NameFormat.Capitalized)
                         {
-                            // Name should already be capitalized by default
+                            name = name.Substring(0, 1).ToUpper() + name.Substring(1).ToLower();
                         }
                     }
 
-                    result.Replace("{" + property + "}", name);
+                    if (this.Options[placeholder].UseLeadingSpace)
+                    {
+                        name = " " + name;
+                    }
+
+                    result.Replace("{" + placeholder + "}", name);
                 }
             }
 
@@ -103,7 +132,7 @@ namespace Syllabore
         /// Grabs substrings that were surrounded by curly brackets
         /// and returns them in an array.
         /// </summary>
-        private string[] GetProperties(string format)
+        private string[] GetPlaceholders(string format)
         {
             var matches = Regex.Matches(format, "\\{.+?\\}");
             var result = new string[matches.Count];
