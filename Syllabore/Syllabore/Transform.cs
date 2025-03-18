@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using Archigen;
 
 namespace Syllabore
@@ -75,22 +76,6 @@ namespace Syllabore
             this.ConditionalRegex = null;
         }
 
-        /// <summary>
-        /// <para>
-        /// Applies this <see cref="Transform"/> on the specified <see cref="Name"/> in
-        /// a destructive manner.
-        /// </para>
-        /// <para>
-        /// For a non-destructive alternative, use <see cref="Apply(Name)"/> instead.
-        /// </para>
-        /// </summary>
-        public void Modify(Name name)
-        {
-            foreach (var step in this.Steps)
-            {
-                step.Modify(name);
-            }
-        }
 
         /// <summary>
         /// <para>
@@ -109,20 +94,62 @@ namespace Syllabore
         public Name Apply(Name name)
         {
             var result = new Name(name);
+            this.Modify(result);
+            return result;
+        }
 
-            if (this.Random.NextDouble() < this.Chance)
-            {
-                foreach (var step in this.Steps)
+        /// <summary>
+        /// <para>
+        /// Applies this <see cref="Transform"/> on the specified <see cref="Name"/> in
+        /// a destructive manner. For a non-destructive alternative, use <see cref="Apply(Name)"/> instead.
+        /// </para>
+        /// <para>
+        /// The transform may result in no changes if a condition 
+        /// was added and is not met, or if the <see href="Chance"/>
+        /// property is between 0 and 1 exclusive (less than 100%).
+        /// </para>
+        /// </summary>
+        public void Modify(Name name)
+        {
+            if (this.Random.NextDouble() < this.Chance) 
+            { 
+                var conditionSatisfied = true;
+
+                if (this.ConditionalRegex != null)
                 {
-                    if (this.Random.NextDouble() < step.Chance)
+                    if (this.ConditionalIndex.HasValue)
                     {
-                        step.Modify(result);
+                        int index = this.ConditionalIndex.Value;
+
+                        if (index < 0) // reverse index provided, so translate into a forward index (eg. -1 is the last syllable)
+                        {
+                            index = name.Syllables.Count + index;
+                        }
+
+                        if (!Regex.IsMatch(name.Syllables[index], this.ConditionalRegex))
+                        {
+                            conditionSatisfied = false;
+                        }
+                    }
+                    else if (!Regex.IsMatch(name.ToString(), this.ConditionalRegex))
+                    {
+                        conditionSatisfied = false;
+                    }
+                }
+
+                if (conditionSatisfied)
+                {
+                    foreach (var step in this.Steps)
+                    {
+                        if (this.Random.NextDouble() < step.Chance)
+                        {
+                            step.Modify(name);
+                        }
                     }
                 }
             }
-
-            return result;
         }
+
 
         /// <summary>
         /// Adds a new step to this transform.

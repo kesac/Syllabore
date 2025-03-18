@@ -88,16 +88,27 @@ namespace Syllabore
         /// is the result of one or more <see cref="Transform"/>s
         /// applied to the specified source <see cref="Name"/>.
         /// This method leaves the source <see cref="Name"/> untouched.
+        /// <para>
+        /// This method can result in no changes if <see cref="Chance"/>
+        /// is less than 1.0.
+        /// </para>
         /// </summary>
         public Name Apply(Name sourceName)
         {
-            if(this.UseRandomSelection)
+            if (this.Random.NextDouble() < this.Chance)
             {
-                return this.ApplyRandomTransforms(sourceName);
+                if (this.UseRandomSelection)
+                {
+                    return this.ApplyRandomTransforms(sourceName);
+                }
+                else
+                {
+                    return this.ApplyAllTransforms(sourceName);
+                }
             }
             else
             {
-                return this.ApplyAllTransforms(sourceName);
+                return new Name(sourceName);
             }
         }
 
@@ -140,11 +151,7 @@ namespace Syllabore
             {
                 var transform = unusedTransforms.RandomWeightedItem(this.Random);
                 unusedTransforms.Remove(transform);
-
-                if (this.CanTransformBeApplied(transform, sourceName))
-                {
-                    transform.Modify(result);
-                }
+                transform.Modify(result);
             }
 
             return result;
@@ -156,56 +163,11 @@ namespace Syllabore
 
             foreach (var transform in this.Transforms)
             {
-                if (this.CanTransformBeApplied(transform, sourceName))
-                {
-                    transform.Modify(result);
-                }
+                transform.Modify(result);
             }
 
             return result;
         }
-
-        private bool CanTransformBeApplied(Transform transform, Name sourceName)
-        {
-            var canApplyTransform = false;
-
-            if (this.Random.NextDouble() <= this.Chance)
-            {
-                if (transform.ConditionalRegex != null)
-                {
-                    if (transform.ConditionalIndex.HasValue)
-                    {
-                        int index = transform.ConditionalIndex.Value;
-
-                        if (index < 0) // reverse index provided, so translate into a forward index (eg. -1 is the last syllable)
-                        {
-                            index = sourceName.Syllables.Count + index;
-                        }
-
-                        if (Regex.IsMatch(sourceName.Syllables[index], transform.ConditionalRegex))
-                        {
-                            // The target syllable passes the condition
-                            canApplyTransform = true;
-                        }
-                    }
-                    else if (Regex.IsMatch(sourceName.ToString(), transform.ConditionalRegex))
-                    {
-                        // Entire name passes the condition
-                        canApplyTransform = true;
-                    }
-                }
-                else
-                {
-                    // No conditions, automatic pass
-                    canApplyTransform = true;
-                }
-            }
-
-            return canApplyTransform;
-
-        }
-
-
     }
 
 }
