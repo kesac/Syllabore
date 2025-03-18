@@ -32,11 +32,21 @@ namespace Syllabore
         /// <summary>
         /// Instantiates a new <see cref="SymbolGenerator"/>.
         /// </summary>
+        [JsonConstructor]
         public SymbolGenerator()
         {
             _recentlyAddedSymbols = new List<Symbol>();
             Symbols = new List<Symbol>();
             Random = new Random();
+        }
+
+        /// <summary>
+        /// Instantiates a new <see cref="SymbolGenerator"/> with the provided symbols.
+        /// Each character in the string is considered a separate symbol.
+        /// </summary>
+        public SymbolGenerator(string symbols) : this()
+        {
+            this.Add(symbols);
         }
 
         /// <summary>
