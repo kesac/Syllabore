@@ -50,7 +50,7 @@ namespace Syllabore
         /// <param name="syllables">The syllables to include in this set.</param>
         public SyllableSet(params string[] syllables) : this()
         {
-            PossibleSyllables.AddRange(syllables);
+            this.PossibleSyllables.AddRange(syllables);
         }
 
         /// <summary>
@@ -58,10 +58,10 @@ namespace Syllabore
         /// </summary>
         public SyllableSet(SyllableGenerator syllableGenerator, int maxSyllableCount, bool forceUnique = false) : this()
         {
-            ForceUnique = forceUnique;
+            this.ForceUnique = forceUnique;
 
-            SyllableGenerator = syllableGenerator;
-            MaximumGeneratedSyllables = maxSyllableCount;
+            this.SyllableGenerator = syllableGenerator;
+            this.MaximumGeneratedSyllables = maxSyllableCount;
         }
 
         /// <summary>

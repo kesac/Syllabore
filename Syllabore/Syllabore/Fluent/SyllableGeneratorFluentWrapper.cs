@@ -38,6 +38,10 @@ namespace Syllabore
         /// <summary>
         /// Adds symbols to the first position of the syllable.
         /// </summary>
+        public SyllableGeneratorFluentWrapper First(SymbolGenerator symbols) => Add(SymbolPosition.First, symbols);
+        /// <summary>
+        /// Adds symbols to the first position of the syllable.
+        /// </summary>
         public SyllableGeneratorFluentWrapper First(Func<SymbolGenerator, SymbolGenerator> configuration) => Add(SymbolPosition.First, configuration(new SymbolGenerator()));
 
         /// <summary>
@@ -47,12 +51,20 @@ namespace Syllabore
         /// <summary>
         /// Adds symbols to the middle position of the syllable.
         /// </summary>
+        public SyllableGeneratorFluentWrapper Middle(SymbolGenerator symbols) => Add(SymbolPosition.Middle, symbols);
+        /// <summary>
+        /// Adds symbols to the middle position of the syllable.
+        /// </summary>
         public SyllableGeneratorFluentWrapper Middle(Func<SymbolGenerator, SymbolGenerator> configuration) => Add(SymbolPosition.Middle, configuration(new SymbolGenerator()));
 
         /// <summary>
         /// Adds symbols to the last position of the syllable.
         /// </summary>
         public SyllableGeneratorFluentWrapper Last(string symbols) => Add(SymbolPosition.Last, new SymbolGenerator().Add(symbols));
+        /// <summary>
+        /// Adds symbols to the last position of the syllable.
+        /// </summary>
+        public SyllableGeneratorFluentWrapper Last(SymbolGenerator symbols) => Add(SymbolPosition.Last, symbols);
         /// <summary>
         /// Adds symbols to the last position of the syllable.
         /// </summary>
@@ -75,7 +87,7 @@ namespace Syllabore
         public SyllableGeneratorFluentWrapper CopyTrail() => CopyFrom(SyllablePosition.Trailing);
 
         /// <summary>
-        /// Sets the chance of generating a symbol for the current syllable position.
+        /// Sets the chance of generating a symbol for the last modified symbol position.
         /// </summary>
         public SyllableGeneratorFluentWrapper Chance(double chance)
         {

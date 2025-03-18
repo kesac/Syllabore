@@ -218,7 +218,7 @@ namespace Syllabore
                 }
                 else
                 {
-                    throw new InvalidOperationException("No syllable generator available for the first position.");
+                    throw new InvalidOperationException("No syllable generator available for the lead position.");
                 }
             }
             else if (size == 2)
@@ -230,7 +230,7 @@ namespace Syllabore
                 }
                 else
                 {
-                    throw new InvalidOperationException("No syllable generator available for the first or last position.");
+                    throw new InvalidOperationException("No syllable generator available for the lead or trailing position.");
                 }
             }
             else
