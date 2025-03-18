@@ -26,6 +26,15 @@ namespace Syllabore.Example
             RunCustomGenerator(new SimilarSoundingNames().GetNonFluentGenerator());
             PrintSeparator();
 
+            RunCustomGenerator(new FuturisticCityNames().GetGenerator());
+            PrintSeparator();
+
+            RunCustomGenerator(new HarshSoundingNames().GetGenerator());
+            PrintSeparator();
+
+            RunCustomGenerator(new SofterSoundingNames().GetGenerator());
+            PrintSeparator();
+
             RunSimpleConstructorExample();
             PrintSeparator();
 
@@ -37,7 +46,7 @@ namespace Syllabore.Example
 
         private static void RunCustomGenerator(IGenerator<string> generator)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
                 Console.WriteLine(generator.Next());
             }
