@@ -89,10 +89,10 @@ namespace Syllabore.Tests
         public void Transform_StepsWithDifferentChance_NotAllStepsAppear()
         {
             var sut = new Transform()
-                .Insert(0, "name").Chance(1.0)        // Always in output
-                .Insert(0, "prefix-").Chance(0.5)     // Sometimes in output
-                .Append("-suffix").Chance(0.5)        // Sometimes in output
-                .Append("-doublesuffix").Chance(0.0); // Never in output
+                .Insert(0, "name").StepChance(1.0)        // Always in output
+                .Insert(0, "prefix-").StepChance(0.5)     // Sometimes in output
+                .Append("-suffix").StepChance(0.5)        // Sometimes in output
+                .Append("-doublesuffix").StepChance(0.0); // Never in output
 
             var emptyName = new Name();
             var results = new HashSet<string>();
@@ -217,7 +217,7 @@ namespace Syllabore.Tests
             var sut = new NameGenerator("str", "ae")
                     .Transform(x => x
                         .Replace(-1, "suffix")
-                        .Chance(0));
+                        .StepChance(0));
 
             var transformFound = false;
 

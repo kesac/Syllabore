@@ -106,9 +106,9 @@ namespace Syllabore
         {
             if(position == SyllablePosition.Any)
             {
-                SetSyllables(SyllablePosition.Leading, generator);
+                SetSyllables(SyllablePosition.Starting, generator);
                 SetSyllables(SyllablePosition.Inner, generator);
-                SetSyllables(SyllablePosition.Trailing, generator);
+                SetSyllables(SyllablePosition.Ending, generator);
             }
             else
             {
@@ -212,39 +212,39 @@ namespace Syllabore
 
             if (size == 1)
             {
-                if (SyllableGenerators.ContainsKey(SyllablePosition.Leading))
+                if (SyllableGenerators.ContainsKey(SyllablePosition.Starting))
                 {
-                    result.Append(SyllableGenerators[SyllablePosition.Leading].Next());
+                    result.Append(SyllableGenerators[SyllablePosition.Starting].Next());
                 }
                 else
                 {
-                    throw new InvalidOperationException("No syllable generator available for the lead position.");
+                    throw new InvalidOperationException("No syllable generator available for the starting position.");
                 }
             }
             else if (size == 2)
             {
-                if (SyllableGenerators.ContainsKey(SyllablePosition.Leading) && SyllableGenerators.ContainsKey(SyllablePosition.Trailing))
+                if (SyllableGenerators.ContainsKey(SyllablePosition.Starting) && SyllableGenerators.ContainsKey(SyllablePosition.Ending))
                 {
-                    result.Append(SyllableGenerators[SyllablePosition.Leading].Next());
-                    result.Append(SyllableGenerators[SyllablePosition.Trailing].Next());
+                    result.Append(SyllableGenerators[SyllablePosition.Starting].Next());
+                    result.Append(SyllableGenerators[SyllablePosition.Ending].Next());
                 }
                 else
                 {
-                    throw new InvalidOperationException("No syllable generator available for the lead or trailing position.");
+                    throw new InvalidOperationException("No syllable generator available for the starting or ending position.");
                 }
             }
             else
             {
-                if (SyllableGenerators.ContainsKey(SyllablePosition.Leading) && SyllableGenerators.ContainsKey(SyllablePosition.Inner) && SyllableGenerators.ContainsKey(SyllablePosition.Trailing))
+                if (SyllableGenerators.ContainsKey(SyllablePosition.Starting) && SyllableGenerators.ContainsKey(SyllablePosition.Inner) && SyllableGenerators.ContainsKey(SyllablePosition.Ending))
                 {
-                    result.Append(SyllableGenerators[SyllablePosition.Leading].Next());
+                    result.Append(SyllableGenerators[SyllablePosition.Starting].Next());
 
                     for (int i = 1; i < size - 1; i++)
                     {
                         result.Append(SyllableGenerators[SyllablePosition.Inner].Next());
                     }
 
-                    result.Append(SyllableGenerators[SyllablePosition.Trailing].Next());
+                    result.Append(SyllableGenerators[SyllablePosition.Ending].Next());
                 }
                 else
                 {

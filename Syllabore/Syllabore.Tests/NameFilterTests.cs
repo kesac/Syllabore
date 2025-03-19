@@ -90,7 +90,7 @@ namespace Syllabore.Tests
         public void NameFilter_PreventSpecificPattern_FilterAffectsGeneration()
         {
             var names = new NameGenerator()
-                .Any(x => x
+                .All(x => x
                     .First(x => x.Add("b").Cluster("cc"))
                     .Middle(x => x.Add("ae").Cluster("ee"))
                     .Last(x => x.Add("d").Cluster("ff")));
@@ -113,7 +113,7 @@ namespace Syllabore.Tests
         public void NameFilter_UsingFluentMethod_FilterAffectsGeneration()
         {
             var sut = new NameGenerator()
-                    .Any(x => x
+                    .All(x => x
                         .First("bcdf").Chance(0.95)
                         .Middle("aei"))
                     .Filter("a", "^b");
@@ -135,9 +135,9 @@ namespace Syllabore.Tests
             var trailing = inner.Copy();
 
             var sut = new NameGenerator()
-                .SetSyllables(SyllablePosition.Leading, leading)
+                .SetSyllables(SyllablePosition.Starting, leading)
                 .SetSyllables(SyllablePosition.Inner, inner)
-                .SetSyllables(SyllablePosition.Trailing, trailing);
+                .SetSyllables(SyllablePosition.Ending, trailing);
 
             for (int i = 0; i < 1000; i++)
             {
