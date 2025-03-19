@@ -71,20 +71,20 @@ namespace Syllabore
         public SyllableGeneratorFluentWrapper Last(Func<SymbolGenerator, SymbolGenerator> configuration) => Add(SymbolPosition.Last, configuration(new SymbolGenerator()));
 
         /// <summary>
-        /// Copies the SyllableGenerator from the leading position to the current syllable position.
-        /// This method only works if the leading position is of type <see cref="SyllableGenerator"/>.
+        /// Copies the SyllableGenerator from the starting position to the current syllable position.
+        /// This method only works if the starting position is of type <see cref="SyllableGenerator"/>.
         /// </summary>
-        public SyllableGeneratorFluentWrapper CopyLead() => CopyFrom(SyllablePosition.Leading);
+        public SyllableGeneratorFluentWrapper CopyStart() => CopyFrom(SyllablePosition.Starting);
         /// <summary>
-        /// Copies the SyllableGenerator from the leading position to the current syllable position.
-        /// This method only works if the leading position is of type <see cref="SyllableGenerator"/>.
+        /// Copies the SyllableGenerator from the inner position to the current syllable position.
+        /// This method only works if the inner position is of type <see cref="SyllableGenerator"/>.
         /// </summary>
         public SyllableGeneratorFluentWrapper CopyInner() => CopyFrom(SyllablePosition.Inner);
         /// <summary>
-        /// Copies the SyllableGenerator from the leading position to the current syllable position.
-        /// This method only works if the leading position is of type <see cref="SyllableGenerator"/>.
+        /// Copies the SyllableGenerator from the ending position to the current syllable position.
+        /// This method only works if the ending position is of type <see cref="SyllableGenerator"/>.
         /// </summary>
-        public SyllableGeneratorFluentWrapper CopyTrail() => CopyFrom(SyllablePosition.Trailing);
+        public SyllableGeneratorFluentWrapper CopyEnd() => CopyFrom(SyllablePosition.Ending);
 
         /// <summary>
         /// Sets the chance of generating a symbol for the last modified symbol position.

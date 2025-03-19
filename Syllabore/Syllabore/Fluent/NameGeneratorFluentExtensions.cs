@@ -10,20 +10,20 @@ namespace Syllabore.Fluent
     public static class NameGeneratorFluentExtensions
     {
         /// <summary>
-        /// Configures the leading <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
+        /// Configures the starting <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGenerator Lead(this NameGenerator names,
+        public static NameGenerator Start(this NameGenerator names,
             Func<SyllableGeneratorFluentWrapper, SyllableGeneratorFluentWrapper> configuration)
         {
-            return names.Define(SyllablePosition.Leading, configuration);
+            return names.Define(SyllablePosition.Starting, configuration);
         }
 
         /// <summary>
-        /// Sets the leading <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
+        /// Sets the starting <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGenerator Lead(this NameGenerator names, ISyllableGenerator syllables)
+        public static NameGenerator Start(this NameGenerator names, ISyllableGenerator syllables)
         {
-            return names.SetSyllables(SyllablePosition.Leading, syllables);
+            return names.SetSyllables(SyllablePosition.Starting, syllables);
         }
 
         /// <summary>
@@ -44,26 +44,26 @@ namespace Syllabore.Fluent
         }
 
         /// <summary>
-        /// Configures the trailing <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
+        /// Configures the ending <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGenerator Trail(this NameGenerator names,
+        public static NameGenerator End(this NameGenerator names,
             Func<SyllableGeneratorFluentWrapper, SyllableGeneratorFluentWrapper> configuration)
         {
-            return names.Define(SyllablePosition.Trailing, configuration);
+            return names.Define(SyllablePosition.Ending, configuration);
         }
 
         /// <summary>
-        /// Sets the trailing <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
+        /// Sets the ending <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
         /// </summary>
-        public static NameGenerator Trail(this NameGenerator names, ISyllableGenerator syllables)
+        public static NameGenerator End(this NameGenerator names, ISyllableGenerator syllables)
         {
-            return names.SetSyllables(SyllablePosition.Trailing, syllables);
+            return names.SetSyllables(SyllablePosition.Ending, syllables);
         }
 
         /// <summary>
-        /// Configures the leading <see cref="SyllableGenerator"/> of a <see cref="NameGenerator"/>.
+        /// Sets the <see cref="SyllableGenerator"/> for all syllable positions. 
         /// </summary>
-        public static NameGenerator Any(this NameGenerator names,
+        public static NameGenerator All(this NameGenerator names,
             Func<SyllableGeneratorFluentWrapper, SyllableGeneratorFluentWrapper> configuration)
         {
             return names.Define(SyllablePosition.Any, configuration);
@@ -72,7 +72,7 @@ namespace Syllabore.Fluent
         /// <summary>
         /// Sets the <see cref="SyllableGenerator"/> for all syllable positions. 
         /// </summary>
-        public static NameGenerator Any(this NameGenerator names, ISyllableGenerator syllables)
+        public static NameGenerator All(this NameGenerator names, ISyllableGenerator syllables)
         {
             return names.SetSyllables(SyllablePosition.Any, syllables);
         }
