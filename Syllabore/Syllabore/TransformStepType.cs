@@ -6,38 +6,39 @@
     /// </summary>
     public enum TransformStepType
     {
-        Unknown,
+        Unknown = 0,
 
         /// <summary>
         /// Adds a syllable to a <see cref="Name"/>, displacing other
         /// syllables as needed.
         /// </summary>
-        InsertSyllable,
+        InsertSyllable = 1,
 
         /// <summary>
         /// Adds a syllable to the end of a <see cref="Name"/>.
         /// </summary>
-        AppendSyllable,
+        AppendSyllable = 2,
 
         /// <summary>
         /// Replaces a single syllable with a another syllable.
         /// </summary>
-        ReplaceSyllable,
+        ReplaceSyllable = 3,
+
+        /// <summary>
+        /// Replaces all instances of a substring with another substring.
+        /// </summary>
+        ReplaceAllSubstring = 4,
 
         /// <summary>
         /// Deletes a syllable from a <see cref="Name"/>, displacing
         /// other syllables as needed.
         /// </summary>
-        RemoveSyllable,
+        RemoveSyllable = 5,
 
         /// <summary>
         /// An action that is not serializable and expressed in a lambda.
         /// </summary>
-        Lambda,
+        Lambda = 6,
 
-        /// <summary>
-        /// Replaces all instances of a substring with another substring.
-        /// </summary>
-        ReplaceAllSubstring
     }
 }

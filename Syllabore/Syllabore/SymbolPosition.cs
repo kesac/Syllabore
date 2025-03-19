@@ -1,30 +1,30 @@
 ﻿namespace Syllabore
 {
     /// <summary>
-    /// Represents the position of a symbol within a syllable.
+    /// The position of a symbol within a syllable.
     /// </summary>
     public enum SymbolPosition 
     {
-        Unknown,
+        Unknown = 0,
 
         /// <summary>
         /// The first symbol of a syllable.
         /// </summary>
-        First,
+        First = 1,
 
         /// <summary>
         /// The position between the first and last symbols of a syllable.
         /// </summary>
-        Middle,
+        Middle = 2,
 
         /// <summary>
         /// The last symbol of a syllable.
         /// </summary>
-        Last,
+        Last = 3,
 
         /// <summary>
         /// Represents any symbol position within a syllable or any syllable position within a name.
         /// </summary>
-        Any
+        Any = 4
     }
 }
