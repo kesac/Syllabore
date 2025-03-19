@@ -28,7 +28,7 @@ namespace Syllabore
         /// </summary>
         public GeneratorPool<T> Add(IGenerator<T> generator)
         {
-            Selector.Add(generator);
+            this.Selector.Add(generator);
             return this;
         }
 
@@ -38,7 +38,7 @@ namespace Syllabore
         /// </summary>
         public T Next()
         {
-            if (Selector.Values.Count == 0)
+            if (this.Selector.Values.Count == 0)
             {
                 throw new InvalidOperationException("No generators available in the pool.");
             }

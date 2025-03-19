@@ -38,9 +38,9 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator()
         {
-            Random = new Random();
-            SymbolGenerators = new Dictionary<SymbolPosition, List<SymbolGenerator>>();
-            PositionChance = new Dictionary<SymbolPosition, double>();
+            this.Random = new Random();
+            this.SymbolGenerators = new Dictionary<SymbolPosition, List<SymbolGenerator>>();
+            this.PositionChance = new Dictionary<SymbolPosition, double>();
 
         }
 
@@ -55,17 +55,17 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator Add(SymbolPosition position, SymbolGenerator generator)
         {
-            if (!SymbolGenerators.ContainsKey(position))
+            if (!this.SymbolGenerators.ContainsKey(position))
             {
-                SymbolGenerators[position] = new List<SymbolGenerator>();
+                this.SymbolGenerators[position] = new List<SymbolGenerator>();
 
-                if (!PositionChance.ContainsKey(position))
+                if (!this.PositionChance.ContainsKey(position))
                 {
-                    PositionChance[position] = 1.0;
+                    this.PositionChance[position] = 1.0;
                 }
             }
 
-            SymbolGenerators[position].Add(generator);
+            this.SymbolGenerators[position].Add(generator);
             _lastAddedGenerator = generator;
             _lastPositionAdded = position;
 
@@ -78,16 +78,16 @@ namespace Syllabore
         /// </summary>
         public SyllableGenerator SetChance(SymbolPosition position, double chance)
         {
-            PositionChance[position] = chance;
+            this.PositionChance[position] = chance;
 
             return this;
         }
 
         private string GenerateSymbol(SymbolPosition position)
         {
-            if (SymbolGenerators.ContainsKey(position) && SymbolGenerators[position].Count > 0)
+            if (this.SymbolGenerators.ContainsKey(position) && SymbolGenerators[position].Count > 0)
             {
-                var generator = SymbolGenerators[position][Random.Next(SymbolGenerators[position].Count)];
+                var generator = this.SymbolGenerators[position][Random.Next(SymbolGenerators[position].Count)];
                 return generator.Next();
             }
             return string.Empty;
@@ -101,17 +101,20 @@ namespace Syllabore
             var syllable = new StringBuilder();
 
             // Generate symbols for each position based on their probabilities
-            if (PositionChance.ContainsKey(SymbolPosition.First) && Random.NextDouble() < PositionChance[SymbolPosition.First])
+            if (this.PositionChance.ContainsKey(SymbolPosition.First) 
+                && this.Random.NextDouble() < this.PositionChance[SymbolPosition.First])
             {
                 syllable.Append(GenerateSymbol(SymbolPosition.First));
             }
 
-            if (PositionChance.ContainsKey(SymbolPosition.Middle) && Random.NextDouble() < PositionChance[SymbolPosition.Middle])
+            if (this.PositionChance.ContainsKey(SymbolPosition.Middle) 
+                && this.Random.NextDouble() < this.PositionChance[SymbolPosition.Middle])
             {
                 syllable.Append(GenerateSymbol(SymbolPosition.Middle));
             }
 
-            if (PositionChance.ContainsKey(SymbolPosition.Last) && Random.NextDouble() < PositionChance[SymbolPosition.Last])
+            if (this.PositionChance.ContainsKey(SymbolPosition.Last) 
+                && this.Random.NextDouble() < this.PositionChance[SymbolPosition.Last])
             {
                 syllable.Append(GenerateSymbol(SymbolPosition.Last));
             }
@@ -132,17 +135,17 @@ namespace Syllabore
         {
             var newGenerator = new SyllableGenerator();
             
-            foreach (var position in SymbolGenerators.Keys)
+            foreach (var position in this.SymbolGenerators.Keys)
             {
-                foreach (var symbols in SymbolGenerators[position])
+                foreach (var symbols in this.SymbolGenerators[position])
                 {
                     newGenerator.Add(position, symbols.Copy());
                 }
             }
 
-            foreach (var position in PositionChance.Keys)
+            foreach (var position in this.PositionChance.Keys)
             {
-                newGenerator.SetChance(position, PositionChance[position]);
+                newGenerator.SetChance(position, this.PositionChance[position]);
             }
 
             return newGenerator;

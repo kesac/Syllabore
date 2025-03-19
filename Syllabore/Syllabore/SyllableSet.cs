@@ -72,9 +72,9 @@ namespace Syllabore
         {
             foreach(var syllable in syllables)
             {
-                if(!ForceUnique || !PossibleSyllables.Contains(syllable))
+                if(!this.ForceUnique || !this.PossibleSyllables.Contains(syllable))
                 {
-                    PossibleSyllables.Add(syllable);
+                    this.PossibleSyllables.Add(syllable);
                 }
             }
 
@@ -86,18 +86,18 @@ namespace Syllabore
         /// </summary>
         public string Next()
         {
-            if (PossibleSyllables.Count < MaximumGeneratedSyllables && SyllableGenerator != null)
+            if (this.PossibleSyllables.Count < this.MaximumGeneratedSyllables && this.SyllableGenerator != null)
             {
                 int attempts = 0;
-                int maxAttempts = MaximumGeneratedSyllables * 2;
+                int maxAttempts = this.MaximumGeneratedSyllables * 2;
 
-                while(PossibleSyllables.Count < MaximumGeneratedSyllables)
+                while(this.PossibleSyllables.Count < this.MaximumGeneratedSyllables)
                 {
-                    var result = SyllableGenerator.Next();
+                    var result = this.SyllableGenerator.Next();
 
                     if(!ForceUnique || !PossibleSyllables.Contains(result))
                     {
-                        PossibleSyllables.Add(result);
+                        this.PossibleSyllables.Add(result);
                     }
 
                     attempts++;
@@ -110,12 +110,12 @@ namespace Syllabore
                 }
             }
 
-            if(PossibleSyllables.Count == 0)
+            if(this.PossibleSyllables.Count == 0)
             {
                 throw new InvalidOperationException("No syllables have been added to this set.");
             }
 
-            return PossibleSyllables[this.Random.Next(PossibleSyllables.Count)];
+            return this.PossibleSyllables[this.Random.Next(this.PossibleSyllables.Count)];
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Syllabore
         public ISyllableGenerator Copy()
         {
             var copy = new SyllableSet();
-            copy.PossibleSyllables.AddRange(PossibleSyllables);
+            copy.PossibleSyllables.AddRange(this.PossibleSyllables);
             
             if(this.SyllableGenerator != null)
             {

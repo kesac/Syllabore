@@ -36,8 +36,8 @@ namespace Syllabore
         public SymbolGenerator()
         {
             _recentlyAddedSymbols = new List<Symbol>();
-            Symbols = new List<Symbol>();
-            Random = new Random();
+            this.Symbols = new List<Symbol>();
+            this.Random = new Random();
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Syllabore
         {
             var newSymbols = symbols.Atomize().Select(x => new Symbol(x)).ToList();
 
-            Symbols.AddRange(newSymbols);
+            this.Symbols.AddRange(newSymbols);
             _recentlyAddedSymbols.Clear();
             _recentlyAddedSymbols.AddRange(newSymbols);
 
@@ -72,7 +72,7 @@ namespace Syllabore
         {
             var newSymbols = clusters.Select(x => new Symbol(x)).ToList();
 
-            Symbols.AddRange(newSymbols);
+            this.Symbols.AddRange(newSymbols);
             _recentlyAddedSymbols.Clear();
             _recentlyAddedSymbols.AddRange(newSymbols);
 
@@ -104,7 +104,7 @@ namespace Syllabore
         /// </summary>
         public string Next()
         {
-            return Symbols.RandomWeightedItem(Random).Value;
+            return this.Symbols.RandomWeightedItem(Random).Value;
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Syllabore
         {
             var newGenerator = new SymbolGenerator();
 
-            foreach (var symbol in Symbols)
+            foreach (var symbol in this.Symbols)
             {
                 newGenerator.Symbols.Add(symbol.Copy());
             }
