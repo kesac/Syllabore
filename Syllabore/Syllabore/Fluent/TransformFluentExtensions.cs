@@ -16,7 +16,7 @@ namespace Syllabore.Fluent
         /// Sets the probability of the last added transform step. To set the probability of the 
         /// transform itself, use <see cref="TriggerChance(double)"/>.
         /// </summary>
-        public static Transform Chance(this Transform transform, double chance)
+        public static Transform StepChance(this Transform transform, double chance)
         {
             transform.Steps[transform.Steps.Count - 1].Chance = chance;
             return transform;
@@ -25,7 +25,7 @@ namespace Syllabore.Fluent
         /// <summary>
         /// Sets the probability that this transform and all of its steps runs.
         /// </summary>
-        public static Transform StartChance(this Transform transform, double chance)
+        public static Transform TransformChance(this Transform transform, double chance)
         {
             transform.Chance = chance;
             return transform;
