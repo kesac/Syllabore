@@ -40,5 +40,48 @@ namespace Syllabore.Example
 
             return names;
         }
+
+        /// <summary>
+        /// Same as GetGenerator(), but without using Syllabore.Fluent extension methods
+        /// </summary>
+        public IGenerator<string> GetNonFluentGenerator()
+        {
+            var startingConsonants = new SymbolGenerator()
+                .Add("lmny").Weight(8)
+                .Add("wr").Weight(2)
+                .Add("s");
+
+            var vowels = new SymbolGenerator()
+                .Add("aeo").Weight(4)
+                .Add("u")
+                .Cluster("ia", "oe", "oi");
+
+            var innerConsonants = new SymbolGenerator()
+                .Cluster("mm", "nn", "mn", "ll");
+
+            var endingConsonants = new SymbolGenerator()
+                .Add("smn")
+                .Cluster("sh", "th");
+
+            var startingSyllables = new SyllableGenerator()
+                .Add(SymbolPosition.First, startingConsonants)
+                .Add(SymbolPosition.Middle, vowels);
+
+            var innerSyllables = (SyllableGenerator)startingSyllables.Copy();
+            innerSyllables.Add(SymbolPosition.First, innerConsonants);
+
+            var endingSyllables = (SyllableGenerator)startingSyllables.Copy();
+            endingSyllables.Add(SymbolPosition.Last, endingConsonants);
+            endingSyllables.SetChance(SymbolPosition.Last, 0.20);
+
+            var names = new NameGenerator()
+                .SetSyllables(SyllablePosition.Starting, startingSyllables)
+                .SetSyllables(SyllablePosition.Inner, innerSyllables)
+                .SetSyllables(SyllablePosition.Ending, endingSyllables)
+                .SetSize(2, 3);
+
+            return names;
+        }
+
     }
 }
