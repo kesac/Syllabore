@@ -13,68 +13,60 @@ using System.Globalization;
 
 namespace Syllabore.Example
 {
+    public interface Example
+    {
+        IGenerator<string> GetGenerator();
+    }
+
     public class Program
     {
         public static void Main(string[] args)
         {
-            RunCustomGenerator(new HighFantasyNames().GetGenerator());
-            PrintSeparator();
-
-            RunCustomGenerator(new SpaceshipNames().GetGenerator());
-            PrintSeparator();
-
-            RunCustomGenerator(new SimilarSoundingNames().GetNonFluentGenerator());
-            PrintSeparator();
-
-            RunCustomGenerator(new FuturisticCityNames().GetGenerator());
-            PrintSeparator();
-
-            RunCustomGenerator(new HarshSoundingNames().GetGenerator());
-            PrintSeparator();
-
-            RunCustomGenerator(new SofterSoundingNames().GetGenerator());
-            PrintSeparator();
-
+            RunCustomGenerator(new HighFantasyNames());
+            RunCustomGenerator(new SpaceshipNames());
+            RunCustomGenerator(new SimilarSoundingNames());
+            RunCustomGenerator(new FuturisticCityNames());
+            RunCustomGenerator(new HarshSoundingNames());
+            RunCustomGenerator(new SofterSoundingNames());
+            RunCustomGenerator(new AlienSoundingNames());
+            RunCustomGenerator(new BossNames());
+   
             RunSimpleConstructorExample();
             PrintSeparator();
 
             RunSerializationExample();
             RunExecutionTimeCheck(300000);
-
         }
 
 
-        private static void RunCustomGenerator(IGenerator<string> generator)
+        private static void RunCustomGenerator(Example example)
         {
-            for (int i = 0; i < 5; i++)
+            Console.WriteLine(string.Format("[{0}]", example.GetType().Name));
+
+            var generator = example.GetGenerator();
+
+            for (int i = 0; i < 8; i++)
             {
                 Console.WriteLine(generator.Next());
             }
+
+            PrintSeparator();
         }
 
         private static void RunSimpleConstructorExample()
         {
-            
+            Console.WriteLine("[SimpleConstructor]");
             var n1 = new NameGenerator("srnl", "ae");
                 
             for(int i = 0; i < 10; i++)
             {
                 Console.WriteLine(n1.Next());
             }
-
-            PrintSeparator();
-
-            var n2 = new NameGenerator("srnl", "ae", "lmt");
-
-            for (int i = 0; i < 10; i++)
-            {
-                Console.WriteLine(n2.Next());
-            }
-
         }
 
         private static void RunExecutionTimeCheck(int attempts)
         {
+            Console.WriteLine("[ExecutionTimeCheck]");
             var stopwatch = Stopwatch.StartNew();
             var v2 = new NameGenerator("ae", "srnl");
 
@@ -107,8 +99,8 @@ namespace Syllabore.Example
 
         public static void PrintSeparator()
         {
-            Console.WriteLine();
-            Console.WriteLine("---");
+            // Console.WriteLine();
+            // Console.WriteLine("---");
             Console.WriteLine();
         }
 

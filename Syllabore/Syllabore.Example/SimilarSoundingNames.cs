@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Archigen;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,13 +8,13 @@ using System.Threading.Tasks;
 namespace Syllabore.Example
 {
     /// <summary>
-    /// Generates names that sound similar to each other.
+    /// Names that sound similar to each other.
     /// This is done by restricting the number of unique syllables possible
     /// through a <see cref="SyllableSet"/>.
     /// </summary>
-    public class SimilarSoundingNames
+    public class SimilarSoundingNames : Example
     {
-        public NameGenerator GetNonFluentGenerator()
+        public IGenerator<string> GetGenerator()
         {
             var syllables = new SyllableGenerator()
                 .Add(SymbolPosition.First, "bgjdktplmnrs")

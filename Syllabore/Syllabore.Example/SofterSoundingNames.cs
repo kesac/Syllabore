@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Archigen;
 using Syllabore.Fluent;
 
 namespace Syllabore.Example
 {
-    public class SofterSoundingNames
+    /// <summary>
+    /// Names that are soft sounding when pronounced.
+    /// </summary>
+    public class SofterSoundingNames : Example
     {
         /// <summary>
         /// Generates names like: Lelia, Yannomo, Lammola
         /// </summary>
-        public NameGenerator GetGenerator()
+        public IGenerator<string> GetGenerator()
         {
             var names = new NameGenerator()
-                .Lead(x => x
+                .Start(x => x
                     .First(x => x
                         .Add("lmny").Weight(8)
                         .Add("wr").Weight(2)
@@ -24,10 +28,10 @@ namespace Syllabore.Example
                         .Add("aeo").Weight(4)
                         .Add("u")
                         .Cluster("ia", "oe", "oi")))
-                .Inner(x => x.CopyLead()
+                .Inner(x => x.CopyStart()
                     .First(x => x
                         .Cluster("mm", "nn", "mn", "ll")))
-                .Trail(x => x.CopyLead()
+                .End(x => x.CopyStart()
                     .Last(x => x
                         .Add("smn")
                         .Cluster("sh", "th"))

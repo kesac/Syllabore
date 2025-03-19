@@ -7,16 +7,16 @@ using Syllabore.Fluent;
 namespace Syllabore.Example
 {
     /// <summary>
-    /// Provides spaceship name generators
+    /// Names that look like spaceship vessel names
     /// </summary>
-    public class SpaceshipNames
+    public class SpaceshipNames : Example
     {
         // Returns a NameGenerator that can generate names like:
         // VNH Mousiavium, NSH Ratirus, MNL Rousiades, etc.
         public IGenerator<string> GetGenerator()
         {
             var prefixes = new NameGenerator()
-                .Any(x => x                    // For any syllable position...
+                .All(x => x                    // For any syllable position...
                 .First(x => x                  // For the first symbol of a syllable...
                     .Add("SHMLAMN").Weight(5)  // Choose these symbols most frequently
                     .Add("UVX").Weight(2)))    // Choose these symbols less frequently
@@ -24,7 +24,7 @@ namespace Syllabore.Example
                 .SetSize(3);
 
             var ships = new NameGenerator()
-                .Any(x => x
+                .All(x => x
                 .First(x => x
                     .Add("rstlmn").Weight(4)
                     .Add("cdgp").Weight(2))

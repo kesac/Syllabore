@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Archigen;
 using Syllabore.Fluent;
 
 namespace Syllabore.Example
 {
     /// <summary>
-    /// Provides high-fantasy sounding name generators
+    /// High-fantasy sounding names
     /// </summary>
-    public class HighFantasyNames
+    public class HighFantasyNames : Example
     {
         // Builds a NameGenerator that generates names with
         // three syllables like: Terolis, Kuregar, Serogar, Tecetia, Meruria
-        public NameGenerator GetGenerator()
+        public IGenerator<string> GetGenerator()
         {
             var names = new NameGenerator()
-                .Any(x => x
+                .All(x => x
                 .First(x => x
                     .Add("lmnstr").Weight(4)
                     .Add("kc").Weight(2)

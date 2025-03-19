@@ -8,17 +8,16 @@ using Syllabore.Fluent;
 namespace Syllabore.Example
 {
     /// <summary>
-    /// Provides name generators for futuristic cities.
-    /// Shows how to combine multiple generators into one.
+    /// Names that sound like futuristic cities.
     /// </summary>
-    public class FuturisticCityNames
+    public class FuturisticCityNames : Example
     {
         /// <summary>
         /// Generates names like: Zaut-31, Matica City, Go'kugo
         /// </summary>
         public IGenerator<string> GetGenerator()
         {
-            var pool = new StringGeneratorPool();
+            var pool = new GeneratorPool<string>();
 
             pool.Add(GetDescriptiveCityGenerator());
             pool.Add(GetNumberedCityGenerator());
@@ -35,7 +34,7 @@ namespace Syllabore.Example
             var digits = new SymbolGenerator("123456789");
 
             var names = new NameGenerator()
-                .Lead(x => x
+                .Start(x => x
                     .First("znmyvr")
                         .Chance(0.9)
                     .Middle(x => x
@@ -46,7 +45,7 @@ namespace Syllabore.Example
                         .Cluster("th", "rk", "st", "rt", "xt")))
                 .Inner(x => x
                     .First("-"))
-                .Trail(x => x
+                .End(x => x
                     .First(digits).Chance(1.0)
                     .Middle(digits).Chance(0.66)
                     .Last(digits).Chance(0.33))
@@ -64,7 +63,7 @@ namespace Syllabore.Example
         public IGenerator<string> GetDescriptiveCityGenerator()
         {
             var names = new NameGenerator()
-                .Lead(x => x
+                .Start(x => x
                     .First(x => x
                         .Add("srlmn").Weight(5)
                         .Add("t").Weight(3)
@@ -73,8 +72,8 @@ namespace Syllabore.Example
                         .Add("aeio").Weight(5)
                         .Cluster("io", "ou", "ie").Weight(3)
                         .Add("u").Weight(1)))
-                .Inner(x => x.CopyLead())
-                .Trail(x => x.CopyLead())
+                .Inner(x => x.CopyStart())
+                .End(x => x.CopyStart())
                 .Transform(new TransformSet()
                     .Chance(0.2)
                     .RandomlySelect(1)
@@ -96,26 +95,25 @@ namespace Syllabore.Example
         }
 
         /// <summary>
-        /// Generates names like: Go'kugo, Topoko, Bokoagog
+        /// Generates names like: Radax, Tirasax, Darisaxis
         /// </summary>
         public IGenerator<string> GetAlienCityGenerator()
         {
             var names = new NameGenerator()
-                .Any(x => x
-                    .First(x => x
-                        .Add("g").Weight(3)
-                        .Add("bkrptq"))
-                    .Middle(x => x
-                        .Add("o").Weight(3)
-                        .Add("u"))
-                    .Last(x => x
-                        .Cluster("rt", "sh")).Chance(0.1))
+                .Start(x => x
+                    .First("strd")
+                    .Middle("ia"))
+                .Inner(x => x
+                    .CopyStart())
+                .End(x => x
+                    .CopyStart()
+                    .Last("x"))
                 .Transform(new TransformSet()
-                    .Chance(0.5)
+                    .Chance(0.2)
                     .RandomlySelect(1)
-                    .Add(x => x.Insert(1, "'"))
-                    .Add(x => x.Append("agog")))
-                .SetSize(2, 3);
+                    .Add(x => x.Append("is"))
+                    .Add(x => x.Append("os")))
+                .SetSize(2,3);
 
             return names;
         }
