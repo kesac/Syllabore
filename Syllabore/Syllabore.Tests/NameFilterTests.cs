@@ -90,7 +90,7 @@ namespace Syllabore.Tests
         public void NameFilter_PreventSpecificPattern_FilterAffectsGeneration()
         {
             var names = new NameGenerator()
-                .All(x => x
+                .Any(x => x
                     .First(x => x.Add("b").Cluster("cc"))
                     .Middle(x => x.Add("ae").Cluster("ee"))
                     .Last(x => x.Add("d").Cluster("ff")));
@@ -113,7 +113,7 @@ namespace Syllabore.Tests
         public void NameFilter_UsingFluentMethod_FilterAffectsGeneration()
         {
             var sut = new NameGenerator()
-                    .All(x => x
+                    .Any(x => x
                         .First("bcdf").Chance(0.95)
                         .Middle("aei"))
                     .Filter("a", "^b");

@@ -16,7 +16,7 @@ namespace Syllabore.Example
         public IGenerator<string> GetGenerator()
         {
             var prefixes = new NameGenerator()
-                .All(x => x                    // For any syllable position...
+                .Any(x => x                    // For any syllable position...
                 .First(x => x                  // For the first symbol of a syllable...
                     .Add("SHMLAMN").Weight(5)  // Choose these symbols most frequently
                     .Add("UVX").Weight(2)))    // Choose these symbols less frequently
@@ -24,7 +24,7 @@ namespace Syllabore.Example
                 .SetSize(3);
 
             var ships = new NameGenerator()
-                .All(x => x
+                .Any(x => x
                 .First(x => x
                     .Add("rstlmn").Weight(4)
                     .Add("cdgp").Weight(2))

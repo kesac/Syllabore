@@ -22,6 +22,7 @@ namespace Syllabore.Example
     {
         public static void Main(string[] args)
         {
+
             RunCustomGenerator(new HighFantasyNames());
             RunCustomGenerator(new SpaceshipNames());
             RunCustomGenerator(new SimilarSoundingNames());

@@ -25,7 +25,7 @@ namespace Syllabore.Example
         {
             // A simple name for the boss
             _names = new NameGenerator()
-                .All(x => x
+                .Any(x => x
                     .First("stlr")
                     .Middle("aeio"))
                 .SetSize(2, 3);

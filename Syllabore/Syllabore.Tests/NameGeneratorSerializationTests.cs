@@ -22,7 +22,7 @@ namespace Syllabore.Tests
         public NameGeneratorSerializationTests()
         {
             _defaultNameGenerator = new NameGenerator()
-                .All(x => x
+                .Any(x => x
                     .First(x => x.Add("bçƢ").Cluster("dr"))
                     .Middle(x => x.Add("aieou").Cluster("ey"))
                     .Last(x => x.Add("ヅ🂅🙂").Cluster("mn")))

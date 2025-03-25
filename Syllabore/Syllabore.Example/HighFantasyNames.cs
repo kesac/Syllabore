@@ -16,7 +16,7 @@ namespace Syllabore.Example
         public IGenerator<string> GetGenerator()
         {
             var names = new NameGenerator()
-                .All(x => x
+                .Any(x => x
                 .First(x => x
                     .Add("lmnstr").Weight(4)
                     .Add("kc").Weight(2)

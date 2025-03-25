@@ -32,7 +32,7 @@ namespace Syllabore.Example
         public IGenerator<string> GetDashedNameGenerator()
         {
             var names = new NameGenerator()
-                .All(x => x
+                .Any(x => x
                     .First(x => x
                         .Add("ngdkt").Weight(2)
                         .Cluster("th", "ts", "qu"))
@@ -58,13 +58,13 @@ namespace Syllabore.Example
         public IGenerator<string> GetApostropheNameGenerator()
         {
             var front = new NameGenerator()
-                .All(x => x
+                .Any(x => x
                     .First("kxyz")
                     .Middle("oai").Chance(0.5))
                 .SetSize(1);
 
             var back = new NameGenerator()
-                .All(x => x
+                .Any(x => x
                     .First(x => x
                         .Add("ngd").Weight(2)
                         .Cluster("th", "ts", "qu", "kn"))
@@ -91,7 +91,7 @@ namespace Syllabore.Example
         public IGenerator<string> GetSimpleNameGenerator(int size)
         {
             return new NameGenerator()
-                .All(x => x
+                .Any(x => x
                     .First("xyz").Chance(0.9)
                     .Middle(x => x
                         .Add("oai").Weight(2)

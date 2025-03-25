@@ -63,7 +63,7 @@ namespace Syllabore.Fluent
         /// <summary>
         /// Sets the <see cref="SyllableGenerator"/> for all syllable positions. 
         /// </summary>
-        public static NameGenerator All(this NameGenerator names,
+        public static NameGenerator Any(this NameGenerator names,
             Func<SyllableGeneratorFluentWrapper, SyllableGeneratorFluentWrapper> configuration)
         {
             return names.Define(SyllablePosition.Any, configuration);
@@ -72,7 +72,7 @@ namespace Syllabore.Fluent
         /// <summary>
         /// Sets the <see cref="SyllableGenerator"/> for all syllable positions. 
         /// </summary>
-        public static NameGenerator All(this NameGenerator names, ISyllableGenerator syllables)
+        public static NameGenerator Any(this NameGenerator names, ISyllableGenerator syllables)
         {
             return names.SetSyllables(SyllablePosition.Any, syllables);
         }
