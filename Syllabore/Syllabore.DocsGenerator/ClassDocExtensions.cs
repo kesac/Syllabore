@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Syllabore.DocsGenerator
 {
+    /// <summary>
+    /// Extension methods used to generate Syllabore class docs.
+    /// </summary>
     public static class ClassDocExtensions
     {
         /// <summary>
@@ -66,15 +69,23 @@ namespace Syllabore.DocsGenerator
         /// <summary>
         /// Returns a string that replaces any instances of <c>`t</c>
         /// or <c>&lt;T&gt;</c>
-        /// with <c>[T]</c>".
+        /// with <c>-less-than-t-greater-than</c>".
         /// </summary>
         /// <param name="typeName"></param>
         /// <returns></returns>
         public static string ToFileSystemSafeName(this Type type)
         {
-            return type.Name.Replace("`1", "[T]").Replace("<", "[").Replace(">", "]");
+            // Also gitbook friendly format
+            return type.Name.ToLower()
+                .Replace("`1", "-less-than-t-greater-than")
+                .Replace("<", "-less-than-")
+                .Replace(">", "-greater-than");
         }
 
+        /// <summary>
+        /// For very long type strings, this method will insert spaces just
+        /// before the "<" character. This is helpful in markdown tables.
+        /// </summary>
         public static string ToSpacedLongString(this string value, int maxLength = 32)
         {
             if(value.Length > maxLength)
@@ -85,6 +96,12 @@ namespace Syllabore.DocsGenerator
             return value;
         }
 
+        /// <summary>
+        /// Returns a reference to the specified type in markdown format.
+        /// If the type is part of the Syllabore library, it will make the markdown
+        /// a hyperlink. Otherwise it will resolve the type along with its namespace.
+        /// This method also handles generic types.
+        /// </summary>
         public static string ToMarkdownReference(this Type type, bool checkForGenericType = true)
         {
             if (type == null)

@@ -65,6 +65,10 @@ namespace Syllabore.DocsGenerator
                 // Remove generic type symbols with ones that are friendlier to file systems
                 var fileName = $"{type.ToFileSystemSafeName()}.md";
                 var filePath = Path.Combine(DefaultOutputDirectory, fileName);
+
+                // Output for the gitbook summary.md
+                Console.WriteLine($"* [{type.ToReadableName()}](class-docs/{type.ToFileSystemSafeName().ToLower()}.md)");
+
                 File.WriteAllText(filePath, markdownContent);
             }
 
@@ -73,23 +77,23 @@ namespace Syllabore.DocsGenerator
 
         private static string GenerateMarkdown(Type type, XDocument xmlDoc)
         {
-            var markdown = new StringBuilder();
+            var result = new StringBuilder();
 
-            AppendHeader(markdown, type, xmlDoc);
+            AppendHeader(result, type, xmlDoc);
 
             if (type.IsClass || type.IsInterface || type.IsAbstract)
             {
-                AppendConstructorsSection(markdown, type, xmlDoc);
-                AppendMethodsSection(markdown, type, xmlDoc);
-                AppendPropertiesSection(markdown, type, xmlDoc);
+                AppendConstructorsSection(result, type, xmlDoc);
+                AppendMethodsSection(result, type, xmlDoc);
+                AppendPropertiesSection(result, type, xmlDoc);
             }
 
             if (type.IsEnum)
             {
-                AppendEnumValuesSection(markdown, type, xmlDoc);
+                AppendEnumValuesSection(result, type, xmlDoc);
             }
 
-            return markdown.ToString();
+            return result.ToString();
         }
 
 
@@ -287,7 +291,6 @@ namespace Syllabore.DocsGenerator
             markdown.AppendLine();
         }
 
-
         private static string ExtractXmlSummary(XDocument xmlDoc, string targetId)
         {
             string result = string.Empty;
@@ -310,7 +313,7 @@ namespace Syllabore.DocsGenerator
                         foreach (var seeElement in processedElement.Descendants("see").ToList())
                         {
                             string crefValue = seeElement.Attribute("cref")?.Value ?? string.Empty;
-                            string typeName = ExtractNameFromCref(crefValue);
+                            string typeName = ExtractTypeNameFromCrefString(crefValue);
 
                             var typeMarkdown = $"*{typeName}*";
                             var type = Type.GetType(typeName + ",Syllabore"); // This will be null for non-Syllabore types                       
@@ -334,39 +337,50 @@ namespace Syllabore.DocsGenerator
             return result;
         }
 
-        private static string ExtractNameFromCref(string crefValue)
+        /// <summary>
+        /// Extracts the type name from a cref string read from a .dll's XML docs file.
+        /// They're usually in one of these formats:
+        /// - Example simple class: "T:Syllabore.NameGenerator"
+        /// - Example simple property: "P:Syllabore.NameGenerator.Random"
+        /// - Example empty constructor: "M:Syllabore.NameGenerator.#ctor"
+        /// - Example method with parameters: "M:Syllabore.NameGenerator.GenerateName(System.Int32)"
+        /// - Example class with generic type: "T:Syllabore.GeneratorPool`1" (Note the `1 at the end)
+        /// </summary>
+        private static string ExtractTypeNameFromCrefString(string cref)
         {
-            if (string.IsNullOrEmpty(crefValue))
-                return string.Empty;
+            var result = string.Empty;
 
-            // Remove the type prefix (T:, M:, P:, etc.)
-            var colonLocation = crefValue.IndexOf(':');
-            if (colonLocation >= 0 && colonLocation < crefValue.Length - 1)
+            if (!string.IsNullOrEmpty(cref))
             {
-                crefValue = crefValue.Substring(colonLocation + 1);
+                // Remove the type prefix (T:, M:, P:, etc.)
+                var colonLocation = cref.IndexOf(':');
+                if (colonLocation >= 0 && colonLocation < cref.Length - 1)
+                {
+                    result = cref.Substring(colonLocation + 1);
+                }
+
+                // Remove any method parameters if present
+                var startBracketLocation = cref.IndexOf('(');
+                if (startBracketLocation > 0)
+                {
+                    result = cref.Substring(0, startBracketLocation);
+                }
+
+                // Handle generic types by removing the ` and any number that follows
+                var tickLocation = cref.IndexOf('`');
+                if (tickLocation > 0)
+                {
+                    result = cref.Substring(0, tickLocation);
+                }
+
+                // Detect constructors
+                if (cref == "#ctor")
+                {
+                    result = "Constructor";
+                }
             }
 
-            // Remove any method parameters if present
-            var startBracketLocation = crefValue.IndexOf('(');
-            if (startBracketLocation > 0)
-            {
-                crefValue = crefValue.Substring(0, startBracketLocation);
-            }
-
-            // Handle generic types by removing the ` and any number that follows
-            var tickLocation = crefValue.IndexOf('`');
-            if (tickLocation > 0)
-            {
-                crefValue = crefValue.Substring(0, tickLocation);
-            }
-
-            // Special case for constructors
-            if (crefValue == "#ctor")
-            {
-                return "Constructor";
-            }
-
-            return crefValue;
+            return result;
         }
         
     }
