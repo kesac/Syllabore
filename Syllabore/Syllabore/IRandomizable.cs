@@ -4,7 +4,7 @@ namespace Syllabore
 {
     /// <summary>
     /// Represents an entity that simulates
-    /// randomness using system class <see cref="System.Random"/>.
+    /// randomness using <see cref="System.Random"/>.
     /// <para>
     /// The purpose of this interface is to make the entity's 
     /// instance of <see cref="System.Random"/>

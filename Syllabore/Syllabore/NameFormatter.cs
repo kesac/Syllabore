@@ -6,29 +6,13 @@ using System.Text.RegularExpressions;
 
 namespace Syllabore
 {
+
     /// <summary>
     /// A convenience class used for modeling names that have multiple parts
     /// and need multiple generators to create them.
     /// </summary>
     public class NameFormatter : IGenerator<string>
     {
-        /// <summary>
-        /// Options for controlling output of a formatted name.
-        /// </summary>
-        public class NameFormatterGeneratorOptions
-        {
-            /// <summary>
-            /// The desired format for names
-            /// </summary>
-            public NameFormat Format { get; set; }
-
-
-            /// <summary>
-            /// Whether the name should have a leading space at its beginning.
-            /// </summary>
-            public bool UseLeadingSpace { get; set; }
-        }
-
         /// <summary>
         /// <para>
         /// The desired format for names. Surround substrings that need to be replaced with 

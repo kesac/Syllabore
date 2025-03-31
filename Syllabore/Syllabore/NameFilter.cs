@@ -24,6 +24,10 @@ namespace Syllabore
         {
             this.Constraints = new List<FilterConstraint>();
         }
+
+        /// <summary>
+        /// Adds new patterns to this filter.
+        /// </summary>
         public NameFilter Add(params string[] patterns)
         {
             foreach (var value in patterns)
@@ -35,6 +39,9 @@ namespace Syllabore
             return this;
         }
 
+        /// <summary>
+        /// Adds a new constraint to this filter.
+        /// </summary>
         public NameFilter Add(FilterConstraint constraint)
         {
             this.Constraints.Add(constraint);

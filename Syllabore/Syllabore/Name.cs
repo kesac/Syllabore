@@ -3,7 +3,7 @@
 namespace Syllabore
 {
     /// <summary>
-    /// Represents a name that consists of a sequence of syllables.
+    /// Represents a sequence of syllables that make up a name.
     /// </summary>
     public class Name
     {
@@ -13,7 +13,7 @@ namespace Syllabore
         public List<string> Syllables { get; set; }
 
         /// <summary>
-        /// Instantiates an empty name.
+        /// Creates an empty name with no syllables.
         /// </summary>
         public Name()
         {
@@ -21,7 +21,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Instantiates a new name with the desired starting syllables.
+        /// Creates a new name with the desired syllables.
         /// </summary>
         /// <param name="syllable"></param>
         public Name(params string[] syllable)
@@ -30,7 +30,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Instantiates a new name that is a copy of the specified name. (This constructor
+        /// Instantiates a new name that is a copy of the specified <see cref="Name"/>. (This constructor
         /// is useful for a <see cref="INameTransformer"/>.)
         /// </summary>
         /// <param name="copy"></param>
@@ -39,7 +39,7 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Adds a new syllable to this name.
+        /// Adds a new syllable to this name. Returns this instance of <see cref="Name"/> for chaining.
         /// </summary>
         public Name Append(string syllable)
         {
@@ -48,10 +48,9 @@ namespace Syllabore
         }
 
         /// <summary>
-        /// Sequences the syllables of this Name into a single
-        /// string and then capitalizes it.
+        /// Sequences the syllables of this <see cref="Name"/> into a single
+        /// string, capitalizes it, and returns it.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             var result = string.Join(string.Empty, this.Syllables);
@@ -68,9 +67,11 @@ namespace Syllabore
         }
 
         /// <summary>
+        /// Returns true if this <see cref="Name"/> is equal
+        /// to the specified <see cref="Name"/>. 
         /// A <see cref="Name"/> is equal to another
-        /// <see cref="Name"/> if and only if their
-        /// string representations are also equal.
+        /// <see cref="Name"/> only if their
+        /// string values are also equal.
         /// </summary>
         public override bool Equals(object obj)
         {

@@ -8,7 +8,8 @@ namespace Syllabore
 {
     /// <summary>
     /// A convenience wrapper for <see cref="SyllableGenerator"/> that
-    /// is used by NameGenerator's fluent extension methods.
+    /// is used by NameGenerator's fluent extension methods. Not meant to be used
+    /// outside of the fluent API.
     /// </summary>
     public class SyllableGeneratorFluentWrapper
     {

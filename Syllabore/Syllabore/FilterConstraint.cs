@@ -13,8 +13,7 @@
         public FilterCondition Type { get; set; }
 
         /// <summary>
-        /// The value that names will be tested against (in conjunction
-        /// with <see cref="Type"/>).
+        /// The value or pattern that names will be tested against.
         /// </summary>
         public string Value { get; set; }
 
