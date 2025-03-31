@@ -38,15 +38,9 @@ namespace Syllabore.DocsGenerator
             // Get all classes that we want to document
             var assembly = typeof(Syllabore.NameGenerator).Assembly;
             var classes = assembly.GetTypes()
-                .Where(t => t.Namespace != null
-                    && t.Namespace.StartsWith("Syllabore")
-                    && (t.IsAbstract || t.IsClass || t.IsInterface || t.IsEnum)
-                    && !t.Name.StartsWith("<")
-                    && !t.Name.EndsWith("Extension")
-                    && !t.Name.EndsWith("Extensions"))
+                .Where(t => t.IsDocumentable())
                 .OrderBy(t => t.Name)
                 .ToList();
-
 
             // Find where the XML docs live
             XDocument xmlDoc = null;
@@ -82,12 +76,17 @@ namespace Syllabore.DocsGenerator
             var markdown = new StringBuilder();
 
             AppendHeader(markdown, type, xmlDoc);
-            AppendConstructorsSection(markdown, type, xmlDoc);
 
             if (type.IsClass || type.IsInterface || type.IsAbstract)
             {
+                AppendConstructorsSection(markdown, type, xmlDoc);
                 AppendMethodsSection(markdown, type, xmlDoc);
                 AppendPropertiesSection(markdown, type, xmlDoc);
+            }
+
+            if (type.IsEnum)
+            {
+                AppendEnumValuesSection(markdown, type, xmlDoc);
             }
 
             return markdown.ToString();
@@ -103,7 +102,7 @@ namespace Syllabore.DocsGenerator
 
             // Description
             string targetId = $"T:{type.FullName}";
-            string description = GetXmlDocumentation(xmlDoc, targetId);
+            string description = ExtractXmlSummary(xmlDoc, targetId);
 
             if (type.IsEnum)
             {
@@ -120,11 +119,6 @@ namespace Syllabore.DocsGenerator
                 markdown.AppendLine();
             }
 
-            if (type.IsEnum)
-            {
-                AppendEnumValuesSection(markdown, type, xmlDoc);
-            }
-
             if (type.IsAbstract || type.IsInterface || type.IsClass)
             {
                 // Get interfaces (before adding the class description)
@@ -133,7 +127,7 @@ namespace Syllabore.DocsGenerator
                 {
                     // Create a list of interface links instead of just names
                     var interfaceLinks = interfacesUsed
-                        .Select(x => x.ToMarkdownLink())
+                        .Select(x => x.ToMarkdownReference())
                         .ToList();
 
                     string interfacesList = string.Join(", ", interfaceLinks);
@@ -141,36 +135,6 @@ namespace Syllabore.DocsGenerator
                     markdown.AppendLine();
                 }
             }
-        }
-
-        private static void AppendEnumValuesSection(StringBuilder markdown, Type type, XDocument xmlDoc)
-        {
-            if (!type.IsEnum)
-                return;
-
-            markdown.AppendLine("## Values");
-            markdown.AppendLine();
-            markdown.AppendLine("| Name | Value | Description |");
-            markdown.AppendLine("|------|-------|-------------|");
-
-            // Get all enum values
-            var enumValues = Enum.GetValues(type);
-            var enumNames = Enum.GetNames(type);
-
-            for (int i = 0; i < enumNames.Length; i++)
-            {
-                string enumName = enumNames[i];
-                int enumValue = (int)enumValues.GetValue(i);
-
-                // Build the XML documentation ID for this enum value
-                string fieldXmlId = $"F:{type.FullName}.{enumName}";
-                string description = GetXmlDocumentation(xmlDoc, fieldXmlId);
-
-                // Add row to the markdown table
-                markdown.AppendLine($"| {enumName} | {enumValue} | {description} |");
-            }
-
-            markdown.AppendLine();
         }
 
         private static void AppendConstructorsSection(StringBuilder markdown, Type type, XDocument xmlDoc)
@@ -189,23 +153,23 @@ namespace Syllabore.DocsGenerator
                 foreach (var constructor in constructors)
                 {
                     var parameters = constructor.GetParameters();
-                    string paramList = string.Join(", ", parameters.Select(p => $"{p.ParameterType.Name} {p.Name}"));
+                    var paramList = string.Join(", ", parameters.Select(p => $"{p.ParameterType.ToMarkdownReference()} {p.Name}"));
 
                     // Fix: For parameterless constructors, don't include the parentheses in XML ID
-                    string ctorXmlId;
+                    string targetId;
                     if (parameters.Length == 0)
                     {
-                        ctorXmlId = $"M:{type.FullName}.#ctor";
+                        targetId = $"M:{type.FullName}.#ctor";
                     }
                     else
                     {
-                        ctorXmlId = $"M:{type.FullName}.#ctor({string.Join(",", parameters.Select(p => p.ParameterType.FullName))})";
+                        targetId = $"M:{type.FullName}.#ctor({string.Join(",", parameters.Select(p => p.ParameterType.ToMarkdownReference()))})";
                     }
 
-                    string ctorDescription = GetXmlDocumentation(xmlDoc, ctorXmlId);
-                    string typeName = type.ToReadableName();
+                    var description = ExtractXmlSummary(xmlDoc, targetId);
+                    var typeName = type.ToReadableName(false); // Leave brackets in since we're printing in a code block
 
-                    markdown.AppendLine($"| `{typeName}({paramList})` | {ctorDescription} |");
+                    markdown.AppendLine($"| {typeName}({paramList}) | {description} |");
                 }
 
                 markdown.AppendLine();
@@ -224,29 +188,30 @@ namespace Syllabore.DocsGenerator
 
             if (methods.Count > 0)
             {
-                markdown.AppendLine("| Method | Description |");
-                markdown.AppendLine("|--------|-------------|");
+                markdown.AppendLine("| Method | Returns | Description |");
+                markdown.AppendLine("|--------|---------|-------------|");
 
                 foreach (var method in methods)
                 {
                     var parameters = method.GetParameters();
-                    string paramList = string.Join(", ", parameters.Select(p => $"{p.ParameterType.ToReadableName()} {p.Name}"));
+                    var returnType = method.ReturnParameter.ParameterType;
+                    var paramList = string.Join(", ", parameters.Select(p => $"{p.ParameterType.ToMarkdownReference().ToSpacedLongString()} {p.Name}"));
 
-                    // Fix: For parameterless methods, don't include the parentheses in XML ID
-                    string methodXmlId;
+                    var targetId = string.Empty;
                     if (parameters.Length == 0)
                     {
-                        methodXmlId = $"M:{type.FullName}.{method.Name}";
+                        targetId = $"M:{type.FullName}.{method.Name}";
                     }
                     else
                     {
-                        methodXmlId = $"M:{type.FullName}.{method.Name}({string.Join(",", parameters.Select(p => p.ParameterType.FullName))})";
+                        targetId = $"M:{type.FullName}.{method.Name}({string.Join(",", parameters.Select(p => p.ParameterType.FullName))})";
                     }
 
-                    string methodDescription = GetXmlDocumentation(xmlDoc, methodXmlId);
+                    var methodDescription = ExtractXmlSummary(xmlDoc, targetId);
+                    var returnTypeValue = returnType.ToMarkdownReference();
 
-                    string methodName = method.ToReadableName();
-                    markdown.AppendLine($"| `{methodName}({paramList})` | {methodDescription} |");
+                    var methodName = method.ToReadableName();
+                    markdown.AppendLine($"| {methodName}({paramList})| {returnTypeValue} | {methodDescription} |");
                 }
 
                 markdown.AppendLine();
@@ -275,14 +240,10 @@ namespace Syllabore.DocsGenerator
                 foreach (var property in properties)
                 {
                     var targetId = $"P:{type.FullName}.{property.Name}";
-                    var description = GetXmlDocumentation(xmlDoc, targetId);
+                    var description = ExtractXmlSummary(xmlDoc, targetId);
                     var propertyType = property.PropertyType;
-                    var typeResult = propertyType.ToReadableName();
 
-                    if (propertyType.Namespace != null && propertyType.Namespace.StartsWith("Syllabore"))
-                    {
-                        typeResult = propertyType.ToMarkdownLink();
-                    }
+                    var typeResult = propertyType.ToMarkdownReference().ToSpacedLongString();
 
                     markdown.AppendLine($"| {property.Name} | {typeResult} | {description} |");
                 }
@@ -293,8 +254,41 @@ namespace Syllabore.DocsGenerator
             }
         }
 
-        
-        private static string GetXmlDocumentation(XDocument xmlDoc, string memberId)
+        private static void AppendEnumValuesSection(StringBuilder markdown, Type type, XDocument xmlDoc)
+        {
+            if (!type.IsEnum)
+                return;
+
+            markdown.AppendLine("## Values");
+            markdown.AppendLine();
+            markdown.AppendLine("| Name | Description |");
+            markdown.AppendLine("|------|-------------|");
+
+            // Get all enum values
+            var enumNames = Enum.GetNames(type);
+
+            for (int i = 0; i < enumNames.Length; i++)
+            {
+                string enumName = enumNames[i];
+
+                // Build the XML documentation ID for this enum value
+                string fieldXmlId = $"F:{type.FullName}.{enumName}";
+                string description = ExtractXmlSummary(xmlDoc, fieldXmlId);
+
+                if (description.Trim() == string.Empty)
+                {
+                    description = "*No description available.*";
+                }
+
+                // Add row to the markdown table
+                markdown.AppendLine($"| {enumName} | {description} |");
+            }
+
+            markdown.AppendLine();
+        }
+
+
+        private static string ExtractXmlSummary(XDocument xmlDoc, string targetId)
         {
             string result = string.Empty;
 
@@ -302,7 +296,7 @@ namespace Syllabore.DocsGenerator
             {
                 var memberElement = xmlDoc
                     .Descendants("member")
-                    .FirstOrDefault(e => e.Attribute("name")?.Value == memberId);
+                    .FirstOrDefault(e => e.Attribute("name")?.Value == targetId);
 
                 if (memberElement != null)
                 {
@@ -316,11 +310,19 @@ namespace Syllabore.DocsGenerator
                         foreach (var seeElement in processedElement.Descendants("see").ToList())
                         {
                             string crefValue = seeElement.Attribute("cref")?.Value ?? string.Empty;
-                            string linkText = ExtractNameFromCref(crefValue);
-                            string linkMarkdown = $"[{linkText}]({linkText}.md)";
+                            string typeName = ExtractNameFromCref(crefValue);
+
+                            var typeMarkdown = $"*{typeName}*";
+                            var type = Type.GetType(typeName + ",Syllabore"); // This will be null for non-Syllabore types                       
+
+                            if (type != null)
+                            {
+                                typeMarkdown = type.ToMarkdownReference();
+                            }
 
                             // Replace the <see> element with the markdown link
-                            seeElement.ReplaceWith(new XText(linkMarkdown));
+                            seeElement.ReplaceWith(new XText(typeMarkdown));
+                            
                         }
 
                         result = processedElement.Value.Trim();
@@ -342,13 +344,6 @@ namespace Syllabore.DocsGenerator
             if (colonLocation >= 0 && colonLocation < crefValue.Length - 1)
             {
                 crefValue = crefValue.Substring(colonLocation + 1);
-            }
-
-            // Extract just the class/type name (the last part after the dot)
-            var lastDotLocation = crefValue.LastIndexOf('.');
-            if (lastDotLocation >= 0 && lastDotLocation < crefValue.Length - 1)
-            {
-                crefValue = crefValue.Substring(lastDotLocation + 1);
             }
 
             // Remove any method parameters if present
