@@ -15,6 +15,36 @@ namespace Syllabore.Json
     public class NameGeneratorSerializer
     {
         /// <summary>
+        /// A type of <see cref="JsonConverter{T}"/> used to 
+        /// ensure properties with an interface type are serialized
+        /// as the concrete class type instead.
+        /// <para>
+        /// This converter is used by <see cref="NameGeneratorSerializer"/>
+        /// internally.
+        /// </para>
+        /// </summary>
+        private class InterfaceConverter<T> : JsonConverter<T>
+        {
+            /// <summary>
+            /// Required to implement <see cref="JsonConverter{T}"/>, but not used by this converter.
+            /// </summary>
+            public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                // NameGeneratorSerializer does not use this when reading JSON
+                throw new InvalidCastException(nameof(InterfaceConverter<T>) + " can only be used when writing JSON.");
+            }
+
+            /// <summary>
+            /// Writes the value as its concrete type.
+            /// </summary>
+            public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+            {
+                // Calling GetType() on value will return the concrete type
+                JsonSerializer.Serialize(writer, value, value.GetType(), options);
+            }
+        }
+
+        /// <summary>
         /// A list of characters that will not be escaped in Json output.
         /// (Carriage return, newline, and quotation mark.)
         /// </summary>
