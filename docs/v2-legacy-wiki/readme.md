@@ -1,0 +1,1 @@
+This folder contains the old contents of the wiki prior to v3.0.
