@@ -1,0 +1,1 @@
+Documentation for v3 is currently hosted at [https://sacro.gitbook.io/syllabore](https://sacro.gitbook.io/syllabore).
