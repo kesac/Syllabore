@@ -1,113 +1,119 @@
 [![Nuget](https://img.shields.io/nuget/v/Syllabore)](https://www.nuget.org/packages/Syllabore/)
 
 ![](https://i.imgur.com/Y98oNli.png) 
-#### What is this?
- * **Syllabore** is a procedural name generator that does not use pre-made lists of names
- * It can be embedded into a .NET program and used 100% offline
+### What is this?
+Syllabore is a name generator that does not use pre-defined lists of names.
 
-#### How are names generated?
- * **Syllabore** first constructs syllables out of characters (_graphemes_)
- * Then it sequences syllables into names
-
-## Table of Contents
- 1. [Quick Start](#quick-start)
- 1. [Tailoring Characters](#tailoring-characters)
- 1. [Transformations](#transformations)
- 1. [Filtering](#filtering-output)
- 1. [Installation](#installation)
- 1. [Compatibility](#compatibility)
- 1. [License](#license)
+You will find Syllabore useful if:
+- You do not want to randomly select names from lists
+- You want a name generator that can be used 100% offline
+- You want a name generator that can be embedded into a .NET app or game
 
 ## Quick Start
-Use the ```NameGenerator``` class to generate names. Call ``Next()`` to get a new name. By default, [a subset of consonants and vowels from the English language](https://github.com/kesac/Syllabore/wiki/What-is-the-DefaultSyllableGenerator) will be used. 
+
+Use the `NameGenerator` class to generate names. Every call to `Next()` returns a new name. 
+
+The following example creates a single name and prints it to the console:
+```csharp
+var names = new NameGenerator("str", "aeo");
+Console.WriteLine(names.Next());
+```
+Each call to `names.Next()` will return names like:
+```
+Sasara
+Rosa
+Tetoro
+```
+Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
+
+## Positioning
+Names are made up of syllables. Syllables are made up of symbols. 
+
+Tell the `NameGenerator` what symbols to use for each *symbol position* and *syllable position*.
+```csharp
+var names = new NameGenerator()
+    .Start(x => x     // The starting syllable of a name
+        .First("st")  // Leading consonants
+        .Middle("ae") // Vowels
+        .Last("rl"))  // Trailing consonants
+    .Inner(x => x     // The "body" of a name
+        .First("mnr")
+        .Middle("ioa"))
+    .End(x => x       // The ending syllable of a name
+        .CopyInner()) // Use the same symbols as inner syllables
+    .SetSize(3);      // Makes names 3 syllables long
+```
+Calls to `names.Next()` will generate names like
+```
+Termino
+Sarnina
+Telnari
+```
+Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
+
+## Transforms
+Add determinism to names by using a `transform`.
+
+This example forces every name to end with the suffix `-nia`:
 
 ```csharp
-var g = new NameGenerator();
-Console.WriteLine(g.Next());
+var names = new NameGenerator()
+    .Any(x => x                       // For all syllable positions...
+        .First("lmnstr")              // Use these consonants
+        .Middle("aeiou"))             // And these vowels
+    .Transform(x => x.Append("nia"))  // Then add this suffix to the final name
+    .SetSize(2);
 ```
-This will return names like:
+Calls to `names.Next()` will produce names like:
 ```
-Pheras
-Domar
-Teso
+Sarunia
+Timania
+Lisonia
 ```
-
-## Tailoring Characters
-For simple generators, you can supply the vowels and consonants to use through the constructor:
-```csharp
-var g = new NameGenerator("ae", "srnl");   
-```
-Names from this generator will only ever have the characters `a` and `e` for vowels, and the characters `s` `r` `n` and `l` for consonants. Calls to ```Next()``` will produce names like:
-```
-Lena
-Salna
-Rasse
-```
-See the [wiki](https://github.com/kesac/Syllabore/wiki) for more examples on how to control things like vowel sequences, consonant positioning, and more!
-
-## Transformations
-A ```Transform``` is a mechanism for changing a source name into a new, modified name. Call ```UsingTransform()``` on a ```NameGenerator``` to specify one or more transformations:
-```csharp
-var g = new NameGenerator()
-        .UsingTransform(x => x
-            .ReplaceSyllable(0, "zo") // Replace the first syllable with string "zo"
-            .AppendSyllable("ri"));   // Adds a new syllable to end of name
-```
-Calling ```Next()``` produces names like:
-```
-Zocari
-Zoshari
-Zojiri
-```
-See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.3%EA%9E%89-Transformations) for additional examples.
+Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
 
 ## Filtering Output
-Each ```NameGenerator``` can be configured to prevent specific substrings or patterns from showing up in names. Filtering is completely optional, but is useful in avoiding awkward sounding combinations of characters.
+Prevent certain symbol combinations from appearing in names by using a `filter`.
 
-Here is a basic example of preventing substrings from appearing:
+The following generator uses the symbols `m` `u`, but uses a filter to prevent `m` from appearing at the beginning of a name and prevents `u` from ending it:
+
 ```csharp
-var g = new NameGenerator()
-        .DoNotAllow("ist") // Will prevent names like "Misty"
-        .DoNotAllow("ck"); // Will prevent names like "Brock"
+var names = new NameGenerator()
+    .Any(x => x
+        .First("strlmn")
+        .Middle("aeiou"))
+    .Filter("^M|u$");
+```
+This generator produces names like:
+```
+Temaro
+Rima
+Narumi
 ```
 
-See the [wiki](https://github.com/kesac/Syllabore/wiki/Guide-1.2%EA%9E%89-Filtering-Output) for additional examples.
-
+Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
 
 ## Installation
-### [.NET apps](https://learn.microsoft.com/en-us/dotnet/core/introduction) 
-Syllabore is available as a [NuGet](https://learn.microsoft.com/en-us/nuget/what-is-nuget) package. You can install it from your [NuGet package manager in Visual Studio](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio) (search for "Syllabore") or by running the following command in your NuGet package manager console:
-```
-Install-Package Syllabore
-```
-
-### [Godot Engine](https://godotengine.org/)
-There are a couple ways to do this in [Godot](https://godotengine.org/):
-- Open your Godot project in Visual Studio and add the Syllabore NuGet package through the [package manager](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio)
-- Or open a command line, `cd` into your Godot project directory, and use the following command:
-```
-dotnet add package Syllabore
-```
+Check out [the installation documentation](https://sacro.gitbook.io/syllabore#how-do-i-add-syllabore-to-my-project) for full details. The gist is:
+- In Visual Code, use the `NuGet: Add NuGet Package` command in Microsoft's C# Dev Kit extension to find `Syllabore`
+- In Visual Studio, use the NuGet package manager to find `Syllabore` or run the package manager command `Install-Package Syllabore`
+- In the .NET CLI, run the command `dotnet add package Syllabore`
 
 ## Compatibility
-By design, Syllabore is a [.NET Standard](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-1-0) 2.0 class library. This means it will be compatible with applications using:
- * .NET or .NET Core 2.0, 2.1, 2.2, 3.0, 3.1, 5.0, 6.0, 7.0, 8.0
- * .NET Framework 4.6.1, 4.6.2, 4.7, 4.7.1, 4.7.2, 4.8, 4.8.1
- * [Mono](https://www.mono-project.com/) 5.4, 6.4
- 
-Syllabore has been tested and known to work in the following game engines:
- * [Godot 4](https://godotengine.org/download/windows/) (Using the .NET edition of the engine)
- 
-Syllabore should also work in the following game engines, but I have not done adequate testing yet:
- * [Godot 3](https://godotengine.org/download/3.x/windows/)
- * [Unity Engine](https://unity.com/products/unity-engine)
- * [MonoGame](https://www.monogame.net/)
+Syllabore is a [.NET Standard](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-1-0) 2.0 class library and is compatible with applications using:
+
+* .NET or .NET Core 2.0 to 8.0 inclusive
+* .NET Framework 4.6.1 to 4.8.1 inclusive
+* [Mono](https://www.mono-project.com/) 5.4 and 6.4
+* [Godot 4](https://godotengine.org/download/windows/) (Using the .NET edition of the engine)
+* [Unity Engine](https://unity.com/products/unity-engine)
+* [MonoGame](https://www.monogame.net/)
 
 ## License
 ```
 MIT License
 
-Copyright (c) 2019-2024 Kevin Sacro
+Copyright (c) 2019-2025 Kevin Sacro
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
