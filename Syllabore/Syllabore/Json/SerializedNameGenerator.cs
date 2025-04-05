@@ -20,5 +20,10 @@ namespace Syllabore.Json
         /// The <see cref="NameGenerator"/> to serialize.
         /// </summary>
         public NameGenerator Value { get; set; }
+
+        /// <summary>
+        /// Creates an empty <see cref="SerializedNameGenerator"/>.
+        /// </summary>
+        public SerializedNameGenerator(){ }
     }
 }

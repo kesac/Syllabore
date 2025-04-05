@@ -9,6 +9,9 @@ namespace Syllabore
     /// </summary>
     public enum SyllablePosition
     {
+        /// <summary>
+        /// The syllable position is unknown.
+        /// </summary>
         Unknown = 0,
 
         /// <summary>

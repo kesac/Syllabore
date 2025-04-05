@@ -6,6 +6,9 @@
     /// </summary>
     public enum FilterCondition
     {
+        /// <summary>
+        /// The filter condition is unknown.
+        /// </summary>
         Unknown = 0,
 
         /// <summary>

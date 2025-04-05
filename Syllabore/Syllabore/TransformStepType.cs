@@ -6,6 +6,10 @@
     /// </summary>
     public enum TransformStepType
     {
+
+        /// <summary>
+        /// The step type is unknown.
+        /// </summary>
         Unknown = 0,
 
         /// <summary>

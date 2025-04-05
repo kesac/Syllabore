@@ -5,6 +5,9 @@
     /// </summary>
     public enum SymbolPosition 
     {
+        /// <summary>
+        /// The symbol position is unknown.
+        /// </summary>
         Unknown = 0,
 
         /// <summary>

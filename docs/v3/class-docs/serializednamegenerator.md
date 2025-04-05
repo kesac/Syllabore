@@ -6,7 +6,7 @@ Contains a [NameGenerator](namegenerator.md) plus the *System.Type* information 
 
 | Constructor | Description |
 |-------------|-------------|
-| SerializedNameGenerator() |  |
+| SerializedNameGenerator() | Creates an empty [SerializedNameGenerator](serializednamegenerator.md). |
 
 ## Methods
 

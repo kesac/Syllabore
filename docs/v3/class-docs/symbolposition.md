@@ -6,7 +6,7 @@
 
 | Name | Description |
 |------|-------------|
-| Unknown | *No description available.* |
+| Unknown | The symbol position is unknown. |
 | First | The first symbol of a syllable. |
 | Middle | The position between the first and last symbols of a syllable. |
 | Last | The last symbol of a syllable. |

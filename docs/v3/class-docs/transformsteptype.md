@@ -6,7 +6,7 @@
 
 | Name | Description |
 |------|-------------|
-| Unknown | *No description available.* |
+| Unknown | The step type is unknown. |
 | InsertSyllable | Adds a syllable to a [Name](name.md), displacing other syllables as needed. |
 | AppendSyllable | Adds a syllable to the end of a [Name](name.md). |
 | ReplaceSyllable | Replaces a single syllable with a another syllable. |
