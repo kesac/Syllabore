@@ -5,13 +5,13 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Kevin Sacro</Authors>
     <Title>Syllabore</Title>
-    <Description>Syllabore is a fantasy name generator that does not use pre-made lists of names. Name generation is accomplished by constructing individual syllables then sequencing them to form names. (See https://github.com/kesac/Syllabore)</Description>
+    <Description>Syllabore is a fantasy name generator that does not use pre-defined lists of names. (See https://github.com/kesac/Syllabore)</Description>
     <Copyright>Copyright (c) 2019-2025 Kevin Sacro</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/kesac/Syllabore</PackageProjectUrl>
     <RepositoryUrl>https://github.com/kesac/Syllabore</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageTags>csharp name-generation generation syllable syllables fantasy name generator name-generator fantasy-name</PackageTags>
+    <PackageTags>generator procedural-generation procedural generation name fantasy name-generation proceduralgeneration syllables syllable name-generator namegenerator fantasy-name namegeneration</PackageTags>
     <Version>3.0.0-alpha</Version>
     <AssemblyVersion>3.0.0</AssemblyVersion>
     <FileVersion>3.0.0</FileVersion>
