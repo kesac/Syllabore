@@ -9,6 +9,9 @@ namespace Syllabore
     /// </summary>
     public enum NameFormat
     {
+        /// <summary>
+        /// An unknown name format. It has no effect.
+        /// </summary>
         Unknown = 0,
 
         /// <summary>

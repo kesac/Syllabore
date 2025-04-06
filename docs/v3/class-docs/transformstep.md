@@ -9,8 +9,8 @@ Represents one action or step in a [Transform](transform.md).
 | Constructor | Description |
 |-------------|-------------|
 | TransformStep() | Instantiates a new [TransformStep](transformstep.md) with no type or arguments. |
-| TransformStep(System.Action&lt;[Name](name.md)&gt; unserializableAction) |  |
-| TransformStep([TransformStepType](transformsteptype.md) type, System.String[] args) |  |
+| TransformStep(System.Action&lt;[Name](name.md)&gt; unserializableAction) | Instantiates a new [TransformStep](transformstep.md) with type *Syllabore.TransformStepType.Lambda* and the specified *System.Action* to execute. Note that this type of [TransformSet](transformset.md) is not serializable. |
+| TransformStep([TransformStepType](transformsteptype.md) type, System.String[] args) | Instantiates a new [TransformStep](transformstep.md) with the specified type and arguments. |
 
 ## Methods
 

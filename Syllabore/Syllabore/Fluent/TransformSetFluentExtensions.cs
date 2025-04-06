@@ -6,6 +6,9 @@ namespace Syllabore.Fluent
 {
     public static class TransformSetFluentExtensions
     {
+        /// <summary>
+        /// Sets the probability of this <see cref="TransformSet"/>. The value must be a double between 0 and 1 inclusive.
+        /// </summary>
         public static TransformSet Chance(this TransformSet set, double chance)
         {
             set.Chance = chance;

@@ -84,7 +84,7 @@ namespace Syllabore
         /// </para>
         /// <para>
         /// The transform may result in no changes if a condition 
-        /// was added and is not met, or if the <see href="Chance"/>
+        /// was added and is not met, or if the *Chance*
         /// property is between 0 and 1 exclusive (less than 100%).
         /// </para>
         /// <para>
@@ -101,11 +101,11 @@ namespace Syllabore
         /// <summary>
         /// <para>
         /// Applies this <see cref="Transform"/> on the specified <see cref="Name"/> in
-        /// a destructive manner. For a non-destructive alternative, use <see cref="Apply(Name)"/> instead.
+        /// a destructive manner. For a non-destructive alternative, use *Apply()* instead.
         /// </para>
         /// <para>
         /// The transform may result in no changes if a condition 
-        /// was added and is not met, or if the <see href="Chance"/>
+        /// was added and is not met, or if the *Chance*
         /// property is between 0 and 1 exclusive (less than 100%).
         /// </para>
         /// </summary>

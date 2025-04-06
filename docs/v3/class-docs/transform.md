@@ -15,8 +15,8 @@ A [Transform](transform.md) is a mechanism for changing a source name into a new
 | Method | Returns | Description |
 |--------|---------|-------------|
 | AddStep([TransformStep](transformstep.md) step)| [Transform](transform.md) | Adds a new step to this transform. |
-| Apply([Name](name.md) name)| [Name](name.md) | Applies this [Transform](transform.md) on the specified [Name](name.md) and returns a new [Name](name.md) as a result. The transform may result in no changes if a condition was added and is not met, or if the ** property is between 0 and 1 exclusive (less than 100%). This method leaves the source [Name](name.md) unchanged. |
-| Modify([Name](name.md) name)| System.Void | Applies this [Transform](transform.md) on the specified [Name](name.md) in a destructive manner. For a non-destructive alternative, use *M:Syllabore.Transform.Apply* instead. The transform may result in no changes if a condition was added and is not met, or if the ** property is between 0 and 1 exclusive (less than 100%). |
+| Apply([Name](name.md) name)| [Name](name.md) | Applies this [Transform](transform.md) on the specified [Name](name.md) and returns a new [Name](name.md) as a result. The transform may result in no changes if a condition was added and is not met, or if the *Chance* property is between 0 and 1 exclusive (less than 100%). This method leaves the source [Name](name.md) unchanged. |
+| Modify([Name](name.md) name)| System.Void | Applies this [Transform](transform.md) on the specified [Name](name.md) in a destructive manner. For a non-destructive alternative, use *Apply()* instead. The transform may result in no changes if a condition was added and is not met, or if the *Chance* property is between 0 and 1 exclusive (less than 100%). |
 
 ## Fluent Methods
 All fluent methods below return an instance of [Transform](transform.md).
@@ -31,7 +31,7 @@ All fluent methods below return an instance of [Transform](transform.md).
 | ReplaceSubstring(System.String substring, System.String replacement)| Adds a step that replaces all instances of the specified substring in each syllable with a desired string. Note that the substring must be completely contained in a syllable to be replaced. |
 | StepChance(System.Double chance)| Sets the probability of the last added transform step. To set the probability of the transform itself, use *!:TriggerChance*. |
 | TransformChance(System.Double chance)| Sets the probability that this transform and all of its steps runs. |
-| Weight(System.Int32 weight)|  |
+| Weight(System.Int32 weight)| Sets the probability of this [Transform](transform.md) being applied. The value must be a double between 0 and 1 inclusive. |
 | When(System.Int32 index, System.String regex)| Adds a condition to this [Transform](transform.md). The condition is a regular expression applied to a syllable at the specified . It must be satisfied for the [Transform](transform.md) to be applied successfully. The specified determines the location of the syllable that the condition operates on. A negative can be provided to traverse from the end of the name instead. (For example, an index -1 will be interpreted as the last syllable of a name.) |
 
 ## Properties

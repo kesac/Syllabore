@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Syllabore.Fluent
 {
-    public static class NameFilterFluentExtension
+    public static class NameFilterFluentExtensions
     {
         /// <summary>
         /// Makes a name invalid if it contains any of the specified substrings.

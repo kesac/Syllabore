@@ -6,7 +6,7 @@ A constraint used by a [NameFilter](namefilter.md) when testing names for validi
 
 | Constructor | Description |
 |-------------|-------------|
-| FilterConstraint([FilterCondition](filtercondition.md) type, System.String value) |  |
+| FilterConstraint([FilterCondition](filtercondition.md) type, System.String value) | Creates a new [FilterConstraint](filterconstraint.md) with the specified condition and value. |
 
 ## Methods
 

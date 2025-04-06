@@ -25,7 +25,7 @@ All fluent methods below return an instance of [TransformSet](transformset.md).
 | Method | Description |
 |--------|-------------|
 | Add(*lambda => [Transform](transform.md)*)| Adds a new [Transform](transform.md) to this [TransformSet](transformset.md). |
-| Chance(System.Double chance)|  |
+| Chance(System.Double chance)| Sets the probability of this [TransformSet](transformset.md). The value must be a double between 0 and 1 inclusive. |
 
 ## Properties
 

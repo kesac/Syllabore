@@ -6,7 +6,7 @@ A convenience wrapper for [SyllableGenerator](syllablegenerator.md) that is used
 
 | Constructor | Description |
 |-------------|-------------|
-| SyllableGeneratorFluentWrapper([NameGenerator](namegenerator.md) parent, [SyllablePosition](syllableposition.md) syllablePosition, [SyllableGenerator](syllablegenerator.md) syllables) |  |
+| SyllableGeneratorFluentWrapper([NameGenerator](namegenerator.md) parent, [SyllablePosition](syllableposition.md) syllablePosition, [SyllableGenerator](syllablegenerator.md) syllables) | Used by [NameGenerator](namegenerator.md) to instantiate a new [SyllableGeneratorFluentWrapper](syllablegeneratorfluentwrapper.md). |
 
 ## Methods
 

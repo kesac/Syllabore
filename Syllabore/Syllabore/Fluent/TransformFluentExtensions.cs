@@ -6,6 +6,9 @@ namespace Syllabore.Fluent
 {
     public static class TransformFluentExtensions
     {
+        /// <summary>
+        /// Sets the probability of this <see cref="Transform"/> being applied. The value must be a double between 0 and 1 inclusive.
+        /// </summary>
         public static Transform Weight(this Transform transform, int weight)
         {
             transform.Weight = weight;

@@ -8,7 +8,7 @@ Represents a sequence of syllables that make up a name.
 |-------------|-------------|
 | Name() | Creates an empty name with no syllables. |
 | Name(System.String[] syllable) | Creates a new name with the desired syllables. |
-| Name([Name](name.md) copy) |  |
+| Name([Name](name.md) copy) | Instantiates a new name that is a copy of the specified [Name](name.md). (This constructor is useful for a [INameTransformer](inametransformer.md).) |
 
 ## Methods
 
