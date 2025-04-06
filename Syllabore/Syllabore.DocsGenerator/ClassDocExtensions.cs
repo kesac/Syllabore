@@ -119,16 +119,18 @@ namespace Syllabore.DocsGenerator
                 {
                     if (type.IsDocumentable())
                     {
+                        // Hyperlink to class documentation
                         className = $"[{className}]({type.ToFileSystemSafeName()}.md)";
                     }
                 }
                 else if(!type.IsSyllaboreType() && type.Namespace != null)
                 {
+                    // Show non-Syllabore class names along with the namespace they belong to
                     className = $"{type.Namespace}.{className}";
                 }
 
+                // In the format Class<Namespace.T1, Namespace2.T2>
                 var genericTypeNames = string.Join(',', type.GetGenericArguments().Select(x => x.ToMarkdownReference()));
-
                 result.Append($"{className}&lt;{genericTypeNames}&gt;");
             }
             else if(type.IsGenericTypeParameter)
@@ -147,5 +149,150 @@ namespace Syllabore.DocsGenerator
             return result.ToString();
 
         } // ToMarkdownReference()
+
+        public static string ToDocumentId(this Type t)
+        {
+            return GenerateDocumentId(t);
+        }
+
+        public static string ToDocumentId(this ConstructorInfo c)
+        {
+            return GenerateDocumentId(c);
+        }
+
+        public static string ToDocumentId(this MethodInfo m)
+        {
+            return GenerateDocumentId(m);
+        }
+
+        public static string ToDocumentId(this PropertyInfo p)
+        {
+            return GenerateDocumentId(p);
+        }
+
+        /// <summary>
+        /// Returns an ID for a type, property, field, etc. that is suitable
+        /// for doing lookups in the XML documentation of a library.
+        /// </summary>
+        private static string GenerateDocumentId(object info)
+        {
+            if (info is Type type)
+            {
+                return $"T:{type.FullName}";
+            }
+            else if (info is PropertyInfo property)
+            {
+                return $"P:{property.DeclaringType.FullName}.{property.Name}";
+            }
+            else if (info is ConstructorInfo constructor)
+            {
+                var parameters = constructor.GetParameters();
+
+                if (parameters.Length == 0)
+                {
+                    return $"M:{constructor.DeclaringType.FullName}.#ctor";
+                }
+                else
+                {
+                    return $"M:{constructor.DeclaringType.FullName}.#ctor({string.Join(",", parameters.Select(p =>
+                    {
+                        if (p.ParameterType.IsGenericType)
+                        {
+                            var genericTypeName = $"{p.ParameterType.Namespace}.{p.ParameterType.Name.Substring(0, p.ParameterType.Name.IndexOf("`"))}";
+                            var parameterTypeNames = string.Join(",", p.ParameterType.GetGenericArguments().Select(x => $"{x.Namespace}.{x.Name}"));
+                            return genericTypeName + "{" + parameterTypeNames + "}";
+                        }
+                        else
+                        {
+                            return p.ParameterType.FullName;
+                        }
+                    }))})";
+                }
+            }
+            else if (info is MethodInfo method)
+            {
+                var parameters = method.GetParameters();
+
+                if (method.IsConstructor)
+                {
+                    if (parameters.Length == 0)
+                    {
+                        return $"M:{method.DeclaringType.FullName}.#ctor";
+                    }
+                    else
+                    {
+                        return $"M:{method.DeclaringType.FullName}.#ctor({string.Join(",", parameters.Select(p =>
+                        {
+                            if (p.ParameterType.IsGenericType)
+                            {
+                                var genericTypeName = $"{p.ParameterType.Namespace}.{p.ParameterType.Name.Substring(0, p.ParameterType.Name.IndexOf("`"))}";
+                                var parameterTypeNames = string.Join(",", p.ParameterType.GetGenericArguments().Select(x => $"{x.Namespace}.{x.Name}"));
+                                return genericTypeName + "{" + parameterTypeNames + "}";
+                            }
+                            else
+                            {
+                                return p.ParameterType.FullName;
+                            }
+                        }))})";
+                    }
+                }
+                else
+                {
+                    if (parameters.Length == 0)
+                    {
+                        return $"M:{method.DeclaringType.FullName}.{method.Name}";
+                    }
+                    else
+                    {
+                        return $"M:{method.DeclaringType.FullName}.{method.Name}({string.Join(",", parameters.Select(p =>
+                        {
+                            if (p.ParameterType.IsGenericType)
+                            {
+                                var genericTypeName = $"{p.ParameterType.Namespace}.{p.ParameterType.Name.Substring(0, p.ParameterType.Name.IndexOf("`"))}";
+                                var parameterTypeNames = string.Join(",", p.ParameterType.GetGenericArguments().Select(x => $"{x.Namespace}.{x.Name}"));
+                                return genericTypeName + "{" + parameterTypeNames + "}";
+                            }
+                            else
+                            {
+                                return p.ParameterType.FullName;
+                            }
+                        }))})";
+                    }
+                }
+            }
+            else if (info is FieldInfo field)
+            {
+                return $"F:{field.DeclaringType.FullName}.{field.Name}";
+            }
+            else if (info is ParameterInfo parameter)
+            {
+                // For parameters, we need to get the method that defines the parameter
+                var method2 = parameter.Member as MethodBase;
+                if (method2 != null)
+                {
+                    // Create the method ID and append the parameter
+                    string methodId;
+                    if (method2.IsConstructor)
+                    {
+                        methodId = $"M:{method2.DeclaringType.FullName}.#ctor";
+                    }
+                    else
+                    {
+                        methodId = $"M:{method2.DeclaringType.FullName}.{method2.Name}";
+                    }
+
+                    return $"{methodId}({parameter.Position})";
+                }
+                else
+                {
+                    throw new ArgumentException("Could not determine the containing method for this parameter");
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"Unsupported reflection object type: {info.GetType().Name}");
+            }
+        }
+
     }
 }

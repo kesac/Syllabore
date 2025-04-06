@@ -3,23 +3,23 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Syllabore.DocsGenerator
 {
     /// <summary>
-    /// Generates markdown documentation for the classes in the Syllabore library.
+    /// Experimental. Generates markdown documentation for the classes in the Syllabore library.
     /// </summary>
     public class GenerateClassDocs
     {
-        private static readonly string DefaultOutputDirectory = "output-docs";
+        private static readonly string DefaultOutputDirectory = "../../../../../docs/v3/class-docs/";
 
         public static void Main(string[] args)
         {
             // Output directory setup
             if (!Directory.Exists(DefaultOutputDirectory))
             {
-                Directory.CreateDirectory(DefaultOutputDirectory);
-                Console.WriteLine("Created directory " + DefaultOutputDirectory);
+                throw new DirectoryNotFoundException($"Class docs directory not found: {DefaultOutputDirectory}");
             }
 
             var existingDocuments = Directory.GetFiles(DefaultOutputDirectory);
@@ -27,7 +27,7 @@ namespace Syllabore.DocsGenerator
             {
                 foreach (var file in existingDocuments)
                 {
-                    if (file.ToLower().EndsWith(".md"))
+                    if (!file.StartsWith("readme") && file.ToLower().EndsWith(".md"))
                     {
                         File.Delete(file);
                     }
@@ -39,8 +39,7 @@ namespace Syllabore.DocsGenerator
             var assembly = typeof(Syllabore.NameGenerator).Assembly;
             var classes = assembly.GetTypes()
                 .Where(t => t.IsDocumentable())
-                .OrderBy(t => t.Name)
-                .ToList();
+                .ToList(); // So we can get the size later
 
             // Find where the XML docs live
             XDocument xmlDoc = null;
@@ -65,11 +64,10 @@ namespace Syllabore.DocsGenerator
                 // Remove generic type symbols with ones that are friendlier to file systems
                 var fileName = $"{type.ToFileSystemSafeName()}.md";
                 var filePath = Path.Combine(DefaultOutputDirectory, fileName);
+                File.WriteAllText(filePath, markdownContent);
 
                 // Output for the gitbook summary.md
-                Console.WriteLine($"* [{type.ToReadableName()}](class-docs/{type.ToFileSystemSafeName().ToLower()}.md)");
-
-                File.WriteAllText(filePath, markdownContent);
+                // Console.WriteLine($"* [{type.ToReadableName()}](class-docs/{type.ToFileSystemSafeName().ToLower()}.md)");
             }
 
             Console.WriteLine("Documentation generation complete!");
@@ -79,157 +77,180 @@ namespace Syllabore.DocsGenerator
         {
             var result = new StringBuilder();
 
-            AppendHeader(result, type, xmlDoc);
+            result.Append(GenerateHeader(type, xmlDoc));
 
             if (type.IsClass || type.IsInterface || type.IsAbstract)
             {
-                AppendConstructorsSection(result, type, xmlDoc);
-                AppendMethodsSection(result, type, xmlDoc);
-                AppendPropertiesSection(result, type, xmlDoc);
+                result.Append(GenerateConstructorsSection(type, xmlDoc));
+                result.Append(GenerateMethodsSection(type, xmlDoc));
+                result.Append(GenerateFluentMethodsSection(type, xmlDoc));
+                result.Append(GeneratePropertiesSection(type, xmlDoc));
             }
 
             if (type.IsEnum)
             {
-                AppendEnumValuesSection(result, type, xmlDoc);
+                result.Append(GenerateEnumValuesSection(type, xmlDoc));
             }
 
             return result.ToString();
         }
 
-
-        private static void AppendHeader(StringBuilder markdown, Type type, XDocument xmlDoc)
+        private static string GenerateHeader(Type type, XDocument xmlDoc)
         {
-            // Name and header
-            var name = type.ToReadableName();
-            markdown.AppendLine($"# {name}");
-            markdown.AppendLine();
+            var result = new StringBuilder();
+            result.AppendLine($"# {type.ToReadableName()}");
+            result.AppendLine();
 
-            // Description
-            string targetId = $"T:{type.FullName}";
-            string description = ExtractXmlSummary(xmlDoc, targetId);
+            var description = new StringBuilder(ExtractDescription(xmlDoc, type.ToDocumentId()));
 
-            if (type.IsEnum)
-            {
-                description = "*Enum*. " + description;
-            }
-            else if (type.IsInterface)
-            {
-                description = "*Interface*. " + description;
-            }
+            if (type.IsEnum)           { description.Insert(0, "*Enum*. "); }
+            else if (type.IsInterface) { description.Insert(0, "*Interface*. "); }
 
-            if (!string.IsNullOrEmpty(description))
-            {
-                markdown.AppendLine(description);
-                markdown.AppendLine();
-            }
+            description.AppendLine();
+            description.AppendLine();
 
+            // Display a list of implemented interfaces
             if (type.IsAbstract || type.IsInterface || type.IsClass)
             {
-                // Get interfaces (before adding the class description)
                 var interfacesUsed = type.GetInterfaces();
                 if (interfacesUsed.Length > 0)
                 {
-                    // Create a list of interface links instead of just names
-                    var interfaceLinks = interfacesUsed
-                        .Select(x => x.ToMarkdownReference())
-                        .ToList();
-
-                    string interfacesList = string.Join(", ", interfaceLinks);
-                    markdown.AppendLine($"*Implements: {interfacesList}*");
-                    markdown.AppendLine();
+                    var interfaceLinks = interfacesUsed.Select(x => x.ToMarkdownReference());
+                    var interfacesList = string.Join(", ", interfaceLinks);
+                    description.AppendLine($"*Implements: {interfacesList}*");
+                    description.AppendLine();
                 }
             }
+
+            return result.Append(description).ToString();
         }
 
-        private static void AppendConstructorsSection(StringBuilder markdown, Type type, XDocument xmlDoc)
+        private static string GenerateConstructorsSection(Type type, XDocument xmlDoc)
         {
+            var result = new StringBuilder();
             var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance)
                 .OrderBy(c => c.GetParameters().Length)
-                .ToList();
+                .ToList(); // So we can get the number of constructors
 
             if (constructors.Count > 0)
             {
-                markdown.AppendLine("## Constructors");
-                markdown.AppendLine();
-                markdown.AppendLine("| Constructor | Description |");
-                markdown.AppendLine("|-------------|-------------|");
+                result.AppendLine("## Constructors");
+                result.AppendLine();
+                result.AppendLine("| Constructor | Description |");
+                result.AppendLine("|-------------|-------------|");
 
                 foreach (var constructor in constructors)
                 {
                     var parameters = constructor.GetParameters();
-                    var paramList = string.Join(", ", parameters.Select(p => $"{p.ParameterType.ToMarkdownReference()} {p.Name}"));
-
-                    // Fix: For parameterless constructors, don't include the parentheses in XML ID
-                    string targetId;
-                    if (parameters.Length == 0)
-                    {
-                        targetId = $"M:{type.FullName}.#ctor";
-                    }
-                    else
-                    {
-                        targetId = $"M:{type.FullName}.#ctor({string.Join(",", parameters.Select(p => p.ParameterType.ToMarkdownReference()))})";
-                    }
-
-                    var description = ExtractXmlSummary(xmlDoc, targetId);
+                    var parameterList = string.Join(", ", parameters.Select(p => $"{p.ParameterType.ToMarkdownReference()} {p.Name}"));
+                    var description = ExtractDescription(xmlDoc, constructor.ToDocumentId());
                     var typeName = type.ToReadableName(false); // Leave brackets in since we're printing in a code block
 
-                    markdown.AppendLine($"| {typeName}({paramList}) | {description} |");
+                    result.AppendLine($"| {typeName}({parameterList}) | {description} |");
                 }
 
-                markdown.AppendLine();
+                result.AppendLine();
             }
+
+            return result.ToString();
         }
 
-        private static void AppendMethodsSection(StringBuilder markdown, Type type, XDocument xmlDoc)
+        private static string GenerateFluentMethodsSection(Type type, XDocument xmlDoc)
         {
+            var result = new StringBuilder();
+            // Find all extension methods in Syllabore.Fluent namespace that apply to this type
+            var assembly = typeof(Syllabore.NameGenerator).Assembly;
+
+            var extensionMethods = assembly.GetTypes()
+                .Where(t => t.Namespace == "Syllabore.Fluent" && t.Name.EndsWith("Extensions"))
+                .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                .Where(m => m.IsDefined(typeof(ExtensionAttribute), false) 
+                    && m.GetParameters().Length > 0 
+                    && m.GetParameters()[0].ParameterType == type)
+                .OrderBy(m => m.Name)
+                .ToList(); // To get total number of methods
+
+            if (extensionMethods.Count > 0)
+            {
+                result.AppendLine("## Fluent Methods");
+                result.AppendLine($"All fluent methods below return an instance of {type.ToMarkdownReference()}.");
+                result.AppendLine();
+                result.AppendLine("| Method | Description |");
+                result.AppendLine("|--------|-------------|");
+
+                foreach (var method in extensionMethods)
+                {
+                    var methodParameters = string.Join(", ", method.GetParameters().Skip(1).Select(p => { // Skip the 'this' parameter
+
+                        var methodParameterResult = $"{p.ParameterType.ToMarkdownReference().ToSpacedLongString()} {p.Name}";
+
+                        if (p.ParameterType.Name.StartsWith("Func"))
+                        {
+                            methodParameterResult = "*lambda*";
+                            var lambdaType = p.ParameterType.GetGenericArguments().FirstOrDefault();
+
+                            if (lambdaType != null)
+                            {
+                                methodParameterResult = $"*lambda => {lambdaType.ToMarkdownReference()}*";
+                            }
+                        }
+
+                        return methodParameterResult;
+                    }));
+
+                    var methodDescription = ExtractDescription(xmlDoc, method.ToDocumentId());
+                    var methodName = method.ToReadableName();
+
+                    result.AppendLine($"| {methodName}({methodParameters})| {methodDescription} |");
+                }
+
+                result.AppendLine();
+            }
+
+            return result.ToString();
+        }
+
+        private static string GenerateMethodsSection(Type type, XDocument xmlDoc)
+        {
+            var result = new StringBuilder();
             var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                 .Where(m => !m.IsSpecialName) // Exclude property accessors
                 .OrderBy(m => m.Name)
                 .ToList();
 
-            markdown.AppendLine("## Methods");
-            markdown.AppendLine();
+            result.AppendLine("## Methods");
+            result.AppendLine();
 
             if (methods.Count > 0)
             {
-                markdown.AppendLine("| Method | Returns | Description |");
-                markdown.AppendLine("|--------|---------|-------------|");
+                result.AppendLine("| Method | Returns | Description |");
+                result.AppendLine("|--------|---------|-------------|");
 
                 foreach (var method in methods)
                 {
-                    var parameters = method.GetParameters();
-                    var returnType = method.ReturnParameter.ParameterType;
-                    var paramList = string.Join(", ", parameters.Select(p => $"{p.ParameterType.ToMarkdownReference().ToSpacedLongString()} {p.Name}"));
-
-                    var targetId = string.Empty;
-                    if (parameters.Length == 0)
-                    {
-                        targetId = $"M:{type.FullName}.{method.Name}";
-                    }
-                    else
-                    {
-                        targetId = $"M:{type.FullName}.{method.Name}({string.Join(",", parameters.Select(p => p.ParameterType.FullName))})";
-                    }
-
-                    var methodDescription = ExtractXmlSummary(xmlDoc, targetId);
-                    var returnTypeValue = returnType.ToMarkdownReference();
-
+                    var paramList = string.Join(", ", method.GetParameters().Select(p => $"{p.ParameterType.ToMarkdownReference().ToSpacedLongString()} {p.Name}"));
+                    var returnTypeValue = method.ReturnParameter.ParameterType.ToMarkdownReference();
+                    var methodDescription = ExtractDescription(xmlDoc, method.ToDocumentId());
                     var methodName = method.ToReadableName();
-                    markdown.AppendLine($"| {methodName}({paramList})| {returnTypeValue} | {methodDescription} |");
+
+                    result.AppendLine($"| {methodName}({paramList})| {returnTypeValue} | {methodDescription} |");
                 }
 
-                markdown.AppendLine();
+                result.AppendLine();
             }
             else
             {
-                markdown.AppendLine("No public methods.");
+                result.AppendLine("No public methods.");
             }
+
+            return result.ToString();
         }
 
-        private static void AppendPropertiesSection(StringBuilder markdown, Type type, XDocument xmlDoc)
+        private static string GeneratePropertiesSection(Type type, XDocument xmlDoc)
         {
-            markdown.AppendLine("## Properties");
-            markdown.AppendLine();
+            var result = new StringBuilder();
+            result.AppendLine("## Properties");
+            result.AppendLine();
 
             var properties = type
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -238,101 +259,111 @@ namespace Syllabore.DocsGenerator
 
             if (properties.Count > 0)
             {
-                markdown.AppendLine("| Property | Type | Description |");
-                markdown.AppendLine("|----------|------|-------------|");
+                result.AppendLine("| Property | Type | Description |");
+                result.AppendLine("|----------|------|-------------|");
 
                 foreach (var property in properties)
                 {
-                    var targetId = $"P:{type.FullName}.{property.Name}";
-                    var description = ExtractXmlSummary(xmlDoc, targetId);
+                    var description = ExtractDescription(xmlDoc, property.ToDocumentId());
                     var propertyType = property.PropertyType;
-
                     var typeResult = propertyType.ToMarkdownReference().ToSpacedLongString();
 
-                    markdown.AppendLine($"| {property.Name} | {typeResult} | {description} |");
+                    result.AppendLine($"| {property.Name} | {typeResult} | {description} |");
                 }
             }
             else
             {
-                markdown.AppendLine("No public properties.");
+                result.AppendLine("No public properties.");
             }
+
+            return result.ToString();
         }
 
-        private static void AppendEnumValuesSection(StringBuilder markdown, Type type, XDocument xmlDoc)
+        private static string GenerateEnumValuesSection(Type type, XDocument xmlDoc)
         {
-            if (!type.IsEnum)
-                return;
+            var result = new StringBuilder();
 
-            markdown.AppendLine("## Values");
-            markdown.AppendLine();
-            markdown.AppendLine("| Name | Description |");
-            markdown.AppendLine("|------|-------------|");
-
-            // Get all enum values
-            var enumNames = Enum.GetNames(type);
-
-            for (int i = 0; i < enumNames.Length; i++)
+            if (type.IsEnum)
             {
-                string enumName = enumNames[i];
+                result.AppendLine("## Values");
+                result.AppendLine();
+                result.AppendLine("| Name | Description |");
+                result.AppendLine("|------|-------------|");
 
-                // Build the XML documentation ID for this enum value
-                string fieldXmlId = $"F:{type.FullName}.{enumName}";
-                string description = ExtractXmlSummary(xmlDoc, fieldXmlId);
+                // Get all enum values
+                var enumNames = Enum.GetNames(type);
 
-                if (description.Trim() == string.Empty)
+                for (int i = 0; i < enumNames.Length; i++)
                 {
-                    description = "*No description available.*";
+                    var enumName = enumNames[i];
+                    var documentId = $"F:{type.FullName}.{enumName}"; // TODO: Use extension method ToDocumentId() instead of this
+                    var description = ExtractDescription(xmlDoc, documentId);
+
+                    if (description.Trim() == string.Empty)
+                    {
+                        description = "*No description available.*";
+                    }
+
+                    result.AppendLine($"| {enumName} | {description} |");
                 }
 
-                // Add row to the markdown table
-                markdown.AppendLine($"| {enumName} | {description} |");
+                result.AppendLine();
             }
 
-            markdown.AppendLine();
+            return result.ToString();
         }
 
-        private static string ExtractXmlSummary(XDocument xmlDoc, string targetId)
+
+        private static string ExtractDescription(XDocument xmlDoc, string targetId)
         {
             string result = string.Empty;
 
-            if (xmlDoc != null)
+            if (xmlDoc == null)
             {
-                var memberElement = xmlDoc
-                    .Descendants("member")
-                    .FirstOrDefault(e => e.Attribute("name")?.Value == targetId);
+                throw new ArgumentNullException("Cannot extract description. A null XML file was specified.");
+            }
 
-                if (memberElement != null)
+            var memberElement = xmlDoc
+                .Descendants("member")
+                .FirstOrDefault(e => e.Attribute("name")?.Value == targetId);
+
+            if(memberElement == null)
+            {
+                Console.WriteLine($"No XML documentation found for target ID: {targetId}");
+            }
+            else
+            {
+                var summaryElement = memberElement.Element("summary");
+
+                if (summaryElement != null)
                 {
-                    var summaryElement = memberElement.Element("summary");
+                    var processedElement = new XElement(summaryElement);
 
-                    if (summaryElement != null)
+                    // Turn '<see cref="">' tags into markdown links, if possible
+                    foreach (var seeElement in processedElement.Descendants("see").ToList())
                     {
-                        var processedElement = new XElement(summaryElement);
+                        string crefValue = seeElement.Attribute("cref")?.Value ?? string.Empty;
+                        string typeName = ExtractTypeNameFromCrefString(crefValue);
 
-                        // Process all <see cref="..."> tags
-                        foreach (var seeElement in processedElement.Descendants("see").ToList())
+                        var markdown = $"*{typeName}*";
+                        var type = Type.GetType(typeName + ",Syllabore"); // This will be null for non-Syllabore types                       
+
+                        if (type != null)
                         {
-                            string crefValue = seeElement.Attribute("cref")?.Value ?? string.Empty;
-                            string typeName = ExtractTypeNameFromCrefString(crefValue);
-
-                            var typeMarkdown = $"*{typeName}*";
-                            var type = Type.GetType(typeName + ",Syllabore"); // This will be null for non-Syllabore types                       
-
-                            if (type != null)
-                            {
-                                typeMarkdown = type.ToMarkdownReference();
-                            }
-
-                            // Replace the <see> element with the markdown link
-                            seeElement.ReplaceWith(new XText(typeMarkdown));
-                            
+                            // If it's a Syllabore class then we can make it into a markdown link
+                            markdown = type.ToMarkdownReference();
                         }
 
-                        result = processedElement.Value.Trim();
-                        result = Regex.Replace(result, @"\s+", " ");
+                        // Replace the <see> element with the markdown link
+                        seeElement.ReplaceWith(new XText(markdown));
+
                     }
+
+                    // Whitespace clean-up
+                    result = Regex.Replace(processedElement.Value.Trim(), @"\s+", " ");
                 }
             }
+            
 
             return result;
         }
@@ -340,11 +371,11 @@ namespace Syllabore.DocsGenerator
         /// <summary>
         /// Extracts the type name from a cref string read from a .dll's XML docs file.
         /// They're usually in one of these formats:
-        /// - Example simple class: "T:Syllabore.NameGenerator"
-        /// - Example simple property: "P:Syllabore.NameGenerator.Random"
-        /// - Example empty constructor: "M:Syllabore.NameGenerator.#ctor"
-        /// - Example method with parameters: "M:Syllabore.NameGenerator.GenerateName(System.Int32)"
-        /// - Example class with generic type: "T:Syllabore.GeneratorPool`1" (Note the `1 at the end)
+        /// - A simple class: "T:Syllabore.NameGenerator"
+        /// - A simple property: "P:Syllabore.NameGenerator.Random"
+        /// - An empty constructor: "M:Syllabore.NameGenerator.#ctor"
+        /// - A method with parameters: "M:Syllabore.NameGenerator.GenerateName(System.Int32)"
+        /// - A class with generic type: "T:Syllabore.GeneratorPool`1" (Note the `1 at the end)
         /// </summary>
         private static string ExtractTypeNameFromCrefString(string cref)
         {
@@ -382,6 +413,8 @@ namespace Syllabore.DocsGenerator
 
             return result;
         }
+
+        
         
     }
 }
