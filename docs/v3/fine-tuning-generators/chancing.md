@@ -35,6 +35,19 @@ names.SetSize(2, 3);
 
 </details>
 
+<details>
+
+<summary>See JSON version</summary>
+
+```json
+{
+    "any": ["lmp", "aei", ["rst", 0.5]],
+    "size": [2, 3]
+}
+```
+
+</details>
+
 Calls to `names.Next()`  will generate names like:
 
 ```

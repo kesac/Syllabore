@@ -42,6 +42,22 @@ names.SetSize(2, 3);
 
 </details>
 
+<details>
+
+<summary>See JSON version</summary>
+
+```json
+{
+    "any": [
+        ["lmnr*5", "kgpb*2"],
+        ["aei*4", "ou*1"]
+    ],
+    "size": [2, 3]
+}
+```
+
+</details>
+
 Calls to `names.Next()`  will generate names like:
 
 ```
@@ -96,6 +112,22 @@ var names = new NameGenerator()
 <strong>    .SetSyllables(SyllablePosition.Any, syllableGenerator)
 </strong>    .SetSize(2, 3);
 </code></pre>
+
+</details>
+
+<details>
+
+<summary>See JSON version</summary>
+
+```json
+{
+    "any": [
+        ["mnlr*1", "(th)*4", "(sh)*4", "(ch)*4"],
+        ["aeiou*1", "(ia)*4", "(ae)*4", "(ei)*4"]
+    ],
+    "size": [2, 3]
+}
+```
 
 </details>
 

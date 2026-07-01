@@ -36,6 +36,21 @@ var names = new NameGenerator()
 
 </details>
 
+<details>
+
+<summary>See JSON version</summary>
+
+```json
+{
+    "any": [
+        ["str", "(sh)", "(th)"],
+        ["aeo", "(ou)"]
+    ]
+}
+```
+
+</details>
+
 In this example, the generator is given the following rules:
 
 * Choose from 3 symbols and 2 clusters (`sh`,`th`) for the first position of _any_ syllable

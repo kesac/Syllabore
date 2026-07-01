@@ -43,6 +43,21 @@ var names = new NameGenerator()
 
 </details>
 
+<details>
+
+<summary>See JSON version</summary>
+
+```json
+{
+    "start": ["st", "eo", "mn"],
+    "inner": ["pl", "ia"],
+    "end": "$inner",
+    "size": 3
+}
+```
+
+</details>
+
 This generator will only use 7 symbols for the _starting_ syllable of a name and then a different set of 4 symbols for the _inner_ or _ending_ syllable.
 
 Calls to `names.Next()` will generate names like

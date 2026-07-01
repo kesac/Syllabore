@@ -38,6 +38,20 @@ var names = new NameGenerator()
 
 </details>
 
+<details>
+
+<summary>See JSON version</summary>
+
+```json
+{
+    "any": ["lmnstr", "aeiou"],
+    "transforms": ["append(nia)"],
+    "size": 2
+}
+```
+
+</details>
+
 Calls to `names.Next()` will produce names like:
 
 ```
@@ -89,6 +103,22 @@ var names = new NameGenerator()
     .SetSyllables(SyllablePosition.Any, syllables)
     .SetTransform(transform)
     .SetSize(2);
+```
+
+</details>
+
+<details>
+
+<summary>See JSON version</summary>
+
+```json
+{
+    "any": ["lmnstr", "aeiou"],
+    "transforms": [
+        ["insert(0,za)", "append(nia)"]
+    ],
+    "size": 2
+}
 ```
 
 </details>
@@ -153,6 +183,10 @@ names.SetSize(3);
 
 </details>
 
+{% hint style="warning" %}
+There is currently no JSON equivalent for this example. The simplified `NameGeneratorConfig` format always applies every eligible transform in a `transforms` list and has no way to express `RandomlySelect()`.
+{% endhint %}
+
 This generator replaces the last syllable with one of the suffixes `-des` `-rus` or `-vium`. The names that come out of this generator look like this:
 
 ```
@@ -214,6 +248,10 @@ names.SetSize(3);
 ```
 
 </details>
+
+{% hint style="warning" %}
+There is currently no JSON equivalent for this example. The simplified `NameGeneratorConfig` format has no way to express `TransformSet.Chance()` or `RandomlySelect()`.
+{% endhint %}
 
 This results in names like:
 

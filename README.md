@@ -24,7 +24,7 @@ Sasara
 Rosa
 Tetoro
 ```
-Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
+Check out [the documentation](docs/v3/starting-out.md) for more details.
 
 ## Quick Start with JSON
 
@@ -48,7 +48,7 @@ Sasara
 Rosa
 Tetoro
 ```
-Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
+Check out [the documentation](docs/v3/starting-out.md) for more details.
 
 ## Positioning
 Names are made up of syllables. Syllables are made up of symbols. 
@@ -82,7 +82,7 @@ The same generator can be expressed as JSON and loaded with `NameGeneratorConfig
     "size": 3
 }
 ```
-Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
+Check out [the documentation](docs/v3/starting-out.md) for more details.
 
 ## Transforms
 Add determinism to names by using a `transform`.
@@ -111,7 +111,7 @@ The same generator can be expressed as JSON and loaded with `NameGeneratorConfig
     "size": 2
 }
 ```
-Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
+Check out [the documentation](docs/v3/starting-out.md) for more details.
 
 ## Filtering Output
 Prevent certain symbol combinations from appearing in names by using a `filter`.
@@ -139,10 +139,10 @@ The same generator can be expressed as JSON and loaded with `NameGeneratorConfig
 }
 ```
 
-Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
+Check out [the documentation](docs/v3/starting-out.md) for more details.
 
 ## Installation
-Check out [the installation documentation](https://sacro.gitbook.io/syllabore#how-do-i-add-syllabore-to-my-project) for full details. The gist is:
+Check out [the installation documentation](docs/v3/README.md#how-do-i-add-syllabore-to-my-project) for full details. The gist is:
 - In Visual Code, use the `NuGet: Add NuGet Package` command in Microsoft's C# Dev Kit extension to find `Syllabore`
 - In Visual Studio, use the NuGet package manager to find `Syllabore` or run the package manager command `Install-Package Syllabore`
 - In the .NET CLI, run the command `dotnet add package Syllabore`

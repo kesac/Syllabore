@@ -19,6 +19,7 @@
   * [Generator Pools](more-techniques/joiners.md)
   * [Syllable Sets](more-techniques/syllableset.md)
   * [Generator Serialization](more-techniques/namegeneratorserializer.md)
+  * [Generator Configuration Files](more-techniques/namegeneratorconfig.md)
 * [More Examples](more-examples/README.md)
   * [Soft/Hard-Sounding Names](more-examples/soft-hard-sounding-names.md)
   * [Fantasy Names](more-examples/fantasy-names.md)

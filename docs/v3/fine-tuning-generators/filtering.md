@@ -39,6 +39,20 @@ var names = new NameGenerator()
 
 </details>
 
+<details>
+
+<summary>See JSON version</summary>
+
+```json
+{
+    "any": ["st", "aeiou", "st"],
+    "filters": ["/tt/"],
+    "size": [2, 3]
+}
+```
+
+</details>
+
 ✅This generator creates names like:
 
 ```
@@ -88,6 +102,19 @@ var names = new NameGenerator()
     .SetSyllables(SyllablePosition.Any, syllableGenerator)
     .SetFilter(nameFilter)
     .SetSize(2, 3);
+```
+
+</details>
+
+<details>
+
+<summary>See JSON version</summary>
+
+```json
+{
+    "any": ["strlmn", "aeiou"],
+    "filters": ["/^M|u$/"]
+}
 ```
 
 </details>
