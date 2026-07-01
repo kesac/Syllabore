@@ -183,9 +183,8 @@ names.SetSize(3);
 
 </details>
 
-{% hint style="warning" %}
-There is currently no JSON equivalent for this example. The simplified `NameGeneratorConfig` format always applies every eligible transform in a `transforms` list and has no way to express `RandomlySelect()`.
-{% endhint %}
+> [!WARNING]
+> There is currently no JSON equivalent for this example. The simplified `NameGeneratorConfig` format always applies every eligible transform in a `transforms` list and has no way to express `RandomlySelect()`.
 
 This generator replaces the last syllable with one of the suffixes `-des` `-rus` or `-vium`. The names that come out of this generator look like this:
 
@@ -249,9 +248,8 @@ names.SetSize(3);
 
 </details>
 
-{% hint style="warning" %}
-There is currently no JSON equivalent for this example. The simplified `NameGeneratorConfig` format has no way to express `TransformSet.Chance()` or `RandomlySelect()`.
-{% endhint %}
+> [!WARNING]
+> There is currently no JSON equivalent for this example. The simplified `NameGeneratorConfig` format has no way to express `TransformSet.Chance()` or `RandomlySelect()`.
 
 This results in names like:
 

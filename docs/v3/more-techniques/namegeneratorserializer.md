@@ -33,6 +33,5 @@ var serializer = new NameGeneratorSerializer();
 var names = serializer.Deserialize("names.json");
 ```
 
-{% hint style="info" %}
-_NameGenerator_ has properties with interfaces as their types. Vanilla .NET deserialization won't work without some advanced setup. This convenience class does the setup for you.
-{% endhint %}
+> [!NOTE]
+> _NameGenerator_ has properties with interfaces as their types. Vanilla .NET deserialization won't work without some advanced setup. This convenience class does the setup for you.

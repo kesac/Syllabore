@@ -176,9 +176,8 @@ A transform can chain multiple steps in one entry, applied in order:
 
 Step arguments are split on commas. Use `\,`, `\(`, `\)`, or `\\` inside an argument to escape a literal comma, parenthesis, or backslash.
 
-{% hint style="warning" %}
-Every transform in the `transforms` array is applied whenever its own condition and chance allow it — there is currently no way to express `TransformSet.RandomlySelect()` or an overall `TransformSet.Chance()` through this simplified format. Use [NameGeneratorSerializer](namegeneratorserializer.md) if you need those.
-{% endhint %}
+> [!WARNING]
+> Every transform in the `transforms` array is applied whenever its own condition and chance allow it — there is currently no way to express `TransformSet.RandomlySelect()` or an overall `TransformSet.Chance()` through this simplified format. Use [NameGeneratorSerializer](namegeneratorserializer.md) if you need those.
 
 ## Putting it all together
 

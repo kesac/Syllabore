@@ -72,9 +72,8 @@ Maloba
 * The vowels `a` `e` `i` will appear 4x more likely than `o` `u`
 * The consonants `l` `m` `n` `r` will appear 2.5x more likely than the letters `k` `g` `p` `b` because $$\frac{5\space weight}{2\space weight} = 2.5$$
 
-{% hint style="info" %}
-The default weight of a symbol is 1.
-{% endhint %}
+> [!NOTE]
+> The default weight of a symbol is 1.
 
 ### Adjusting weights of clusters
 

@@ -68,6 +68,5 @@ Sonlili
 Tenlipa
 ```
 
-{% hint style="info" %}
-The call to `SetSize(3)` forces all generated names to be exactly 3 syllables long.&#x20;
-{% endhint %}
+> [!NOTE]
+> The call to `SetSize(3)` forces all generated names to be exactly 3 syllables long.
