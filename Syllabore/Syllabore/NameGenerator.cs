@@ -1,4 +1,5 @@
 ﻿using Archigen;
+using Syllabore.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -94,6 +95,31 @@ namespace Syllabore
                 .Add(SymbolPosition.Last, lastSymbols);
 
             this.SetSyllables(SyllablePosition.Any, syllableGenerator);
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="NameGenerator"/> using a simplified, hand-authorable
+        /// <see cref="NameGeneratorConfig"/> (typically loaded via <see cref="NameGeneratorConfig.Load(string)"/>).
+        /// </summary>
+        public NameGenerator(NameGeneratorConfig config) : this()
+        {
+            foreach (var pair in config.SyllableGenerators)
+            {
+                this.SetSyllables(pair.Key, pair.Value);
+            }
+
+            if (config.Transform != null)
+            {
+                this.SetTransform(config.Transform);
+            }
+
+            if (config.Filter != null)
+            {
+                this.SetFilter(config.Filter);
+            }
+
+            this.MinimumSize = config.MinimumSize;
+            this.MaximumSize = config.MaximumSize;
         }
 
         /// <summary>
