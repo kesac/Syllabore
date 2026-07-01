@@ -1,5 +1,5 @@
 # Overview
-This document describes breaking changes between Syllabore's v2 and v3 releases. This document does not contain v3 docs. You can find v3 docs in the gitbook here: [https://sacro.gitbook.io/syllabore](https://sacro.gitbook.io/syllabore).
+This document describes breaking changes between Syllabore's v2 and v3 releases. This document does not contain v3 docs. You can find v3 docs in the gitbook ( [https://sacro.gitbook.io/syllabore](https://sacro.gitbook.io/syllabore)) or in the v3 folder [here](https://github.com/kesac/Syllabore/tree/main/docs/v3).
 
 # Breaking Change 1: Name Generator Constructors
 In v2, you could configure a `NameGenerator` without explicitly configuring `SyllableGenerators` through quick setup constructors.

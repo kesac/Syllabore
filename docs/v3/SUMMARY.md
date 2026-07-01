@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Overview](README.md)
+* [Overview](readme.md)
 * [Starting Out](starting-out.md)
 
 ## Fine-Tuning Generators
