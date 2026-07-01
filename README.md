@@ -26,6 +26,30 @@ Tetoro
 ```
 Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
 
+## Quick Start with JSON
+
+A `NameGenerator` can also be configured from a hand-written JSON file using `NameGeneratorConfig`. This is useful when you'd rather not configure the generator through code.
+
+```json
+{
+    "any": ["str", "aeo"]
+}
+```
+
+Load the file with `NameGeneratorConfig.Load()` and pass the result into a `NameGenerator`:
+```csharp
+var config = NameGeneratorConfig.Load("config.json");
+var names = new NameGenerator(config);
+Console.WriteLine(names.Next());
+```
+This produces the same kind of output as the code-only example above:
+```
+Sasara
+Rosa
+Tetoro
+```
+Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
+
 ## Positioning
 Names are made up of syllables. Syllables are made up of symbols. 
 
@@ -49,6 +73,15 @@ Termino
 Sarnina
 Telnari
 ```
+The same generator can be expressed as JSON and loaded with `NameGeneratorConfig.Load()`:
+```json
+{
+    "start": ["st", "ae", "rl"],
+    "inner": ["mnr", "ioa"],
+    "end": "$inner",
+    "size": 3
+}
+```
 Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
 
 ## Transforms
@@ -70,6 +103,14 @@ Sarunia
 Timania
 Lisonia
 ```
+The same generator can be expressed as JSON and loaded with `NameGeneratorConfig.Load()`:
+```json
+{
+    "any": ["lmnstr", "aeiou"],
+    "transforms": ["append(nia)"],
+    "size": 2
+}
+```
 Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
 
 ## Filtering Output
@@ -90,6 +131,13 @@ Temaro
 Rima
 Narumi
 ```
+The same generator can be expressed as JSON and loaded with `NameGeneratorConfig.Load()`:
+```json
+{
+    "any": ["strlmn", "aeiou"],
+    "filters": ["/^M|u$/"]
+}
+```
 
 Check out [the documentation](https://sacro.gitbook.io/syllabore) for more details.
 
@@ -102,7 +150,7 @@ Check out [the installation documentation](https://sacro.gitbook.io/syllabore#ho
 ## Compatibility
 Syllabore is a [.NET Standard](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-1-0) 2.0 class library and is compatible with applications using:
 
-* .NET or .NET Core 2.0 to 8.0 inclusive
+* .NET or .NET Core 2.0 to 10.0 inclusive
 * .NET Framework 4.6.1 to 4.8.1 inclusive
 * [Mono](https://www.mono-project.com/) 5.4 and 6.4
 * [Godot 4](https://godotengine.org/download/windows/) (Using the .NET edition of the engine)
@@ -113,7 +161,7 @@ Syllabore is a [.NET Standard](https://learn.microsoft.com/en-us/dotnet/standard
 ```
 MIT License
 
-Copyright (c) 2019-2025 Kevin Sacro
+Copyright (c) 2019-2026 Kevin Sacro
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
